@@ -94,8 +94,85 @@ enum Api {
         _ = try await request("api/profile", body: b)
     }
 
+    /// 只验家长密码，**不产生任何副作用** —— 专给「解锁」按钮用。
+    ///
+    /// 为什么借 `/api/config` 而不是新开一个 `/api/verify`：它是只读的，
+    /// 且已经要求家长密码；密码不对返回 403、对了返回配置。加一个新端点等于
+    /// 多一处要维护的鉴权入口，而鉴权入口越多越容易有一处写错。
+    ///
+    /// 之前没有这个方法，解锁只能靠「凑一笔账出来记」触发密码框 ——
+    /// 想单纯解锁一下做不到，等于这个入口不存在。
+    static func verifyParent(_ password: String) async throws {
+        _ = try await request("api/config", body: ["admin": password])
+    }
+
+    /// 读可编辑配置（规则 / 商品 / 档位）。要家长密码。
+    static func config(_ password: String) async throws -> Config {
+        Config(json: try await request("api/config", body: ["admin": password]))
+    }
+
+    /// 整段替换某类配置。服务端会做**跨文件全量校验**，不过就整笔拒绝、一个字不写。
+    static func configPut(_ password: String, kind: String,
+                          items: [[String: Any]]) async throws {
+        _ = try await request("api/config_put",
+                              body: ["admin": password, "kind": kind, "items": items])
+    }
+
+    /// 实时推送 —— 一条 SSE 长连接。收到事件只表示「有东西变了」，
+    /// 拿到信号去 `/api/state` 拉一次完整状态，**不从推送里读数据**：
+    /// 推数据等于多一条下发路径，两条路给出不同答案时根本查不清谁对。
+    ///
+    /// `URLSession.bytes` 给的是逐字节的异步序列，按行解析即可。
+    /// 断线由调用方决定怎么重连（这里不自己重试 —— 重试策略是 Store 的事）。
+    static func events() async throws -> AsyncThrowingStream<String, Error> {
+        var req = URLRequest(url: base.appendingPathComponent("api/events"))
+        req.timeoutInterval = 0                 // 长连接：不能有超时，否则每 N 秒被自己掐断
+        req.setValue("text/event-stream", forHTTPHeaderField: "Accept")
+        let (bytes, resp) = try await URLSession.shared.bytes(for: req)
+        let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
+        guard code == 200 else { throw Failure(message: "推送连不上(HTTP \(code))") }
+        return AsyncThrowingStream { continuation in
+            let task = Task {
+                do {
+                    for try await line in bytes.lines {
+                        // `event: ledger` / `event: config`；`: ping` 是心跳，忽略
+                        if line.hasPrefix("event:") {
+                            continuation.yield(String(line.dropFirst(6))
+                                .trimmingCharacters(in: .whitespaces))
+                        }
+                    }
+                    continuation.finish()
+                } catch {
+                    continuation.finish(throwing: error)
+                }
+            }
+            continuation.onTermination = { _ in task.cancel() }
+        }
+    }
+
     static func logout() async {
         _ = try? await request("api/logout", body: [:])
+    }
+}
+
+/// 可编辑配置的投影 —— 管理面用。
+struct Config {
+    var subjects: [State.Subject]
+    var rules: [[String: Any]]      // 保持原始字典：规则的字段随 kind 变，
+    var shop: [[String: Any]]       // 强类型化会在「服务端加了个字段」时把它吃掉
+    var tiers: [[String: Any]]
+    var eras: [String: String]
+
+    init(json: [String: Any]) {
+        subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
+            State.Subject(id: $0["k"] as? String ?? "",
+                          name: $0["name"] as? String ?? "",
+                          icon: $0["icon"] as? String ?? "")
+        }
+        rules = (json["rules"] as? [[String: Any]]) ?? []
+        shop = (json["shop"] as? [[String: Any]]) ?? []
+        tiers = (json["tiers"] as? [[String: Any]]) ?? []
+        eras = (json["eras"] as? [String: String]) ?? [:]
     }
 }
 

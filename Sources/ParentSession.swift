@@ -37,6 +37,16 @@ final class ParentSession: ObservableObject {
 
     func noteEarned() { count += 1 }
 
+    /// 独立解锁 —— 拿一个**只读**接口去验密码，验过才置位。
+    ///
+    /// 这个方法补的是一个设计缺陷：原先 `askPassword` 只在「记这一笔」里触发，
+    /// 意味着**想单纯解锁一下必须先凑一笔账出来**。找不到的入口等于没有 ——
+    /// 用户第一句话就是「怎么解锁家长模式？」，那就是入口不成立的证据。
+    func unlock(password pw: String) async throws {
+        try await Api.verifyParent(pw)      // 密码对不对只有服务端说了算，本地不判
+        unlock(pw)
+    }
+
     func lock() {
         password = nil
         count = 0

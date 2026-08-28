@@ -10,6 +10,11 @@ struct AccountView: View {
     @EnvironmentObject var session: ParentSession
 
     @State private var showTiers = false
+    @State private var showAdmin = false
+    @State private var askUnlock = false
+    @State private var typedPw = ""
+    @State private var unlockErr: String?
+    @State private var unlocking = false
     @State private var showProfile = false
     @State private var confirmLogout = false
 
@@ -34,6 +39,16 @@ struct AccountView: View {
         }
         .sheet(isPresented: $showProfile) {
             ProfileEditView().environmentObject(store)
+        }
+        .sheet(isPresented: $showAdmin) {
+            AdminView().environmentObject(store).environmentObject(session)
+        }
+        .alert("解锁家长模式", isPresented: $askUnlock) {
+            SecureField("管理密码", text: $typedPw)
+            Button("解锁") { Task { await unlock() } }
+            Button("取消", role: .cancel) { typedPw = "" }
+        } message: {
+            Text("解锁后可以记账、也能改规则和商品。上锁、退出 app、或切后台超过 10 分钟会自动锁回去。")
         }
         .alert("退出登录？", isPresented: $confirmLogout) {
             Button("退出", role: .destructive) { Task { await store.logout() } }
@@ -163,6 +178,13 @@ struct AccountView: View {
             }
             row("电视时间", value: "\(s?.tv ?? 0) 分钟")
             row("今天还能刷题挣", value: "\(s?.practiceLeft ?? 0) 分")
+            // 推送状态得露出来 —— 不露的话，「推送坏了」和「今天没人加分」长得一模一样
+            HStack {
+                Circle().fill(store.live ? .green : .orange).frame(width: 7, height: 7)
+                Text(store.live ? "实时同步中" : "未连上推送（下拉可手动刷新）")
+                    .font(.caption2).foregroundStyle(.white.opacity(0.5))
+                Spacer()
+            }
         }
     }
 
@@ -170,19 +192,33 @@ struct AccountView: View {
     private var settings: some View {
         card("设置") {
             tapRow("改昵称 / 换头像", icon: "person.text.rectangle") { showProfile = true }
+            // 家长模式 —— **解锁必须是一个能直接点的按钮**。
+            // 原先只有「记这一笔」会顺带弹密码框，等于想解锁得先凑一笔账出来，
+            // 那个入口找不到就是不存在。
             HStack {
                 Label("家长模式", systemImage: session.isUnlocked ? "lock.open.fill" : "lock.fill")
                     .foregroundStyle(.white.opacity(0.9))
                 Spacer()
-                Text(session.isUnlocked ? "已解锁 · \(session.count) 笔" : "已上锁")
-                    .font(.footnote).foregroundStyle(.white.opacity(0.55))
                 if session.isUnlocked {
+                    Text("已解锁 · \(session.count) 笔")
+                        .font(.footnote).foregroundStyle(.white.opacity(0.55))
                     Button("上锁") { session.lock() }
                         .font(.footnote).buttonStyle(.borderless)
+                        .foregroundStyle(era.accent)
+                } else {
+                    Button("解锁") { unlockErr = nil; askUnlock = true }
+                        .font(.subheadline.weight(.semibold))
+                        .buttonStyle(.borderless)
                         .foregroundStyle(era.accent)
                 }
             }
             .font(.subheadline)
+            if let unlockErr {
+                Text(unlockErr).font(.caption).foregroundStyle(.orange)
+            }
+            if session.isUnlocked {
+                tapRow("管理规则 / 商品 / 档位", icon: "slider.horizontal.3") { showAdmin = true }
+            }
             tapRow("退出登录", icon: "rectangle.portrait.and.arrow.right",
                    tint: .red.opacity(0.9)) { confirmLogout = true }
         }
@@ -196,6 +232,19 @@ struct AccountView: View {
         .font(.caption2)
         .foregroundStyle(.white.opacity(0.35))
         .padding(.top, 6)
+    }
+
+    private func unlock() async {
+        let pw = typedPw; typedPw = ""
+        guard !pw.isEmpty else { return }
+        unlocking = true; defer { unlocking = false }
+        do {
+            try await session.unlock(password: pw)
+            unlockErr = nil
+        } catch {
+            // 服务端的原话（「家长密码不对」）比「解锁失败」有用
+            unlockErr = error.localizedDescription
+        }
     }
 
     // ── 小零件 ──────────────────────────────────────────────────────────────

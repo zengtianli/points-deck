@@ -30,6 +30,13 @@ final class Store: ObservableObject {
 
     private static let tierKey = "lastTier"
 
+    /// 实时推送的连接任务。**只留一个** —— 每次登录/回前台都新建一条的话，
+    /// 连接会越积越多，服务端每条都占一个线程。
+    private var eventTask: Task<Void, Never>?
+    /// 推送是否连着 —— 界面上给一个小圆点，断了要能看出来。
+    /// 不显示的话，「推送坏了」和「今天没人加分」长得一模一样。
+    @Published var live = false
+
     /// 开屏先拿一次 state：cookie 还在就直接进，不必再问一次密码。
     /// 拿不到**不等于**密码错了 —— 也可能是没网。所以只在 401 那种「账本拒绝」时才退到登录页，
     /// 其余错误留在登录页上把原因显示出来，不假装成「你没登录」。
@@ -50,6 +57,7 @@ final class Store: ObservableObject {
             state = fresh
             phase = .loggedIn
             publishSnapshot()
+            startEvents()
         } catch {
             phase = .loggedOut
         }
@@ -65,6 +73,7 @@ final class Store: ObservableObject {
             state = fresh
             phase = .loggedIn
             publishSnapshot()
+            startEvents()
         } catch {
             self.error = error.localizedDescription
             // ⚠ 必须落回 loggedOut：从 restore() 的 dev 分支进来时 phase 还是 .checking，
@@ -101,7 +110,45 @@ final class Store: ObservableObject {
         WidgetCenter.shared.reloadAllTimelines()
     }
 
+    /// 开一条推送长连接。断了自动重连，退避 2→4→8→…→60 秒。
+    ///
+    /// 为什么要退避而不是固定间隔：服务端重启或没网时，固定 1 秒重连会把
+    /// 一个已经出问题的服务打得更惨，而且日志会被刷满。
+    func startEvents() {
+        guard eventTask == nil else { return }
+        eventTask = Task { [weak self] in
+            var backoff: UInt64 = 2
+            while !Task.isCancelled {
+                do {
+                    let stream = try await Api.events()
+                    await MainActor.run { self?.live = true }
+                    backoff = 2                                  // 连上了就把退避清零
+                    for try await kind in stream {
+                        guard let self else { return }
+                        // 推送只是信号，数据一律回 /api/state 拿（见 Api.events 的说明）
+                        if kind == "ledger" || kind == "profile" || kind == "config" {
+                            await self.refresh()
+                        }
+                    }
+                } catch {
+                    // 连不上/断了都走这里 —— 包括登录态失效，那时 refresh 会自己退到登录页
+                }
+                await MainActor.run { self?.live = false }
+                if Task.isCancelled { return }
+                try? await Task.sleep(for: .seconds(Double(backoff)))
+                backoff = min(backoff * 2, 60)
+            }
+        }
+    }
+
+    func stopEvents() {
+        eventTask?.cancel()
+        eventTask = nil
+        live = false
+    }
+
     func logout() async {
+        stopEvents()
         await Api.logout()
         state = nil
         phase = .loggedOut
