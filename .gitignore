@@ -19,6 +19,13 @@ Widget/Info.plist
 Resources/Skins/*.jpg
 Resources/Skins/skins.json
 
+# 练习页:SSOT 在 ~/Edu(curriculum.yaml + 题库 + 渲染门)，这里只是构建时组装来的副本。
+# 存进仓就是第二份，加了课两边会漂。clone 之后跑 bash sync-lessons.sh 就有了
+# (构建也会自动跑一次，~/Edu 不在或组装失败直接 exit 1)。
+Resources/Lessons/*.html
+Resources/Lessons/*.json
+Resources/Lessons/primary-*/
+
 .DS_Store
 
 
