@@ -11,6 +11,25 @@ final class Store: ObservableObject {
     @Published var error: String?
     @Published var busy = false
 
+    /// 刚刚升档到了哪一档 —— 非 nil 时界面弹「乔迁新居」。
+    /// **只庆不罚**：回落一声不吭(~/Edu 的规矩，页面本身已经在说话了)。
+    @Published var promoted: String?
+
+    /// 上一次看到的档位序号。**存盘而不是只放内存** —— 最常见的升档场景是
+    /// 「家长加分时孩子没开着 app，孩子后来才打开」，只放内存的话那一次永远庆祝不了，
+    /// 而那恰恰是最该被看见的一次。
+    ///
+    /// 用序号不用房名：房名可能在 skins.json 里被改字，而序号是位置，改名不会假装成升档。
+    private var lastTier: Int? {
+        get {
+            let d = UserDefaults.standard
+            return d.object(forKey: Self.tierKey) as? Int
+        }
+        set { UserDefaults.standard.set(newValue, forKey: Self.tierKey) }
+    }
+
+    private static let tierKey = "lastTier"
+
     /// 开屏先拿一次 state：cookie 还在就直接进，不必再问一次密码。
     /// 拿不到**不等于**密码错了 —— 也可能是没网。所以只在 401 那种「账本拒绝」时才退到登录页，
     /// 其余错误留在登录页上把原因显示出来，不假装成「你没登录」。
@@ -26,7 +45,9 @@ final class Store: ObservableObject {
             return
         }
         do {
-            state = try await Api.state(timeout: 6)
+            let fresh = try await Api.state(timeout: 6)
+            noteTier(fresh)
+            state = fresh
             phase = .loggedIn
             publishSnapshot()
         } catch {
@@ -39,7 +60,9 @@ final class Store: ObservableObject {
         defer { busy = false }
         do {
             try await Api.login(user: user, password: password)
-            state = try await Api.state()
+            let fresh = try await Api.state()
+            noteTier(fresh)
+            state = fresh
             phase = .loggedIn
             publishSnapshot()
         } catch {
@@ -52,9 +75,19 @@ final class Store: ObservableObject {
 
     func refresh() async {
         do {
-            state = try await Api.state()
+            let fresh = try await Api.state()
+            noteTier(fresh)
+            state = fresh
             publishSnapshot()
         } catch { self.error = error.localizedDescription }
+    }
+
+    /// 比对档位。**装完 app 第一次**拿到状态时只记不庆（没有基准，谈不上「升」了）；
+    /// 之后就算 app 被关掉过，升档照样庆祝 —— 基准在盘上。
+    private func noteTier(_ fresh: State) {
+        defer { lastTier = fresh.tier }
+        guard let old = lastTier, fresh.tier > old else { return }
+        promoted = fresh.houseName
     }
 
     /// 把当前状态写进 App Group 给 Widget 读。

@@ -32,6 +32,13 @@ struct HomeView: View {
             }
         }
         .sheet(isPresented: $showParent) { ParentView().environmentObject(store) }
+        .overlay {
+            if let name = store.promoted {
+                CelebrationView(houseName: name, era: era) { store.promoted = nil }
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: store.promoted)
     }
 
     private var topBar: some View {

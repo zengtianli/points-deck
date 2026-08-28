@@ -22,6 +22,7 @@
 | 错题 | 拍照 / 相册 → `/api/wrong`。端上先压到 3MB 以内再传 |
 | 家长（右上角锁盾） | 选规则 → 填输入 → 服务端预览 → **Face ID 取密码** → 记账；撤销最近 5 笔 |
 | Widget | 锁屏/主屏常驻「市值 + 还差 N 分升 X」。读 App Group 快照，**自己不联网** |
+| 升档庆祝 | 「乔迁新居」+ 彩带 + success 触感。**只庆不罚**：回落一声不吭 |
 
 ## 家长密码为什么要这么绕
 
@@ -90,10 +91,19 @@ SIM_LAUNCH_ARGS="-api_base http://127.0.0.1:8788 -dev_user jingbao -dev_pw 16091
 - **`widgetFamily` 是只读环境值**，`.environment(\.widgetFamily,)` 编不过；
   预览用显式 `familyOverride` 参数。
 
+## 升档庆祝为什么要存盘
+
+`lastTier` 存 UserDefaults 而不是只放内存 —— 最常见的升档场景是
+**「家长加分时孩子没开着 app，孩子后来才打开」**，只放内存的话那一次永远庆祝不了，
+而那恰恰是最该被看见的一次。装完 app 第一次拿到状态时只记不庆（没有基准，谈不上「升」）。
+
+用**档位序号**比对而不是房名：房名可能在 `skins.json` 里被改字，改名不该假装成一次升档。
+
+回到前台会自动刷新一次（`scenePhase == .active`）—— 分是家长在别处加的，不刷就看不到。
+
 ## 还没做
 
-真机装机（等 Apple Developer membership 转 active）· 升档「乔迁新居」的庆祝转场 ·
-Haptics · 兑换记录筛选。方案见
+真机装机（等 Apple Developer membership 转 active）· 兑换记录筛选。方案见
 `~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md`。
 
 **按付费档规格开发**（2026-08-28 用户钦定）：不为「同时 3 个自签」的上限做妥协设计。

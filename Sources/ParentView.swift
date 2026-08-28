@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// 家长面 —— 选规则 → 填输入 → **服务端预览** → Face ID 取密码 → 记账。
 ///
@@ -251,6 +252,7 @@ struct ParentView: View {
             let pw = try await AdminGate.password(reason: "记一笔积分")
             let skipped = try await Api.earn(i, admin: pw)
             await store.refresh()
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
             show(skipped ?? "记好了")
             picked = nil; input = nil; preview = nil
         } catch {

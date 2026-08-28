@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// 兑换 —— 花的是孩子自己的分，**不需要家长密码**（服务端如此），但不许透支。
 struct ShopView: View {
@@ -88,6 +89,7 @@ struct ShopView: View {
         do {
             try await Api.spend(item: item.id)
             await store.refresh()
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
             show("换好了：\(item.icon) \(item.label)")
         } catch {
             show(error.localizedDescription)

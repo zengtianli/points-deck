@@ -145,6 +145,7 @@ struct State {
     let tv: Int            // 电视时间(分钟)
     let houseName: String
     let houseAt: Int
+    let tier: Int
     let era: Era
     let nextName: String?
     let nextAt: Int?
@@ -216,6 +217,7 @@ struct State {
         tv = json["tv"] as? Int ?? 0
         houseName = house["name"] as? String ?? "—"
         houseAt = house["at"] as? Int ?? 0
+        tier = house["tier"] as? Int ?? 0
         era = Era(key: house["era"] as? String ?? "")
         let nxt = house["next"] as? [String: Any]
         nextName = nxt?["name"] as? String

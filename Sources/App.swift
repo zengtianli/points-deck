@@ -13,6 +13,7 @@ struct PointsDeckApp: App {
 
 struct RootView: View {
     @EnvironmentObject var store: Store
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -28,6 +29,12 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.35), value: store.phase)
         .task { await store.restore() }
+        // 回到前台就刷一次 —— 分是家长在别处加的，孩子这边不刷就看不到；
+        // 升档的庆祝也靠这一下。
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active, store.phase == .loggedIn else { return }
+            Task { await store.refresh() }
+        }
     }
 }
 
