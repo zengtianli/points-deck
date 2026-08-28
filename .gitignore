@@ -11,6 +11,14 @@ PointsDeck.xcodeproj/
 # 同理:Widget/Info.plist 是 project.yml 的 info.properties 生成的，不是手写的
 Widget/Info.plist
 
+# 时代底图:SSOT 在 ~/Edu/points/skins/，这里只是构建时同步来的副本。
+# 存进仓就是第二份，改了图两边会漂。clone 之后跑 bash sync-skins.sh 就有了
+# （构建也会自动跑一次，缺源直接失败）。
+# 目录里的 README.md 要进仓 —— 只为让目录存在，否则 xcodegen 会因
+# 「missing source directory」直接拒，那时 preBuildScripts 还没轮到跑。
+Resources/Skins/*.jpg
+Resources/Skins/skins.json
+
 .DS_Store
 
 

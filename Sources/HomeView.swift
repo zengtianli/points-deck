@@ -43,10 +43,9 @@ struct HomeView: View {
 
     private var topBar: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(store.state?.nick ?? "—").font(.headline).foregroundStyle(.white)
-                Text(store.state?.houseName ?? "—").font(.subheadline).foregroundStyle(era.accent)
-            }
+            // 房名交给账本页的底图带去说(压在插画上)，这里不再重复一遍
+            Text(store.state?.nick ?? "—")
+                .font(.headline).foregroundStyle(.white)
             Spacer()
             Button { showParent = true } label: {
                 Image(systemName: "lock.shield")

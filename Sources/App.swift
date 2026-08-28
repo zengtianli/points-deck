@@ -19,6 +19,8 @@ struct RootView: View {
         Group {
             if UserDefaults.standard.bool(forKey: "widgetpreview") {
                 WidgetPreviewView()
+            } else if UserDefaults.standard.bool(forKey: "palette") {
+                PalettePreview()
             } else {
             switch store.phase {
             case .checking:  SplashView()

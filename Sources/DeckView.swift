@@ -12,6 +12,7 @@ struct DeckView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
+                    banner
                     marketValue
                     nextTier
                     ledger
@@ -28,6 +29,34 @@ struct DeckView: View {
         .onChange(of: s?.balance) { _, new in
             guard let new else { return }
             withAnimation(.easeOut(duration: 0.6)) { shown = Double(new) }
+        }
+    }
+
+    /// 天际线底图带 —— 「住什么房」这件事**得看得见**，不能只是一行字。
+    /// 11 档房名映射到 5 个时代(skins.json 的 era)，所以小木屋与砖瓦房共用一张图 ——
+    /// 那是 ~/Edu 既定的美术分档，不在端上另立一套。
+    @ViewBuilder
+    private var banner: some View {
+        if let img = era.banner {
+            ZStack(alignment: .bottomLeading) {
+                Image(uiImage: img)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 132)
+                    .clipped()
+                // 底部压一层渐变，房名压在图上才读得清
+                LinearGradient(colors: [.clear, .black.opacity(0.55)],
+                               startPoint: .center, endPoint: .bottom)
+                Text(s?.houseName ?? "")
+                    .font(.title3.weight(.bold))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 3)
+                    .padding(.horizontal, 16).padding(.bottom, 12)
+            }
+            .frame(height: 132)
+            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .transition(.opacity)
+            .animation(.easeInOut(duration: 0.8), value: era)   // 升档时换图也是一次转场
         }
     }
 

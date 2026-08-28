@@ -11,8 +11,21 @@ targets:
   PointsDeck:
     type: application
     platform: iOS
+    # 每次构建前从 ~/Edu 同步一次时代底图。
+    # 为什么不把图提交进仓:图的 SSOT 在 ~/Edu/points/skins/(那边有生图 prompt、seed、
+    # 皮肤清单门)，仓里存一份副本就是第二份，改了图两边会漂。
+    # 为什么必须挂在构建前:漏同步的表现是**编译通过、装上能跑、只是没有背景** ——
+    # 那种缺陷不会报错，只会被当成「设计就这样」。缺源时脚本 exit 1，构建直接失败。
+    preBuildScripts:
+      - script: bash "$PROJECT_DIR/sync-skins.sh"
+        name: 同步时代底图
+        basedOnDependencyAnalysis: false
     sources:
       - path: Sources
+      # 时代底图 —— folder 引用(不是 group)，进包后保持 Skins/ 子目录结构
+      - path: Resources/Skins
+        type: folder
+        buildPhase: resources
     dependencies:
       - target: PointsWidget
     settings:
@@ -51,6 +64,10 @@ targets:
       - path: Sources/Skin.swift
       - path: Sources/Snapshot.swift
       - path: Sources/WidgetViews.swift
+      # widget 也从插画派生配色，同一份资源
+      - path: Resources/Skins
+        type: folder
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.widget
