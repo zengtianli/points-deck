@@ -26,4 +26,8 @@ notes: |
   按付费档规格开发(2026-08-28 用户钦定):不为「同时 3 个自签」的上限做妥协设计,
   Widget 按常驻做,签名主体按可上架规划。
 
+  **只管账本**。做题 / 错题本 / 离线课页在姊妹 app ~/Apps/ios/wrong-book
+  (2026-08-28 用户拍板「分开2个app,一个关注错题,一个关注积分」)。
+  两边共用 edu.tianli.cyou 的同一套账号与 cookie,但各装各的、各登各的。
+
   方案全文 ~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md

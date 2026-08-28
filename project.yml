@@ -20,11 +20,6 @@ targets:
       - script: bash "$PROJECT_DIR/sync-skins.sh"
         name: 同步时代底图
         basedOnDependencyAnalysis: false
-      # 同理:练习页的 SSOT 在 ~/Edu。漏同步的表现是「那一课点不开」或
-      # 「做的是上一版的题」——都不报错。组装器与上线共用同一道 PII 门。
-      - script: bash "$PROJECT_DIR/sync-lessons.sh"
-        name: 同步练习页
-        basedOnDependencyAnalysis: false
     sources:
       - path: Sources
       # ⚠ 图标资产必须在这儿列出来。漏了的表现是**编译通过、装机通过、桌面白板**——
@@ -33,10 +28,6 @@ targets:
       - path: Resources/Assets.xcassets
       # 时代底图 —— folder 引用(不是 group)，进包后保持 Skins/ 子目录结构
       - path: Resources/Skins
-        type: folder
-        buildPhase: resources
-      # 练习页 —— folder 引用,进包后保持 primary-*/ 子目录结构(页面里是相对链接)
-      - path: Resources/Lessons
         type: folder
         buildPhase: resources
     dependencies:

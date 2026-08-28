@@ -25,12 +25,6 @@ struct RootView: View {
                 WidgetPreviewView()
             } else if UserDefaults.standard.bool(forKey: "palette") {
                 PalettePreview()
-            } else if let slug = UserDefaults.standard.string(forKey: "lesson") {
-                // 验证通道：`-lesson <slug>` 直接开某一课，不必先登录。
-                // 和 -tab / -palette 同一路数（只影响启动落点，不带任何凭证）——
-                // 练习引擎本身不依赖登录:页面自包含，登录只决定分记不记得上。
-                // 有了它，「离线能不能做题」这条才验得了:不登录、不联网，照样该能做完一套。
-                LessonPreview(slug: slug).environmentObject(store)
             } else {
             switch store.phase {
             case .checking:  SplashView()

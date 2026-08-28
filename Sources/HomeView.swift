@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// 五个 tab + 右上角家长入口。
+/// 三个 tab + 右上角家长入口。
 ///
-/// 为什么是 TabView 而不是一屏到底：孩子面的几块内容(账本/学习/走势/兑换)是**并列**的，
+/// 为什么是 TabView 而不是一屏到底：孩子面的三块内容(账本/走势/兑换)是**并列**的，
 /// 不是递进的 —— 塞进一个 ScrollView 会让「还差 N 分」被推到屏外，而那是核心钩子。
 /// 家长面不占 tab：它不是孩子会点的东西，放右上角、且要过 Face ID。
 struct HomeView: View {
@@ -24,10 +24,9 @@ struct HomeView: View {
                 topBar
                 TabView(selection: $tab) {
                     DeckView().tag(0)
-                    LearnView().tag(1)
-                    TrendView().tag(2)
-                    ShopView().tag(3)
-                    AccountView().tag(4)
+                    TrendView().tag(1)
+                    ShopView().tag(2)
+                    AccountView().tag(3)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 tabBar
@@ -66,10 +65,9 @@ struct HomeView: View {
     private var tabBar: some View {
         HStack(spacing: 0) {
             item(0, "账本", "list.bullet.rectangle")
-            item(1, "学习", "book")
-            item(2, "走势", "chart.line.uptrend.xyaxis")
-            item(3, "兑换", "gift")
-            item(4, "账户", "person.crop.circle")
+            item(1, "走势", "chart.line.uptrend.xyaxis")
+            item(2, "兑换", "gift")
+            item(3, "账户", "person.crop.circle")
         }
         .padding(.top, 10)
         .padding(.bottom, 6)
