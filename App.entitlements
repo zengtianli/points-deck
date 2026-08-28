@@ -2,9 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>com.apple.security.application-groups</key>
+	<!-- 主 app 与 Widget 共享快照的仓。第一项 = 不传 kSecAttrAccessGroup 时的默认落点,
+	     所以**两个 target 这一项必须逐字相同**(check_shared_group.py 在产物上对账)。
+	     $(AppIdentifierPrefix) 由 Xcode 展开成 "<TeamID>." —— TeamID 不写死在任何文件里。 -->
+	<key>keychain-access-groups</key>
 	<array>
-		<string>group.cyou.tianli.pointsdeck</string>
+		<string>$(AppIdentifierPrefix)cyou.tianli.pointsdeck.shared</string>
 	</array>
 </dict>
 </plist>

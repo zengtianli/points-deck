@@ -17,7 +17,7 @@ struct WidgetPreviewView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
                 Text("Widget 视图预览").font(.headline).foregroundStyle(.white)
-                Text("数据来自 App Group 里的真实快照")
+                Text("数据来自共享 keychain 仓里的真实快照")
                     .font(.caption).foregroundStyle(.white.opacity(0.6))
 
                 block("systemSmall", w: 170, h: 170, family: .systemSmall)

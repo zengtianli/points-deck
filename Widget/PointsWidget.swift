@@ -6,7 +6,7 @@ import WidgetKit
 /// 这是整个 app 最有存在理由的一块：那句话现在只在打开页面时可见，
 /// 放到锁屏才是真的一直在眼前。
 ///
-/// **Widget 不联网**：它读 App Group 里主 app 每次刷新时写下的快照。
+/// **Widget 不联网**：它读共享 keychain 仓里主 app 每次刷新时写下的快照。
 /// 让 Widget 自己去打账本要处理登录态/超时/重试，而它的刷新预算由系统说了算 ——
 /// 拿不到数据时宁可显示上一次的快照，也不显示一个转圈。
 struct Provider: TimelineProvider {

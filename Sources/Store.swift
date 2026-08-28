@@ -99,7 +99,7 @@ final class Store: ObservableObject {
         promoted = fresh.houseName
     }
 
-    /// 把当前状态写进 App Group 给 Widget 读。
+    /// 把当前状态写进共享 keychain 仓给 Widget 读。
     /// Widget 自己不联网(要处理登录态/超时/重试，而刷新预算由系统说了算)，
     /// 拿不到新数据时它显示上一次的快照，比显示一个转圈有用。
     func publishSnapshot() {
