@@ -159,7 +159,10 @@ find .dd-sim/Build/Products/*/PointsDeck.app/PlugIns/PointsWidget.appex -name '*
 
 ## 还没做
 
-真机装机（等 Apple Developer membership 转 active）· 兑换记录筛选。方案见
-`~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md`。
+- **桌面小组件本身没验过** —— 代码路径通了、两个二进制的 keychain 组对上了
+  （`check_shared_group.py` 绿），但「把组件摆到桌面看显示对不对」需要长按主屏拖一次，
+  没有 API 能替代。
+- 兑换记录筛选。方案见 `~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md`。
 
-**按付费档规格开发**（2026-08-28 用户钦定）：不为「同时 3 个自签」的上限做妥协设计。
+> ~~真机装机（等 membership 转 active）~~ 2026-08-28 已完成：付费 team `B9LJH93LA4`，
+> 证书 2027-08-28 到期。**按付费档规格开发**（用户钦定）：不为「同时 3 个自签」做妥协设计。
