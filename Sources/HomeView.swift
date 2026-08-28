@@ -7,6 +7,7 @@ import SwiftUI
 /// 家长面不占 tab：它不是孩子会点的东西，放右上角、且要过 Face ID。
 struct HomeView: View {
     @EnvironmentObject var store: Store
+    @EnvironmentObject var session: ParentSession
     // 验证通道：`-tab 1` / `-parent 1` 直接落到某一屏，方便 headless 截图核对。
     // 和 -api_base 一样，只在显式传了 launch 参数时生效。
     @State private var tab = UserDefaults.standard.integer(forKey: "tab")
@@ -25,13 +26,15 @@ struct HomeView: View {
                     DeckView().tag(0)
                     TrendView().tag(1)
                     ShopView().tag(2)
-                    WrongView().tag(3)
+                    AccountView().tag(3)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
                 tabBar
             }
         }
-        .sheet(isPresented: $showParent) { ParentView().environmentObject(store) }
+        .sheet(isPresented: $showParent) {
+            ParentView().environmentObject(store).environmentObject(session)
+        }
         .overlay {
             if let name = store.promoted {
                 CelebrationView(houseName: name, era: era) { store.promoted = nil }
@@ -64,7 +67,7 @@ struct HomeView: View {
             item(0, "账本", "list.bullet.rectangle")
             item(1, "走势", "chart.line.uptrend.xyaxis")
             item(2, "兑换", "gift")
-            item(3, "错题", "camera")
+            item(3, "账户", "person.crop.circle")
         }
         .padding(.top, 10)
         .padding(.bottom, 6)

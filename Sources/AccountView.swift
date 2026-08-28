@@ -1,0 +1,246 @@
+import SwiftUI
+
+/// 账户页 —— 「就和账户一样」（2026-08-28 用户原话）。
+///
+/// 它回答四个在别处无处可问的问题：**我是谁 / 我到哪一级了 / 我有多少 / 怎么设置**。
+/// 其中「我到哪一级了」是重点：等级卡不是一个数字，是一个能点进去看完整阶梯的入口 ——
+/// 看不见的饼不是饼。
+struct AccountView: View {
+    @EnvironmentObject var store: Store
+    @EnvironmentObject var session: ParentSession
+
+    @State private var showTiers = false
+    @State private var showProfile = false
+    @State private var confirmLogout = false
+
+    private var s: State? { store.state }
+    private var era: Era { s?.era ?? .slum }
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 18) {
+                header
+                levelCard
+                assets
+                settings
+                about
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 28)
+        }
+        .refreshable { await store.refresh() }
+        .sheet(isPresented: $showTiers) {
+            TiersView().environmentObject(store)
+        }
+        .sheet(isPresented: $showProfile) {
+            ProfileEditView().environmentObject(store)
+        }
+        .alert("退出登录？", isPresented: $confirmLogout) {
+            Button("退出", role: .destructive) { Task { await store.logout() } }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("账本在服务器上，退出不会丢任何数据。")
+        }
+    }
+
+    // ── 头部：头像 + 昵称 + 当前档位徽章 ──────────────────────────────────────
+    private var header: some View {
+        VStack(spacing: 10) {
+            Text(s?.avatar ?? "🐯")
+                .font(.system(size: 56))
+                .frame(width: 96, height: 96)
+                .background(.white.opacity(0.12), in: Circle())
+                .overlay(Circle().stroke(era.accent.opacity(0.55), lineWidth: 2))
+
+            Text(s?.nick ?? "—")
+                .font(.title2.weight(.bold))
+                .foregroundStyle(.white)
+
+            HStack(spacing: 6) {
+                Image(systemName: "house.fill").font(.caption)
+                Text(s?.houseName ?? "—").font(.subheadline.weight(.semibold))
+            }
+            .foregroundStyle(era.accent)
+            .padding(.horizontal, 14).padding(.vertical, 6)
+            .background(.white.opacity(0.12), in: Capsule())
+
+            Button {
+                showProfile = true
+            } label: {
+                Label("编辑资料", systemImage: "pencil")
+                    .font(.footnote)
+                    .foregroundStyle(.white.opacity(0.8))
+            }
+        }
+        .padding(.top, 8)
+    }
+
+    // ── 等级卡 —— 本页的核心 ─────────────────────────────────────────────────
+    private var levelCard: some View {
+        Button {
+            showTiers = true
+        } label: {
+            VStack(alignment: .leading, spacing: 12) {
+                HStack {
+                    Text("等级")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(.white.opacity(0.85))
+                    Spacer()
+                    if let s {
+                        Text("第 \(s.tier + 1) 级 / 共 \(max(s.ladder.count, s.tier + 1)) 级")
+                            .font(.caption).foregroundStyle(.white.opacity(0.6))
+                    }
+                }
+
+                if let s {
+                    ProgressView(value: s.progress)
+                        .tint(era.accent)
+                        .scaleEffect(x: 1, y: 1.6, anchor: .center)
+
+                    // 「还差多少」是钩子，必须是这张卡上最显眼的一行字
+                    if let toNext = s.toNext, let next = s.nextName {
+                        HStack(spacing: 4) {
+                            Text("距").foregroundStyle(.white.opacity(0.6))
+                            Text(next).foregroundStyle(era.accent).fontWeight(.semibold)
+                            Text("还差").foregroundStyle(.white.opacity(0.6))
+                            Text("\(toNext)").foregroundStyle(.white).fontWeight(.bold)
+                                .monospacedDigit()
+                            Text("分").foregroundStyle(.white.opacity(0.6))
+                        }
+                        .font(.subheadline)
+
+                        // 下一档给什么 —— 这一行就是饼本身。没有它，进度条只是个进度条。
+                        if let nextTier = s.ladder.first(where: { $0.at == s.nextAt }) {
+                            nextReward(nextTier)
+                        }
+                    } else {
+                        Text("已经是最高一档了 👑")
+                            .font(.subheadline).foregroundStyle(era.accent)
+                    }
+                }
+
+                HStack {
+                    Text("查看全部等级与待遇")
+                    Image(systemName: "chevron.right")
+                }
+                .font(.footnote.weight(.medium))
+                .foregroundStyle(era.accent)
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
+        }
+        .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private func nextReward(_ t: State.Tier) -> some View {
+        let items = (s?.shop ?? []).filter { t.unlock.contains($0.id) }
+        if t.bonus > 0 || !items.isEmpty {
+            VStack(alignment: .leading, spacing: 4) {
+                Text("升上去能拿到")
+                    .font(.caption2).foregroundStyle(.white.opacity(0.5))
+                if t.bonus > 0 {
+                    Label("贺礼 \(t.bonus) 分", systemImage: "gift.fill")
+                        .font(.caption).foregroundStyle(.white.opacity(0.9))
+                }
+                ForEach(items) { it in
+                    Label("解锁 \(it.icon) \(it.label)", systemImage: "lock.open.fill")
+                        .font(.caption).foregroundStyle(.white.opacity(0.9))
+                }
+            }
+            .padding(.top, 2)
+        }
+    }
+
+    // ── 资产 ────────────────────────────────────────────────────────────────
+    private var assets: some View {
+        card("资产") {
+            row("市值", value: RollingNumber.grouped(s?.balance ?? 0) + " 分")
+            if let s, s.rate > 0 {
+                row("折合", value: String(format: "¥%.2f", Double(s.balance) / Double(s.rate)),
+                    dim: true)
+            }
+            row("电视时间", value: "\(s?.tv ?? 0) 分钟")
+            row("今天还能刷题挣", value: "\(s?.practiceLeft ?? 0) 分")
+        }
+    }
+
+    // ── 设置 ────────────────────────────────────────────────────────────────
+    private var settings: some View {
+        card("设置") {
+            tapRow("改昵称 / 换头像", icon: "person.text.rectangle") { showProfile = true }
+            HStack {
+                Label("家长模式", systemImage: session.isUnlocked ? "lock.open.fill" : "lock.fill")
+                    .foregroundStyle(.white.opacity(0.9))
+                Spacer()
+                Text(session.isUnlocked ? "已解锁 · \(session.count) 笔" : "已上锁")
+                    .font(.footnote).foregroundStyle(.white.opacity(0.55))
+                if session.isUnlocked {
+                    Button("上锁") { session.lock() }
+                        .font(.footnote).buttonStyle(.borderless)
+                        .foregroundStyle(era.accent)
+                }
+            }
+            .font(.subheadline)
+            tapRow("退出登录", icon: "rectangle.portrait.and.arrow.right",
+                   tint: .red.opacity(0.9)) { confirmLogout = true }
+        }
+    }
+
+    private var about: some View {
+        VStack(spacing: 4) {
+            Text("京宝积分 · \(Bundle.main.shortVersion)")
+            Text("账本在 edu.tianli.cyou，本机不存账")
+        }
+        .font(.caption2)
+        .foregroundStyle(.white.opacity(0.35))
+        .padding(.top, 6)
+    }
+
+    // ── 小零件 ──────────────────────────────────────────────────────────────
+    private func card<C: View>(_ title: String,
+                               @ViewBuilder content: () -> C) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.white.opacity(0.85))
+            content()
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
+    }
+
+    private func row(_ title: String, value: String, dim: Bool = false) -> some View {
+        HStack {
+            Text(title).foregroundStyle(.white.opacity(dim ? 0.55 : 0.9))
+            Spacer()
+            Text(value).foregroundStyle(dim ? .white.opacity(0.55) : .white)
+                .fontWeight(dim ? .regular : .semibold)
+                .monospacedDigit()
+        }
+        .font(.subheadline)
+    }
+
+    private func tapRow(_ title: String, icon: String, tint: Color = .white.opacity(0.9),
+                        action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                Label(title, systemImage: icon).foregroundStyle(tint)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption).foregroundStyle(.white.opacity(0.35))
+            }
+            .font(.subheadline)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+extension Bundle {
+    var shortVersion: String {
+        (infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0"
+    }
+}

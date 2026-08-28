@@ -16,7 +16,7 @@ struct ShopView: View {
             VStack(spacing: 14) {
                 header
                 ForEach(s?.shop ?? []) { item in card(item) }
-                Text("兑换不许赊账 —— 分不够就买不了，这条在服务端拦")
+                Text("兑换不许赊账，锁着的也换不了 —— 这两道门都在服务端拦")
                     .font(.caption2).foregroundStyle(.white.opacity(0.4))
                     .padding(.top, 6)
             }
@@ -56,18 +56,38 @@ struct ShopView: View {
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
     }
 
+    /// 一件商品有两种买不了：**没到档位**（锁着）和**分不够**。
+    /// 这两种必须在界面上区分开 —— 都显示成「还差 N 分」的话，
+    /// 孩子攒够了分点下去仍然失败，那就成了骗人的进度条。
     private func card(_ item: State.ShopItem) -> some View {
+        let unlocked = s?.isUnlocked(item.id) ?? true
         let afford = (s?.balance ?? 0) >= item.pts
+        let need = s?.tierRequiring(item.id)
+        let usable = unlocked && afford
         return Button {
             confirming = item
         } label: {
             HStack(spacing: 14) {
                 Text(item.icon).font(.system(size: 34))
+                    .opacity(unlocked ? 1 : 0.45)
                 VStack(alignment: .leading, spacing: 3) {
-                    Text(item.label).font(.headline).foregroundStyle(.white)
-                    Text(afford ? "点一下换" : "还差 \(item.pts - (s?.balance ?? 0)) 分")
-                        .font(.caption)
-                        .foregroundStyle(afford ? era.accent : .white.opacity(0.45))
+                    HStack(spacing: 5) {
+                        Text(item.label).font(.headline)
+                            .foregroundStyle(.white.opacity(unlocked ? 1 : 0.6))
+                        if !unlocked {
+                            Image(systemName: "lock.fill")
+                                .font(.caption2).foregroundStyle(.white.opacity(0.5))
+                        }
+                    }
+                    if !unlocked, let need {
+                        // 锁着时说的是**档位**，不是分数 —— 这两件事孩子会分得很清
+                        Text("要住进「\(need.name)」才能换（\(RollingNumber.grouped(need.at)) 分）")
+                            .font(.caption).foregroundStyle(.white.opacity(0.5))
+                    } else {
+                        Text(afford ? "点一下换" : "还差 \(item.pts - (s?.balance ?? 0)) 分")
+                            .font(.caption)
+                            .foregroundStyle(afford ? era.accent : .white.opacity(0.45))
+                    }
                 }
                 Spacer()
                 if busy == item.id {
@@ -75,13 +95,13 @@ struct ShopView: View {
                 } else {
                     Text("\(item.pts)")
                         .font(.title3.weight(.bold)).monospacedDigit()
-                        .foregroundStyle(afford ? .white : .white.opacity(0.35))
+                        .foregroundStyle(usable ? .white : .white.opacity(0.35))
                 }
             }
             .padding(16)
-            .background(.white.opacity(afford ? 0.12 : 0.06), in: RoundedRectangle(cornerRadius: 18))
+            .background(.white.opacity(usable ? 0.12 : 0.06), in: RoundedRectangle(cornerRadius: 18))
         }
-        .disabled(!afford || busy != nil)
+        .disabled(!usable || busy != nil)
     }
 
     private func spend(_ item: State.ShopItem) async {

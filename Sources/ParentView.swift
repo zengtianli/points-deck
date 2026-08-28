@@ -1,14 +1,18 @@
 import SwiftUI
 import UIKit
 
-/// 家长面 —— 选规则 → 填输入 → **服务端预览** → Face ID 取密码 → 记账。
+/// 家长面 —— 选规则 → 填输入 → **服务端预览** → 记账。
+///
+/// 密码走 `ParentSession`：**解锁一次，连着记，手动关闭**（2026-08-28 用户钦定，
+/// 替掉了原来每笔一次 Face ID 的做法）。
 ///
 /// 三条硬约束：
 /// ① 分值不在这里算，`/api/preview` 与记账走服务端同一个 compute()
-/// ② 家长密码每次现取现发，不落 cookie(孩子拿到解锁的手机也加不了分)
+/// ② 家长密码仍然每次随请求发一次、不落 cookie —— 变的只是它从会话内存里拿
 /// ③ 撤销是服务端直接删，不是红冲
 struct ParentView: View {
     @EnvironmentObject var store: Store
+    @EnvironmentObject var session: ParentSession
     @Environment(\.dismiss) private var dismiss
 
     @State private var subject: String = ""
@@ -50,14 +54,20 @@ struct ParentView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("关闭") { dismiss() }
                 }
+                // 上锁只在解锁着时出现 —— 没解锁时它是个什么都不做的按钮，露着只会让人点
+                if session.isUnlocked {
+                    ToolbarItem(placement: .confirmationAction) {
+                        Button("上锁") { session.lock(); show("已上锁") }
+                    }
+                }
             }
             .overlay(alignment: .bottom) { toastView }
-            .alert("家长密码", isPresented: $askPassword) {
+            .alert("解锁家长模式", isPresented: $askPassword) {
                 SecureField("管理密码", text: $typed)
-                Button("保存并记账") { Task { await saveThenEarn() } }
+                Button("解锁") { Task { await unlockThenEarn() } }
                 Button("取消", role: .cancel) { typed = "" }
             } message: {
-                Text("存进 Keychain，以后靠 Face ID 取出来 —— 仍然每次现发一次，不留登录状态。")
+                Text("解锁后可以连着记，不再逐笔要密码。记完点右上角「上锁」。")
             }
         }
     }
@@ -195,16 +205,19 @@ struct ParentView: View {
     }
 
     private var gateSection: some View {
-        Section("家长密码") {
+        Section("家长模式") {
             HStack {
-                Image(systemName: AdminGate.hasSaved ? "faceid" : "key")
-                Text(AdminGate.hasSaved ? "已存在 Keychain，用 Face ID 取" : "还没保存")
-                    .foregroundStyle(.secondary)
+                Image(systemName: session.isUnlocked ? "lock.open.fill" : "lock.fill")
+                    .foregroundStyle(session.isUnlocked ? .green : .secondary)
+                Text(session.isUnlocked ? "已解锁 · 本次记了 \(session.count) 笔" : "已上锁")
+                Spacer()
+                if session.isUnlocked {
+                    Button("上锁") { session.lock(); show("已上锁") }
+                        .buttonStyle(.borderless)
+                }
             }
-            if AdminGate.hasSaved {
-                Button("忘掉这个密码", role: .destructive) { AdminGate.forget() }
-            }
-            Text("密码不会变成登录状态 —— 每次记账都是取出来发一次就丢。孩子拿到解锁的手机也加不了分。")
+            Text("解锁后可以连着记，不再逐笔要密码。密码只在内存里 —— 上锁、退出 app、"
+                 + "或切后台超过 10 分钟就没了，孩子拿到手机时它一定是锁着的。")
                 .font(.caption2).foregroundStyle(.secondary)
         }
     }
@@ -244,13 +257,14 @@ struct ParentView: View {
         }
     }
 
+    /// 解锁着就直接记；没解锁就先弹密码框（解锁本身由 `unlockThenEarn` 完成）。
     private func earn() async {
         guard let i = input else { return }
-        guard AdminGate.hasSaved else { askPassword = true; return }
+        guard let pw = session.password else { askPassword = true; return }
         busy = true; defer { busy = false }
         do {
-            let pw = try await AdminGate.password(reason: "记一笔积分")
             let skipped = try await Api.earn(i, admin: pw)
+            session.noteEarned()
             await store.refresh()
             UINotificationFeedbackGenerator().notificationOccurred(.success)
             show(skipped ?? "记好了")
@@ -260,30 +274,34 @@ struct ParentView: View {
         }
     }
 
-    private func saveThenEarn() async {
+    /// 首次解锁 —— **先拿这个密码真记一笔，服务端认了才算解锁**。
+    /// 不先验就解锁的话，错密码会让接下来每一笔都被拒，而界面显示「已解锁」，
+    /// 那种自相矛盾的状态最难查。密码对不对的唯一权威是服务端，本地不判。
+    private func unlockThenEarn() async {
         let pw = typed; typed = ""
         guard !pw.isEmpty, let i = input else { return }
         busy = true; defer { busy = false }
         do {
-            // 先拿这次记账验一下密码对不对，**验过了才存** —— 存一个错密码进 Keychain，
-            // 之后每次都会 Face ID 通过却被服务端拒，那种错最难查。
             let skipped = try await Api.earn(i, admin: pw)
-            try AdminGate.save(pw)
+            session.unlock(pw)
+            session.noteEarned()
             await store.refresh()
-            show(skipped ?? "记好了，密码已存进 Keychain")
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+            show(skipped ?? "已解锁，记好了")
             picked = nil; input = nil; preview = nil
         } catch {
+            // 验失败就**不解锁**，把服务端的原话透出去
             show(error.localizedDescription)
         }
     }
 
     private func undo(_ e: State.Entry) async {
+        guard let pw = session.password else {
+            show("先解锁家长模式才能撤销")
+            return
+        }
         busy = true; defer { busy = false }
         do {
-            let pw = AdminGate.hasSaved
-                ? try await AdminGate.password(reason: "撤销一笔")
-                : { askPassword = true; return "" }()
-            guard !pw.isEmpty else { return }
             try await Api.undo(id: e.id, admin: pw)
             await store.refresh()
             show("已撤销：\(e.what)")

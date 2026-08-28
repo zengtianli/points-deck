@@ -86,48 +86,12 @@ enum Api {
         _ = try await request("api/spend", body: ["item": item])
     }
 
-    // ── 错题本 ────────────────────────────────────────────────────────────────
-    struct Wrong: Identifiable {
-        let id: String
-        let at: String
-        let subject: String
-        let status: String   // new=待录入 / ingested=已进题库(原图已回收)
-        let bytes: Int
-    }
-
-    static func wrongs() async throws -> [Wrong] {
-        let o = try await request("api/wrongs")
-        return ((o["items"] as? [[String: Any]]) ?? []).map {
-            Wrong(id: $0["id"] as? String ?? "",
-                  at: String(($0["at"] as? String ?? "").prefix(16).replacingOccurrences(of: "T", with: " ")),
-                  subject: $0["subject"] as? String ?? "",
-                  status: $0["status"] as? String ?? "new",
-                  bytes: $0["bytes"] as? Int ?? 0)
-        }.reversed()
-    }
-
-    /// 传一张错题照片。服务端**从真实字节认格式**，所以这里的 mime 前缀只是形式；
-    /// 但大小它是真拦的(单张 ≤3MB)，压缩要在端上做完再传。
-    static func uploadWrong(jpeg: Data, subject: String, note: String) async throws {
-        let dataURL = "data:image/jpeg;base64," + jpeg.base64EncodedString()
-        _ = try await request("api/wrong",
-                              body: ["data": dataURL, "subject": subject, "note": note],
-                              timeout: 60)
-    }
-
-    static func deleteWrong(id: String) async throws {
-        _ = try await request("api/wrong_del", body: ["id": id])
-    }
-
-    /// 原图 —— 走同一个 URLSession(带 cookie)，服务端只发自己的那些。
-    static func wrongImage(id: String) async throws -> Data {
-        var req = URLRequest(url: base.appendingPathComponent("api/wrong_img"))
-        req.url = URL(string: req.url!.absoluteString + "?id=" + id)
-        let (d, resp) = try await URLSession.shared.data(for: req)
-        guard (resp as? HTTPURLResponse)?.statusCode == 200 else {
-            throw Failure(message: "取不到这张图")
-        }
-        return d
+    /// 改昵称 / 换预设头像 —— 自己改自己的，**不要家长密码**（服务端如此）。
+    static func profile(nick: String? = nil, emoji: String? = nil) async throws {
+        var b: [String: Any] = [:]
+        if let nick { b["nick"] = nick }
+        if let emoji { b["emoji"] = emoji }
+        _ = try await request("api/profile", body: b)
     }
 
     static func logout() async {
@@ -155,6 +119,16 @@ struct State {
     let calcs: [String: Calc]
     let shop: [ShopItem]
     let practiceLeft: Int
+    /// 整条家园阶梯（含每档权益）—— 等级总览页要把 11 档全摊开。
+    /// ⚠ 阈值与权益的 SSOT 在 ~/Edu/points/skins/skins.json，这里只是它的投影。
+    /// **不许在端上补一份**：加一档、改一个红包数，端上什么都不用动。
+    let ladder: [Tier]
+    /// 当前已解锁的商品 id。服务端算的 —— 端上藏按钮只是观感，
+    /// 真正拦住的是 /api/spend 里那道门。
+    let unlocked: Set<String>
+    let avatar: String
+    /// 可选头像 —— 服务端下发，端上不写第二份
+    let avatarChoices: [String]
 
     struct Entry: Identifiable {
         let id: String
@@ -197,6 +171,16 @@ struct State {
             let label: String
             let hint: String
         }
+    }
+
+    /// 一档家园 + 它的权益。
+    struct Tier: Identifiable, Hashable {
+        let at: Int
+        let name: String
+        let era: Era
+        let bonus: Int          // 升到这一档一次性到账
+        let unlock: [String]    // 这一档解锁的 shop id
+        var id: Int { at }
     }
 
     struct ShopItem: Identifiable, Hashable {
@@ -261,6 +245,27 @@ struct State {
                      label: $0["label"] as? String ?? "", pts: $0["pts"] as? Int ?? 0)
         }
         practiceLeft = json["practice_left"] as? Int ?? 0
+        ladder = ((json["ladder"] as? [[String: Any]]) ?? []).map {
+            Tier(at: $0["at"] as? Int ?? 0,
+                 name: $0["name"] as? String ?? "",
+                 era: Era(key: $0["era"] as? String ?? ""),
+                 bonus: $0["bonus"] as? Int ?? 0,
+                 unlock: ($0["unlock"] as? [String]) ?? [])
+        }
+        unlocked = Set((json["unlocked"] as? [String]) ?? [])
+        // 头像：服务端发的是 {k, v}，k=preset 时 v 是 emoji，k=img 时要另外拉图。
+        // 这一版只认 emoji —— 上传头像还没接，认了也画不出来。
+        let av = json["avatar"] as? [String: Any]
+        avatar = (av?["k"] as? String) == "img" ? "🖼" : ((av?["v"] as? String) ?? "🐯")
+        avatarChoices = (json["avatars"] as? [String]) ?? []
+    }
+
+    /// 这一档是否已经解锁了某商品。
+    func isUnlocked(_ itemID: String) -> Bool { unlocked.contains(itemID) }
+
+    /// 某商品要住进哪一档才换得了 —— 兑换页上锁着的那行字。
+    func tierRequiring(_ itemID: String) -> Tier? {
+        ladder.first { $0.unlock.contains(itemID) }
     }
 
     /// 「还差 N 分升级到 X」—— 核心机制，永远在第一屏内。

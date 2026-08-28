@@ -22,6 +22,10 @@ targets:
         basedOnDependencyAnalysis: false
     sources:
       - path: Sources
+      # ⚠ 图标资产必须在这儿列出来。漏了的表现是**编译通过、装机通过、桌面白板**——
+      #   ASSETCATALOG_COMPILER_APPICON_NAME 指向一个不在工程里的 catalog，
+      #   actool 根本没被调起，全程零报错。2026-08-28 实测踩到。
+      - path: Resources/Assets.xcassets
       # 时代底图 —— folder 引用(不是 group)，进包后保持 Skins/ 子目录结构
       - path: Resources/Skins
         type: folder
@@ -35,9 +39,6 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: 京宝积分
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
-        INFOPLIST_KEY_NSFaceIDUsageDescription: 用 Face ID 解锁家长记账，免去每次手输管理密码
-        INFOPLIST_KEY_NSCameraUsageDescription: 拍错题照片，存进错题本
-        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: 从相册选错题照片
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_ENTITLEMENTS: App.entitlements
         MARKETING_VERSION: "0.1"

@@ -1,61 +1,71 @@
 #!/usr/bin/env python3
-"""生成 app 图标：画的就是这个 app 讲的事 —— 一条从低处涨上去的市值曲线，
-末端一间亮起来的小房子（市值 = 住什么房，这是整套激励的核心隐喻）。
+"""生成 app 图标 —— **从 app 内那张时代插画裁出来**，不手搓几何图形。
 
-深绿→金的渐变对应「小康之家 → 金碧辉煌」那条路，不用高饱和原色
-（那是廉价儿童 app 的观感，不是我们要的）。不用外部素材、不联网，重跑逐像素一致。
+为什么改成这样（2026-08-28）：上一版是 PIL 画的一条折线 + 一个三角形房子，
+硬边、无抗锯齿、留白大，缩到桌面 60×60 只剩一条蓝线。更要命的是它和 app 里
+那 5 张 Seedream 绘本插画**不是一个视觉语言** —— 打开 app 是绘本，图标是折线图。
+
+现在的做法：取 `cottage`（普通人家）那张插画里小木屋的那一块。
+选 cottage 而不是别的时代，是因为它是这套隐喻的中位数 ——
+「有个自己的小家」，暖、具体、不炫富，也正是这个 app 想让人奔向的东西。
+
+裁切框是**按图里房子的实际位置定的**，不是拍脑袋的比例：
+房子连烟囱在原图约 x∈[1130,1470] y∈[300,590]，取一个把它连同左侧松树、
+下方草地一起包住的正方形，让房子占画面中央约六成 —— 小尺寸下辨识的就是这个轮廓。
+
+    python3 make_icon.py          # 重跑逐像素一致（无随机、不联网）
 """
 import pathlib
+import sys
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
+
+HERE = pathlib.Path(__file__).resolve().parent
+# 底图 SSOT 在 ~/Edu，不在本仓 —— 和 sync-skins.sh 同一个源，避免两份图漂
+SRC = pathlib.Path.home() / "Edu" / "points" / "skins" / "cottage" / "bg.jpg"
+OUT = HERE / "Resources" / "icon-1024.png"
+OUT_ASSET = HERE / "Resources" / "Assets.xcassets" / "AppIcon.appiconset" / "icon-1024.png"
 
 S = 1024
-TOP = (31, 75, 87)          # garden 档的深青 —— 与 app 内 Era.garden 同族
-BOT = (20, 42, 50)
-LINE = (143, 227, 240)      # Era.garden.accent
-HOUSE = (255, 233, 168)     # Era.golden.accent —— 终点是金
-GRID = (255, 255, 255, 22)
 
-img = Image.new("RGB", (S, S), TOP)
-d = ImageDraw.Draw(img)
+if not SRC.is_file():
+    sys.exit(f"✘ 底图不在：{SRC}\n   它的 SSOT 在 ~/Edu/points/skins/，先确认那边有图")
 
-for y in range(S):                                   # 竖向渐变
-    t = y / (S - 1)
-    d.line([(0, y), (S, y)],
-           fill=tuple(int(TOP[i] + (BOT[i] - TOP[i]) * t) for i in range(3)))
+src = Image.open(SRC).convert("RGB")
+W, H = src.size
 
-ov = Image.new("RGBA", (S, S), (0, 0, 0, 0))
-od = ImageDraw.Draw(ov)
-M = 150
-x0, x1, y0, y1 = M, S - M, M, S - M
-for i in range(1, 4):
-    y = y0 + (y1 - y0) * i / 4
-    od.line([(x0, y), (x1, y)], fill=GRID, width=4)
-img = Image.alpha_composite(img.convert("RGBA"), ov).convert("RGB")
-d = ImageDraw.Draw(img)
+# 裁切框按**比例**算，这样换一张同构图的底图也不会错位
+cx0, cx1 = int(W * 0.685), int(W * 0.960)          # 房子 + 右侧松树
+cy0 = int(H * 0.300)
+side = cx1 - cx0
+cy1 = cy0 + side
+if cy1 > H:                                         # 底边不够就整体上移，不拉伸
+    cy1, cy0 = H, H - side
+crop = src.crop((cx0, cy0, cx1, cy1)).resize((S, S), Image.LANCZOS)
 
-# 市值曲线：有涨有跌但总体向上 —— 账本本来就是这样(seed 的曲线也有回撤)
-pts_x = [0.00, 0.18, 0.32, 0.46, 0.58, 0.72, 0.86, 1.00]
-pts_y = [0.92, 0.80, 0.86, 0.62, 0.70, 0.44, 0.36, 0.16]
-curve = [(x0 + (x1 - x0) * a, y0 + (y1 - y0) * b) for a, b in zip(pts_x, pts_y)]
-d.line(curve, fill=LINE, width=26, joint="curve")
+# 稍微提一点饱和与对比 —— 缩到 60×60 后细节会被平均掉，不提就发灰
+crop = ImageEnhance.Color(crop).enhance(1.12)
+crop = ImageEnhance.Contrast(crop).enhance(1.06)
 
-# 终点的小房子
-hx, hy = curve[-1]
-w, h = 130, 96
-d.polygon([(hx - w * 0.62, hy - h * 0.18), (hx, hy - h * 0.95), (hx + w * 0.62, hy - h * 0.18)],
-          fill=HOUSE)
-d.rounded_rectangle([hx - w * 0.42, hy - h * 0.18, hx + w * 0.42, hy + h * 0.52],
-                    radius=12, fill=HOUSE)
+# 四角轻暗角：让图标在浅色桌面壁纸上也有边界感（不是为了好看，是为了看得见轮廓）。
+#
+# ⚠ 用**径向遮罩 + 高斯模糊**，不要手画同心矩形描边。
+# 2026-08-28 第一版就是一圈圈 rectangle(outline=a) 叠出来的，结果画面正中央
+# 多出一个硬矩形亮框 —— 描边只覆盖最外 140 圈，再往里遮罩值突然归零，
+# 那道台阶在图上就是一条边。渐变要的是连续函数，不是一圈圈叠。
+mask = Image.new("L", (S, S), 0)                    # 0=不压暗
+ImageDraw.Draw(mask).ellipse(
+    [-S * 0.16, -S * 0.16, S * 1.16, S * 1.16], fill=255)
+mask = mask.filter(ImageFilter.GaussianBlur(S * 0.11))
+mask = mask.point(lambda v: 255 - v)                # 反过来：中心亮、四角暗
+mask = mask.point(lambda v: int(v * 0.30))          # 暗角强度，最多压 30%
+crop = Image.composite(Image.new("RGB", (S, S), (26, 19, 13)), crop, mask)
 
-out = pathlib.Path(__file__).parent / "Resources" / "icon-1024.png"
-img.save(out)
-print(f"✅ {out}")
-
-# 写进 Assets.xcassets —— xcodebuild 那条路靠 actool 编它，缺了就是个没图标的包
-ac = out.parent / "Assets.xcassets" / "AppIcon.appiconset" / "icon-1024.png"
-if ac.parent.is_dir():
-    img.save(ac)
-    print(f"✅ {ac}")
-else:
-    raise SystemExit(f"❌ 没有 {ac.parent} —— Assets.xcassets 结构不对，别静默跳过")
+OUT.parent.mkdir(parents=True, exist_ok=True)
+OUT_ASSET.parent.mkdir(parents=True, exist_ok=True)
+crop.save(OUT, "PNG")
+crop.save(OUT_ASSET, "PNG")
+print(f"✅ 图标已生成 {S}×{S}")
+print(f"   {OUT}")
+print(f"   {OUT_ASSET}")
+print(f"   源：{SRC}  裁切 x[{cx0},{cx1}] y[{cy0},{cy1}]")
