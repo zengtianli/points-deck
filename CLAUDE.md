@@ -97,6 +97,23 @@ SIM_LAUNCH_ARGS="-api_base http://127.0.0.1:8788 -dev_user jingbao -dev_pw 16091
 | `AdminGate.swift` | Keychain + Face ID |
 | `HomeView / DeckView / TrendView / ShopView / WrongView / ParentView` | 各屏 |
 
+## 底图要在**两个** target 里各声明一次
+
+`Resources/Skins` 在 `project.yml` 里对 `PointsDeck` 和 `PointsWidget` 各写了一次
+（`type: folder` + `buildPhase: resources`）。widget extension 有自己的 bundle，
+主 app 打了包不等于它也有。
+
+**漏声明不会报错** —— widget 只是悄悄掉回 `fallbackColors`，锁屏上颜色和 app 里对不上，
+而两边看起来都「正常」。核验方式（这个是确定性的，比看预览可靠）：
+
+```bash
+find .dd-sim/Build/Products/*/PointsDeck.app/PlugIns/PointsWidget.appex -name '*.jpg'
+```
+
+⚠ `-widgetpreview 1` 那个预览页是**主 app 在渲染 widget 的视图代码**，
+它证明不了 widget 进程读得到资源 —— 上面那条 find 才证明得了。
+真正的锁屏布局与刷新预算只能上真机看。
+
 ## 踩过的（别再踩）
 
 - **字段名照 server.py 第 498-504 行对，不猜** —— 第一版猜了 `what`/`t`，
