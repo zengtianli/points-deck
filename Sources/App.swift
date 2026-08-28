@@ -16,10 +16,14 @@ struct RootView: View {
 
     var body: some View {
         Group {
+            if UserDefaults.standard.bool(forKey: "widgetpreview") {
+                WidgetPreviewView()
+            } else {
             switch store.phase {
             case .checking:  SplashView()
             case .loggedOut: LoginView()
-            case .loggedIn:  DeckView()
+            case .loggedIn:  HomeView()
+            }
             }
         }
         .animation(.easeInOut(duration: 0.35), value: store.phase)

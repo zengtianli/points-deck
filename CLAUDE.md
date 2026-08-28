@@ -4,20 +4,43 @@
 
 ## 三条不可越过的线
 
-1. **不做后端** —— 服务端是 `~/Edu/points/server.py`（线上 `edu.tianli.cyou`）。
-   这里只发请求。
+1. **不做后端** —— 服务端是 `~/Edu/points/server.py`（线上 `edu.tianli.cyou`）。这里只发请求。
 2. **不复刻算分** —— 分值一律服务端算，预览也走 `/api/preview`。
    两边各算各的迟早算出不同的数，而家长看到的是预览、孩子拿到的是记账。
    **`Sources/` 里不许出现任何一条规则的分值。**
 3. **不写第二份档位阈值** —— 「多少分算哪一档」的 SSOT 是
    `~/Edu/points/skins/skins.json` 的 `tiers`，随 `/api/state` 的 `house` 下发。
-   `Skin.swift` 只管「拿到 era 之后长什么样」。加一档要改两处就是漂移。
+   `Skin.swift` 只管「拿到 era 之后长什么样」。
+
+## 界面
+
+| | |
+|---|---|
+| 账本 | 市值大字（滚动动画）· **还差 N 分升级到 X** + 进度条 · 最近流水 |
+| 走势 | 曲线 + 涨跌/最高/最低/今日刷题余额。用每条流水自带的 `bal` 快照，**不在端上累加求余额** |
+| 兑换 | 商店。花的是孩子自己的分，**不需要家长密码**（服务端如此），不许透支 |
+| 错题 | 拍照 / 相册 → `/api/wrong`。端上先压到 3MB 以内再传 |
+| 家长（右上角锁盾） | 选规则 → 填输入 → 服务端预览 → **Face ID 取密码** → 记账；撤销最近 5 笔 |
+| Widget | 锁屏/主屏常驻「市值 + 还差 N 分升 X」。读 App Group 快照，**自己不联网** |
+
+## 家长密码为什么要这么绕
+
+`~/Edu` 的设计是「家长密码每次现输、不发 cookie」——
+理由是**孩子拿到已登录的平板也加不了分**。能自己给自己加分的积分系统，第二天就变成刷分游戏。
+
+这条不能破，所以这里不是「记住登录状态」，而是：密码存 Keychain 且
+**要求生物识别才读得出来**（`.userPresence` + `WhenUnlockedThisDeviceOnly`，不进 iCloud 钥匙串），
+每次记账仍然是「取出 → 随请求发一次 → 丢掉」。
+
+⚠ `saveThenEarn()` 是**先拿这次记账验过密码才存** —— 存一个错密码进 Keychain，
+之后每次都会 Face ID 通过却被服务端拒，那种错最难查。
 
 ## 跑起来
 
 ```bash
 bash sim-run.sh                      # 模拟器：xcodegen → 编 → 装 → 起 → 截图(总部 SSOT)
 bash install-to-iphone.sh            # 真机(总部 SSOT，默认走 WiFi)
+python3 make_icon.py                 # 重画图标
 ```
 
 **对着本地账本验**（不碰线上数据）：
@@ -34,22 +57,43 @@ cd ~/Apps/ios/points-deck
 SIM_LAUNCH_ARGS="-api_base http://127.0.0.1:8788 -dev_user jingbao -dev_pw 160912" bash sim-run.sh
 ```
 
-`-api_base` / `-dev_user` / `-dev_pw` 是 launch 参数（进 UserDefaults），
-**只在显式传了才生效**，生产路径上永远是 nil。
+**验证用的 launch 参数**（进 UserDefaults，**只在显式传了才生效**，生产路径上永远是 nil）：
+
+| | |
+|---|---|
+| `-api_base <url>` | 指向本地 server |
+| `-dev_user` / `-dev_pw` | 跳过手输登录 |
+| `-tab 0..3` | 直接落到某个 tab |
+| `-parent 1` | 直接打开家长面 |
+| `-widgetpreview 1` | 把 Widget 的同一份 View 按各尺寸画出来看（拖 widget 到主屏 headless 做不到） |
 
 ## 文件
 
 | | |
 |---|---|
-| `Api.swift` | 账本客户端 + `/api/state` 的投影。**字段名照着 server.py 第 498-504 行对的** —— 第一版猜了 `what`/`t`，跑出来整列事由是「—」而其余一切正常，界面看着毫无异样 |
-| `Store.swift` | 会话状态机（checking / loggedOut / loggedIn）。开屏探测超时 6s 而非 20s：它挡在任何界面之前，没网时干等 20 秒就是「app 坏了」的观感 |
+| `Api.swift` | 账本客户端 + `/api/state` 投影 + `RuleInput`（按 kind 组装参数，**不算分**） |
+| `Store.swift` | 会话状态机。开屏探测超时 6s 而非 20s；登录失败必须落回 `loggedOut` |
 | `Skin.swift` | 五个时代的配色 + 数字滚动。**无阈值** |
-| `LoginView.swift` / `DeckView.swift` | 登录 / 孩子面第一屏 |
+| `Snapshot.swift` / `WidgetViews.swift` | 主 app 与 Widget **共用的同一份**数据契约与视图 |
+| `AdminGate.swift` | Keychain + Face ID |
+| `HomeView / DeckView / TrendView / ShopView / WrongView / ParentView` | 各屏 |
+
+## 踩过的（别再踩）
+
+- **字段名照 server.py 第 498-504 行对，不猜** —— 第一版猜了 `what`/`t`，
+  跑出来整列事由是「—」而市值进度条一切正常，**界面看着毫无异样**。
+- **`@main` 只能有一个** —— Widget 的视图与 Snapshot 要拆成共享文件，
+  `Widget/PointsWidget.swift` 只留 Provider 和 `@main`。
+- **xcodegen 的 `info.path` 是生成目标不是「用这个文件」** —— 手写一份 `Widget/Info.plist`
+  会被直接覆盖。`NSExtension` 必须写在 `info.properties` 里，
+  少了它的表现是**编译通过、装机报 `Invalid placeholder attributes`**。
+- **`widgetFamily` 是只读环境值**，`.environment(\.widgetFamily,)` 编不过；
+  预览用显式 `familyOverride` 参数。
 
 ## 还没做
 
-家长面（记一笔 / 撤销 / 调账，Face ID 包住管理密码不落 cookie）· 走势图 · 兑换 ·
-锁屏 Widget · 相机直连错题。方案见
+真机装机（等 Apple Developer membership 转 active）· 升档「乔迁新居」的庆祝转场 ·
+Haptics · 兑换记录筛选。方案见
 `~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md`。
 
 **按付费档规格开发**（2026-08-28 用户钦定）：不为「同时 3 个自签」的上限做妥协设计。

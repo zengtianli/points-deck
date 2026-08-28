@@ -10,25 +10,16 @@ struct DeckView: View {
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
-        ZStack {
-            era.background.ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.8), value: era)   // 升档 = 场景切换，不是刷新
-
-            ScrollView {
-                VStack(spacing: 22) {
-                    header
+        ScrollView {
+            VStack(spacing: 22) {
                     marketValue
                     nextTier
                     ledger
-                    Text("走势图 / 兑换 / 家长记一笔 —— 下一步")
-                        .font(.caption2).foregroundStyle(.white.opacity(0.4))
-                        .padding(.top, 8)
-                }
-                .padding(.horizontal, 20)
-                .padding(.vertical, 28)
             }
-            .refreshable { await store.refresh() }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 24)
         }
+        .refreshable { await store.refresh() }
         .task {
             // 进来先把数字从 0 滚上去，之后的刷新只滚差值
             guard let s else { return }
@@ -37,22 +28,6 @@ struct DeckView: View {
         .onChange(of: s?.balance) { _, new in
             guard let new else { return }
             withAnimation(.easeOut(duration: 0.6)) { shown = Double(new) }
-        }
-    }
-
-    private var header: some View {
-        HStack {
-            VStack(alignment: .leading, spacing: 2) {
-                Text(s?.nick ?? "—")
-                    .font(.headline).foregroundStyle(.white)
-                Text(s?.houseName ?? "—")
-                    .font(.subheadline).foregroundStyle(era.accent)
-            }
-            Spacer()
-            Button { Task { await store.logout() } } label: {
-                Image(systemName: "rectangle.portrait.and.arrow.right")
-                    .foregroundStyle(.white.opacity(0.6))
-            }
         }
     }
 

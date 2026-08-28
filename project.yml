@@ -13,8 +13,8 @@ targets:
     platform: iOS
     sources:
       - path: Sources
-      - path: Resources/Assets.xcassets
-        buildPhase: resources
+    dependencies:
+      - target: PointsWidget
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck
@@ -23,9 +23,37 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: 京宝积分
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         INFOPLIST_KEY_NSFaceIDUsageDescription: 用 Face ID 解锁家长记账，免去每次手输管理密码
+        INFOPLIST_KEY_NSCameraUsageDescription: 拍错题照片，存进错题本
+        INFOPLIST_KEY_NSPhotoLibraryUsageDescription: 从相册选错题照片
         GENERATE_INFOPLIST_FILE: YES
+        CODE_SIGN_ENTITLEMENTS: App.entitlements
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"
     scheme:
       testTargets: []
       configVariants: []
+  PointsWidget:
+    type: app-extension
+    platform: iOS
+    # ⚠ xcodegen 的 info.path 是**生成目标**，不是「用这个现成文件」——
+    # 手写一份 Widget/Info.plist 放那儿会被直接覆盖掉，内容必须写在 properties 里。
+    # 少了 NSExtension 的表现是:编译通过、装机报 "Invalid placeholder attributes"。
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: 京宝积分
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    sources:
+      - path: Widget
+        excludes: ["Info.plist"]
+      # 两边共用的同一份文件，不复制 —— Era/RollingNumber 是视觉，Snapshot 是数据契约
+      - path: Sources/Skin.swift
+      - path: Sources/Snapshot.swift
+      - path: Sources/WidgetViews.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.widget
+        CODE_SIGN_ENTITLEMENTS: Widget.entitlements
+        MARKETING_VERSION: "0.1"
+        CURRENT_PROJECT_VERSION: "1"

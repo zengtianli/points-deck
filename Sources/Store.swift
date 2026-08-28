@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import WidgetKit
 
 @MainActor
 final class Store: ObservableObject {
@@ -27,6 +28,7 @@ final class Store: ObservableObject {
         do {
             state = try await Api.state(timeout: 6)
             phase = .loggedIn
+            publishSnapshot()
         } catch {
             phase = .loggedOut
         }
@@ -39,13 +41,31 @@ final class Store: ObservableObject {
             try await Api.login(user: user, password: password)
             state = try await Api.state()
             phase = .loggedIn
+            publishSnapshot()
         } catch {
             self.error = error.localizedDescription
+            // ⚠ 必须落回 loggedOut：从 restore() 的 dev 分支进来时 phase 还是 .checking，
+            // 不落回就永远停在开屏转圈上 —— 界面不动，也没有任何错误可看。
+            phase = .loggedOut
         }
     }
 
     func refresh() async {
-        do { state = try await Api.state() } catch { self.error = error.localizedDescription }
+        do {
+            state = try await Api.state()
+            publishSnapshot()
+        } catch { self.error = error.localizedDescription }
+    }
+
+    /// 把当前状态写进 App Group 给 Widget 读。
+    /// Widget 自己不联网(要处理登录态/超时/重试，而刷新预算由系统说了算)，
+    /// 拿不到新数据时它显示上一次的快照，比显示一个转圈有用。
+    func publishSnapshot() {
+        guard let s = state else { return }
+        Snapshot(balance: s.balance, houseName: s.houseName, nextName: s.nextName,
+                 toNext: s.toNext, progress: s.progress, era: s.era.rawValue,
+                 updated: .now).save()
+        WidgetCenter.shared.reloadAllTimelines()
     }
 
     func logout() async {
