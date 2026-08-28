@@ -1,0 +1,27 @@
+name: points-deck
+origin: own
+lifecycle: active
+form: ios
+
+one_liner: 京宝积分随身版 —— 孩子看市值与换装、家长 Face ID 免密记一笔，账本仍是 edu.tianli.cyou 那一本
+
+stack: swift-ui
+notes: |
+  **不做后端、不复刻算法。** 消费 ~/Edu/points/server.py 已有的 JSON API
+  (/api/state /api/preview /api/earn /api/spend /api/undo)。分值一律服务端算,
+  预览也走 /api/preview —— 两边各算各的迟早算出不同的数,而家长看到的是预览、
+  孩子拿到的是记账。这条是 ~/Edu 立的铁律,本 app 继承。
+
+  一个 app 两种身份(2026-08-28 用户拍板):
+    孩子面 = 市值大字 + 「还差 N 分升级」进度条 + 走势 + 流水(登录即见)
+    家长面 = 记一笔 / 撤销 / 调账(现输管理密码,Face ID 代发,**不落 cookie**)
+  「管理密码不发 cookie」是 ~/Edu 的有意设计:孩子拿到已登录的设备也加不了分。
+  原生这边用 Keychain + Face ID 保住它,同时省掉每次手输。
+
+  换装美术不从零定:阈值/时代/底图的 SSOT 是 ~/Edu/points/skins/skins.json
+  (11 档市值 → 5 时代)。**禁在 Swift 里写第二份阈值表**,加一档要改两处就是漂移。
+
+  按付费档规格开发(2026-08-28 用户钦定):不为「同时 3 个自签」的上限做妥协设计,
+  Widget 按常驻做,签名主体按可上架规划。
+
+  方案全文 ~/Dev/wiki/handoffs/dev/ios-fleet-landing/05-积分app方案.md
