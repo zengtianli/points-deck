@@ -42,7 +42,7 @@ def main() -> int:
     apps = sorted(prod.glob("*-iphoneos/PointsDeck.app"))
     if not apps:
         print(f"❌ 在 {prod} 下没找到 PointsDeck.app —— 先构建。"
-              f"（枚举为空一律判红，不在空集上报绿）")
+              f"（拒绝在空集上报绿：枚举为空一律判红）")
         return 2
     app = apps[0]
     exts = sorted(app.glob("PlugIns/*.appex"))
