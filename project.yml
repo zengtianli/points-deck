@@ -1,18 +1,19 @@
 name: PointsDeck
 options:
   bundleIdPrefix: cyou.tianli
-  deploymentTarget: { iOS: "18.0" }
+  deploymentTarget: { iOS: "18.0", macOS: "15.0" }
   createIntermediateGroups: true
 settings:
   base:
     CODE_SIGN_STYLE: Automatic
     # 2026-08-29 起已开通付费 Developer Program(团队 B9LJH93LA4),不再留空走免费 Personal Team。
     DEVELOPMENT_TEAM: B9LJH93LA4
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     SWIFT_VERSION: "5.0"
 targets:
   PointsDeck:
     type: application
-    platform: iOS
+    supportedDestinations: [iOS, macOS]
     # 每次构建前从 ~/Edu 同步一次时代底图。
     # 为什么不把图提交进仓:图的 SSOT 在 ~/Edu/points/skins/(那边有生图 prompt、seed、
     # 皮肤清单门)，仓里存一份副本就是第二份，改了图两边会漂。
@@ -23,6 +24,8 @@ targets:
         name: 同步时代底图
         basedOnDependencyAnalysis: false
     sources:
+      # 总部共享：macOS 侧给 iOS-only SwiftUI 修饰符提供同名 no-op，调用点不改（multiplatform.py 注入）
+      - path: /Users/tianli/Dev/tools/dev/lib/tools/macapp/swift-shared/PlatformCompat.swift
       - path: Sources
       # ⚠ 图标资产必须在这儿列出来。漏了的表现是**编译通过、装机通过、桌面白板**——
       #   ASSETCATALOG_COMPILER_APPICON_NAME 指向一个不在工程里的 catalog，
@@ -37,6 +40,11 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck
+        # ── Mac 侧（multiplatform.py 注入）：沙盒 + 加固运行时是 TestFlight for Mac 的硬门槛；
+        #    entitlements 按 sdk 分开给，iOS 的 profile 不认 app-sandbox 这个键。
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Mac.entitlements
+        "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
+        INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.education
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: 京宝积分
@@ -55,7 +63,7 @@ targets:
       configVariants: []
   PointsWidget:
     type: app-extension
-    platform: iOS
+    supportedDestinations: [iOS, macOS]
     # ⚠ xcodegen 的 info.path 是**生成目标**，不是「用这个现成文件」——
     # 手写一份 Widget/Info.plist 放那儿会被直接覆盖掉，内容必须写在 properties 里。
     # 少了 NSExtension 的表现是:编译通过、装机报 "Invalid placeholder attributes"。
@@ -66,6 +74,8 @@ targets:
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     sources:
+      # 总部共享：macOS 侧给 iOS-only SwiftUI 修饰符提供同名 no-op，调用点不改（multiplatform.py 注入）
+      - path: /Users/tianli/Dev/tools/dev/lib/tools/macapp/swift-shared/PlatformCompat.swift
       - path: Widget
         excludes: ["Info.plist"]
       # 两边共用的同一份文件，不复制 —— Era/RollingNumber 是视觉，Snapshot 是数据契约
@@ -79,6 +89,10 @@ targets:
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.widget
+        # ── Mac 侧（multiplatform.py 注入）：沙盒 + 加固运行时是 TestFlight for Mac 的硬门槛；
+        #    entitlements 按 sdk 分开给，iOS 的 profile 不认 app-sandbox 这个键。
+        "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Mac.PointsWidget.entitlements
+        "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         CODE_SIGN_ENTITLEMENTS: Widget.entitlements
         MARKETING_VERSION: "0.1"
         CURRENT_PROJECT_VERSION: "1"
