@@ -24,6 +24,7 @@ struct PointsWidgetView: View {
 
     var body: some View {
         switch family {
+        #if os(iOS)   // 锁屏三种 family 是 iOS 独有的 enum case，Mac 上不存在
         case .accessoryCircular:
             Gauge(value: entry.snap.progress) {
                 Text("分")
@@ -39,6 +40,7 @@ struct PointsWidgetView: View {
                 Text(line).font(.caption)
                 ProgressView(value: entry.snap.progress).tint(.white)
             }
+        #endif
         default:
             VStack(alignment: .leading, spacing: 8) {
                 Text("总市值").font(.caption).foregroundStyle(.white.opacity(0.7))

@@ -30,7 +30,11 @@ struct PointsWidget: Widget {
         }
         .configurationDisplayName("京宝积分")
         .description("总市值与「还差多少升级」")
+        #if os(iOS)
         .supportedFamilies([.systemSmall, .systemMedium,
-                            .accessoryCircular, .accessoryRectangular, .accessoryInline])
+                            .accessoryCircular, .accessoryRectangular, .accessoryInline])   // accessory* = 锁屏，iOS 独有
+        #else
+        .supportedFamilies([.systemSmall, .systemMedium])
+        #endif
     }
 }

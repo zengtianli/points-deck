@@ -22,6 +22,7 @@ struct HomeView: View {
 
             VStack(spacing: 0) {
                 topBar
+                #if os(iOS)
                 TabView(selection: $tab) {
                     DeckView().tag(0)
                     TrendView().tag(1)
@@ -29,6 +30,19 @@ struct HomeView: View {
                     AccountView().tag(3)
                 }
                 .tabViewStyle(.page(indexDisplayMode: .never))
+                #else
+                // Mac 没有分页式 TabView，而系统 TabView 会再画一条自己的标签栏（与下面的 tabBar 双份）。
+                // 直接按 tab 切页，底部自家 tabBar 照旧。
+                Group {
+                    switch tab {
+                    case 1: TrendView()
+                    case 2: ShopView()
+                    case 3: AccountView()
+                    default: DeckView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                #endif
                 tabBar
             }
         }

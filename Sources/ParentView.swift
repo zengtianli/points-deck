@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// 家长面 —— 选规则 → 填输入 → **服务端预览** → 记账。
 ///

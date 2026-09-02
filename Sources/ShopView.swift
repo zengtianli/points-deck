@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// 兑换 —— 花的是孩子自己的分，**不需要家长密码**（服务端如此），但不许透支。
 struct ShopView: View {

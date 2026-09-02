@@ -22,9 +22,11 @@ struct WidgetPreviewView: View {
 
                 block("systemSmall", w: 170, h: 170, family: .systemSmall)
                 block("systemMedium", w: 360, h: 170, family: .systemMedium)
+                #if os(iOS)   // 锁屏三种样式 iOS 独有，Mac 桌面小组件只有 system*
                 block("accessoryRectangular（锁屏）", w: 340, h: 90, family: .accessoryRectangular)
                 block("accessoryCircular（锁屏）", w: 90, h: 90, family: .accessoryCircular)
                 block("accessoryInline（锁屏）", w: 340, h: 36, family: .accessoryInline)
+                #endif
             }
             .padding(20)
         }

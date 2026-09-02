@@ -1,5 +1,7 @@
 import SwiftUI
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// 「乔迁新居」—— 升档时的庆祝。
 ///
