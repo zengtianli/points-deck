@@ -1,7 +1,9 @@
 name: points-deck
+bundle_id: cyou.tianli.pointsdeck   # 派生自 project.yml（SSOT）；fleet_audit a/g 项与 app_registry gate-mac 按它对装机
 origin: own
 lifecycle: active
 form: ios
+platforms: [iphone, ipad, mac]   # 跑在哪（正交于 form=源码住哪）；multiplatform.py audit 与 project.yml 对账
 
 one_liner: 京宝积分随身版 —— 孩子看市值与换装、家长 Face ID 免密记一笔，账本仍是 edu.tianli.cyou 那一本
 
