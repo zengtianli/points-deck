@@ -4,6 +4,7 @@ struct LoginView: View {
     @EnvironmentObject var store: Store
     @State private var user = ""
     @State private var password = ""
+    @State private var showRegister = false
     @FocusState private var focus: Field?
 
     private enum Field { case user, password }
@@ -25,7 +26,7 @@ struct LoginView: View {
                 }
 
                 VStack(spacing: 12) {
-                    field("用户名", text: $user, secure: false, focus: .user)
+                    field("用户名或邮箱", text: $user, secure: false, focus: .user)
                     field("密码", text: $password, secure: true, focus: .password)
                 }
 
@@ -51,6 +52,9 @@ struct LoginView: View {
                 .disabled(store.busy || user.isEmpty || password.isEmpty)
                 .opacity(user.isEmpty || password.isEmpty ? 0.5 : 1)
 
+                Button("没有账号？邮箱注册") { showRegister = true }
+                    .font(.footnote).foregroundStyle(.white.opacity(0.85))
+
                 Spacer()
                 Text("账本在 edu.tianli.cyou，这里只是它的随身版")
                     .font(.caption2)
@@ -59,6 +63,7 @@ struct LoginView: View {
             .padding(.horizontal, 28)
         }
         .animation(.easeInOut(duration: 0.2), value: store.error)
+        .sheet(isPresented: $showRegister) { RegisterView() }
     }
 
     private func field(_ title: String, text: Binding<String>, secure: Bool, focus f: Field) -> some View {

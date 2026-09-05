@@ -17,6 +17,9 @@ struct AccountView: View {
     @State private var unlocking = false
     @State private var showProfile = false
     @State private var confirmLogout = false
+    @State private var askDelete = false
+    @State private var deletePw = ""
+    @State private var deleteErr: String?
 
     private var s: State? { store.state }
     private var era: Era { s?.era ?? .slum }
@@ -50,6 +53,22 @@ struct AccountView: View {
         } message: {
             Text("解锁后可以记账、也能改规则和商品。上锁、退出 app、或切后台超过 10 分钟会自动锁回去。")
         }
+        // App Store 5.1.1(v)：能注册就必须能在 app 内删号。要密码，二次确认，文案说清删什么。
+        .alert("注销账号？", isPresented: $askDelete) {
+            SecureField("当前密码", text: $deletePw)
+            Button("永久删除", role: .destructive) {
+                Task {
+                    if await store.deleteAccount(password: deletePw) { deleteErr = nil }
+                    else { deleteErr = store.error }
+                }
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("账号、积分账本、学习存档、头像会一起删除，不可恢复。输入当前密码确认。")
+        }
+        .alert("没删成", isPresented: Binding(get: { deleteErr != nil }, set: { if !$0 { deleteErr = nil } })) {
+            Button("好", role: .cancel) {}
+        } message: { Text(deleteErr ?? "") }
         .alert("退出登录？", isPresented: $confirmLogout) {
             Button("退出", role: .destructive) { Task { await store.logout() } }
             Button("取消", role: .cancel) {}
@@ -221,6 +240,8 @@ struct AccountView: View {
             }
             tapRow("退出登录", icon: "rectangle.portrait.and.arrow.right",
                    tint: .red.opacity(0.9)) { confirmLogout = true }
+            tapRow("注销账号", icon: "person.crop.circle.badge.xmark",
+                   tint: .red.opacity(0.9)) { deletePw = ""; askDelete = true }
         }
     }
 

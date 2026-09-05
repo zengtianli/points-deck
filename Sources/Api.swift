@@ -153,6 +153,16 @@ enum Api {
     static func logout() async {
         _ = try? await request("api/logout", body: [:])
     }
+
+    /// 邮箱注册：`{email, p, nick}` → 服务端派生内部用户名并直接下发 cookie（注册即登录）。
+    static func register(email: String, password: String, nick: String) async throws {
+        _ = try await request("api/register", body: ["email": email, "p": password, "nick": nick])
+    }
+
+    /// 自助注销：要当前密码；服务端把账本/存档整体归档后清 cookie。
+    static func deleteAccount(password: String) async throws {
+        _ = try await request("api/account_del", body: ["p": password])
+    }
 }
 
 /// 可编辑配置的投影 —— 管理面用。

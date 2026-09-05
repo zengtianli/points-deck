@@ -147,6 +147,38 @@ final class Store: ObservableObject {
         live = false
     }
 
+    func register(email: String, password: String, nick: String) async {
+        busy = true; error = nil
+        defer { busy = false }
+        do {
+            try await Api.register(email: email, password: password, nick: nick)
+            let fresh = try await Api.state()
+            noteTier(fresh)
+            state = fresh
+            phase = .loggedIn
+            publishSnapshot()
+            startEvents()
+        } catch {
+            self.error = error.localizedDescription        // 邮箱已注册 / 格式不对 / 名额满，服务端文案原样
+        }
+    }
+
+    /// 注销账号。成功回 true 并落回登录页；失败把原因放进 error（密码不对 → 403 的那句）。
+    func deleteAccount(password: String) async -> Bool {
+        busy = true; error = nil
+        defer { busy = false }
+        do {
+            try await Api.deleteAccount(password: password)
+            stopEvents()
+            state = nil
+            phase = .loggedOut
+            return true
+        } catch {
+            self.error = error.localizedDescription
+            return false
+        }
+    }
+
     func logout() async {
         stopEvents()
         await Api.logout()
