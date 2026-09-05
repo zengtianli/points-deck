@@ -155,8 +155,14 @@ enum Api {
     }
 
     /// 邮箱注册：`{email, p, nick}` → 服务端派生内部用户名并直接下发 cookie（注册即登录）。
-    static func register(email: String, password: String, nick: String) async throws {
-        _ = try await request("api/register", body: ["email": email, "p": password, "nick": nick])
+    /// 家长密码按账号各自一把（服务端 2026-09-05 起）：注册时一并设，只有家长知道。
+    static func register(email: String, password: String, nick: String, parent: String) async throws {
+        _ = try await request("api/register", body: ["email": email, "p": password, "nick": nick, "parent": parent])
+    }
+
+    /// 设置 / 修改本账号的家长密码：要账号密码。
+    static func setParent(password: String, parent: String) async throws {
+        _ = try await request("api/parent_set", body: ["p": password, "parent": parent])
     }
 
     /// 自助注销：要当前密码；服务端把账本/存档整体归档后清 cookie。

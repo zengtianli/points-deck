@@ -147,11 +147,11 @@ final class Store: ObservableObject {
         live = false
     }
 
-    func register(email: String, password: String, nick: String) async {
+    func register(email: String, password: String, nick: String, parent: String) async {
         busy = true; error = nil
         defer { busy = false }
         do {
-            try await Api.register(email: email, password: password, nick: nick)
+            try await Api.register(email: email, password: password, nick: nick, parent: parent)
             let fresh = try await Api.state()
             noteTier(fresh)
             state = fresh

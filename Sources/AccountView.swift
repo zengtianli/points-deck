@@ -18,6 +18,10 @@ struct AccountView: View {
     @State private var showProfile = false
     @State private var confirmLogout = false
     @State private var askDelete = false
+    @State private var askParent = false
+    @State private var parentAcct = ""
+    @State private var parentPw = ""
+    @State private var parentMsg: String?
     @State private var deletePw = ""
     @State private var deleteErr: String?
 
@@ -54,6 +58,23 @@ struct AccountView: View {
             Text("解锁后可以记账、也能改规则和商品。上锁、退出 app、或切后台超过 10 分钟会自动锁回去。")
         }
         // App Store 5.1.1(v)：能注册就必须能在 app 内删号。要密码，二次确认，文案说清删什么。
+        // 家长密码按账号各自一把：改它要账号密码（登录态不够）
+        .alert("设置家长密码", isPresented: $askParent) {
+            SecureField("账号密码", text: $parentAcct)
+            SecureField("新的家长密码（至少 4 位）", text: $parentPw)
+            Button("保存") {
+                Task {
+                    do { try await Api.setParent(password: parentAcct, parent: parentPw); parentMsg = "家长密码已更新" }
+                    catch { parentMsg = error.localizedDescription }
+                }
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("记账、撤销、改规则都要这把密码；只有家长知道。")
+        }
+        .alert("家长密码", isPresented: Binding(get: { parentMsg != nil }, set: { if !$0 { parentMsg = nil } })) {
+            Button("好", role: .cancel) {}
+        } message: { Text(parentMsg ?? "") }
         .alert("注销账号？", isPresented: $askDelete) {
             SecureField("当前密码", text: $deletePw)
             Button("永久删除", role: .destructive) {
@@ -240,6 +261,7 @@ struct AccountView: View {
             }
             tapRow("退出登录", icon: "rectangle.portrait.and.arrow.right",
                    tint: .red.opacity(0.9)) { confirmLogout = true }
+            tapRow("家长密码", icon: "key.fill") { parentPw = ""; parentAcct = ""; askParent = true }
             tapRow("注销账号", icon: "person.crop.circle.badge.xmark",
                    tint: .red.opacity(0.9)) { deletePw = ""; askDelete = true }
         }

@@ -9,6 +9,7 @@ struct RegisterView: View {
     @State private var nick = ""
     @State private var pw1 = ""
     @State private var pw2 = ""
+    @State private var parent = ""
 
     private var mismatch: Bool { !pw2.isEmpty && pw1 != pw2 }
 
@@ -30,6 +31,13 @@ struct RegisterView: View {
                 } footer: {
                     Text("注册即同意隐私政策：只保存邮箱、昵称与积分账本，可随时在「我的 → 注销账号」整体删除。")
                 }
+                Section {
+                    SecureField("家长密码（至少 4 位）", text: $parent).textContentType(.newPassword)
+                } header: {
+                    Text("家长密码")
+                } footer: {
+                    Text("只有家长知道的那把：记账、撤销、改规则都要它。孩子拿到手机也加不了分。")
+                }
                 if let e = store.error {
                     Section { Text(e).foregroundStyle(.red) }
                 }
@@ -37,7 +45,8 @@ struct RegisterView: View {
                     Button {
                         Task {
                             await store.register(email: email.trimmingCharacters(in: .whitespaces),
-                                                 password: pw1, nick: nick.trimmingCharacters(in: .whitespaces))
+                                                 password: pw1, nick: nick.trimmingCharacters(in: .whitespaces),
+                                                 parent: parent)
                             if store.phase == .loggedIn { dismiss() }
                         }
                     } label: {
@@ -45,7 +54,7 @@ struct RegisterView: View {
                             if store.busy { ProgressView() } else { Text("注册并登录").fontWeight(.semibold) }
                             Spacer() }
                     }
-                    .disabled(store.busy || email.isEmpty || pw1.isEmpty || pw1 != pw2)
+                    .disabled(store.busy || email.isEmpty || pw1.isEmpty || pw1 != pw2 || parent.count < 4)
                 }
             }
             .navigationTitle("邮箱注册")
