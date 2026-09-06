@@ -269,7 +269,7 @@ struct AccountView: View {
 
     private var about: some View {
         VStack(spacing: 4) {
-            Text("京宝积分 · \(Bundle.main.shortVersion)")
+            Text("\(AppIdentity.displayName) · \(Bundle.main.shortVersion)")
             Text("账本在 edu.tianli.cyou，本机不存账")
         }
         .font(.caption2)

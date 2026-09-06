@@ -17,7 +17,7 @@ struct LoginView: View {
                 Spacer()
 
                 VStack(spacing: 8) {
-                    Text("京宝积分")
+                    Text(AppIdentity.displayName)
                         .font(.system(size: 34, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                     Text("挣的每一分都在这本账上")

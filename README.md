@@ -1,6 +1,6 @@
-<p align="center"><img src="Resources/icon-1024.png" width="96" alt="京宝积分"></p>
+<p align="center"><img src="Resources/icon-1024.png" width="96" alt="成长小金库"></p>
 
-# 京宝积分 · points-deck
+# 成长小金库 · points-deck
 
 **孩子的每一分努力，涨成看得见的房子。**
 

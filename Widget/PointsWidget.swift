@@ -28,7 +28,7 @@ struct PointsWidget: Widget {
         StaticConfiguration(kind: "PointsWidget", provider: Provider()) { entry in
             PointsWidgetView(entry: entry)
         }
-        .configurationDisplayName("京宝积分")
+        .configurationDisplayName(AppIdentity.displayName)
         .description("总市值与「还差多少升级」")
         #if os(iOS)
         .supportedFamilies([.systemSmall, .systemMedium,

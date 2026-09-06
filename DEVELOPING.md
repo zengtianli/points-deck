@@ -1,4 +1,4 @@
-# points-deck · 京宝积分随身版
+# points-deck · 成长小金库
 
 `~/Edu` 积分账本（<https://edu.tianli.cyou>）的 iOS 原生客户端。
 
