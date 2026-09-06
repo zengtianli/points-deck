@@ -8,7 +8,7 @@ struct TrendView: View {
     @EnvironmentObject var store: Store
     @State private var span = 30
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     /// 只取积分那条线：电视时间与心愿是另外两本账，混进同一条曲线就是三本账画成一本。

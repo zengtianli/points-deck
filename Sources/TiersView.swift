@@ -14,7 +14,7 @@ struct TiersView: View {
     @EnvironmentObject var store: Store
     @Environment(\.dismiss) private var dismiss
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
@@ -69,7 +69,7 @@ struct TiersView: View {
     }
 
     @ViewBuilder
-    private func tierCard(_ i: Int, _ t: State.Tier) -> some View {
+    private func tierCard(_ i: Int, _ t: LedgerState.Tier) -> some View {
         let cur = s?.tier ?? 0
         let passed = i < cur
         let now = i == cur

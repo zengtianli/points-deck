@@ -18,7 +18,7 @@ struct ParentView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var subject: String = ""
-    @State private var picked: State.Rule?
+    @State private var picked: LedgerState.Rule?
     @State private var input: RuleInput?
     @State private var preview: Preview?
     @State private var previewErr: String?
@@ -26,9 +26,9 @@ struct ParentView: View {
     @State private var toast: String?
     @State private var askPassword = false
     @State private var typed = ""
-    @State private var pendingUndo: State.Entry?
+    @State private var pendingUndo: LedgerState.Entry?
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
 
     var body: some View {
         NavigationStack {
@@ -75,7 +75,7 @@ struct ParentView: View {
     }
 
     // ── 选规则 ────────────────────────────────────────────────────────────────
-    private func subjectSection(_ s: State) -> some View {
+    private func subjectSection(_ s: LedgerState) -> some View {
         Section("记一笔") {
             Picker("科目", selection: $subject) {
                 Text("请选择").tag("")
@@ -105,7 +105,7 @@ struct ParentView: View {
 
     // ── 按 kind 渲染输入 ──────────────────────────────────────────────────────
     @ViewBuilder
-    private func inputSection(_ r: State.Rule) -> some View {
+    private func inputSection(_ r: LedgerState.Rule) -> some View {
         Section(r.label) {
             switch r.kind {
             case "per", "tv":
@@ -178,7 +178,7 @@ struct ParentView: View {
     }
 
     // ── 撤销 ──────────────────────────────────────────────────────────────────
-    private func undoSection(_ s: State) -> some View {
+    private func undoSection(_ s: LedgerState) -> some View {
         Section("撤销最近的") {
             if s.entries.isEmpty {
                 Text("还没有流水").foregroundStyle(.secondary)
@@ -297,7 +297,7 @@ struct ParentView: View {
         }
     }
 
-    private func undo(_ e: State.Entry) async {
+    private func undo(_ e: LedgerState.Entry) async {
         guard let pw = session.password else {
             show("先解锁家长模式才能撤销")
             return

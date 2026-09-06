@@ -49,8 +49,8 @@ enum Api {
         _ = try await request("api/login", body: ["u": user, "p": password])
     }
 
-    static func state(timeout: TimeInterval = 20) async throws -> State {
-        try State(json: await request("api/state", timeout: timeout))
+    static func state(timeout: TimeInterval = 20) async throws -> LedgerState {
+        try LedgerState(json: await request("api/state", timeout: timeout))
     }
 
     /// 预览 —— **和记账走的是服务端同一个 compute()**，这里只发规则和输入。
@@ -173,7 +173,7 @@ enum Api {
 
 /// 可编辑配置的投影 —— 管理面用。
 struct Config {
-    var subjects: [State.Subject]
+    var subjects: [LedgerState.Subject]
     var rules: [[String: Any]]      // 保持原始字典：规则的字段随 kind 变，
     var shop: [[String: Any]]       // 强类型化会在「服务端加了个字段」时把它吃掉
     var tiers: [[String: Any]]
@@ -181,7 +181,7 @@ struct Config {
 
     init(json: [String: Any]) {
         subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
-            State.Subject(id: $0["k"] as? String ?? "",
+            LedgerState.Subject(id: $0["k"] as? String ?? "",
                           name: $0["name"] as? String ?? "",
                           icon: $0["icon"] as? String ?? "")
         }
@@ -194,7 +194,7 @@ struct Config {
 
 /// `/api/state` 的投影 —— 只取第一屏真用得上的字段。
 /// 用不上的(rules/subjects/shop/calcs)先不解析：解析了就得维护，而它们要等家长面才用。
-struct State {
+struct LedgerState {
     let user: String
     let nick: String
     let balance: Int
@@ -382,7 +382,7 @@ struct State {
 ///   fixed {rule} · per {rule,n} · range {rule,pts} · calc {rule,inputs} · tv {rule,n}
 /// **这里只组装参数，不算分。**
 struct RuleInput {
-    let rule: State.Rule
+    let rule: LedgerState.Rule
     var n: Int = 0                    // per / tv
     var pts: Int = 0                  // range
     var inputs: [String: String] = [:] // calc

@@ -14,7 +14,7 @@ struct ProfileEditView: View {
     @State private var busy = false
     @State private var err: String?
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     private let cols = [GridItem(.adaptive(minimum: 56), spacing: 12)]

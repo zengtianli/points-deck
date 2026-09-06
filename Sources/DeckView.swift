@@ -6,7 +6,7 @@ struct DeckView: View {
     @EnvironmentObject var store: Store
     @State private var shown: Double = 0
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
@@ -130,7 +130,7 @@ struct DeckView: View {
     }
 
     /// 三种币种走同一条时间线(服务端如此)，所以单位要跟着条目走，不能一律写「分」。
-    private func sign(_ e: State.Entry) -> String {
+    private func sign(_ e: LedgerState.Entry) -> String {
         let unit = e.cur == "tv" ? " 分钟" : (e.cur == "wish" ? " 次" : "")
         return (e.pts >= 0 ? "+" : "") + "\(e.pts)" + unit
     }

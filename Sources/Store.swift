@@ -7,7 +7,7 @@ final class Store: ObservableObject {
     enum Phase { case checking, loggedOut, loggedIn }
 
     @Published var phase: Phase = .checking
-    @Published var state: State?
+    @Published var state: LedgerState?
     @Published var error: String?
     @Published var busy = false
 
@@ -93,7 +93,7 @@ final class Store: ObservableObject {
 
     /// 比对档位。**装完 app 第一次**拿到状态时只记不庆（没有基准，谈不上「升」了）；
     /// 之后就算 app 被关掉过，升档照样庆祝 —— 基准在盘上。
-    private func noteTier(_ fresh: State) {
+    private func noteTier(_ fresh: LedgerState) {
         defer { lastTier = fresh.tier }
         guard let old = lastTier, fresh.tier > old else { return }
         promoted = fresh.houseName

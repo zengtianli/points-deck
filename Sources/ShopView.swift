@@ -8,9 +8,9 @@ struct ShopView: View {
     @EnvironmentObject var store: Store
     @State private var busy: String?
     @State private var toast: String?
-    @State private var confirming: State.ShopItem?
+    @State private var confirming: LedgerState.ShopItem?
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
@@ -61,7 +61,7 @@ struct ShopView: View {
     /// 一件商品有两种买不了：**没到档位**（锁着）和**分不够**。
     /// 这两种必须在界面上区分开 —— 都显示成「还差 N 分」的话，
     /// 孩子攒够了分点下去仍然失败，那就成了骗人的进度条。
-    private func card(_ item: State.ShopItem) -> some View {
+    private func card(_ item: LedgerState.ShopItem) -> some View {
         let unlocked = s?.isUnlocked(item.id) ?? true
         let afford = (s?.balance ?? 0) >= item.pts
         let need = s?.tierRequiring(item.id)
@@ -106,7 +106,7 @@ struct ShopView: View {
         .disabled(!usable || busy != nil)
     }
 
-    private func spend(_ item: State.ShopItem) async {
+    private func spend(_ item: LedgerState.ShopItem) async {
         busy = item.id; defer { busy = nil }
         do {
             try await Api.spend(item: item.id)

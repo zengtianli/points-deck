@@ -25,7 +25,7 @@ struct AccountView: View {
     @State private var deletePw = ""
     @State private var deleteErr: String?
 
-    private var s: State? { store.state }
+    private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
@@ -189,7 +189,7 @@ struct AccountView: View {
     }
 
     @ViewBuilder
-    private func nextReward(_ t: State.Tier) -> some View {
+    private func nextReward(_ t: LedgerState.Tier) -> some View {
         let items = (s?.shop ?? []).filter { t.unlock.contains($0.id) }
         if t.bonus > 0 || !items.isEmpty {
             VStack(alignment: .leading, spacing: 4) {
