@@ -9,8 +9,25 @@
 # 运行时零外部请求；图缺了自动退回纯色主题(fail-soft，见 Skin.swift)。
 set -euo pipefail
 
+ROOT="$(cd "$(dirname "$0")" && pwd)"
 SRC="${EDU_SKINS:-$HOME/Edu/points/skins}"
-DST="$(cd "$(dirname "$0")" && pwd)/Resources/Skins"
+DST="$ROOT/Resources/Skins"
+
+# Cloud/new checkouts consume a pinned export of the source artwork.
+# The release contains only five illustrations and the runtime skin config.
+if [ -z "${EDU_SKINS:-}" ] && { [ "${CI:-}" = "TRUE" ] || [ ! -d "$SRC" ]; }; then
+  SRC="$ROOT/.build-inputs/skins"
+  mkdir -p "$SRC"
+  read -r digest url < "$ROOT/ci_scripts/skins.lock"
+  archive="$ROOT/.build-inputs/skins.tar.gz"
+  if [ ! -f "$archive" ]; then
+    curl --fail --location --retry 2 "$url" -o "$archive.part"
+    printf '%s  %s\n' "$digest" "$archive.part" | shasum -a 256 -c -
+    mv "$archive.part" "$archive"
+  fi
+  printf '%s  %s\n' "$digest" "$archive" | shasum -a 256 -c -
+  tar -xzf "$archive" -C "$SRC"
+fi
 
 [ -d "$SRC" ] || { echo "❌ 找不到皮肤源 $SRC" >&2; exit 1; }
 mkdir -p "$DST"
