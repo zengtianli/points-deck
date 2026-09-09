@@ -44,3 +44,6 @@ handoffs/
 
 # Local App Review evidence; may contain private recordings.
 /review/
+
+# Superseded local artifacts
+/archived/
