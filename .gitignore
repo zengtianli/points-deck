@@ -12,7 +12,7 @@ PointsDeck.xcodeproj/
 # 同理:Widget/Info.plist 是 project.yml 的 info.properties 生成的，不是手写的
 Widget/Info.plist
 
-# 时代底图:SSOT 在 ~/Edu/points/skins/，这里只是构建时同步来的副本。
+# 时代底图:SSOT 在 ~/Apps/edu/web/points/skins/，这里只是构建时同步来的副本。
 # 存进仓就是第二份，改了图两边会漂。clone 之后跑 bash sync-skins.sh 就有了
 # （构建也会自动跑一次，缺源直接失败）。
 # 目录里的 README.md 要进仓 —— 只为让目录存在，否则 xcodegen 会因
@@ -37,6 +37,7 @@ shots/
 # ── 公开仓不带的内部件（本地仍在，只是不跟踪；oss_prep.py 维护）──
 CLAUDE.md
 catalog.yaml
+project.yaml
 .claude/
 handoffs/
 # README 截图白名单（git-template 的 info/exclude 默认拦 *.png）
