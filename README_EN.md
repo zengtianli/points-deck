@@ -36,7 +36,7 @@ Made for children: 11 value tiers map to illustrations across 5 eras, making the
 
 Email registration and separate family ledgers are supported. The iOS edition is preparing for App Store release and is not yet publicly downloadable.
 
-The era illustration backgrounds come from the author’s `~/Edu` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
+The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
 ## Build
 
