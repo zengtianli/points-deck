@@ -16,8 +16,8 @@ targets:
   PointsDeck:
     type: application
     supportedDestinations: [iOS, macOS]
-    # 每次构建前从 ~/Edu 同步一次时代底图。
-    # 为什么不把图提交进仓:图的 SSOT 在 ~/Edu/points/skins/(那边有生图 prompt、seed、
+    # 每次构建前从 ~/Apps/edu/web 同步一次时代底图。
+    # 为什么不把图提交进仓:图的 SSOT 在 ~/Apps/edu/web/points/skins/(那边有生图 prompt、seed、
     # 皮肤清单门)，仓里存一份副本就是第二份，改了图两边会漂。
     # 为什么必须挂在构建前:漏同步的表现是**编译通过、装上能跑、只是没有背景** ——
     # 那种缺陷不会报错，只会被当成「设计就这样」。缺源时脚本 exit 1，构建直接失败。

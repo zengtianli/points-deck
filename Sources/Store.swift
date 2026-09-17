@@ -12,7 +12,7 @@ final class Store: ObservableObject {
     @Published var busy = false
 
     /// 刚刚升档到了哪一档 —— 非 nil 时界面弹「乔迁新居」。
-    /// **只庆不罚**：回落一声不吭(~/Edu 的规矩，页面本身已经在说话了)。
+    /// **只庆不罚**：回落一声不吭(~/Apps/edu/web 的规矩，页面本身已经在说话了)。
     @Published var promoted: String?
 
     /// 上一次看到的档位序号。**存盘而不是只放内存** —— 最常见的升档场景是

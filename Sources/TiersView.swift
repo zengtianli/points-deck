@@ -9,7 +9,7 @@ import SwiftUI
 /// 然后知道那要 40000 分。
 ///
 /// 阈值与权益全部来自 `/api/state` 的 `ladder`，SSOT 在
-/// `~/Edu/points/skins/skins.json`。这里一个数字都不许写死。
+/// `~/Apps/edu/web/points/skins/skins.json`。这里一个数字都不许写死。
 struct TiersView: View {
     @EnvironmentObject var store: Store
     @Environment(\.dismiss) private var dismiss

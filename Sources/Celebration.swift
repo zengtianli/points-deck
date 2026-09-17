@@ -6,7 +6,7 @@ import UIKit
 /// 「乔迁新居」—— 升档时的庆祝。
 ///
 /// 这是原生相对网页真正拿得到的东西之一：CSS 换个 class 和一次带触感的转场，
-/// 观感差一个量级。**只庆不罚** —— 回落不弹（~/Edu 的规矩）。
+/// 观感差一个量级。**只庆不罚** —— 回落不弹（~/Apps/edu/web 的规矩）。
 struct CelebrationView: View {
     let houseName: String
     let era: Era

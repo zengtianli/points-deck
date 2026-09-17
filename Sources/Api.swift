@@ -2,7 +2,7 @@ import Foundation
 
 /// 账本客户端 —— **只发请求，不算分**。
 ///
-/// 分值一律服务端算(~/Edu 立的铁律，本 app 继承)：预览也走 /api/preview。
+/// 分值一律服务端算(~/Apps/edu/web 立的铁律，本 app 继承)：预览也走 /api/preview。
 /// 两边各算各的迟早算出不同的数，而家长看到的是预览、孩子拿到的是记账。
 /// 所以这个文件里不许出现任何一条规则的分值。
 enum Api {
@@ -213,7 +213,7 @@ struct LedgerState {
     let shop: [ShopItem]
     let practiceLeft: Int
     /// 整条家园阶梯（含每档权益）—— 等级总览页要把 11 档全摊开。
-    /// ⚠ 阈值与权益的 SSOT 在 ~/Edu/points/skins/skins.json，这里只是它的投影。
+    /// ⚠ 阈值与权益的 SSOT 在 ~/Apps/edu/web/points/skins/skins.json，这里只是它的投影。
     /// **不许在端上补一份**：加一档、改一个红包数，端上什么都不用动。
     let ladder: [Tier]
     /// 当前已解锁的商品 id。服务端算的 —— 端上藏按钮只是观感，

@@ -11,7 +11,7 @@ import SwiftUI
 ///    进程一死就没了 —— 所以「孩子拿到手机」时它必然是锁着的。
 /// ② 切后台超过 `idleLimit` 自动上锁。家长解锁完随手把手机放桌上，
 ///    这是最现实的泄漏场景，比「被猜到密码」现实得多。
-/// ③ 服务端语义不变：每次记账仍然**带着密码发一次**（~/Edu 的「管理密码不发 cookie」
+/// ③ 服务端语义不变：每次记账仍然**带着密码发一次**（~/Apps/edu/web 的「管理密码不发 cookie」
 ///    是有意的）。变的只是密码从内存拿，而不是每次弹框问。
 @MainActor
 final class ParentSession: ObservableObject {

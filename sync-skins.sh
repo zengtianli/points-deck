@@ -1,16 +1,16 @@
 #!/bin/bash
-# 把 ~/Edu/points/skins/ 的时代底图与阈值表同步进 app bundle。
+# 把 ~/Apps/edu/web/points/skins/ 的时代底图与阈值表同步进 app bundle。
 #
-# 为什么是脚本不是手工拷：底图的 SSOT 在 ~/Edu(那边有生图 prompt、seed、
+# 为什么是脚本不是手工拷：底图的 SSOT 在 ~/Apps/edu/web(那边有生图 prompt、seed、
 # 皮肤清单门 skin_check.py 盯着)。这边只是**取一份副本装进 bundle**，
 # 换了图重跑一次即可,不用记得手工再拷一遍。
 #
-# 为什么装进 bundle 而不是运行时下载：底图是离线资产(~/Edu 的既定规矩)，
+# 为什么装进 bundle 而不是运行时下载：底图是离线资产(~/Apps/edu/web 的既定规矩)，
 # 运行时零外部请求；图缺了自动退回纯色主题(fail-soft，见 Skin.swift)。
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
-SRC="${EDU_SKINS:-$HOME/Edu/points/skins}"
+SRC="${EDU_SKINS:-$HOME/Apps/edu/web/points/skins}"
 DST="$ROOT/Resources/Skins"
 
 # Cloud/new checkouts consume a pinned export of the source artwork.

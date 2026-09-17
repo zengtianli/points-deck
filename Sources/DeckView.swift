@@ -34,7 +34,7 @@ struct DeckView: View {
 
     /// 天际线底图带 —— 「住什么房」这件事**得看得见**，不能只是一行字。
     /// 11 档房名映射到 5 个时代(skins.json 的 era)，所以小木屋与砖瓦房共用一张图 ——
-    /// 那是 ~/Edu 既定的美术分档，不在端上另立一套。
+    /// 那是 ~/Apps/edu/web 既定的美术分档，不在端上另立一套。
     @ViewBuilder
     private var banner: some View {
         if let img = era.banner {

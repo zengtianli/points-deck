@@ -1,9 +1,9 @@
 # 时代底图（同步来的，不是手写的）
 
 这里的 `*.jpg` 与 `skins.json` 由 `../../sync-skins.sh` 从
-`~/Edu/points/skins/` 同步而来，**不进 git**：
+`~/Apps/edu/web/points/skins/` 同步而来，**不进 git**：
 
-- 图的 SSOT 在 `~/Edu`（那边有生图 prompt、seed、皮肤清单门 `skin_check.py` 盯着）
+- 图的 SSOT 在 `~/Apps/edu/web`（那边有生图 prompt、seed、皮肤清单门 `skin_check.py` 盯着）
 - 仓里存一份副本就是第二份，改了图两边会漂
 
 **这个 README 进仓**，只为让目录存在 —— xcodegen 的 `sources` 引用一个不存在的

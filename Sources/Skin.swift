@@ -6,7 +6,7 @@ import UIKit
 /// 五个视觉时代的配色。
 ///
 /// ⚠ **这里没有、也不许有阈值。** 「多少分算哪一档」的 SSOT 是
-/// `~/Edu/points/skins/skins.json` 的 `tiers`，由 server.py 读、随 `/api/state` 的
+/// `~/Apps/edu/web/points/skins/skins.json` 的 `tiers`，由 server.py 读、随 `/api/state` 的
 /// `house.era` 下发。本文件只负责「拿到 era 之后长什么样」——
 /// 视觉是端上的事，档位不是。写第二份阈值表就意味着加一档要改两处。
 enum Era: String, CaseIterable {
@@ -107,7 +107,7 @@ enum Era: String, CaseIterable {
     }
 
     /// 这个时代的天际线底图（`Resources/Skins/<era>.jpg`，由 sync-skins.sh 从
-    /// ~/Edu/points/skins/ 同步而来，是 Seedream 离线生成的资产、不是运行时生图）。
+    /// ~/Apps/edu/web/points/skins/ 同步而来，是 Seedream 离线生成的资产、不是运行时生图）。
     ///
     /// 取不到就返回 nil，界面退回纯色主题 —— **fail-soft 是有意的**：
     /// 底图是锦上添花，缺一张不该让整个账本打不开。
