@@ -1,3 +1,5 @@
+**中文** | [English](README_EN.md)
+
 <p align="center"><img src="Resources/icon-1024.png" width="96" alt="成长小金库"></p>
 
 # 成长小金库 · points-deck
