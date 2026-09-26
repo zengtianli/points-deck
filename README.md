@@ -32,7 +32,7 @@
 
 ## 怎么拿到
 
-已支持邮箱注册与独立家庭账本；iOS 版正在准备 App Store 发布，暂未开放公开下载。
+已支持邮箱注册与独立家庭账本；iOS 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布。2026-09-26 官方构建回读为 1.0（2），见[发行记录](perf/asc-release.json)；手机当前装机版本与运行性能仍待真机核验。
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 

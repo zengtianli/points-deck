@@ -34,7 +34,7 @@ Made for children: 11 value tiers map to illustrations across 5 eras, making the
 
 ## Availability
 
-Email registration and separate family ledgers are supported. The iOS edition is preparing for App Store release and is not yet publicly downloadable.
+Email registration and separate family ledgers are supported. The iOS edition is available on the [App Store](https://apps.apple.com/app/id6806799638). The official build readback on 2026-09-26 identifies version 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
