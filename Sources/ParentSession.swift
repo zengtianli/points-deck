@@ -54,14 +54,14 @@ final class ParentSession: ObservableObject {
     }
 
     /// 切到后台记一下时刻；回前台时超时就锁。
-    func scenePhaseChanged(to phase: ScenePhase) {
+    func scenePhaseChanged(to phase: ScenePhase, at now: Date = Date()) {
         guard isUnlocked else { return }
         switch phase {
         case .active:
-            if let t = leftAt, Date().timeIntervalSince(t) > Self.idleLimit { lock() }
+            if let t = leftAt, now.timeIntervalSince(t) > Self.idleLimit { lock() }
             leftAt = nil
         case .background, .inactive:
-            if leftAt == nil { leftAt = Date() }
+            if leftAt == nil { leftAt = now }
         @unknown default:
             break
         }
