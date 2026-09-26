@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "app_id": "points-deck-ios",
+  "environment": "simulator",
+  "measured_at": "2026-09-27T00:02:35.838143+08:00",
+  "version": "1.0 (1)",
+  "configuration": "Release",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "binary_sha256": "3b90e31b5ca1ebac127c92f5706ad375ea9a2da6c54e1a73aad1e8fbef48d1ce",
+  "source": {
+    "input_globs": [
+      "Sources/**",
+      "Shared/**",
+      "Resources/**",
+      "Widget/**",
+      "ShareExtension/**",
+      "project.yml",
+      "*.entitlements"
+    ],
+    "sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
+    "file_count": 54,
+    "commit": "c209f8bf3a67e99dc14e960eff14df1e6e0e55bb",
+    "dirty_scope": "组件当前 Git 工作树；跨仓/软链输入的实际内容由 sha256 核验",
+    "dirty": false
+  },
+  "app_path": "~/Apps/edu/ios/points/01-源程序/.dd-sim/Build/Products/Release-iphonesimulator/PointsDeck.app",
+  "simulator_udid": "C6F5D655-20E3-4CEE-89FF-3C8C20AB6D3B",
+  "simulator_device": "iPhone 17 Pro",
+  "simulator_os": "iOS 27.0",
+  "host": "Mac16,12 / Apple M4 / macOS 27.2",
+  "load_average_at_start": [
+    4.20703125,
+    15.8056640625,
+    27.44140625
+  ],
+  "host_memory_pressure_level": "2",
+  "host_swap_usage": "total = 10240.00M  used = 9102.31M  free = 1137.69M  (encrypted)",
+  "measurement_tool_sha256": "0393a632f3e0a2d2551ecb173704f195c3f9da743d0a49bad0492c1e0b669698",
+  "scope": "Simulator App process only; excludes CoreSimulator, Simulator GUI, system services and inactive extensions",
+  "data": "Fresh app container on isolated simulator; default first-run data; no production user data imported",
+  "build_receipt": {
+    "exit": 0,
+    "configuration": "Release",
+    "command": [
+      "xcrun",
+      "xcodebuild",
+      "-project",
+      "PointsDeck.xcodeproj",
+      "-scheme",
+      "PointsDeck",
+      "-configuration",
+      "Release",
+      "-sdk",
+      "iphonesimulator",
+      "-destination",
+      "id=C6F5D655-20E3-4CEE-89FF-3C8C20AB6D3B",
+      "-derivedDataPath",
+      "~/Apps/edu/ios/points/01-源程序/.dd-sim",
+      "CODE_SIGNING_ALLOWED=NO",
+      "build"
+    ],
+    "seconds": 16.84,
+    "source_before_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
+    "source_after_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
+    "source_unchanged": true,
+    "load_average_after_build": [
+      4.20703125,
+      15.8056640625,
+      27.44140625
+    ]
+  },
+  "size": {
+    "download_bytes": 3979225,
+    "installed_bytes": 8785920,
+    "kind": "Local simulator .app ZIP; not an App Store IPA or device slice"
+  },
+  "installed_binary_sha256": "3b90e31b5ca1ebac127c92f5706ad375ea9a2da6c54e1a73aad1e8fbef48d1ce",
+  "launch": {
+    "samples": [
+      {
+        "ms": 1228.647332998662,
+        "pid": 66576
+      },
+      {
+        "ms": 111.68349999934435,
+        "pid": 66611
+      },
+      {
+        "ms": 116.18620899753296,
+        "pid": 66635
+      }
+    ],
+    "median_ms": 116.18620899753296,
+    "runs": 3,
+    "command": [
+      "xcrun",
+      "simctl",
+      "launch",
+      "C6F5D655-20E3-4CEE-89FF-3C8C20AB6D3B",
+      "cyou.tianli.pointsdeck"
+    ],
+    "foreground_request": "simctl default; --background not supplied",
+    "method": "simctl launch wall time through process PID acknowledgement after terminate; includes CLI overhead and warm filesystem cache; not first-frame or interactive-ready time",
+    "limitations": "Process acknowledgement only, not first-frame/interactive readiness; host load is included in raw evidence."
+  },
+  "process_before_cpu": "66635 43585 Sun Sep 27 00:02:40 2026     Ss   ~/Library/Developer/CoreSimulator/Devices/C6F5D655-20E3-4CEE-89FF-3C8C20AB6D3B/data/Containers/Bundle/Application/88CDD197-1CF4-4708-8C0E-4EDE8BF9BC29/PointsDeck.app/PointsDeck",
+  "idle": {
+    "process": "66635",
+    "footprint_mb": 22.0,
+    "cpu_pct": 0.0,
+    "window_s": 60,
+    "settle_s": 45,
+    "method": "Shared measure.py: CPU time delta / 60s wall; 3 phys_footprint samples after CPU window, maximum reported",
+    "scope": "Simulator App process only; excludes CoreSimulator, Simulator GUI, system services and inactive extensions",
+    "limitations": "Post-launch simulator process sampling; simctl requested foreground by default; UIApplication/RunningBoard activation state was not observed and this is not a complete foreground business test."
+  },
+  "process_after_cpu": "66635 43585 Sun Sep 27 00:02:40 2026     Ss   ~/Library/Developer/CoreSimulator/Devices/C6F5D655-20E3-4CEE-89FF-3C8C20AB6D3B/data/Containers/Bundle/Application/88CDD197-1CF4-4708-8C0E-4EDE8BF9BC29/PointsDeck.app/PointsDeck",
+  "source_unchanged_during_measurement": true,
+  "binary_unchanged_during_measurement": true,
+  "completed_at": "2026-09-27T00:04:31.201927+08:00"
+}
