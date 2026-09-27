@@ -25,13 +25,26 @@
   },
   "speed_gui": [
     {
-      "key": "process_launch_ms",
-      "label": "simctl launch 返回 PID（非首屏可交互）",
-      "label_en": "simctl launch PID acknowledgement (not interactive readiness)",
-      "median_ms": 116.19,
-      "runs": 3,
-      "method": "simctl launch wall time through process PID acknowledgement after terminate; includes CLI overhead and warm filesystem cache; not first-frame or interactive-ready time",
-      "limitations": "Process acknowledgement only, not first-frame/interactive readiness; host load is included in raw evidence."
+      "key": "first_screen_ready",
+      "label": "模拟器冷启动到首屏就绪",
+      "label_en": "Simulator cold launch to first screen ready",
+      "median_ms": 342.2,
+      "runs": 5,
+      "headline": true,
+      "method": "Simulator unified log: CoreSimulator \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" (app committed its first scene content) / FrontBoard \"Dropping launch assertion\" (launch finished). App process terminated 3 s before each run; system caches warm; first run after install discarded. Median of 5 runs. Reference on the same simulator: system Settings app 2517.9 ms to ready.",
+      "evidence": "perf/raw/simulator-launch-20260927.json",
+      "evidence_sha256": "b54d3f5505932e10d68fbf3d04da9ddaa2bcafc1520fd3dfac6c8fb8490514b6"
+    },
+    {
+      "key": "launch_complete",
+      "label": "模拟器冷启动到系统判定启动完成",
+      "label_en": "Simulator cold launch to launch completed",
+      "median_ms": 1320.9,
+      "runs": 5,
+      "headline": false,
+      "method": "Simulator unified log: CoreSimulator \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" (app committed its first scene content) / FrontBoard \"Dropping launch assertion\" (launch finished). App process terminated 3 s before each run; system caches warm; first run after install discarded. Median of 5 runs. Reference on the same simulator: system Settings app 2517.9 ms to ready.",
+      "evidence": "perf/raw/simulator-launch-20260927.json",
+      "evidence_sha256": "b54d3f5505932e10d68fbf3d04da9ddaa2bcafc1520fd3dfac6c8fb8490514b6"
     }
   ],
   "runtime_measurement": {
@@ -49,5 +62,13 @@
     "actual_build": true
   },
   "scope": "Simulator App process only; excludes CoreSimulator, Simulator GUI, system services and inactive extensions",
-  "limitations": "模拟器应用进程占用，排除 Simulator/CoreSimulator 系统开销；此 ZIP 不是 App Store 下载包。后台与业务任务峰值未在本次测量。"
+  "limitations": "模拟器应用进程占用，排除 Simulator/CoreSimulator 系统开销；此 ZIP 不是 App Store 下载包。后台与业务任务峰值未在本次测量。",
+  "speed_measured_at": "2026-09-27T14:17:07.956961+08:00",
+  "speed_build": {
+    "version": "1.0 (1)",
+    "configuration": "Release",
+    "binary_sha256": "f99543626defbcfe790ad649fc810d33a3bbb5ec278a7d3a9b1a40575365b7bb",
+    "input_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
+    "source_same_as_idle_measurement": true
+  }
 }

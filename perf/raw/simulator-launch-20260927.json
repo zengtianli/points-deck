@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "app_id": "points-deck-ios",
+  "environment": "simulator",
+  "mode": "launch",
+  "measured_at": "2026-09-27T14:17:07.956961+08:00",
+  "version": "1.0 (1)",
+  "configuration": "Release",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "binary_sha256": "f99543626defbcfe790ad649fc810d33a3bbb5ec278a7d3a9b1a40575365b7bb",
+  "build_receipt": {
+    "configuration": "Release",
+    "seconds": 15.5,
+    "source_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
+    "source_unchanged": true,
+    "built_from": "working tree"
+  },
+  "git_head": "e91692367355a97d6577ad2aa6cf2d758c9e0ac9",
+  "simulator_device": "iPhone 17 Pro",
+  "simulator_os": "iOS 27.0",
+  "host": "Mac16,12 / Apple M4 / macOS 27.2",
+  "load_average_at_start": [
+    3.2294921875,
+    15.64501953125,
+    36.51171875
+  ],
+  "measurement_tool_sha256": "0393a632f3e0a2d2551ecb173704f195c3f9da743d0a49bad0492c1e0b669698",
+  "probe_sha256": "04e8e990c1a6c393d9b49bf91ac8b4f799588f181ea10657f38517cdf281c129",
+  "scope": "Simulator App process only; excludes CoreSimulator, Simulator GUI, system services and inactive extensions",
+  "launch": {
+    "samples": [
+      {
+        "run": 0,
+        "pid": 96456,
+        "host_call_epoch": 1790489831.1457589,
+        "request_to_ready_ms": 1412.3,
+        "request_to_launch_complete_ms": 1856.7
+      },
+      {
+        "run": 1,
+        "pid": 96753,
+        "host_call_epoch": 1790489839.612512,
+        "request_to_ready_ms": 342.2,
+        "request_to_launch_complete_ms": 1320.9
+      },
+      {
+        "run": 2,
+        "pid": 96850,
+        "host_call_epoch": 1790489847.739279,
+        "request_to_ready_ms": 349.0,
+        "request_to_launch_complete_ms": 1322.1
+      },
+      {
+        "run": 3,
+        "pid": 96960,
+        "host_call_epoch": 1790489855.8587992,
+        "request_to_ready_ms": 341.7,
+        "request_to_launch_complete_ms": 1314.5
+      },
+      {
+        "run": 4,
+        "pid": 97182,
+        "host_call_epoch": 1790489863.995019,
+        "request_to_ready_ms": 329.0,
+        "request_to_launch_complete_ms": 1307.8
+      },
+      {
+        "run": 5,
+        "pid": 97331,
+        "host_call_epoch": 1790489872.1242821,
+        "request_to_ready_ms": 354.1,
+        "request_to_launch_complete_ms": 1324.2
+      }
+    ],
+    "discarded_runs": 1,
+    "runs": 5,
+    "ready_median_ms": 342.2,
+    "launch_complete_median_ms": 1320.9,
+    "method": "Simulator unified log: CoreSimulator \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" (app committed its first scene content) / FrontBoard \"Dropping launch assertion\" (launch finished). App process terminated 3 s before each run; system caches warm; first run after install discarded.",
+    "marker_lines": {
+      "0": [
+        {
+          "timestamp": "2026-09-27 14:17:11.230240+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:11.467124+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 96456"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:12.642537+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:13.086912+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:96456] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:13.384253+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:96456] Dropping launch assertion."
+        }
+      ],
+      "1": [
+        {
+          "timestamp": "2026-09-27 14:17:19.720814+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:19.750780+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 96753"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:20.063024+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:21.041740+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:96753] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:21.074956+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:96753] Dropping launch assertion."
+        }
+      ],
+      "2": [
+        {
+          "timestamp": "2026-09-27 14:17:27.850871+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:27.888985+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 96850"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:28.199828+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:29.172976+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:96850] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:29.212322+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:96850] Dropping launch assertion."
+        }
+      ],
+      "3": [
+        {
+          "timestamp": "2026-09-27 14:17:35.967219+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:36.003474+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 96960"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:36.308931+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:37.281720+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:96960] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:37.323355+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:96960] Dropping launch assertion."
+        }
+      ],
+      "4": [
+        {
+          "timestamp": "2026-09-27 14:17:44.101500+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:44.136743+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 97182"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:44.430460+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:45.409310+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:97182] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:45.439374+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:97182] Dropping launch assertion."
+        }
+      ],
+      "5": [
+        {
+          "timestamp": "2026-09-27 14:17:52.215051+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:52.243416+0800",
+          "process": "CoreSimulatorBridge",
+          "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 97331"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:52.569128+0800",
+          "process": "SpringBoard",
+          "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+        },
+        {
+          "timestamp": "2026-09-27 14:17:53.539300+0800",
+          "process": "SpringBoard",
+          "message": "[app<cyou.tianli.pointsdeck>:97331] Dropping launch assertion."
+        },
+        {
+          "timestamp": "2026-09-27 14:17:53.572641+0800",
+          "process": "InputUI",
+          "message": "[app<cyou.tianli.pointsdeck>:97331] Dropping launch assertion."
+        }
+      ]
+    }
+  },
+  "source_unchanged_during_measurement": true,
+  "completed_at": "2026-09-27T14:17:57.162610+08:00",
+  "calibration": {
+    "measured_at": "2026-09-27T14:04:00+08:00",
+    "device": "iPhone 17 Pro / iOS 27.0 Simulator (same device as app runs)",
+    "app": "com.apple.Preferences (system Settings)",
+    "settings_ready_samples_ms": [
+      3626.3,
+      2505.8,
+      2529.9,
+      2517.9,
+      2589.8,
+      2507.6
+    ],
+    "settings_launch_complete_samples_ms": [
+      3424.6,
+      2911.7,
+      2917.7,
+      2906.9,
+      2977.7,
+      2887.3
+    ],
+    "settings_ready_median_ms": 2517.9,
+    "settings_launch_complete_median_ms": 2911.7,
+    "note": "Same probe and markers as the app runs; first sample discarded. Shows the simulator's own launch overhead; not a physical-device figure."
+  },
+  "idle_evidence_kept": "perf/raw/simulator-20260927.json"
+}
