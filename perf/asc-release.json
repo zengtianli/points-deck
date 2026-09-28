@@ -9,6 +9,16 @@
   "build_id": "39708603-ce63-4169-a649-790e865a6c2e",
   "processing_state": "VALID",
   "device_install_verified": false,
-  "source_commit": null,
-  "source_note": "Apple 构建及体积已回读；尚未建立当前本机源码与该发行二进制的来源映射。"
+  "source_commit": "249ad80a1b307d7b5c291e914b5af5012597532d",
+  "source_note": "发行二进制来源：Xcode Cloud 第 2 次运行按提交 249ad80a 构建并上传（ASC API 回读）。之后源码仅一处不改变行为的整理（ParentSession.scenePhaseChanged 增加可注入时间参数，默认当前时间）与注释路径更新。",
+  "source_kind_detail": {
+    "builder": "Xcode Cloud",
+    "ci_product_id": "5cf41782-b5fc-4beb-ac13-7ab4979b928b",
+    "workflow": "App Store iOS",
+    "build_run_number": 2,
+    "build_run_commit": "249ad80a1b307d7b5c291e914b5af5012597532d",
+    "uploaded": "2026-09-06T00:13:53-07:00",
+    "verified_at": "2026-09-29T01:28:13+08:00",
+    "method": "ASC API ciProducts/{id}/buildRuns → ciBuildRuns/{id}/builds 中含该 build_id"
+  }
 }
