@@ -6,7 +6,7 @@ options:
 settings:
   base:
     APP_DISPLAY_NAME: 成长小金库
-    MARKETING_VERSION: "1.0"
+    MARKETING_VERSION: "1.0.1"
     CODE_SIGN_STYLE: Automatic
     # 2026-08-29 起已开通付费 Developer Program(团队 B9LJH93LA4),不再留空走免费 Personal Team。
     DEVELOPMENT_TEAM: B9LJH93LA4
@@ -72,6 +72,9 @@ targets:
       path: Widget/Info.plist
       properties:
         CFBundleDisplayName: "$(APP_DISPLAY_NAME)"
+        # 扩展版本必须与主 App 一致（App Store 拒收不一致的包）；不写时 xcodegen 默认填 1.0。
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
         NSExtension:
           NSExtensionPointIdentifier: com.apple.widgetkit-extension
     sources:
