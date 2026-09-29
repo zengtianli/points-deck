@@ -1,24 +1,40 @@
 {
-  "version": "1.0",
-  "build": "2",
+  "version": "1.0.1",
+  "build": "8",
   "source_kind": "app_store_connect",
-  "distribution": "App Store",
-  "queried_at": "2026-09-26T19:24:25.367477+08:00",
+  "distribution": "TestFlight（内测组 family）",
+  "queried_at": "2026-09-29T23:43:35+08:00",
   "app_id": "6806799638",
   "bundle_id": "cyou.tianli.pointsdeck",
-  "build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+  "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
   "processing_state": "VALID",
-  "device_install_verified": false,
-  "source_commit": "249ad80a1b307d7b5c291e914b5af5012597532d",
-  "source_note": "发行二进制来源：Xcode Cloud 第 2 次运行按提交 249ad80a 构建并上传（ASC API 回读）。之后源码仅一处不改变行为的整理（ParentSession.scenePhaseChanged 增加可注入时间参数，默认当前时间）与注释路径更新。",
+  "beta_state": "IN_BETA_TESTING",
+  "device_install_verified": true,
+  "source_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea",
   "source_kind_detail": {
     "builder": "Xcode Cloud",
     "ci_product_id": "5cf41782-b5fc-4beb-ac13-7ab4979b928b",
     "workflow": "App Store iOS",
-    "build_run_number": 2,
-    "build_run_commit": "249ad80a1b307d7b5c291e914b5af5012597532d",
-    "uploaded": "2026-09-06T00:13:53-07:00",
-    "verified_at": "2026-09-29T01:28:13+08:00",
+    "build_run_number": 8,
+    "build_run_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea",
+    "uploaded": "2026-09-28T14:08:01-07:00",
+    "verified_at": "2026-09-29T23:43:35+08:00",
     "method": "ASC API ciProducts/{id}/buildRuns → ciBuildRuns/{id}/builds 中含该 build_id"
+  },
+  "app_store": {
+    "live_version": "1.0",
+    "live_build": "2",
+    "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+    "live_state": "READY_FOR_SALE",
+    "pending_version": "1.0.1",
+    "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
+  },
+  "source_note": "手机装机 1.0.1 (8) 来自 TestFlight；该构建由 Xcode Cloud 第 8 次运行按提交 5de32a2 构建。App Store 在售仍为 1.0 (2)。",
+  "previous": {
+    "version": "1.0",
+    "build": "2",
+    "build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+    "source_commit": "249ad80a1b307d7b5c291e914b5af5012597532d",
+    "distribution": "App Store"
   }
 }
