@@ -110,7 +110,7 @@ Download size is App Store data; memory, CPU and launch time are iOS Simulator m
 
 | Download | Idle memory | Idle CPU | Simulator cold launch to first screen ready |
 |---|---|---|---|
-| **3.1 MB** (installed 4.0 MB) | **23.1 MB** | **0%** | **368 ms** |
+| **3.1 MB** (installed 4.0 MB) | **23.1 MB** | **0%** | **350 ms** |
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
