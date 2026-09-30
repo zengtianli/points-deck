@@ -3,20 +3,20 @@
  "app_id": "points-deck-ios",
  "environment": "simulator",
  "mode": "full",
- "measured_at": "2026-09-30T13:15:10.950455+08:00",
- "completed_at": "2026-09-30T13:27:00.466815+08:00",
+ "measured_at": "2026-09-30T22:43:46.673554+08:00",
+ "completed_at": "2026-09-30T22:51:44.323392+08:00",
  "version": "1.0.1 (1)",
  "configuration": "Release",
  "bundle_id": "cyou.tianli.pointsdeck",
- "binary_sha256": "3025d1b26e1e151f01c8397ef56bf92226a397675e1baac98158bc7ab520fe23",
+ "binary_sha256": "99adfee704697e7fec264db38023c68135d18fad8c1327b6398f869514b3b82b",
  "build_receipt": {
   "configuration": "Release",
-  "seconds": 96.6,
+  "seconds": 16.4,
   "xcode": "Xcode.app",
-  "source_sha256": "0558aeb23b4fc5e58e5c7056206551515ec52f82022d5a15a287f1fcaff883f8",
-  "source_file_count": 54,
+  "source_sha256": "306f8991b3fc8b7436daa37d382051c02ee55f63ce0605f674d06123bcc20075",
+  "source_file_count": 55,
   "source_dirty": false,
-  "git_head": "236221a8f30d1326a3490c42cd155fe5f9e4c7af",
+  "git_head": "12594307b6d72360a7a1e575658e4999dd342400",
   "built_from": "working-tree copy (exactly the files app_sop hashes as sop.source)",
   "source_unchanged": true
  },
@@ -25,24 +25,24 @@
  "simulator_udid": "64736945-A931-47F2-A7E3-E2B23851F42A",
  "host": "Mac16,12 / Apple M4 / macOS 27.2",
  "load_average_at_start": [
-  6.47021484375,
-  28.42822265625,
-  21.2763671875
+  3.53076171875,
+  4.00537109375,
+  8.08984375
  ],
  "load_average_before_launches": [
-  10.44287109375,
-  80.05615234375,
-  66.591796875
+  13.65087890625,
+  39.0712890625,
+  27.71240234375
  ],
  "load_average_after_launches": [
-  7.90478515625,
-  64.7890625,
-  61.884765625
+  10.40380859375,
+  34.25732421875,
+  26.6552734375
  ],
  "load_average_before_idle": [
-  6.599609375,
-  55.6015625,
-  58.64306640625
+  6.76611328125,
+  29.58984375,
+  25.35986328125
  ],
  "load_gates": {
   "start_max": 12.0,
@@ -55,216 +55,216 @@
   "samples": [
    {
     "run": 0,
-    "pid": 79138,
-    "request_to_ready_ms": 1138.3,
-    "request_to_launch_complete_ms": 1610.1,
+    "pid": 63202,
+    "request_to_ready_ms": 1000.4,
+    "request_to_launch_complete_ms": 1596.1,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:23:58.801324+0800",
+      "timestamp": "2026-09-30 22:48:55.852628+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:23:58.977079+0800",
+      "timestamp": "2026-09-30 22:48:56.036862+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79138"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63202"
      },
      {
-      "timestamp": "2026-09-30 13:23:59.939667+0800",
+      "timestamp": "2026-09-30 22:48:56.853059+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:00.411458+0800",
+      "timestamp": "2026-09-30 22:48:57.448681+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79138] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63202] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:00.666269+0800",
+      "timestamp": "2026-09-30 22:48:57.624231+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79138] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63202] Dropping launch assertion."
      }
     ]
    },
    {
     "run": 1,
-    "pid": 79223,
-    "request_to_ready_ms": 411.9,
-    "request_to_launch_complete_ms": 1351.9,
+    "pid": 63411,
+    "request_to_ready_ms": 378.9,
+    "request_to_launch_complete_ms": 1328.0,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:24:10.209679+0800",
+      "timestamp": "2026-09-30 22:49:05.357112+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:24:10.261386+0800",
+      "timestamp": "2026-09-30 22:49:05.389768+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79223"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63411"
      },
      {
-      "timestamp": "2026-09-30 13:24:10.621565+0800",
+      "timestamp": "2026-09-30 22:49:05.736016+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:11.561542+0800",
+      "timestamp": "2026-09-30 22:49:06.685149+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79223] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63411] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:11.619875+0800",
+      "timestamp": "2026-09-30 22:49:06.738292+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79223] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63411] Dropping launch assertion."
      }
     ]
    },
    {
     "run": 2,
-    "pid": 79342,
-    "request_to_ready_ms": 360.2,
-    "request_to_launch_complete_ms": 1319.4,
+    "pid": 63497,
+    "request_to_ready_ms": 340.6,
+    "request_to_launch_complete_ms": 1318.7,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:24:21.868347+0800",
+      "timestamp": "2026-09-30 22:49:14.515516+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:24:21.900709+0800",
+      "timestamp": "2026-09-30 22:49:14.543359+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79342"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63497"
      },
      {
-      "timestamp": "2026-09-30 13:24:22.228580+0800",
+      "timestamp": "2026-09-30 22:49:14.856149+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:23.187710+0800",
+      "timestamp": "2026-09-30 22:49:15.834194+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79342] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63497] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:23.228837+0800",
+      "timestamp": "2026-09-30 22:49:15.868643+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79342] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63497] Dropping launch assertion."
      }
     ]
    },
    {
     "run": 3,
-    "pid": 79557,
-    "request_to_ready_ms": 395.9,
-    "request_to_launch_complete_ms": 1347.5,
+    "pid": 63570,
+    "request_to_ready_ms": 335.3,
+    "request_to_launch_complete_ms": 1314.3,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:24:33.048340+0800",
+      "timestamp": "2026-09-30 22:49:23.698283+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:24:33.096867+0800",
+      "timestamp": "2026-09-30 22:49:23.735977+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79557"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63570"
      },
      {
-      "timestamp": "2026-09-30 13:24:33.444287+0800",
+      "timestamp": "2026-09-30 22:49:24.033556+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:34.395889+0800",
+      "timestamp": "2026-09-30 22:49:25.012579+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79557] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63570] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:34.445891+0800",
+      "timestamp": "2026-09-30 22:49:25.045922+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79557] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63570] Dropping launch assertion."
      }
     ]
    },
    {
     "run": 4,
-    "pid": 79641,
-    "request_to_ready_ms": 355.3,
-    "request_to_launch_complete_ms": 1326.8,
+    "pid": 63652,
+    "request_to_ready_ms": 349.7,
+    "request_to_launch_complete_ms": 1314.3,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:24:43.730695+0800",
+      "timestamp": "2026-09-30 22:49:32.848197+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:24:43.770895+0800",
+      "timestamp": "2026-09-30 22:49:32.877036+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79641"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63652"
      },
      {
-      "timestamp": "2026-09-30 13:24:44.085988+0800",
+      "timestamp": "2026-09-30 22:49:33.197851+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:45.057494+0800",
+      "timestamp": "2026-09-30 22:49:34.162488+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79641] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63652] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:45.099029+0800",
+      "timestamp": "2026-09-30 22:49:34.204648+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79641] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63652] Dropping launch assertion."
      }
     ]
    },
    {
     "run": 5,
-    "pid": 79729,
-    "request_to_ready_ms": 367.7,
-    "request_to_launch_complete_ms": 1333.8,
+    "pid": 63732,
+    "request_to_ready_ms": 354.1,
+    "request_to_launch_complete_ms": 1329.5,
     "markers": [
      {
-      "timestamp": "2026-09-30 13:24:54.315249+0800",
+      "timestamp": "2026-09-30 22:49:41.999529+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n    };\n}"
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    environment =     {\n        TERM = \"xterm-ghostty\";\n    };\n}"
      },
      {
-      "timestamp": "2026-09-30 13:24:54.354817+0800",
+      "timestamp": "2026-09-30 22:49:42.034180+0800",
       "process": "CoreSimulatorBridge",
-      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 79729"
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 63732"
      },
      {
-      "timestamp": "2026-09-30 13:24:54.682985+0800",
+      "timestamp": "2026-09-30 22:49:42.353630+0800",
       "process": "SpringBoard",
       "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
      },
      {
-      "timestamp": "2026-09-30 13:24:55.649002+0800",
+      "timestamp": "2026-09-30 22:49:43.329018+0800",
       "process": "SpringBoard",
-      "message": "[app<cyou.tianli.pointsdeck>:79729] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63732] Dropping launch assertion."
      },
      {
-      "timestamp": "2026-09-30 13:24:55.692748+0800",
+      "timestamp": "2026-09-30 22:49:43.367228+0800",
       "process": "InputUI",
-      "message": "[app<cyou.tianli.pointsdeck>:79729] Dropping launch assertion."
+      "message": "[app<cyou.tianli.pointsdeck>:63732] Dropping launch assertion."
      }
     ]
    }
   ],
   "discarded_runs": 1,
   "runs": 5,
-  "ready_median_ms": 367.7,
-  "launch_complete_median_ms": 1333.8,
+  "ready_median_ms": 349.7,
+  "launch_complete_median_ms": 1318.7,
   "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded."
  },
  "size": {
-  "download_bytes": 5229718,
+  "download_bytes": 5229720,
   "installed_bytes": 10010812,
   "kind": "Local simulator Release .app ZIP / .app bytes; not an App Store IPA or device slice"
  },
  "idle": {
-  "process": "79821",
+  "process": "63814",
   "footprint_mb": 22.0,
   "cpu_pct": 0.0,
   "window_s": 60,

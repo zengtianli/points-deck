@@ -4,17 +4,17 @@
  "platform": "ios",
  "version": "1.0.1 (1)",
  "configuration": "Release",
- "measured_at": "2026-09-30T13:15:10.950455+08:00",
+ "measured_at": "2026-09-30T22:43:46.673554+08:00",
  "device": "iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2",
- "input_sha256": "0558aeb23b4fc5e58e5c7056206551515ec52f82022d5a15a287f1fcaff883f8",
+ "input_sha256": "306f8991b3fc8b7436daa37d382051c02ee55f63ce0605f674d06123bcc20075",
  "data": "Fresh app container on isolated simulator; default first-run data; no production user data imported",
  "size": {
-  "download_bytes": 5229718,
+  "download_bytes": 5229720,
   "installed_bytes": 10010812,
   "kind": "Local simulator Release .app ZIP / .app bytes; not an App Store IPA or device slice"
  },
  "idle": {
-  "process": "79821",
+  "process": "63814",
   "footprint_mb": 22.0,
   "cpu_pct": 0.0,
   "window_s": 60,
@@ -27,23 +27,23 @@
    "key": "first_screen_ready",
    "label": "模拟器冷启动到首屏就绪",
    "label_en": "Simulator cold launch to first screen ready",
-   "median_ms": 367.7,
+   "median_ms": 349.7,
    "runs": 5,
    "headline": true,
    "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded. Median of 5 runs.",
    "evidence": "perf/raw/simulator-full-20260930.json",
-   "evidence_sha256": "1a305270d61ed6e289887a03e39018ea119f1d78ee814f4840cc22e91dcd9094"
+   "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
   },
   {
    "key": "launch_complete",
    "label": "模拟器冷启动到系统判定启动完成",
    "label_en": "Simulator cold launch to launch completed",
-   "median_ms": 1333.8,
+   "median_ms": 1318.7,
    "runs": 5,
    "headline": false,
    "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded. Median of 5 runs.",
    "evidence": "perf/raw/simulator-full-20260930.json",
-   "evidence_sha256": "1a305270d61ed6e289887a03e39018ea119f1d78ee814f4840cc22e91dcd9094"
+   "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
   }
  ],
  "runtime_measurement": {
@@ -52,7 +52,7 @@
   "os": "iOS 27.0",
   "version": "1.0.1 (1)",
   "evidence": "perf/raw/simulator-full-20260930.json",
-  "evidence_sha256": "1a305270d61ed6e289887a03e39018ea119f1d78ee814f4840cc22e91dcd9094"
+  "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
  },
  "build": {
   "configuration": "Release",
@@ -70,5 +70,5 @@
   "input_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
   "source_same_as_idle_measurement": true
  },
- "git_head": "236221a8f30d1326a3490c42cd155fe5f9e4c7af"
+ "git_head": "12594307b6d72360a7a1e575658e4999dd342400"
 }
