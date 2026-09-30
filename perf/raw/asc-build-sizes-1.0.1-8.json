@@ -1,0 +1,41 @@
+{
+  "source": {
+    "kind": "app_store_connect",
+    "app_id": "6806799638",
+    "bundle_id": "cyou.tianli.pointsdeck",
+    "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+    "queried_at": "2026-09-30T09:25:21.589142+08:00",
+    "distribution": "TestFlight（内测组 family）",
+    "processing_state": "VALID",
+    "device_model": "iPhone18,3",
+    "os_variant": "Universal",
+    "api_doc": "https://developer.apple.com/documentation/appstoreconnectapi/get-v1-buildbundles-_id_-buildbundlefilesizes"
+  },
+  "build": {
+    "id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+    "attributes": {
+      "version": "8",
+      "preReleaseVersion": "1.0.1",
+      "uploadedDate": "2026-09-28T14:08:01-07:00",
+      "expired": false,
+      "processingState": "VALID"
+    }
+  },
+  "build_bundle": {
+    "id": "a54d2698-1772-44fb-bede-fb10e964cd19",
+    "bundleId": "cyou.tianli.pointsdeck",
+    "bundleType": "APP"
+  },
+  "selected_device_size": {
+    "type": "buildBundleFileSizes",
+    "id": "aa11e1c4-1b94-3e86-a579-1ff932151f07",
+    "attributes": {
+      "deviceModel": "iPhone18,3",
+      "osVersion": "Universal",
+      "downloadBytes": 3109001,
+      "installBytes": 4035584
+    }
+  },
+  "size_rows": 118,
+  "previous_record": "raw/asc-build-sizes.json（1.0 (2)，App Store 在售构建）"
+}
