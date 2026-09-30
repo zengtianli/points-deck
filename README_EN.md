@@ -38,6 +38,47 @@ Email registration and separate family ledgers are supported. The iOS edition is
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
+## Command line for agents · `treasury`
+
+The app is for people; the command line is for agents. `cli/treasury` is a thin client of the same server the app and the website use (the `/api/*` endpoints of `edu.tianli.cyou`), written with the Python standard library only. Points, tier unlocks, overdraft rules, the parent password and concurrency locks are all decided on the server; the command line contains no scoring logic.
+
+A locally built Mac edition carries the command inside its `.app` at `Contents/Resources/bin/treasury` (a `project.yml` build phase copies it only in macOS builds, before signing); iPhone/iPad packages and every archive (App Store / TestFlight) leave it out.
+
+```bash
+sh cli/install.sh          # Mac edition installed: finds the .app by bundle id and links to the command inside it; otherwise links to cli/treasury in this repo (source edits apply at once)
+sh cli/install.sh --check  # verify only; --uninstall removes only this product's link
+```
+
+Credentials come only from environment variables or stdin and are never stored or echoed: `EDU_USER` (email or username), `EDU_PASSWORD` (or `--password-stdin`); parent actions need `EDU_PARENT_PW` (or `--parent-stdin`), sent per call like the app's parent lock; `EDU_API_BASE` defaults to `https://edu.tianli.cyou`.
+
+```bash
+treasury state --json                          # balance, current house tier, points to the next tier, TV time, wishes, today's practice allowance
+treasury entries --limit 10 --json             # ledger entries, newest first (the server returns the latest 400)
+treasury preview tr-show --json                # computed by the server, nothing recorded
+printf '%s\n' "$PARENT" | treasury earn tr-show --parent-stdin --json
+treasury spend sh-icecream --dry-run --json    # check before redeeming
+treasury config put shop --file shop.json --parent-stdin < parent.txt
+```
+
+Every read command supports `--json` and prints `{"ok": true, …}`; failures print `{"ok": false, "err": …}` and exit non-zero (1 = refused by the server or network failure, 2 = usage error or missing credentials). Read commands never change state; write commands go through the server's existing validation, locks and idempotency. Earn/adjust/undo/spend accept `--dry-run`; deleting a user or the account requires `--yes`.
+
+| In the app | Command |
+|---|---|
+| Ledger home | `treasury state` |
+| Entries / trend | `treasury entries [--since DATE] [--cur pts\|tv\|wish]` / `treasury trend --span 14\|30\|100` |
+| Shop / redeem | `treasury shop` / `treasury spend <item>` |
+| Tier ladder | `treasury tiers` |
+| Parent: rules, preview, record, undo, adjust | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
+| Manage rules / shop / tiers | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
+| Profile, account password, parent password, account deletion | `treasury profile` / `me` / `account passwd\|parent-password\|delete --yes` |
+| Family user admin | `treasury users list\|reset-password\|delete --yes` |
+
+Admin scope is whatever the server says: `config get`, `config put` and `users list` report the `scope` field of the response (`site` = the whole site, `account` = this account only). When the server returns no `scope`, they report `unknown`: `users list` shows only the caller's own row, and `config put`, `users reset-password` and `users delete` refuse rather than guess where the write would land.
+
+GUI-only (pure interface): the parent-lock countdown, live refresh pushes, home/lock-screen widgets, the tier-up celebration, and the palette and widget previews.
+
+Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule and `install.sh` (a fake .app in a temporary Applications folder), then starts an isolated local server (temporary directory, free port) and never touches live accounts; it needs `edu/web/points/server.py` from the same workspace, or `EDU_SERVER_PY` pointing to it.
+
 ## Build
 
 ```bash

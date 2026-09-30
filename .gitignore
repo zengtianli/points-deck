@@ -48,3 +48,6 @@ handoffs/
 
 # Superseded local artifacts
 /archived/
+
+# Python 字节码（cli/ 与 Tests/ 的 stdlib 脚本跑过会生成）
+__pycache__/

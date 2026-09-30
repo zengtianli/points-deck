@@ -36,6 +36,47 @@
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 
+## 给 Agent 的命令行 · `treasury`
+
+App 给人用，命令行给 Agent 用。`cli/treasury` 是同一个服务端（`edu.tianli.cyou` 的 `/api/*`，App 与网页用的同一套接口）的薄客户端，只用 Python 标准库；分值、档位解锁、透支、家长密码和并发锁全在服务端判，命令行里没有一行算分逻辑。
+
+本机构建的 Mac 版 `.app` 自带这个命令：`Contents/Resources/bin/treasury`（`project.yml` 的构建阶段只在 macOS 的 build 里拷进去，随包签名）；iPhone/iPad 包和任何归档（App Store / TestFlight）都不带。
+
+```bash
+sh cli/install.sh          # 装了 Mac 版：按 bundle id 找到 .app，链到包里的命令；没装：链到本仓 cli/treasury（改源码即生效）
+sh cli/install.sh --check  # 只核对；--uninstall 只删本产品入口的链接
+```
+
+凭据只从环境变量或 stdin 取，不落盘、不回显：`EDU_USER`（邮箱或用户名）、`EDU_PASSWORD`（或 `--password-stdin`）；家长操作要 `EDU_PARENT_PW`（或 `--parent-stdin`），同 App 的家长锁每次现取现发；`EDU_API_BASE` 默认 `https://edu.tianli.cyou`。
+
+```bash
+treasury state --json                          # 余额、住哪一档、还差多少升档、电视时间、心愿、今天刷题额度
+treasury entries --limit 10 --json             # 流水（新的在前；服务端下发最近 400 笔）
+treasury preview tr-show --json                # 服务端算分，不记账
+printf '%s\n' "$PARENT" | treasury earn tr-show --parent-stdin --json
+treasury spend sh-icecream --dry-run --json    # 先看能不能换
+treasury config put shop --file shop.json --parent-stdin < parent.txt
+```
+
+读命令都支持 `--json`，输出 `{"ok": true, …}`；失败输出 `{"ok": false, "err": …}` 且退出码非 0（1 = 服务端拒绝或网络失败，2 = 用法错或缺凭据）。读命令不改任何状态；会写的命令都走服务端原有的校验、锁与幂等，记账/调账/撤销/兑换可先 `--dry-run`，删号与注销必须 `--yes`。
+
+| App 里能做的 | 命令 |
+|---|---|
+| 账本首页 | `treasury state` |
+| 流水 / 走势 | `treasury entries [--since 日期] [--cur pts\|tv\|wish]` / `treasury trend --span 14\|30\|100` |
+| 兑换清单 / 兑换 | `treasury shop` / `treasury spend <商品>` |
+| 家园阶梯 | `treasury tiers` |
+| 家长：规则、预览、记账、撤销、调账 | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
+| 管理规则 / 商品 / 档位 | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
+| 资料、账号密码、家长密码、注销 | `treasury profile` / `me` / `account passwd\|parent-password\|delete --yes` |
+| 家长用户管理 | `treasury users list\|reset-password\|delete --yes` |
+
+管理范围以服务端为准：`config get`、`config put`、`users list` 原样报告响应里的 `scope`（`site` 全站 / `account` 仅本账号）。服务端没返回 `scope` 时报 `unknown`：`users list` 只显示本账号自己这一行，`config put`、`users reset-password`、`users delete` 直接拒绝，不猜写入会落到哪里。
+
+留在 App 的（纯界面）：家长锁倒计时、实时刷新推送、桌面/锁屏小组件、升档庆祝动画、配色与小组件预览。
+
+回归：`python3 Tests/cli_treasury_test.py` —— 先核打包规则与 `install.sh`（临时 Applications 目录里的假 .app），再起一个隔离的本地服务端（临时目录 + 空闲端口），不碰线上账号；需要同一工作区的 `edu/web/points/server.py`，或用 `EDU_SERVER_PY` 指过去。
+
 ## 构建
 
 ```bash

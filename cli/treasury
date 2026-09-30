@@ -1,0 +1,617 @@
+#!/usr/bin/env python3
+"""treasury —— Growth Treasury · 成长小金库 的命令行（给 Agent 用，GUI 给人用）。
+
+和 App、edu.tianli.cyou 网页走**同一个服务端**（~/Apps/edu/web/points/server.py 的 /api/*）：
+分值、档位、解锁、透支、家长密码、并发锁全在服务端判，这里只组装请求、整理输出，不算分。
+
+凭据（都不落盘，cookie 只在本进程内存里）：
+  EDU_USER        账号（邮箱或用户名），或 --user
+  EDU_PASSWORD    账号密码，或 --password-stdin（stdin 第 1 行）
+  EDU_PARENT_PW   家长密码，或 --parent-stdin（stdin 下一行）；每次现取现发，同 App 的家长锁
+  EDU_API_BASE    服务端地址，默认 https://edu.tianli.cyou（本地隔离测试服用 http://127.0.0.1:<端口>）
+stdin 按顺序读：--password-stdin → --parent-stdin → --new-stdin，每项一行。
+
+退出码：0 成功；1 服务端拒绝/网络失败（--json 时输出 {"ok": false, "err": ...}）；2 用法或缺凭据。
+"""
+from __future__ import annotations
+
+import argparse
+import base64
+import json
+import os
+import sys
+import urllib.error
+import urllib.parse
+import urllib.request
+from http.cookiejar import CookieJar
+from pathlib import Path
+
+DEFAULT_API = "https://edu.tianli.cyou"
+AGENT = "treasury-cli/1.0"
+CONFIG_KINDS = ("rules", "shop", "tiers")
+
+
+class Fail(Exception):
+    """服务端拒绝或本地前置条件不满足。code=1 业务失败，code=2 用法/凭据。"""
+
+    def __init__(self, msg: str, code: int = 1, status: int | None = None):
+        super().__init__(msg)
+        self.msg, self.code, self.status = msg, code, status
+
+
+# ───────────────────────────── 传输（同 Api.swift 的 request）─────────────────────────────
+
+class Client:
+    def __init__(self, base: str, timeout: float = 20):
+        self.base = base.rstrip("/")
+        self.timeout = timeout
+        self.op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(CookieJar()))
+
+    def call(self, path: str, body: dict | None = None, query: dict | None = None,
+             timeout: float | None = None) -> dict:
+        url = f"{self.base}/{path.lstrip('/')}"
+        if query:
+            url += "?" + urllib.parse.urlencode(query)
+        data = json.dumps(body).encode() if body is not None else None
+        req = urllib.request.Request(url, data=data, method="POST" if body is not None else "GET",
+                                     headers={"Content-Type": "application/json", "User-Agent": AGENT})
+        try:
+            with self.op.open(req, timeout=timeout or self.timeout) as r:
+                status, payload = r.status, r.read()
+        except urllib.error.HTTPError as e:
+            status, payload = e.code, e.read()
+        except (urllib.error.URLError, TimeoutError, OSError) as e:
+            raise Fail(f"连不上 {self.base}：{getattr(e, 'reason', e)}")
+        try:
+            obj = json.loads(payload or b"{}")
+        except ValueError:
+            raise Fail(f"服务端返回的不是 JSON（HTTP {status}）", status=status)
+        if status >= 400 or obj.get("ok") is False:
+            # 服务端的 err 是给人看的中文，原样透出（同 App：不包成「请求失败」）
+            raise Fail(str(obj.get("err") or f"HTTP {status}"), status=status)
+        return obj
+
+
+class Secrets:
+    """按固定顺序从 stdin 取密码；缺了就 exit 2。不回显、不写盘。"""
+
+    def __init__(self, args):
+        self.args = args
+        self._lines: list[str] | None = None
+        self._account: str | None = None
+
+    def _line(self, what: str) -> str:
+        if self._lines is None:
+            self._lines = sys.stdin.read().splitlines() if not sys.stdin.isatty() else []
+        if not self._lines:
+            raise Fail(f"stdin 里缺少{what}（每项一行）", code=2)
+        return self._lines.pop(0)
+
+    def account(self) -> str:
+        if self._account is None:                  # 只读一次：登录和改密码/注销共用
+            if getattr(self.args, "password_stdin", False):
+                self._account = self._line("账号密码")
+            else:
+                self._account = os.environ.get("EDU_PASSWORD") or ""
+                if not self._account:
+                    raise Fail("缺账号密码：设 EDU_PASSWORD 或用 --password-stdin", code=2)
+        return self._account
+
+    def parent(self) -> str:
+        if getattr(self.args, "parent_stdin", False):
+            return self._line("家长密码")
+        pw = os.environ.get("EDU_PARENT_PW")
+        if not pw:
+            raise Fail("这一步要家长密码：设 EDU_PARENT_PW 或用 --parent-stdin", code=2)
+        return pw
+
+    def new(self) -> str:
+        if not getattr(self.args, "new_stdin", False):
+            raise Fail("新密码只从 stdin 读：加 --new-stdin", code=2)
+        return self._line("新密码")
+
+
+def session(args, sec: Secrets) -> Client:
+    user = args.user or os.environ.get("EDU_USER") or ""
+    if not user:
+        raise Fail("缺账号：设 EDU_USER 或用 --user", code=2)
+    c = Client(args.api or os.environ.get("EDU_API_BASE") or DEFAULT_API, timeout=args.timeout)
+    c.call("api/login", {"u": user, "p": sec.account()})
+    return c
+
+
+# ───────────────────────────── 读 ─────────────────────────────
+
+def state_view(st: dict) -> dict:
+    h = st.get("house") or {}
+    nxt = h.get("next")
+    return {"ok": True, "user": st.get("u"), "nick": st.get("nick"),
+            "balance": st.get("balance"), "yuan": round(st.get("balance", 0) / max(1, st.get("rate") or 100), 2),
+            "house": {"tier": h.get("tier"), "name": h.get("name"), "era": h.get("era"),
+                      "at": h.get("at"), "top": h.get("top"),
+                      "next": ({"name": nxt["name"], "at": nxt["at"], "bonus": nxt.get("bonus", 0),
+                                "unlock": nxt.get("unlock") or [],
+                                "points_to_go": max(0, nxt["at"] - st.get("balance", 0))} if nxt else None)},
+            "tv": st.get("tv"), "wish": st.get("wish"), "practice_left": st.get("practice_left"),
+            "has_parent": st.get("has_parent"), "today": st.get("today"),
+            "entries_total": st.get("total")}
+
+
+def cmd_state(c, a, sec):
+    v = state_view(c.call("api/state"))
+    def text():
+        h, n = v["house"], v["house"]["next"]
+        line = f"{v['nick']}（{v['user']}）余额 {v['balance']} 分（{v['yuan']:.2f} 元）· 住「{h['name']}」"
+        line += f" · 还差 {n['points_to_go']} 分到「{n['name']}」" if n else " · 已是最高档"
+        return (line + f"\n电视 {v['tv']} 分钟 · 心愿 {v['wish']} 个 · 今天刷题还能得 {v['practice_left']} 分"
+                + f" · 流水共 {v['entries_total']} 笔" + ("" if v["has_parent"] else " · 还没设家长密码"))
+    return v, text
+
+
+def _entry(e: dict) -> dict:
+    return {"id": e.get("id"), "ts": e.get("ts"), "day": e.get("day"), "kind": e.get("kind"),
+            "cat": e.get("cat"), "label": e.get("label"), "pts": e.get("pts"),
+            "cur": e.get("cur") or "pts", "bal": e.get("bal"), "note": e.get("note") or "",
+            "by": e.get("by"), "seed": bool(e.get("seed"))}
+
+
+def cmd_entries(c, a, sec):
+    st = c.call("api/state")
+    es = [_entry(e) for e in st.get("entries") or []]
+    if a.since:
+        es = [e for e in es if (e["day"] or "") >= a.since]
+    if a.cur:
+        es = [e for e in es if e["cur"] == a.cur]
+    es = list(reversed(es))[:a.limit] if a.limit > 0 else list(reversed(es))   # 新的在前，同 App 流水
+    v = {"ok": True, "user": st.get("u"), "total": st.get("total"),
+         "window": len(st.get("entries") or []), "shown": len(es),
+         "truncated": (st.get("total") or 0) > len(st.get("entries") or []), "entries": es}
+    def text():
+        rows = [f"{e['ts'][:16]}  {e['pts']:+6d}{'' if e['cur'] == 'pts' else ' ' + e['cur']}  余 {e['bal']:>7}  "
+                f"[{e['cat']}] {e['label']}  #{e['id']}" for e in es]
+        tail = f"\n（共 {v['total']} 笔，服务端只下发最近 {v['window']} 笔）" if v["truncated"] else ""
+        return ("\n".join(rows) or "（没有符合条件的流水）") + tail
+    return v, text
+
+
+def cmd_trend(c, a, sec):
+    """同 TrendView：只取积分那条线，用每条流水自带的 bal 快照，不在端上累加。"""
+    st = c.call("api/state")
+    pts = [e for e in st.get("entries") or [] if (e.get("cur") or "pts") == "pts"][-a.span:]
+    vals = [int(e["bal"]) for e in pts]
+    v = {"ok": True, "span": a.span, "points": [{"day": e["day"], "bal": int(e["bal"])} for e in pts],
+         "change": (vals[-1] - vals[0]) if vals else 0, "high": max(vals) if vals else 0,
+         "low": min(vals) if vals else 0, "practice_left": st.get("practice_left")}
+    def text():
+        return (f"最近 {len(pts)} 笔：涨跌 {v['change']:+d} 分 · 最高 {v['high']} · 最低 {v['low']}"
+                f" · 今天刷题还能得 {v['practice_left']} 分")
+    return v, text
+
+
+def cmd_shop(c, a, sec):
+    st = c.call("api/state")
+    bal, unlocked, ladder = st.get("balance", 0), set(st.get("unlocked") or []), st.get("ladder") or []
+    items = []
+    for x in st.get("shop") or []:
+        need = next(((i, t) for i, t in enumerate(ladder) if x["id"] in (t.get("unlock") or [])), None)
+        items.append({"id": x["id"], "label": x.get("label"), "icon": x.get("icon", ""), "pts": x.get("pts"),
+                      "unlocked": x["id"] in unlocked,
+                      "tier": need[0] if need else None, "tier_name": need[1]["name"] if need else None,
+                      "tier_at": need[1]["at"] if need else None,
+                      "affordable": x["id"] in unlocked and bal >= int(x.get("pts") or 0)})
+    v = {"ok": True, "balance": bal, "items": items}
+    def text():
+        return "\n".join(f"{'  ' if i['unlocked'] else '🔒'} {i['icon']} {i['label']}  {i['pts']} 分  #{i['id']}"
+                         + ("" if i["unlocked"] else f"  （住进「{i['tier_name']}」{i['tier_at']} 分解锁）")
+                         for i in items) + f"\n余额 {bal} 分"
+    return v, text
+
+
+def cmd_tiers(c, a, sec):
+    st = c.call("api/state")
+    bal, cur, names = st.get("balance", 0), (st.get("house") or {}).get("tier"), st.get("era_names") or {}
+    tiers = [{"index": i, "at": t["at"], "name": t["name"], "era": t["era"], "era_name": names.get(t["era"], t["era"]),
+              "bonus": t.get("bonus", 0), "unlock": t.get("unlock") or [], "reached": bal >= t["at"],
+              "current": i == cur} for i, t in enumerate(st.get("ladder") or [])]
+    v = {"ok": True, "balance": bal, "current": cur, "tiers": tiers}
+    def text():
+        return "\n".join(f"{'▶' if t['current'] else ('✓' if t['reached'] else ' ')} {t['index']:>2} {t['name']}"
+                         f"（{t['era_name']}）{t['at']} 分 · 贺礼 {t['bonus']} · 解锁 {','.join(t['unlock']) or '—'}"
+                         for t in tiers)
+    return v, text
+
+
+def _hint(r: dict) -> str:
+    k = r.get("kind") or "fixed"
+    if k == "fixed":
+        return "记一个心愿" if r.get("wish") else f"{int(r.get('pts') or 0):+d}"
+    if k == "per":
+        return f"{int(r.get('pts') or 0):+d}/{r.get('unit') or '个'} × --n"
+    if k == "range":
+        return f"--pts {r.get('min')}~{r.get('max')}" + ("（电视分钟）" if r.get("cur") == "tv" else "")
+    if k == "calc":
+        return f"计算器 {r.get('calc')}：--input 键=值"
+    if k == "tv":
+        return f"每 {r.get('per') or 1}{r.get('unit') or ''} = {r.get('tv')} 分钟电视 × --n"
+    return k
+
+
+def cmd_rules(c, a, sec):
+    st = c.call("api/state")
+    rules = [r for r in st.get("rules") or [] if not a.subject or r.get("subject") == a.subject]
+    calcs = st.get("calcs") or {}
+    v = {"ok": True, "subjects": st.get("subjects") or [], "rules": rules,
+         "calcs": {k: {"inputs": c_.get("inputs") or []} for k, c_ in calcs.items()}}
+    def text():
+        names = {s["k"]: s.get("name", s["k"]) for s in v["subjects"]}
+        return "\n".join(f"[{names.get(r.get('subject'), r.get('subject'))}] {r['label']}  {_hint(r)}  #{r['id']}"
+                         for r in rules) or "（没有规则）"
+    return v, text
+
+
+def rule_body(a) -> dict:
+    """同 RuleInput.body()：只组装参数，不算分。未给的键不发，服务端按规则类型取用。"""
+    b: dict = {"rule": a.rule}
+    if a.n is not None:
+        b["n"] = a.n
+    if a.pts is not None:
+        b["pts"] = a.pts
+    if a.input:
+        inputs = {}
+        for kv in a.input:
+            if "=" not in kv:
+                raise Fail(f"--input 要写成 键=值：{kv}", code=2)
+            k, val = kv.split("=", 1)
+            try:
+                inputs[k] = int(val)
+            except ValueError:
+                inputs[k] = val                # 交给服务端报「要填数字」
+        b["inputs"] = inputs
+    return b
+
+
+def cmd_preview(c, a, sec):
+    v = c.call("api/preview", rule_body(a))
+    v = {"ok": True, "rule": a.rule, "pts": v.get("pts"), "label": v.get("label"), "cur": v.get("cur"),
+         "why": v.get("why") or ""}
+    return v, lambda: f"{v['label']}：{v['pts']:+d} {'分' if v['cur'] == 'pts' else v['cur']}" + (
+        f"（{v['why']}）" if v["why"] else "")
+
+
+# ───────────────────────────── 写（服务端校验、锁与幂等照旧）─────────────────────────────
+
+def cmd_earn(c, a, sec):
+    b = rule_body(a)
+    if a.dry_run:                                  # 预览 = 服务端同一个 compute()，不记账
+        v, _ = cmd_preview(c, a, sec)
+        v["dry_run"] = True
+        return v, lambda: f"（预览，未记账）{v['label']}：{v['pts']:+d} {v['cur']}"
+    b["admin"] = sec.parent()
+    if a.note:
+        b["note"] = a.note
+    r = c.call("api/earn", b)
+    e = r.get("entry")
+    v = {"ok": True, "skipped": bool(r.get("skipped")), "why": r.get("why") or "",
+         "entry": _entry(e) if e else None, "balance": r.get("balance"), "cur": r.get("cur")}
+    return v, lambda: (f"没记账：{v['why']}" if v["skipped"] else
+                       f"记了一笔 {e['pts']:+d} {v['cur']}「{e['label']}」· 余额 {v['balance']} #{e['id']}")
+
+
+def cmd_adjust(c, a, sec):
+    if a.dry_run:
+        st = c.call("api/state")
+        v = {"ok": True, "dry_run": True, "pts": a.pts, "balance": st.get("balance"),
+             "balance_after": st.get("balance", 0) + a.pts}
+        return v, lambda: f"（预演，未调账）{a.pts:+d} → 余额 {v['balance_after']}"
+    b = {"pts": a.pts, "admin": sec.parent()}
+    if a.label:
+        b["label"] = a.label
+    if a.note:
+        b["note"] = a.note
+    r = c.call("api/adjust", b)
+    v = {"ok": True, "entry": _entry(r["entry"]), "balance": r.get("balance")}
+    return v, lambda: f"调账 {a.pts:+d}「{v['entry']['label']}」· 余额 {v['balance']} #{v['entry']['id']}"
+
+
+def cmd_undo(c, a, sec):
+    st = c.call("api/state")
+    hit = next((e for e in st.get("entries") or [] if e.get("id") == a.entry_id), None)
+    if a.dry_run:
+        if not hit:
+            raise Fail("找不到这笔（服务端只下发最近 400 笔）")
+        v = {"ok": True, "dry_run": True, "entry": _entry(hit)}
+        return v, lambda: f"（预演，未撤销）将删掉：{hit['ts'][:16]} {hit['pts']:+d}「{hit['label']}」"
+    r = c.call("api/undo", {"id": a.entry_id, "admin": sec.parent()})
+    v = {"ok": True, "removed": _entry(hit) if hit else {"id": a.entry_id}, "balance": r.get("balance")}
+    return v, lambda: f"已撤销 #{a.entry_id}（挪进账本的 deleted 区留底）· 余额 {v['balance']}"
+
+
+def cmd_spend(c, a, sec):
+    if a.dry_run:
+        v, _ = cmd_shop(c, a, sec)
+        it = next((i for i in v["items"] if i["id"] == a.item), None)
+        if not it:
+            raise Fail("商店里没有这一项")
+        out = {"ok": True, "dry_run": True, "item": it, "balance": v["balance"],
+               "would_succeed": bool(it["affordable"])}
+        return out, lambda: (f"（预演，未兑换）{it['label']} {it['pts']} 分："
+                             + ("可以换" if it["affordable"] else ("还没解锁" if not it["unlocked"] else "余额不够")))
+    b = {"item": a.item}
+    if a.note:
+        b["note"] = a.note
+    r = c.call("api/spend", b)
+    v = {"ok": True, "entry": _entry(r["entry"]), "balance": r.get("balance")}
+    return v, lambda: f"兑换「{v['entry']['label']}」{v['entry']['pts']:+d} · 余额 {v['balance']}"
+
+
+def scope_of(r: dict) -> str:
+    """服务端给的管理范围：site 全站 / account 仅本账号；旧服务端不带这个字段 → unknown（不替它猜成 site）。"""
+    return r.get("scope") if "scope" in r else "unknown"
+
+
+SCOPE_TEXT = {"site": "全站（这一家）", "account": "只本账号", "unknown": "未知（服务端没返回 scope）"}
+
+
+def require_scoped_server(r: dict, what: str) -> None:
+    """管理写入前确认服务端带回了这个账号的管理范围（响应里的 `scope`：site 全站 / account 仅本账号）。
+
+    拿不到 `scope` 就不知道这次写入会落到哪里 —— 不猜，拒绝写入（读不受影响）。"""
+    if "scope" not in r:
+        raise Fail(f"服务端没有返回管理范围（scope），不确定写入落到哪里，拒绝{what}；先确认 edu 服务端已更新")
+
+
+def cmd_config_get(c, a, sec):
+    r = c.call("api/config", {"admin": sec.parent()})
+    v = {"ok": True, "scope": scope_of(r), "server_scoped": "scope" in r, **{k: r.get(k) for k in
+         ("subjects", "rules", "shop", "calcs", "tiers", "eras")}}
+    return v, lambda: (f"配置范围：{SCOPE_TEXT.get(v['scope'], v['scope'])} · 规则 {len(v['rules'] or [])} 条"
+                       f" · 商品 {len(v['shop'] or [])} 件 · 档位 {len(v['tiers'] or [])} 档")
+
+
+def cmd_config_put(c, a, sec):
+    try:
+        raw = json.loads(Path(a.file).read_text(encoding="utf-8"))
+    except (OSError, ValueError) as e:
+        raise Fail(f"读不了 {a.file}：{e}", code=2)
+    items = raw.get("items") if isinstance(raw, dict) else raw
+    if not isinstance(items, list):
+        raise Fail("文件要是 JSON 数组（或 {\"items\": [...]}），整段替换", code=2)
+    admin = sec.parent()
+    require_scoped_server(c.call("api/config", {"admin": admin}), "改配置")
+    r = c.call("api/config_put", {"admin": admin, "kind": a.kind, "items": items})
+    v = {"ok": True, "kind": a.kind, "count": len(items), "scope": scope_of(r)}
+    return v, lambda: f"已整段替换 {a.kind}（{len(items)} 条）· 写入范围：{SCOPE_TEXT.get(v['scope'], v['scope'])}"
+
+
+def cmd_profile(c, a, sec):
+    if a.avatar_file:
+        blob = Path(a.avatar_file).read_bytes()
+        kind = ("png" if blob[:8] == b"\x89PNG\r\n\x1a\n" else "jpeg" if blob[:3] == b"\xff\xd8\xff"
+                else "webp" if blob[:4] == b"RIFF" and blob[8:12] == b"WEBP" else None)
+        if not kind:
+            raise Fail("头像只收 png/jpeg/webp", code=2)
+        c.call("api/avatar", {"data": f"data:image/{kind};base64," + base64.b64encode(blob).decode()})
+    b = {}
+    if a.nick is not None:
+        b["nick"] = a.nick
+    if a.emoji is not None:
+        b["emoji"] = a.emoji
+    r = c.call("api/profile", b) if b else c.call("api/me")
+    v = {"ok": True, "nick": r.get("nick"), "avatar": r.get("avatar")}
+    return v, lambda: f"昵称 {v['nick']} · 头像 {(v['avatar'] or {}).get('v') or '图片'}"
+
+
+def cmd_me(c, a, sec):
+    r = c.call("api/me")
+    v = {"ok": True, "user": r.get("u"), "nick": r.get("nick"), "has_email": bool(r.get("email")),
+         "created": r.get("created"), "avatar": r.get("avatar")}
+    return v, lambda: f"{v['nick']}（{v['user']}）· {'邮箱账号' if v['has_email'] else '用户名账号'} · 加入 {str(v['created'])[:10]}"
+
+
+def cmd_account_passwd(c, a, sec):
+    r = c.call("api/passwd", {"old": sec.account(), "new": sec.new()})
+    return {"ok": True}, lambda: "账号密码已改（其他设备的登录全部下线）"
+
+
+def cmd_account_parent(c, a, sec):
+    c.call("api/parent_set", {"p": sec.account(), "parent": sec.new()})
+    return {"ok": True}, lambda: "本账号的家长密码已设好"
+
+
+def cmd_account_delete(c, a, sec):
+    if not a.yes:
+        raise Fail("注销会永久删除本账号的账本和资料：确认请加 --yes", code=2)
+    c.call("api/account_del", {"p": sec.account()})
+    return {"ok": True, "deleted": True}, lambda: "账号已注销"
+
+
+def cmd_users_list(c, a, sec):
+    """同 App 家长页的用户管理。范围由服务端判（响应里的 scope）；旧服务端不带 scope 时不知道这把家长密码
+    该管多大范围 —— 只列本账号自己这一行，别人的账号、昵称、余额和注销汇总一律不带出来。"""
+    r = c.call("api/users", {"admin": sec.parent()})
+    users, dels, hidden = r.get("users") or [], r.get("account_deletions") or {}, 0
+    if "scope" not in r:
+        me = c.call("api/me").get("u")
+        mine = [u for u in users if u.get("u") == me]
+        hidden, users, dels = len(users) - len(mine), mine, {}
+    v = {"ok": True, "scope": scope_of(r), "server_scoped": "scope" in r, "count": len(users),
+         "hidden": hidden, "users": users, "account_deletions": dels}
+    def text():
+        rows = "\n".join(f"@{u['u']}  {u['nick']}  余额 {u['balance']}  加入 {u['created']}" for u in users)
+        note = (f"\n（服务端没返回管理范围，只显示本账号；另有 {hidden} 个账号未显示）" if hidden else "")
+        return rows + f"\n（{v['count']} 个账号 · 范围 {v['scope']}）" + note
+    return v, text
+
+
+def cmd_users_reset(c, a, sec):
+    admin = sec.parent()
+    new = sec.new()
+    require_scoped_server(c.call("api/users", {"admin": admin}), "重置密码")
+    c.call("api/passwd_reset", {"user": a.target, "new": new, "admin": admin})
+    return {"ok": True, "user": a.target}, lambda: f"@{a.target} 的密码已重置（该账号全设备下线）"
+
+
+def cmd_users_delete(c, a, sec):
+    if not a.yes:
+        raise Fail("删号会把该账号整体挪进服务器回收目录：确认请加 --yes", code=2)
+    admin = sec.parent()
+    require_scoped_server(c.call("api/users", {"admin": admin}), "删号")
+    c.call("api/user_del", {"user": a.target, "admin": admin})
+    return {"ok": True, "user": a.target}, lambda: f"@{a.target} 已删除（进了服务器 trash/，不是真删）"
+
+
+# ───────────────────────────── 命令行 ─────────────────────────────
+
+EXAMPLES = """示例：
+  EDU_USER=me@example.com EDU_PASSWORD=… treasury state --json
+  treasury entries --limit 10 --json
+  treasury preview tr-show --json                         # 服务端算分，不记账
+  printf '%s\\n' "$PARENT" | treasury earn cn-dict-wrong --n 3 --parent-stdin --json
+  treasury spend sh-icecream --dry-run
+  treasury config put shop --file shop.json --parent-stdin < parent.txt
+纯界面的留在 App：家长锁倒计时、SSE 实时刷新、桌面小组件、升档庆祝动画、配色预览。"""
+
+
+def build() -> argparse.ArgumentParser:
+    ap = argparse.ArgumentParser(prog="treasury", formatter_class=argparse.RawDescriptionHelpFormatter,
+                                 description="Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+                                 epilog=EXAMPLES)
+    ap.add_argument("--api", help="服务端地址（默认 $EDU_API_BASE 或 https://edu.tianli.cyou）")
+    ap.add_argument("--user", help="账号：邮箱或用户名（默认 $EDU_USER）")
+    ap.add_argument("--password-stdin", action="store_true", help="账号密码从 stdin 第 1 行读（默认 $EDU_PASSWORD）")
+    ap.add_argument("--timeout", type=float, default=20, help="单次请求超时秒数（默认 20）")
+    sub = ap.add_subparsers(dest="cmd", metavar="命令")
+
+    def cmd(name, fn, help_, *, parent=False, new=False):
+        p = sub.add_parser(name, help=help_, description=help_)
+        p.add_argument("--json", action="store_true", help="输出 JSON")
+        if parent:
+            p.add_argument("--parent-stdin", action="store_true", help="家长密码从 stdin 读（默认 $EDU_PARENT_PW）")
+        if new:
+            p.add_argument("--new-stdin", action="store_true", help="新密码从 stdin 读（必需）")
+        p.set_defaults(fn=fn)
+        return p
+
+    cmd("state", cmd_state, "首页：余额、住哪一档、还差多少升档、电视时间、心愿、今天刷题额度")
+    p = cmd("entries", cmd_entries, "流水（新的在前；服务端只下发最近 400 笔）")
+    p.add_argument("--limit", type=int, default=20, help="显示几笔（0 = 全部，默认 20）")
+    p.add_argument("--since", help="只看这一天及以后（YYYY-MM-DD）")
+    p.add_argument("--cur", choices=("pts", "tv", "wish"), help="只看一种币种")
+    p = cmd("trend", cmd_trend, "走势：最近 N 笔积分的余额快照、涨跌、最高、最低（同 App 走势页）")
+    p.add_argument("--span", type=int, default=30, choices=(14, 30, 100), help="取最近几笔（14/30/100，默认 30）")
+    cmd("shop", cmd_shop, "兑换清单：每件的价格、是否解锁、要住进哪一档、够不够换")
+    cmd("tiers", cmd_tiers, "家园阶梯：每档门槛、时代、贺礼、解锁的商品，标出当前档")
+    p = cmd("rules", cmd_rules, "加分/扣分规则清单（earn/preview 用的规则 id）")
+    p.add_argument("--subject", help="只看一个科目（科目 key）")
+    cmd("me", cmd_me, "当前登录的账号")
+
+    def rule_args(p):
+        p.add_argument("rule", help="规则 id（见 treasury rules）")
+        p.add_argument("--n", type=int, help="个数（per / tv 类规则）")
+        p.add_argument("--pts", type=int, help="分值（range 类规则，在 min~max 内）")
+        p.add_argument("--input", action="append", metavar="键=值", help="计算器输入（calc 类规则，可重复）")
+
+    rule_args(cmd("preview", cmd_preview, "预览一条规则算出来几分（服务端算，不记账）"))
+    p = cmd("earn", cmd_earn, "家长记一笔加分/扣分（要家长密码）", parent=True)
+    rule_args(p)
+    p.add_argument("--note", help="备注")
+    p.add_argument("--dry-run", action="store_true", help="只预览不记账")
+    p = cmd("adjust", cmd_adjust, "家长手动调账 ±分（要家长密码；不许扣穿）", parent=True)
+    p.add_argument("pts", type=int, help="分值，正加负扣")
+    p.add_argument("--label", help="事由（默认「家长手动加分/扣分」）")
+    p.add_argument("--note", help="备注")
+    p.add_argument("--dry-run", action="store_true", help="只算调完的余额，不调账")
+    p = cmd("undo", cmd_undo, "家长撤销一笔（要家长密码；条目挪进 deleted 区留底）", parent=True)
+    p.add_argument("entry_id", help="流水 id（见 treasury entries）")
+    p.add_argument("--dry-run", action="store_true", help="只显示将撤销哪一笔")
+    p = cmd("spend", cmd_spend, "兑换一件商品（不要家长密码；未解锁或余额不够会被拒）")
+    p.add_argument("item", help="商品 id（见 treasury shop）")
+    p.add_argument("--note", help="备注")
+    p.add_argument("--dry-run", action="store_true", help="只看能不能换，不兑换")
+
+    pc = sub.add_parser("config", help="规则/商品/档位配置（要家长密码）", description="规则/商品/档位配置（要家长密码）")
+    csub = pc.add_subparsers(dest="sub", metavar="动作", required=True)
+    p = csub.add_parser("get", help="读当前生效的配置")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--parent-stdin", action="store_true")
+    p.set_defaults(fn=cmd_config_get)
+    p = csub.add_parser("put", help="整段替换一类配置（服务端整体校验，不过就一个字不写）")
+    p.add_argument("kind", choices=CONFIG_KINDS)
+    p.add_argument("--file", required=True, help="JSON 数组文件（或 {\"items\": [...]}）")
+    p.add_argument("--json", action="store_true")
+    p.add_argument("--parent-stdin", action="store_true")
+    p.set_defaults(fn=cmd_config_put)
+
+    p = cmd("profile", cmd_profile, "改昵称/预设头像/上传头像（不要家长密码）")
+    p.add_argument("--nick", help="昵称（1~16 字）")
+    p.add_argument("--emoji", help="预设头像（state 里的 avatars 之一）")
+    p.add_argument("--avatar-file", help="上传头像图片（png/jpeg/webp，≤200KB）")
+
+    pa = sub.add_parser("account", help="账号：改密码 / 设家长密码 / 注销", description="账号：改密码 / 设家长密码 / 注销")
+    asub = pa.add_subparsers(dest="sub", metavar="动作", required=True)
+    for name, fn, h in (("passwd", cmd_account_passwd, "改账号密码（新密码从 stdin）"),
+                        ("parent-password", cmd_account_parent, "设置/修改本账号的家长密码（新密码从 stdin）")):
+        p = asub.add_parser(name, help=h, description=h)
+        p.add_argument("--json", action="store_true")
+        p.add_argument("--new-stdin", action="store_true", help="新密码从 stdin 读（必需）")
+        p.set_defaults(fn=fn)
+    p = asub.add_parser("delete", help="注销本账号（不可恢复，须 --yes）")
+    p.add_argument("--yes", action="store_true")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_account_delete)
+
+    pu = sub.add_parser("users", help="家长用户管理（要家长密码；公开账号只看得到/管得了自己）",
+                        description="家长用户管理（要家长密码；公开账号只看得到/管得了自己）")
+    usub = pu.add_subparsers(dest="sub", metavar="动作", required=True)
+    p = usub.add_parser("list", help="列账号与余额")
+    p.set_defaults(fn=cmd_users_list)
+    p = usub.add_parser("reset-password", help="重置一个账号的密码（新密码从 stdin）")
+    p.add_argument("target", help="用户名")
+    p.add_argument("--new-stdin", action="store_true", help="新密码从 stdin 读（必需）")
+    p.set_defaults(fn=cmd_users_reset)
+    p = usub.add_parser("delete", help="删除一个账号（挪进服务器 trash/，须 --yes）")
+    p.add_argument("target", help="用户名")
+    p.add_argument("--yes", action="store_true")
+    p.set_defaults(fn=cmd_users_delete)
+    for p in (usub.choices["list"], usub.choices["reset-password"], usub.choices["delete"]):
+        p.add_argument("--json", action="store_true")
+        p.add_argument("--parent-stdin", action="store_true")
+    return ap
+
+
+def main(argv: list[str]) -> int:
+    ap = build()
+    a = ap.parse_args(argv)
+    if not getattr(a, "fn", None):
+        ap.print_help()
+        return 2
+    as_json = getattr(a, "json", False)
+    sec = Secrets(a)
+    try:
+        c = session(a, sec)
+        v, text = a.fn(c, a, sec)
+    except Fail as f:
+        return report_fail(f, as_json)
+    except OSError as e:
+        return report_fail(Fail(f"读写本地文件失败：{e}"), as_json)
+    if as_json:
+        print(json.dumps(v, ensure_ascii=False, indent=1))
+    else:
+        print(text())
+    return 0
+
+
+def report_fail(f: Fail, as_json: bool) -> int:
+    if as_json:
+        print(json.dumps({"ok": False, "err": f.msg, **({"status": f.status} if f.status else {})},
+                         ensure_ascii=False))
+    else:
+        print(f"✘ {f.msg}", file=sys.stderr)
+    return f.code
+
+
+if __name__ == "__main__":
+    try:
+        raise SystemExit(main(sys.argv[1:]))
+    except KeyboardInterrupt:
+        raise SystemExit(130)
