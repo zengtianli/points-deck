@@ -1,12 +1,12 @@
 **中文** | [English](README_EN.md)
 
-<p align="center"><img src="Resources/icon-1024.png" width="96" alt="成长小金库"></p>
+<p align="center"><img src="Resources/icon-1024.png" width="96" alt="Growth Treasury · 成长小金库"></p>
 
-# 成长小金库 · points-deck
+# Growth Treasury · 成长小金库
 
 **孩子的每一分努力，涨成看得见的房子。**
 
-![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) ![TestFlight](https://img.shields.io/badge/TestFlight-内测中-0D84FF) ![License](https://img.shields.io/badge/License-MIT-green)
+![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-已上架-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
 给孩子做的：11 档市值映射 5 个时代的插画，「住什么房看得见」，整页配色从插画采样派生。家长密码永不落盘——能自己给自己加分的积分系统，第二天就会变成刷分游戏。升档只庆不罚，回落一声不吭。
 

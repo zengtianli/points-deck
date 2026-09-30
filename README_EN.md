@@ -2,13 +2,13 @@
 
 <p align="center"><img src="Resources/icon-1024.png" width="96" alt="Growth Treasury"></p>
 
-# Growth Treasury · points-deck
+# Growth Treasury · 成长小金库
 
 
 
 **Every point your child earns grows into a home they can see.**
 
-![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) ![TestFlight](https://img.shields.io/badge/TestFlight-内测中-0D84FF) ![License](https://img.shields.io/badge/License-MIT-green)
+![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-available-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
 Made for children: 11 value tiers map to illustrations across 5 eras, making their “home” visible. The entire page palette is sampled from the illustration. The parent password is never written to disk: a points system that lets children award themselves points becomes a point-farming game by the next day. Moving up a tier is celebrated, never punished; moving down is silent.
 
