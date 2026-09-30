@@ -8,6 +8,8 @@ installs it on a dedicated, windowless simulator, and measures:
   - idle: shared app-lightweight measure.py (45 s settle, 60 s CPU window, footprint after window).
 Writes perf/raw/simulator-full-<date>.json and updates perf/simulator.json only if the source snapshot
 is unchanged across the whole run. Never opens Simulator.app, never touches the clipboard or input.
+Exit 75 (Chapter retries the same input when steady): the owner is not idle, the host is busy before any work,
+or the owner comes back mid-run (the simulator is shut down at once). Exit 1: a sample rejected after the build.
 
   ~/Dev/.venv/bin/python scripts/perf/sim_measure.py [--runs 5] [--max-load 8] [--min-user-idle 600]
 Adapted from ~/Apps/clip/ios/01-源程序/scripts/perf/sim_measure.py; adds the user-idle gate.
@@ -87,11 +89,31 @@ def user_idle_s():
     return int(m.group(1)) / 1e9 if m else 0.0
 
 
-def settle_gate(limit, stage, wait_s=600):
+# app_sop's DEFER_EXIT: the environment stopped the run, not the input, so Chapter forgets the attempt and runs
+# the same input again in the next steady window. Any other non-zero exit is recorded as a failed measurement
+# of this input and is not retried until the input changes or the owner presses retry.
+DEFER_EXIT = 75
+
+
+def defer(reason):
+    print(reason, file=sys.stderr)
+    sys.exit(DEFER_EXIT)
+
+
+def owner_back(t0, stage):
+    """Input since the run started (idle time shorter than the run): stop now; it lags the owner and skews timing."""
+    if user_idle_s() < time.time() - t0:
+        defer(f"{stage}：用户回来操作了，停止测量并关闭模拟器，空闲时再测")
+
+
+def settle_gate(limit, stage, wait_s=600, t0=None, defer_on_timeout=False):
     deadline = time.time() + wait_s
     while os.getloadavg()[0] > limit:
+        if t0 is not None:
+            owner_back(t0, stage)
         if time.time() > deadline:
-            sys.exit(f"{stage}负载 {os.getloadavg()[0]:.1f} 在 {wait_s}s 内未降到 {limit} 以下，未测量")
+            reason = f"{stage}负载 {os.getloadavg()[0]:.1f} 在 {wait_s}s 内未降到 {limit} 以下，未测量"
+            defer(reason) if defer_on_timeout else sys.exit(reason)
         time.sleep(10)
 
 
@@ -106,15 +128,18 @@ def main():
     a = ap.parse_args()
     idle_s = user_idle_s()
     if idle_s < a.min_user_idle:
-        sys.exit(f"用户 {idle_s:.0f}s 前仍有操作，未满 {a.min_user_idle:.0f}s 空闲门，未测量")
-    settle_gate(a.max_load, "开测前", 900)
+        defer(f"用户 {idle_s:.0f}s 前仍有操作，未满 {a.min_user_idle:.0f}s 空闲门，未开模拟器、未测量")
+    t0 = time.time()
+    settle_gate(a.max_load, "开测前", 900, t0=t0, defer_on_timeout=True)
     load = os.getloadavg()
     before = snapshot()
     started = dt.datetime.now().astimezone()
     work = Path(tempfile.mkdtemp(prefix="points-sim-measure."))
     udid = None
+    measured = False
     try:
         app, build_s, xcode = build(work / "src")
+        owner_back(t0, "构建后")
         info = plistlib.loads((app / "Info.plist").read_bytes())
         version = f"{info['CFBundleShortVersionString']} ({info['CFBundleVersion']})"
         zip_path = work / "PointsDeck.app.zip"
@@ -124,7 +149,8 @@ def main():
         subprocess.run(["xcrun", "simctl", "bootstatus", udid, "-b"], check=True, capture_output=True)
         # A freshly created iOS 27 simulator spends minutes on first-boot work (load > 300 seen 2026-09-29);
         # timing launches during that window measures the host, not the app.
-        settle_gate(a.max_load, "开机后")
+        settle_gate(a.max_load, "开机后", t0=t0)
+        owner_back(t0, "开机后")
         subprocess.run(["xcrun", "simctl", "uninstall", udid, BUNDLE], capture_output=True)
         subprocess.run(["xcrun", "simctl", "install", udid, str(app)], check=True)
         samples = []
@@ -138,6 +164,7 @@ def main():
             time.sleep(5)
             ready, done, lines = log_markers(udid, start, pid)
             samples.append({"run": run, "pid": pid, "request_to_ready_ms": ready, "request_to_launch_complete_ms": done, "markers": lines})
+            owner_back(t0, "启动计时中")
         load_after_launch = os.getloadavg()
         if max(load_after_launch[0], load_mid[0]) > a.abort_load:
             sys.exit(f"启动计时期间负载 {load_mid[0]:.1f}/{load_after_launch[0]:.1f} 超过 {a.abort_load}，样本作废，未写入")
@@ -151,15 +178,20 @@ def main():
         time.sleep(3)
         pid = int(sh(["xcrun", "simctl", "launch", udid, BUNDLE]).strip().split(":")[-1])
         time.sleep(45)
+        owner_back(t0, "空闲采样前")
         idle_load = os.getloadavg()
         if idle_load[0] > a.abort_load:
             sys.exit(f"空闲采样前 1 分钟负载 {idle_load[0]:.1f} > {a.abort_load}，样本作废，未写入")
         idle_out = sh([sys.executable, str(MEASURE), "idle", str(pid), "--seconds", "60"])
         idle = json.loads(idle_out[idle_out.index("{"):idle_out.rindex("}") + 1])["idle"]
+        owner_back(t0, "空闲采样中")
         subprocess.run(["xcrun", "simctl", "terminate", udid, BUNDLE], capture_output=True)
+        measured = True
     finally:
         if udid:
             subprocess.run(["xcrun", "simctl", "shutdown", udid], capture_output=True)
+        if not measured:  # a stopped or failed run leaves no multi-hundred-MB build copy behind
+            shutil.rmtree(work, ignore_errors=True)
     after = snapshot()
     if after["sha256"] != before["sha256"]:
         shutil.rmtree(work, ignore_errors=True)
