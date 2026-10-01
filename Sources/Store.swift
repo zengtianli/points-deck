@@ -45,7 +45,7 @@ final class Store: ObservableObject {
     /// 探测失败一律退到登录页，那里能重试，也能显示原因。
     func restore() async {
         // 验证通道：只有显式传了 launch 参数才生效，生产路径上这两个 key 永远是 nil。
-        //   ... -dev_user jingbao -dev_pw 160912
+        //   ... -dev_user jingbao -dev_pw <密码>
         let d = UserDefaults.standard
         if let u = d.string(forKey: "dev_user"), let pw = d.string(forKey: "dev_pw") {
             await login(user: u, password: pw)
