@@ -1,0 +1,26 @@
+{
+  "summary": "命令行在仓库里：treasury — Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+  "passed": true,
+  "commands": [
+    "treasury"
+  ],
+  "app": null,
+  "host": "repo",
+  "host_app": null,
+  "entry": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+  "target": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+  "at_entry": true,
+  "help_summary": "Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+  "entries": [
+    {
+      "command": "treasury",
+      "link": "~/.local/bin/treasury",
+      "target": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+      "executable": true,
+      "exit_code": 0,
+      "summary": "Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+      "error": null,
+      "at_entry": true
+    }
+  ]
+}

@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "name": "homepage_mobile",
+  "app_id": "points-deck-ios",
+  "command": "~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/homepage.py --viewport mobile",
+  "exit_code": 0,
+  "status": "passed",
+  "started_at": "2026-09-30T23:00:18.336814+08:00",
+  "finished_at": "2026-09-30T23:00:34.886060+08:00",
+  "input_sha256": "2f6fa49cde1e98d553ab72876d3d9a3c783ddb651701cd911b5960bfb8a28cba",
+  "log": "perf/acceptance/homepage_mobile.log",
+  "log_sha256": "bfdc33c691ea840c9f996d5f82b81624e73b209b285b5f2c88961fcde1d2663c",
+  "summary": "mobile 390px：HTTP 200，标题「Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。」，无横向溢出，5 张图片全部加载",
+  "detail": {
+    "summary": "mobile 390px：HTTP 200，标题「Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。」，无横向溢出，5 张图片全部加载",
+    "passed": true,
+    "url": "https://app-ios-points-deck.tianli.cyou/",
+    "viewport": [
+      390,
+      844
+    ],
+    "http_status": 200,
+    "title": "Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。",
+    "inner_width": 390,
+    "scroll_width": 390,
+    "horizontal_overflow": false,
+    "images": [
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/icon.png?v=97d827221d",
+        "complete": true,
+        "natural_width": 180,
+        "natural_height": 180,
+        "rendered_width": 36,
+        "rendered_height": 36,
+        "alt": ""
+      },
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/01.jpg",
+        "complete": true,
+        "natural_width": 328,
+        "natural_height": 720,
+        "rendered_width": 232,
+        "rendered_height": 510,
+        "alt": "真实测试账号：余额、住处与最近流水。"
+      },
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/02.jpg",
+        "complete": true,
+        "natural_width": 328,
+        "natural_height": 720,
+        "rendered_width": 169,
+        "rendered_height": 369,
+        "alt": "测试账本的积分走势。"
+      },
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/03.jpg",
+        "complete": true,
+        "natural_width": 328,
+        "natural_height": 720,
+        "rendered_width": 169,
+        "rendered_height": 369,
+        "alt": "家庭示例奖励：用已挣得的积分兑换。"
+      },
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/icon.png?v=97d827221d",
+        "complete": true,
+        "natural_width": 180,
+        "natural_height": 180,
+        "rendered_width": 72,
+        "rendered_height": 72,
+        "alt": "Growth Treasury · 成长小金库 图标"
+      }
+    ],
+    "videos": [
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/demo.mp4",
+        "ready_state": 0,
+        "duration": null,
+        "current_time": 0,
+        "paused": true,
+        "error": null,
+        "video_width": 0,
+        "video_height": 0,
+        "tracks": 1,
+        "play_error": null
+      }
+    ],
+    "failed_requests": [],
+    "requests": 7,
+    "screenshot": "perf/acceptance/homepage_mobile.png",
+    "screenshot_sha256": "d65efacbf6eb52210e85d89af38d34c4013e5d67ab5f063e3431aa2cd31d5815",
+    "screenshot_check": "极差 255，标准差 72.7",
+    "browser": {
+      "binary": "/Users/tianli/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "kind": "headless_shell",
+      "version": "Google Chrome for Testing 151.0.7922.34"
+    },
+    "probe_timed_out": true,
+    "method": "隔离无界面浏览器（临时配置、无调试端口、不操作桌面）经本地透传代理加载线上页面，探针读取布局与资源状态",
+    "limits": [
+      "响应式视口，不等于真机",
+      "机器判定布局与资源；视觉美观未做人工审阅"
+    ]
+  }
+}

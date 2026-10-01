@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "name": "cli_entry",
+  "app_id": "points-deck-ios",
+  "command": "~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/cli_entry.py",
+  "exit_code": 0,
+  "status": "passed",
+  "started_at": "2026-09-30T23:00:18.393193+08:00",
+  "finished_at": "2026-09-30T23:00:18.598451+08:00",
+  "input_sha256": "8584bdce209e390ce4eef8989802e79ddd36403e0638dc1cce128c3addc2b210",
+  "log": "perf/acceptance/cli_entry.log",
+  "log_sha256": "994cbba6aac91826d7aa54e2d516197d8bc9c249cf3e843ab47d5cb0bdbf1387",
+  "summary": "命令行在仓库里：treasury — Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+  "detail": {
+    "summary": "命令行在仓库里：treasury — Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+    "passed": true,
+    "commands": [
+      "treasury"
+    ],
+    "app": null,
+    "host": "repo",
+    "host_app": null,
+    "entry": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+    "target": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+    "at_entry": true,
+    "help_summary": "Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+    "entries": [
+      {
+        "command": "treasury",
+        "link": "~/.local/bin/treasury",
+        "target": "~/Apps/edu/ios/points/01-源程序/cli/treasury",
+        "executable": true,
+        "exit_code": 0,
+        "summary": "Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。",
+        "error": null,
+        "at_entry": true
+      }
+    ]
+  }
+}

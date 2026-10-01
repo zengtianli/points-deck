@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "name": "functionality",
+  "app_id": "points-deck-ios",
+  "command": "bash scripts/accept/run.sh functionality",
+  "exit_code": 0,
+  "status": "passed",
+  "started_at": "2026-09-30T23:00:14.762803+08:00",
+  "finished_at": "2026-09-30T23:00:18.335241+08:00",
+  "input_sha256": "5d637d9a4565b84634f1d9943c964b2538b2e0765b6ca4bda53752f1862a54e8",
+  "log": "perf/acceptance/functionality.log",
+  "log_sha256": "d4c2b9124dca5db9957c71f49bc9e7dd53bd621cafb18a5386bccf133d1f9977",
+  "summary": "功能：生产 Swift 客户端对本地真实账本服务 10 项通过",
+  "detail": {
+    "summary": "功能：生产 Swift 客户端对本地真实账本服务 10 项通过",
+    "passed": true,
+    "steps": [
+      "登录并读取首屏：余额 1000、小木屋、流水 30 条、阶梯 11 档",
+      "服务端预览「听写全对一次」= 10 pts",
+      "家长会话解锁（只读 /api/config 验证，未记账）",
+      "解锁状态记一笔：余额 1000 → 1010，会话计数 1",
+      "撤销最近一笔：余额回到 1000",
+      "兑换已解锁商品「多看一集动画」扣 150 分（无需家长密码）",
+      "修改昵称并回读",
+      "实时推送：家长加分后收到 ledger 事件",
+      "上锁并退出登录：账本不可再读",
+      "客户端隔离 HOME 写入 0 个文件，其中含密码明文 0 个"
+    ],
+    "scope": "macOS 编译同一份 Sources/Api.swift + ParentSession.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+  }
+}

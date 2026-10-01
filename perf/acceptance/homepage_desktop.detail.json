@@ -1,0 +1,91 @@
+{
+  "summary": "desktop 1440px：HTTP 200，标题「Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。」，无横向溢出，5 张图片全部加载",
+  "passed": true,
+  "url": "https://app-ios-points-deck.tianli.cyou/",
+  "viewport": [
+    1440,
+    900
+  ],
+  "http_status": 200,
+  "title": "Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。",
+  "inner_width": 1440,
+  "scroll_width": 1440,
+  "horizontal_overflow": false,
+  "images": [
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/icon.png?v=97d827221d",
+      "complete": true,
+      "natural_width": 180,
+      "natural_height": 180,
+      "rendered_width": 36,
+      "rendered_height": 36,
+      "alt": ""
+    },
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/01.jpg",
+      "complete": true,
+      "natural_width": 328,
+      "natural_height": 720,
+      "rendered_width": 269,
+      "rendered_height": 590,
+      "alt": "真实测试账号：余额、住处与最近流水。"
+    },
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/02.jpg",
+      "complete": true,
+      "natural_width": 328,
+      "natural_height": 720,
+      "rendered_width": 368,
+      "rendered_height": 620,
+      "alt": "测试账本的积分走势。"
+    },
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/03.jpg",
+      "complete": true,
+      "natural_width": 328,
+      "natural_height": 720,
+      "rendered_width": 368,
+      "rendered_height": 620,
+      "alt": "家庭示例奖励：用已挣得的积分兑换。"
+    },
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/icon.png?v=97d827221d",
+      "complete": true,
+      "natural_width": 180,
+      "natural_height": 180,
+      "rendered_width": 72,
+      "rendered_height": 72,
+      "alt": "Growth Treasury · 成长小金库 图标"
+    }
+  ],
+  "videos": [
+    {
+      "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/demo.mp4",
+      "ready_state": 0,
+      "duration": null,
+      "current_time": 0,
+      "paused": true,
+      "error": null,
+      "video_width": 0,
+      "video_height": 0,
+      "tracks": 1,
+      "play_error": null
+    }
+  ],
+  "failed_requests": [],
+  "requests": 7,
+  "screenshot": "perf/acceptance/homepage_desktop.png",
+  "screenshot_sha256": "c2e1607851b7c7c3a55aee89bbf0e700fd63de8c4f76dc9969def6fa05d69f7b",
+  "screenshot_check": "极差 255，标准差 64.2",
+  "browser": {
+    "binary": "/Users/tianli/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+    "kind": "headless_shell",
+    "version": "Google Chrome for Testing 151.0.7922.34"
+  },
+  "probe_timed_out": true,
+  "method": "隔离无界面浏览器（临时配置、无调试端口、不操作桌面）经本地透传代理加载线上页面，探针读取布局与资源状态",
+  "limits": [
+    "单一桌面视口",
+    "机器判定布局与资源；视觉美观未做人工审阅"
+  ]
+}

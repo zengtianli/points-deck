@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "name": "media_playback",
+  "app_id": "points-deck-ios",
+  "command": "~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/media_playback.py",
+  "exit_code": 0,
+  "status": "passed",
+  "started_at": "2026-09-30T09:30:26.700481+08:00",
+  "finished_at": "2026-09-30T09:30:34.658416+08:00",
+  "input_sha256": "70a2004397ef6221177be80abaec94b6d64e226d36d9accd2eb54a41ca09db7c",
+  "log": "perf/acceptance/media_playback.log",
+  "log_sha256": "15fb177027bfd0e192de7cc0c3529ff98f6e17ef88a653d2247fdafaa88df269",
+  "summary": "1 个本地视频 ffprobe/ffmpeg 全量解码通过（/Users/tianli/Apps/edu/ios/points/01-源程序/../02-审核/当前版本/02-视频/成片/public-preview/tour.mp4 28.0s h264）；推广页 1 个视频在无界面浏览器中实际播放（1.1/28s）",
+  "detail": {
+    "summary": "1 个本地视频 ffprobe/ffmpeg 全量解码通过（/Users/tianli/Apps/edu/ios/points/01-源程序/../02-审核/当前版本/02-视频/成片/public-preview/tour.mp4 28.0s h264）；推广页 1 个视频在无界面浏览器中实际播放（1.1/28s）",
+    "passed": true,
+    "local_videos": [
+      {
+        "path": "/Users/tianli/Apps/edu/ios/points/01-源程序/../02-审核/当前版本/02-视频/成片/public-preview/tour.mp4",
+        "bytes": 329574,
+        "sha256": "3d039f0b1e3b59ae6b3a7eca1ff25767c9451aa4b4c6471eee62dde169c325d8",
+        "duration": 28.0,
+        "codec": "h264",
+        "size": [
+          580,
+          1280
+        ],
+        "decode_ok": true,
+        "decode_errors": null,
+        "ok": true
+      }
+    ],
+    "page_url": "https://app-ios-points-deck.tianli.cyou/",
+    "page_videos": [
+      {
+        "src": "https://app-ios-points-deck.tianli.cyou/assets/ios/points-deck-ios/demo.mp4",
+        "ready_state": 4,
+        "duration": 28,
+        "current_time": 1.069251,
+        "paused": false,
+        "error": null,
+        "video_width": 580,
+        "video_height": 1280,
+        "tracks": 1,
+        "play_error": null,
+        "ok": true
+      }
+    ],
+    "page_title": "Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。",
+    "page_screenshot": "perf/acceptance/media_playback.png",
+    "browser": {
+      "binary": "/Users/tianli/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell",
+      "kind": "headless_shell",
+      "version": "Google Chrome for Testing 151.0.7922.34"
+    },
+    "local_sha256": [
+      "3d039f0b1e3b59ae6b3a7eca1ff25767c9451aa4b4c6471eee62dde169c325d8"
+    ],
+    "method": "ffprobe/ffmpeg 全量解码 + 隔离无界面浏览器静音播放（readyState/currentTime/duration）",
+    "limits": [
+      "静音自动播放；字幕文字与拖动进度未做人工审阅"
+    ]
+  }
+}

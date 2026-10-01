@@ -1,3 +1,61 @@
+name: points-deck
 name_en: Growth Treasury
 name_zh: 成长小金库
 display_name: Growth Treasury · 成长小金库
+family: edu
+form: ios
+lifecycle: active
+bundle_id: cyou.tianli.pointsdeck
+origin: own
+sop:
+  test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py
+  accept:
+    functionality: bash scripts/accept/run.sh functionality
+    recovery: bash scripts/accept/run.sh recovery
+    privacy: bash scripts/accept/run.sh privacy
+  ui:
+  - Sources/**
+  - Shared/**
+  source:
+  - Sources/**
+  - Shared/**
+  - Resources/**
+  - Widget/**
+  - ShareExtension/**
+  - project.yml
+  - '*.entitlements'
+  - cli/treasury
+  test_inputs:
+  - Tests/**
+  - ref/**
+  - test-contract.py
+  - test_check_markdown_drift.py
+  - scripts/tests/**
+  - Package.swift
+  - cli/**
+  media:
+  - shots
+  - ../02-审核/当前版本/02-视频/成片/public-preview
+  media_meta: ../02-审核/当前版本/02-视频/成片/public-preview/provenance.json
+  release: perf/asc-release.json
+  measure:  # Chapter 在接电源、10 分钟无操作、负载低时自动重测；脚本自带空闲与源码快照核对，只写 perf/
+    command: ~/Dev/.venv/bin/python scripts/perf/sim_measure.py
+    outputs: [perf/simulator.json, perf/lightweight.json, perf/raw]
+  runtime_note: iPhone 17 / iOS 27.2 当前离线（tunnel unavailable、ddiServicesAvailable=false）；主机 DDI 已核验可用。未启动 App，未用模拟器替代真机数据，等待连接解锁及空闲测量窗口。
+  # 给 Agent 的命令行：同一服务端 /api/* 的薄客户端（stdlib）。本机 Mac 构建会把它拷进
+  # Contents/Resources/bin/treasury（project.yml 构建阶段，iOS 包与归档不带）；本机现在没装 Mac 版，
+  # 所以 ~/.local/bin/treasury 由 cli/install.sh 链到本仓入口、这里写 host: repo。第一次装上 Mac 版后
+  # 重跑 cli/install.sh（改链到 .app 内），并去掉下面的 host 与 entry（改为 App 托管）。
+  cli:
+    commands:
+    - treasury
+    host: repo
+    entry: cli/treasury
+  runtime:
+    kind: ios
+    readback: builtin:asc-device
+  product:
+    distribution: public
+    source_visibility: public
+    source_url: https://github.com/zengtianli/points-deck
+    rationale: 记录努力、积攒积分，让成长有自己的模样。 面向外部使用者提供现有公开产品与源码入口，持续维护获取、教程和版本证据。
