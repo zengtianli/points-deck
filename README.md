@@ -52,9 +52,18 @@
 
 截图里的账号「小满」和 30 天流水是演示数据（`scripts/demo/ledger.py` 在本机临时起的隔离账本），不是任何真实家庭的账。
 
-### 各平台资源占用（模拟器实测）
+### 各平台资源占用（模拟器与本机实测）
 
 <!-- platforms:start -->
+| 平台 | 测量环境 | 包体（zip） | 空闲内存 | 空闲 CPU | 冷启动到首屏有数据 | 目标 |
+|---|---|---|---|---|---|---|
+| iPhone | 模拟器 · iPhone 17 Pro · iOS 27.0 | 8.4 MB | 43.0 MB | 0% | 1.83 s | ≤ 150 MB · ≤ 0.5% |
+| iPad | 模拟器 · iPad Pro 13-inch · iPadOS 27.0 | 8.4 MB | 45.0 MB | 0.02% | 0.71 s | ≤ 150 MB · ≤ 0.5% |
+| Mac | 本机原生 · Mac16,12 / Apple M4 · macOS 27.2 | 4.7 MB | 59.0 MB | 0% | 0.42 s | ≤ 150 MB · ≤ 0.5% |
+| Apple Watch | 模拟器 · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB | 23.0 MB | 0.02% | 0.47 s | ≤ 25 MB · ≤ 10 MB 包 · ≤ 1.5 s |
+| Apple Vision Pro | 模拟器 · Apple Vision Pro · visionOS 27.0 | 4.7 MB | 58.0 MB | 0.13% | 14.02 s | ≤ 60 MB |
+
+<sub>2026-10-02 实测，数据来自 `perf/platforms/<平台>.json`。iPhone / iPad / Watch / Vision 是 Xcode 模拟器上的 Release 构建，Mac 是本机原生的本地 Release 构建；**都不是真机数值，包体也不是 App Store 切片**（App Store 的 iPhone 体积见下方「资源占用」）。内存为 App 进程 phys_footprint，CPU 为启动静置 45 秒后 60 秒窗口内的 CPU 时间 ÷ 墙钟，冷启动是发出启动到 App 打出「第一屏有数据」日志的中位数（隔离的本地演示账本，5 次，丢弃装机后第一次）。模拟器的启动时间随宿主负载浮动很大：测量当天本机内存吃紧，同一份代码的 iPhone 线在不同时段测出 1.8–4.1 秒；Vision Pro 那 14 秒里大部分是模拟器自己的开销（进程拉起后到 App 打出第一行日志、visionOS 场景与 RealityKit 初始化），App 从取账本到画出第一屏约 2 秒。</sub>
 <!-- platforms:end -->
 
 ## 怎么拿到
@@ -140,7 +149,7 @@ MIT © 2026 曾田力 (Tianli Zeng)
 
 | 安装包 | 空闲内存 | 空闲 CPU | 模拟器冷启动到首屏就绪 |
 |---|---|---|---|
-| **3.1 MB**（装好后 4.0 MB） | **35.7 MB** | **0%** | **613 ms** |
+| **3.1 MB**（装好后 4.0 MB） | **34.6 MB** | **0%** | **347 ms** |
 
 体积按具体发行构建回读；真机尚未测量，内存、CPU 与启动时间先用 iOS 模拟器实测并标明环境。
 
