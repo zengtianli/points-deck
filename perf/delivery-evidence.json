@@ -5,72 +5,122 @@
       "result": "passed",
       "scope": "promo_ui",
       "method": "ui_automation",
-      "checked_at": "2026-09-30T23:00:31.759291+08:00",
-      "input_sha256": "2f6fa49cde1e98d553ab72876d3d9a3c783ddb651701cd911b5960bfb8a28cba",
+      "checked_at": "2026-10-02T20:39:15.317106+08:00",
+      "input_sha256": "36a424acaa213495fec3a0cbd473e68d68cab54f2d6e39f0e7a9f06267a8af9a",
       "evidence": "perf/acceptance/homepage_desktop.json",
-      "evidence_sha256": "3b9c1c3265ee6574f50303ffb396cd538d9e57ece446dea215bc6580c542e3b7",
+      "evidence_sha256": "eaefeddf8bd053f4f1c55e38db637f7ee8c1f52a8ffa8b27fb79f4121f194fe3",
       "detail": "builtin:homepage_desktop：~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/homepage.py --viewport desktop → desktop 1440px：HTTP 200，标题「Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。」，无横向溢出，5 张图片全部加载"
     },
     "homepage_mobile": {
       "result": "passed",
       "scope": "promo_ui",
       "method": "ui_automation",
-      "checked_at": "2026-09-30T23:00:34.886060+08:00",
-      "input_sha256": "2f6fa49cde1e98d553ab72876d3d9a3c783ddb651701cd911b5960bfb8a28cba",
+      "checked_at": "2026-10-02T20:39:16.290660+08:00",
+      "input_sha256": "36a424acaa213495fec3a0cbd473e68d68cab54f2d6e39f0e7a9f06267a8af9a",
       "evidence": "perf/acceptance/homepage_mobile.json",
-      "evidence_sha256": "e6b778c6b8a5660a6346b40e61c45fbae87fa5f65956c07604b31abaa8c45fa0",
+      "evidence_sha256": "b20c407db69718a109cdb41f5f646f6113156cfc8fa06f9d03f06779b6d3d769",
       "detail": "builtin:homepage_mobile：~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/homepage.py --viewport mobile → mobile 390px：HTTP 200，标题「Growth Treasury · 成长小金库 · 记录努力、积攒积分，让成长有自己的模样。」，无横向溢出，5 张图片全部加载"
     },
     "media_playback": {
       "result": "passed",
       "scope": "media",
       "method": "ui_automation",
-      "checked_at": "2026-09-30T09:30:34.658416+08:00",
-      "input_sha256": "70a2004397ef6221177be80abaec94b6d64e226d36d9accd2eb54a41ca09db7c",
+      "checked_at": "2026-10-02T20:39:04.804962+08:00",
+      "input_sha256": "0a6bac4f903d8e5803e5eb2f030708e2166d92f0aed72f23b74d4a05111afed9",
       "evidence": "perf/acceptance/media_playback.json",
-      "evidence_sha256": "9df718c20aeb86667d317af99dcf794c30322f87edf2462d7a6f2b4ce0ccb281",
+      "evidence_sha256": "874015c74444975e8186c18e366b9846a9d307810b6a90a4338e46aead5d8a9a",
       "detail": "builtin:media_playback：~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/media_playback.py → 1 个本地视频 ffprobe/ffmpeg 全量解码通过（/Users/tianli/Apps/edu/ios/points/01-源程序/../02-审核/当前版本/02-视频/成片/public-preview/tour.mp4 28.0s h264）；推广页 1 个视频在无界面浏览器中实际播放（1.1/28s）"
     },
     "functionality": {
       "result": "passed",
       "scope": "code",
       "method": "real_product",
-      "checked_at": "2026-09-30T23:00:18.335241+08:00",
-      "input_sha256": "5d637d9a4565b84634f1d9943c964b2538b2e0765b6ca4bda53752f1862a54e8",
+      "checked_at": "2026-10-02T17:06:32.952963+08:00",
+      "input_sha256": "aacbb39a386ba1b921145bc4596a1ea88ec5f74694328bab9ad5fc1cd2a28b23",
       "evidence": "perf/acceptance/functionality.json",
-      "evidence_sha256": "8c67d7efce9941bc98aecb112c0c9ff26f4fd1f043b34e96045d4ef4d73269f4",
+      "evidence_sha256": "6bd7131fd060f88ad3760824458e3a5b34cd24d8c8848c387407af38494ef771",
       "detail": "sop.accept：bash scripts/accept/run.sh functionality → 功能：生产 Swift 客户端对本地真实账本服务 10 项通过"
     },
     "recovery": {
       "result": "passed",
       "scope": "code",
       "method": "real_product",
-      "checked_at": "2026-09-30T23:00:18.658612+08:00",
-      "input_sha256": "5d637d9a4565b84634f1d9943c964b2538b2e0765b6ca4bda53752f1862a54e8",
+      "checked_at": "2026-10-02T17:06:33.589221+08:00",
+      "input_sha256": "aacbb39a386ba1b921145bc4596a1ea88ec5f74694328bab9ad5fc1cd2a28b23",
       "evidence": "perf/acceptance/recovery.json",
-      "evidence_sha256": "126296f82b1c8046b495f3667a86dd174e1a5607c7281257f9054e4626b4ab45",
+      "evidence_sha256": "6852fce3e7a2297cfd518e8a757071d96457279aeeeed01bcf8451f1db955583",
       "detail": "sop.accept：bash scripts/accept/run.sh recovery → 故障与恢复：生产 Swift 客户端对本地真实账本服务 9 项通过"
     },
     "privacy": {
       "result": "passed",
       "scope": "code",
       "method": "real_product",
-      "checked_at": "2026-09-30T23:00:18.392472+08:00",
-      "input_sha256": "5d637d9a4565b84634f1d9943c964b2538b2e0765b6ca4bda53752f1862a54e8",
+      "checked_at": "2026-10-02T17:06:32.898457+08:00",
+      "input_sha256": "aacbb39a386ba1b921145bc4596a1ea88ec5f74694328bab9ad5fc1cd2a28b23",
       "evidence": "perf/acceptance/privacy.json",
-      "evidence_sha256": "7161102fa3de3b166cf47257c9061db4c4f36c6012faef805ebdb7d662d9e2a9",
-      "detail": "sop.accept：bash scripts/accept/run.sh privacy → 隐私边界：生产 Swift 客户端对本地真实账本服务 6 项通过；静态：24 个 Swift 源文件无跟踪 SDK，联网主机仅 ['edu.tianli.cyou']，家长密码只在内存，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串"
+      "evidence_sha256": "ebd7a35196af869937be3f3cb9929c11669519749e3abc70aa6099a3a2209886",
+      "detail": "sop.accept：bash scripts/accept/run.sh privacy → 隐私边界：生产 Swift 客户端对本地真实账本服务 6 项通过；静态：31 个 Swift 源文件无跟踪 SDK，联网主机仅 ['edu.tianli.cyou']，家长密码只在内存，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串"
     },
     "cli_entry": {
       "result": "passed",
       "scope": "cli_entry",
       "method": "real_product",
-      "checked_at": "2026-09-30T23:00:18.598451+08:00",
-      "input_sha256": "8584bdce209e390ce4eef8989802e79ddd36403e0638dc1cce128c3addc2b210",
+      "checked_at": "2026-10-02T17:06:22.209226+08:00",
+      "input_sha256": "736b0a22d0a0d2212e01bd09e6c49f57c9dd8b8e5a2cec3a47d8b15194677652",
       "evidence": "perf/acceptance/cli_entry.json",
-      "evidence_sha256": "995e4d8a26adf169ffad283a17c0ec1155d7beab4cc8155c35c53e845316f390",
+      "evidence_sha256": "fc80ce1935ba40038b3e016973a6061bbdd3b208a104a63e7b101e62a160c901",
       "detail": "builtin:cli_entry：~/Dev/.venv/bin/python ~/Apps/chapter/engine/acceptors/cli_entry.py → 命令行在仓库里：treasury — Growth Treasury · 成长小金库：积分账本的命令行。读命令加 --json 输出 {\"ok\": true, …}。"
+    },
+    "launch_iphone": {
+      "result": "passed",
+      "scope": "platform_iphone",
+      "method": "ui_automation",
+      "checked_at": "2026-10-02T17:12:35.100855+08:00",
+      "input_sha256": "2e3c4c3d80dfb1f2f33a881b4bbd7503059a8a565227490b9a4b035c65a234ba",
+      "evidence": "perf/acceptance/launch_iphone.json",
+      "evidence_sha256": "c50c2a0b13564102ef7419f38ef09c51fdfb4a84b2c384b164720430fc901e66",
+      "detail": "sop.accept：bash scripts/accept/launch.sh iphone → iPhone 模拟器 iPhone 17 Pro 启动冒烟通过：os_log 6.832 s，截图 1206×2622"
+    },
+    "launch_ipad": {
+      "result": "passed",
+      "scope": "platform_ipad",
+      "method": "ui_automation",
+      "checked_at": "2026-10-02T17:17:43.640895+08:00",
+      "input_sha256": "40867dae692331da873b27492d7272b28ff0c2dc2f5e486c6f565d42e8b5cbb6",
+      "evidence": "perf/acceptance/launch_ipad.json",
+      "evidence_sha256": "c45fd0a04789206bd08b5e16f1e8c68c58fa97094b229174c5eb321f18da52c8",
+      "detail": "sop.accept：bash scripts/accept/launch.sh ipad → iPad 模拟器 iPad Pro 13-inch (M5) 启动冒烟通过：os_log 3.077 s，截图 2064×2752"
+    },
+    "launch_watch": {
+      "result": "passed",
+      "scope": "platform_watch",
+      "method": "ui_automation",
+      "checked_at": "2026-10-02T17:21:59.360288+08:00",
+      "input_sha256": "411ec822b8484c6ed25d6a9960699fe816365141707abcc681a876d3cd969f79",
+      "evidence": "perf/acceptance/launch_watch.json",
+      "evidence_sha256": "d37a24bd440c45cd90cd7599a4c9b5e3eef76a898b1037525c3f0cf97b36f503",
+      "detail": "sop.accept：bash scripts/accept/launch.sh watch → Apple Watch 模拟器 Apple Watch Series 12 (46mm) 启动冒烟通过：os_log 1.541 s，截图 416×496"
+    },
+    "launch_vision": {
+      "result": "passed",
+      "scope": "platform_vision",
+      "method": "ui_automation",
+      "checked_at": "2026-10-02T17:25:41.815281+08:00",
+      "input_sha256": "91301b62df5fed5486f565f4e2d8ec71e54c4c036f260d5dce4477bfd3c4d121",
+      "evidence": "perf/acceptance/launch_vision.json",
+      "evidence_sha256": "4d1a7428f760b661e8247e0a3c050c7383c83a52c8e1cf97d344d7dce5508119",
+      "detail": "sop.accept：bash scripts/accept/launch.sh vision → Apple Vision Pro 模拟器 Apple Vision Pro 启动冒烟通过：os_log 7.694 s，截图 3840×2160"
+    },
+    "launch_mac": {
+      "result": "passed",
+      "scope": "platform_mac",
+      "method": "ui_automation",
+      "checked_at": "2026-10-02T17:18:31.510835+08:00",
+      "input_sha256": "0d1b31d1dfe84a90764ae369fad184d4dce1d03155388a72084e680805a70b00",
+      "evidence": "perf/acceptance/launch_mac.json",
+      "evidence_sha256": "0f8417f517c2af29573f7decc808b36fe01605f7b90fdd7ff3506458f2a08032",
+      "detail": "sop.accept：bash scripts/accept/launch.sh mac → Mac 本机 启动冒烟通过：os_log 1.489 s，截图 2880×1800"
     }
   },
-  "updated_at": "2026-09-30T23:00:34.898781+08:00"
+  "updated_at": "2026-10-02T20:39:16.309897+08:00"
 }

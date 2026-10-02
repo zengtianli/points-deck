@@ -4,36 +4,36 @@
  "app_id": "points-deck-ios",
  "version": "1.0.1",
  "build": "1",
- "input_sha256": "d8a829e3be51416d0a5f617d7da462ec0cd871f48214120046db147910ee5095",
+ "input_sha256": "a3dd7aca6d6ba87f94028715681898f6733bd512b09c50735f1f8656031ace12",
  "runtime_measurement": {
   "environment": "native",
   "device": "Mac16,12 / Apple M4",
   "os": "macOS 27.2",
   "xcode": "Xcode 27.0 (27A266a)",
-  "evidence": "perf/platforms/mac/measure-20261002-155118.json",
-  "evidence_sha256": "b3b1163bd1f1a8b33fea259241feb20a3ead86a7d964149dc4549363fa8c28cb"
+  "evidence": "perf/platforms/mac/measure-20261002-203333.json",
+  "evidence_sha256": "6cdb3a11054c982904ad8941d85fff5c6f7b48c5a31daa83cba114be04096e47"
  },
  "size": {
-  "download_bytes": 4716289,
-  "installed_bytes": 10254711,
-  "download_mb": 4.72,
-  "installed_mb": 10.25,
+  "download_bytes": 4728005,
+  "installed_bytes": 10291911,
+  "download_mb": 4.73,
+  "installed_mb": 10.29,
   "kind": "local ad-hoc Release .app, not a store package"
  },
  "speed": {
-  "cold_launch_ms": 422.0,
+  "cold_launch_ms": 287.0,
   "runs": 5,
   "discarded_runs": 1,
   "ready_signal": "os_log",
   "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
  },
  "idle": {
-  "memory_mb": 59.0,
+  "memory_mb": 51.0,
   "cpu_pct": 0.0,
   "window_s": 60,
   "settle_s": 45,
   "method": "shared measure.py idle: CPU-time delta / wall window; phys_footprint peak of 3 samples after the window",
-  "scope": "Local ad-hoc Release build, main process only, window opened with open -g (not activated)"
+  "scope": "Local ad-hoc Release build, main process only, quiet launch (hidden, no Dock icon, window never on screen)"
  },
- "measured_at": "2026-10-02T15:51:18+08:00"
+ "measured_at": "2026-10-02T20:33:33+08:00"
 }

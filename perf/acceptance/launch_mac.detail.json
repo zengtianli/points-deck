@@ -1,0 +1,53 @@
+{
+  "summary": "Mac 本机 启动冒烟通过：os_log 1.489 s，截图 2880×1800",
+  "passed": true,
+  "platform": "mac",
+  "environment": "native",
+  "scheme": "PointsDeck",
+  "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
+  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "build": {
+    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.n8xcu581/dd/Build/Products/Debug/PointsDeck.app",
+    "bundle_id": "cyou.tianli.pointsdeck",
+    "version": "1.0.1",
+    "build": "1",
+    "executable_sha256": "1565776d7343c2a5078850ea63713d82da25b27296097ee1e426b30f0626535d",
+    "sdk": "macosx27.0",
+    "xcode": {
+      "name": "Xcode.app",
+      "version": "27.0",
+      "build": "27A266a",
+      "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+    },
+    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.n8xcu581/build-mac-Debug.log"
+  },
+  "launch_args": [
+    "-api_base",
+    "http://127.0.0.1:56670",
+    "-dev_user",
+    "xiaoman",
+    "-dev_pw",
+    "<redacted>"
+  ],
+  "run": {
+    "udid": null,
+    "pid": null,
+    "ready_seconds": 1.489,
+    "ready_signal": "os_log",
+    "size": [
+      2880,
+      1800
+    ],
+    "runtime": null,
+    "device": null
+  },
+  "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": null,
+    "stable": false,
+    "diff_baseline": null,
+    "diff_prev": null
+  },
+  "screenshot": "perf/platforms/mac/launch.png",
+  "screenshot_sha256": "b1a70ebaa44621e0adcdf182b843214cb8492d85970c0e324374a8f07a6d0c9d"
+}

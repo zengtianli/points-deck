@@ -1,0 +1,119 @@
+{
+ "schema_version": 1,
+ "platform": "vision",
+ "app_id": "points-deck-ios",
+ "input_sha256": "a3dd7aca6d6ba87f94028715681898f6733bd512b09c50735f1f8656031ace12",
+ "measured_at": "2026-10-02T19:34:18+08:00",
+ "completed_at": "2026-10-02T19:55:15+08:00",
+ "build": {
+  "configuration": "Release",
+  "scheme": "PointsDeck",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "version": "1.0.1",
+  "build": "1",
+  "sdk": "xrsimulator27.0",
+  "executable_sha256": "1e6fd595d37341090dc302e3b380b1265f957aaba164a91d8eac505331f3d4c3",
+  "signing": "unsigned simulator build (CODE_SIGNING_ALLOWED=NO)",
+  "seconds": 28.3,
+  "xcode": {
+   "name": "Xcode.app",
+   "version": "27.0",
+   "build": "27A266a",
+   "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+  }
+ },
+ "measurement": {
+  "environment": "simulator",
+  "device": "Apple Vision Pro (Apple-Vision-Pro-4K)",
+  "os": "visionOS 27.0",
+  "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF",
+  "install_seconds": 9.0,
+  "samples": [
+   {
+    "run": 0,
+    "pid": 13373,
+    "ready_seconds": 5.384,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 1,
+    "pid": 13598,
+    "ready_seconds": 2.626,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 2,
+    "pid": 13766,
+    "ready_seconds": 2.929,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 3,
+    "pid": 13955,
+    "ready_seconds": 2.778,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 4,
+    "pid": 14225,
+    "ready_seconds": 2.932,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 5,
+    "pid": 14536,
+    "ready_seconds": 2.851,
+    "ready_signal": "os_log",
+    "errors": []
+   }
+  ],
+  "idle": {
+   "process": "14707",
+   "footprint_mb": 60.0,
+   "cpu_pct": 0.07,
+   "window_s": 60
+  },
+  "loads": {
+   "before_launches": [
+    13.0966796875,
+    37.9169921875,
+    50.18798828125
+   ],
+   "after_launches": [
+    7.92041015625,
+    30.84521484375,
+    46.46630859375
+   ],
+   "before_idle": [
+    6.58447265625,
+    26.6064453125,
+    43.90869140625
+   ]
+  },
+  "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions",
+  "settle_s": 45
+ },
+ "size": {
+  "download_bytes": 4682255,
+  "installed_bytes": 9807936,
+  "download_mb": 4.68,
+  "installed_mb": 9.81
+ },
+ "speed": {
+  "cold_launch_ms": 2851.0,
+  "runs": 5,
+  "discarded_runs": 1,
+  "ready_signal": "os_log",
+  "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+ },
+ "tool_sha256": {
+  "platform_measure.py": "3f7d0ec1d5ac0a9d0dcb3e44313244512cc2f1308a8cb517a6be36d9824eff64",
+  "measure.py": "0393a632f3e0a2d2551ecb173704f195c3f9da743d0a49bad0492c1e0b669698",
+  "sim_lane.py": "92a98e36169960bc4055f1fc6c677419c32c4ed2f2e14360215a7f43cb2f11b3"
+ }
+}

@@ -1,0 +1,59 @@
+{
+  "summary": "iPad 模拟器 iPad Pro 13-inch (M5) 启动冒烟通过：os_log 3.077 s，截图 2064×2752",
+  "passed": true,
+  "platform": "ipad",
+  "environment": "simulator",
+  "scheme": "PointsDeck",
+  "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
+  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "build": {
+    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.31tsr4jg/dd/Build/Products/Debug-iphonesimulator/PointsDeck.app",
+    "bundle_id": "cyou.tianli.pointsdeck",
+    "version": "1.0.1",
+    "build": "1",
+    "executable_sha256": "3e53108a40e8ebce6eab5f9cc95c56c04f1cbd4ce5fb9e6933f280f50f8d4c13",
+    "sdk": "iphonesimulator27.0",
+    "xcode": {
+      "name": "Xcode.app",
+      "version": "27.0",
+      "build": "27A266a",
+      "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+    },
+    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.31tsr4jg/build-ipad-Debug.log"
+  },
+  "device": {
+    "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
+    "name": "iPad Pro 13-inch (M5)",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.iOS-27-0",
+    "device_type": "iPad-Pro-13-inch-M5-12GB"
+  },
+  "launch_args": [
+    "-api_base",
+    "http://127.0.0.1:55428",
+    "-dev_user",
+    "xiaoman",
+    "-dev_pw",
+    "<redacted>"
+  ],
+  "run": {
+    "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
+    "pid": 40060,
+    "ready_seconds": 3.077,
+    "ready_signal": "os_log",
+    "size": [
+      2064,
+      2752
+    ],
+    "runtime": "iOS-27-0",
+    "device": "iPad Pro 13-inch (M5)"
+  },
+  "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.8267,
+    "diff_prev": 0.0
+  },
+  "screenshot": "perf/platforms/ipad/launch.png",
+  "screenshot_sha256": "779115ba5f98b8e7d4e768d665421e916492ec458592813cd56bb9fea39b25dc"
+}

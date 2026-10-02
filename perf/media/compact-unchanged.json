@@ -1,0 +1,78 @@
+{
+ "schema_version": 1,
+ "app": "points-deck-ios",
+ "checked_at": "2026-10-02T19:33:48+08:00",
+ "base_commit": "2c2d7e62908bbcba90a5ae150992b8470cf32419",
+ "ui_source": {
+  "globs": [
+   "Sources/**",
+   "Shared/**",
+   "Watch/**"
+  ],
+  "sha256": "64a78af819bb2dbb718ee99c4f75490cdf4d39fc5267cca4d018961205f7069d",
+  "file_count": 30
+ },
+ "ui_source_unchanged_during_check": true,
+ "device": "iPhone 17 Pro (iPhone-17-Pro) / iOS-27-0 simulator",
+ "builds": {
+  "base": {
+   "version": "1.0.1",
+   "build": "1",
+   "executable_sha256": "fa0293a4de2da0f5af83b4f18e78954c46deff6a9f1f4b78f46b10b7c25b4695",
+   "sdk": "iphonesimulator27.0"
+  },
+  "current": {
+   "version": "1.0.1",
+   "build": "1",
+   "executable_sha256": "c65876f7206fda03e320bde996b86fa6bea0a3d6774f1cfcdf959580c6e199db",
+   "sdk": "iphonesimulator27.0"
+  }
+ },
+ "data": "isolated demo ledger (scripts/demo/ledger.py), same fixture for both builds, status bar 9:41",
+ "rule": "identical, or differences only in the top 5.5% (status bar / Dynamic Island) with max channel diff <= 2",
+ "screens": {
+  "login": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "85de37d9c6ddf10057ebd1769472e744329491c3d5cb2366f245d1368deba07b",
+   "current_sha256": "85de37d9c6ddf10057ebd1769472e744329491c3d5cb2366f245d1368deba07b"
+  },
+  "deck": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "f92069fd36e407933dc46e918174677b9dc717e8824f353b742bc39a6d188299",
+   "current_sha256": "f92069fd36e407933dc46e918174677b9dc717e8824f353b742bc39a6d188299"
+  },
+  "trend": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "a8154ecce72cdb1d88c6dab92e295a94b43855e081b379c3d272166232949c96",
+   "current_sha256": "a8154ecce72cdb1d88c6dab92e295a94b43855e081b379c3d272166232949c96"
+  },
+  "shop": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "8d50ed2da85688ea9984e6c3d41988ac44deb74bb66e1488d90ca0fe5e1bc43a",
+   "current_sha256": "8d50ed2da85688ea9984e6c3d41988ac44deb74bb66e1488d90ca0fe5e1bc43a"
+  },
+  "account": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "f4094bea5cf441bef870f40c5dc8a3a4eb108a0a86e49a90ebbb1483c46a2837",
+   "current_sha256": "f4094bea5cf441bef870f40c5dc8a3a4eb108a0a86e49a90ebbb1483c46a2837"
+  },
+  "parent": {
+   "identical": true,
+   "ok": true,
+   "diff_pixels": 0,
+   "base_sha256": "62a702f9ef2d798fa543d3dc4e899ab54551fe46f735bc14b5c057b1113628c3",
+   "current_sha256": "62a702f9ef2d798fa543d3dc4e899ab54551fe46f735bc14b5c057b1113628c3"
+  }
+ },
+ "unchanged": true
+}

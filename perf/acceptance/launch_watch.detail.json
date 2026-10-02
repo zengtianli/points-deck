@@ -1,0 +1,59 @@
+{
+  "summary": "Apple Watch 模拟器 Apple Watch Series 12 (46mm) 启动冒烟通过：os_log 1.541 s，截图 416×496",
+  "passed": true,
+  "platform": "watch",
+  "environment": "simulator",
+  "scheme": "PointsDeckWatch",
+  "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
+  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "build": {
+    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.bsyu4ftd/dd/Build/Products/Debug-watchsimulator/PointsDeckWatch.app",
+    "bundle_id": "cyou.tianli.pointsdeck.watchkitapp",
+    "version": "1.0.1",
+    "build": "1",
+    "executable_sha256": "b5e55e0ab545ec0d028df70d1f863b75b815fde00139566aad2c3d28873f5152",
+    "sdk": "watchsimulator27.0",
+    "xcode": {
+      "name": "Xcode.app",
+      "version": "27.0",
+      "build": "27A266a",
+      "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+    },
+    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.bsyu4ftd/build-watch-Debug.log"
+  },
+  "device": {
+    "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
+    "name": "Apple Watch Series 12 (46mm)",
+    "runtime": "com.apple.CoreSimulator.SimRuntime.watchOS-27-0",
+    "device_type": "Apple-Watch-Series-12-46mm"
+  },
+  "launch_args": [
+    "-api_base",
+    "http://127.0.0.1:57030",
+    "-dev_user",
+    "xiaoman",
+    "-dev_pw",
+    "<redacted>"
+  ],
+  "run": {
+    "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
+    "pid": 45779,
+    "ready_seconds": 1.541,
+    "ready_signal": "os_log",
+    "size": [
+      416,
+      496
+    ],
+    "runtime": "watchOS-27-0",
+    "device": "Apple Watch Series 12 (46mm)"
+  },
+  "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.9424,
+    "diff_prev": 0.0
+  },
+  "screenshot": "perf/platforms/watch/launch.png",
+  "screenshot_sha256": "5cecc6497ea3f03c011123ae2fed1e080a0d0e547b91ee9bc37363fe77262fe8"
+}

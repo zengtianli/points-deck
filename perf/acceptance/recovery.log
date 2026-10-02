@@ -7,6 +7,6 @@ ACCEPT: 网关返回非 JSON：提示「连不上账本(HTTP 502)」
 ACCEPT: 服务重启后免重新登录，余额 1000 与流水 30 条完整
 ACCEPT: 家长会话后台超过 10 分钟自动上锁
 PASS recovery
-scripts/accept/run.sh: line 70: 72198 Terminated: 15          ( cd "$server_dir" && exec "$py" server.py serve ) > "$scratch/server.log" 2>&1
+scripts/accept/run.sh: line 70: 22766 Terminated: 15          ( cd "$server_dir" && exec "$py" server.py serve ) > "$scratch/server.log" 2>&1
 ACCEPT: 客户端隔离 HOME 写入 1 个文件，其中含密码明文 0 个
 故障与恢复：生产 Swift 客户端对本地真实账本服务 9 项通过

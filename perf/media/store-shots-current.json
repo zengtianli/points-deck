@@ -1,0 +1,78 @@
+{
+ "schema_version": 1,
+ "app": "points-deck-ios",
+ "checked_at": "2026-10-02T21:40:00+08:00",
+ "subject": "iPad / Mac / Watch / Vision store screenshots (shots/appstore/<lane>/, captured 12:25–12:37 into scratch, copied 12:38:05) and the README images docs/screenshots/07–10 cut from them (12:40)",
+ "decision": "still_valid",
+ "ui_source_at_capture": {
+  "sha256": "c78ad908f47e017ceed9cc2b67cb8fc719ff31c5c3c0f1ae6623a663a1d586dc",
+  "how_known": "sop.ui snapshot (Sources/** Shared/** Watch/**) recorded by the 12:39 ui_reviews entry; an out-of-repo build copy taken at 15:55 (sim-lane-build.li_5c744/src) hashes to the same value once its xcodegen-generated Watch/*.plist (gitignored) are left out, and its newest UI source mtime is 12:09:10, before every capture"
+ },
+ "ui_source_now": "64a78af819bb2dbb718ee99c4f75490cdf4d39fc5267cca4d018961205f7069d",
+ "changes_since_capture": [
+  {
+   "file": "Sources/LaneSignal.swift -> Shared/LaneSignal.swift",
+   "visual": false,
+   "why": "moved to the HQ shared copy; additions are macOS-only and gated: -lane_quiet (accessory policy, transparent off-screen windows), -lane_snapshot (in-process offscreen render), a quiet branch of -lane_window; plus comments and the Logger subsystem fallback string. None runs without those launch arguments, and the store shots were taken without -lane_quiet"
+  },
+  {
+   "file": "Sources/App.swift",
+   "visual": false,
+   "why": "macOS only: @NSApplicationDelegateAdaptor(LaneAppDelegate.self), whose applicationWillFinishLaunching returns immediately unless -lane_quiet is set"
+  },
+  {
+   "file": "project.yml",
+   "visual": false,
+   "why": "LaneSignal.swift source path moved from Sources/ to Shared/ in the app and watch targets"
+  }
+ ],
+ "pixel_checks": [
+  {
+   "current": "perf/platforms/vision/launch.png",
+   "store": "shots/appstore/vision/01-board.png",
+   "result": "byte-identical"
+  },
+  {
+   "current": "perf/platforms/ipad/launch.png",
+   "store": "shots/appstore/ipad/05-board-portrait.png",
+   "result": "differs only in an 11x8 px box at the bottom edge (763,2744)-(774,2752): a ledger entry's date (demo data seeded at a different time), not layout"
+  },
+  {
+   "current": "perf/platforms/watch/launch.png",
+   "store": "shots/appstore/watch/01-home.png",
+   "result": "differs above a 12-level channel threshold only in the status-bar clock (302,40)-(383,64): 12:26 vs 17:21; smaller differences (max channel diff <=12) fall inside (193,39)-(384,230)"
+  },
+  {
+   "current": "perf/platforms/mac/launch.png",
+   "store": "shots/appstore/mac/01-board.png",
+   "result": "not comparable: the launch image is the quiet lane's offscreen render (sidebar selection material renders black), the store set is the on-screen window at -lane_window 1440x900, whose non-quiet code path did not change"
+  }
+ ],
+ "current_launch_shots_bound_to": "a3dd7aca6d6ba87f94028715681898f6733bd512b09c50735f1f8656031ace12 (sop.source, perf/acceptance/launch_<lane>.json, 17:07–17:25)",
+ "store_files_sha256": {
+  "shots/appstore/ipad/01-board-landscape.png": "ccda98f577bd581a2ecebe3dad227898b430978f5fd0f47af992e2416fe33648",
+  "shots/appstore/ipad/02-parent-landscape.png": "ecac3938625951f4d3503dd2e488d85cd5544104cb3bcde9b686ce44e0aac10b",
+  "shots/appstore/ipad/03-shop-landscape.png": "c45929a4936c592584db945527f368c625d2edadcb9efef5f90e14ff5ba77efd",
+  "shots/appstore/ipad/04-trend-landscape.png": "68affbfc97ebeae451670e201a7aec7f15341f303b1a1f0a0bd95e23109e6bcd",
+  "shots/appstore/ipad/05-board-portrait.png": "0d000d110195a6e24f3c3aa1ee71099f9511fa22f9402c89d60821ae36f0883a",
+  "shots/appstore/mac/01-board.png": "d1d9c962c1802042e7174ebfbad695f82c23147f04d5b35fd0868cde090d57f1",
+  "shots/appstore/mac/02-parent.png": "8d8227f4c6146665947853170f23f9c61b71eefad17c1c91a8fe1bd88a0896a5",
+  "shots/appstore/mac/03-shop.png": "e6c5b56a0b34e787219358ed606886c7b415033bafcaf3b64b54c863401c3941",
+  "shots/appstore/mac/04-trend.png": "7a00e510d14c66a56be5fc4756c9824c82f0b0dae67f66d49f89ebd7c9c39463",
+  "shots/appstore/mac/05-account.png": "7f1e8d65be79f983317e33de85fa7f1c84c5eb9be3d55479f0cf036d2f6b1dfb",
+  "shots/appstore/vision/01-board.png": "e4545d69f3682e6a9cb13262bb2c12e5cfc9f5865f6f436e3ba87701d057f7de",
+  "shots/appstore/vision/02-shop.png": "66bdd7bf6e6e81e59d43eee9b9bfd72a0314f3b4cf2d3c90cc7ffb0e0659dcb6",
+  "shots/appstore/vision/03-parent.png": "06a1629b0651c31945096ed5383a4395c9ba1d03c931d0fb6ddd44980fe4f92f",
+  "shots/appstore/vision/04-account.png": "f6fac96d023bcd52a40419bb2d5e527f78ef9d80efb34544e68b1e599543e06d",
+  "shots/appstore/watch/01-home.png": "477c9994abd041d7f7d3ac1802a38e0b9d941e306ef14385b3a72867f6f06b25",
+  "shots/appstore/watch/02-ledger.png": "9db669a54cca1aaa456126ce4d4fcca42a23fe4c84b669d86180ba9b4e6c6326",
+  "shots/appstore/watch/03-pair-with-iphone.png": "7a6892eccbd74029f6859d8f46e758df2d5c403049957d571318e078677d904e"
+ },
+ "readme_files_sha256": {
+  "docs/screenshots/07-ipad.png": "5ec68eaad86c62b1c8c17edaf3b6986d7ae5ec8298ea0e95e9167c93aa437e05",
+  "docs/screenshots/08-mac.png": "2e310d404d2598350aae750b5403ccccecd55a9a79a9572e90e3ced7f3d3d39a",
+  "docs/screenshots/09-watch.png": "811c9da8054561b861c50687c3427973b9367d7ece83b7fa160eb15108b30881",
+  "docs/screenshots/10-vision.png": "37303f565d4eef77ea052b628056e9eb0ca828fe3c717adb9f77f1770d4d51aa"
+ },
+ "recheck_when": "sop.ui snapshot changes from 64a78af8…: re-run the lane launches and compare again, or regenerate the store set via sim_lane with scripts/demo/ledger.py"
+}
