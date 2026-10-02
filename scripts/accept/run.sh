@@ -13,7 +13,7 @@ repo="$PWD"
 out="${SOP_OUT_DIR:-$repo/perf/acceptance}"
 server_dir="${POINTS_SERVER_DIR:-$HOME/Apps/edu/web/points}"
 mkdir -p "$out"
-[ -f "$server_dir/server.py" ] || { echo "账本服务源码不在 $server_dir，无法验收"; exit 78; }
+[ -f "$server_dir/server.py" ] || { echo "账本服务源码不在 ${server_dir}，无法验收"; exit 78; }
 
 # server.py hashes with hashlib.scrypt, which the macOS system python3 lacks; pick an interpreter that has it.
 py=""

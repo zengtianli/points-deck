@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Static privacy boundary of the shipped sources (Sources/, Shared/, Widget/, project.yml, entitlements).
+"""Static privacy boundary of the shipped sources (Sources/, Shared/, Widget/, Watch/, project.yml, entitlements).
 
 Fails when: a tracking/analytics/ads SDK or AdSupport/AppTrackingTransparency is imported; a network host other
 than the own ledger (edu.tianli.cyou) or localhost appears in code; the parent password is written to
@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 
 repo = Path(__file__).resolve().parents[2]
-code = {p: p.read_text(encoding="utf-8") for d in ("Sources", "Shared", "Widget") for p in (repo / d).rglob("*.swift")}
+code = {p: p.read_text(encoding="utf-8") for d in ("Sources", "Shared", "Widget", "Watch") for p in (repo / d).rglob("*.swift")}
 problems = []
 
 trackers = re.compile(r"^\s*import\s+(AdSupport|AppTrackingTransparency|Firebase\w*|FBSDK\w*|Adjust\w*|AppsFlyer\w*|"

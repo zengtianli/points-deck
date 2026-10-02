@@ -8,11 +8,16 @@ installs it on a dedicated, windowless simulator, and measures:
   - idle: shared app-lightweight measure.py (45 s settle, 60 s CPU window, footprint after window).
 Writes perf/raw/simulator-full-<date>.json and updates perf/simulator.json only if the source snapshot
 is unchanged across the whole run. Never opens Simulator.app, never touches the clipboard or input.
-Exit 75 (Chapter retries the same input when steady): the owner is not idle, the host is busy before any work,
-or the owner comes back mid-run (the simulator is shut down at once). Exit 1: a sample rejected after the build.
+Exit 75 (Chapter retries the same input when steady): the host is busy before any work, the simulator lock is held,
+or — only with --min-user-idle > 0 — the owner is not idle or comes back mid-run (the simulator is shut down at once).
+Exit 1: a sample rejected after the build.
 
-  ~/Dev/.venv/bin/python scripts/perf/sim_measure.py [--runs 5] [--max-load 8] [--min-user-idle 600]
+  ~/Dev/.venv/bin/python scripts/perf/sim_measure.py [--runs 5] [--max-load 12] [--min-user-idle 0]
+      [--launch-arg=-api_base --launch-arg=http://127.0.0.1:PORT --launch-arg=-dev_user ...]
 Adapted from ~/Apps/clip/ios/01-源程序/scripts/perf/sim_measure.py; adds the user-idle gate.
+Since 2026-10-02 the simulator is booted through the shared sim_lane Session (the machine-wide one-simulator lock,
+the load gate, always shut down), and scripts/perf/measure_platforms.py passes the isolated demo ledger and a dev
+login as launch arguments, so the app is measured on its data-bearing first screen and never reaches edu.tianli.cyou.
 """
 import argparse, datetime as dt, hashlib, json, os, plistlib, re, shutil, statistics, subprocess, sys, tempfile, time
 from pathlib import Path
@@ -23,6 +28,8 @@ import app_sop  # noqa: E402  (source snapshot = the binding app_sop verifies)
 
 MEASURE = Path.home() / "Apps/.claude/skills/app-lightweight/scripts/measure.py"
 MACAPP = Path.home() / "Dev/tools/dev/lib/tools/macapp"
+sys.path.insert(0, str(MACAPP / "ios"))
+import sim_lane  # noqa: E402  (machine-wide simulator lock + load gate + headless boot/shutdown)
 DEVICE_NAME, DEVICE_TYPE = "PointsDeck Perf iPhone 17 Pro", "com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro"
 RUNTIME = "com.apple.CoreSimulator.SimRuntime.iOS-27-0"
 BUNDLE = "cyou.tianli.pointsdeck"
@@ -42,29 +49,17 @@ def sha(path):
 
 
 def device():
-    data = json.loads(sh(["xcrun", "simctl", "list", "devices", "-j"]))
-    for d in data["devices"].get(RUNTIME, []):
-        if d["name"] == DEVICE_NAME and d["isAvailable"]:
-            return d["udid"]
-    return sh(["xcrun", "simctl", "create", DEVICE_NAME, DEVICE_TYPE, RUNTIME]).strip()
+    return sim_lane.ensure_device("iphone", DEVICE_TYPE, DEVICE_NAME, RUNTIME)["udid"]
 
 
 def build(work):
-    shutil.copytree(REPO, work, ignore=shutil.ignore_patterns(".git", "build", ".dd*", "perf", "shots", "archived",
-                                                              "verification", "PointsDeck.xcodeproj", "*.xcresult"))
-    script = f"""set -e
-source {MACAPP}/xcode_env.sh && xcode_env_use iphonesimulator >/dev/null
-source {MACAPP}/scrub_env.sh
-cd "{work}" && xcodegen generate --spec project.yml >/dev/null
-scrub_env_run xcodebuild -project PointsDeck.xcodeproj -scheme PointsDeck -configuration Release \
-  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' -derivedDataPath "{work}/dd" \
-  CODE_SIGNING_ALLOWED=NO build >"{work}/build.log" 2>&1 || {{ tail -30 "{work}/build.log"; exit 1; }}
-echo "$XCODE_ENV_NAME"
-"""
+    """Release simulator build of the working tree through the shared sim_lane (copy outside the repo, xcodegen,
+    scrubbed env). Since the Watch app is a dependency (embedded under PointsDeck.app/Watch/), the build must not
+    pin `-sdk iphonesimulator`: that forces the watchOS target onto the iOS SDK and fails (2026-10-02)."""
     t = time.time()
-    xcode = sh(["/bin/bash", "-c", script]).strip().splitlines()[-1]
-    app = next((work / "dd/Build/Products/Release-iphonesimulator").glob("PointsDeck.app"))
-    return app, round(time.time() - t, 1), xcode
+    built = sim_lane.build(REPO, "PointsDeck", "iphone", "Release", work)
+    xc = built["xcode"]
+    return Path(built["app_path"]), round(time.time() - t, 1), f"{xc['name']} {xc['version']} ({xc['build']})"
 
 
 def log_markers(udid, start, pid):
@@ -100,9 +95,14 @@ def defer(reason):
     sys.exit(DEFER_EXIT)
 
 
+WATCH_OWNER = False   # set from --min-user-idle in main()
+
+
 def owner_back(t0, stage):
-    """Input since the run started (idle time shorter than the run): stop now; it lags the owner and skews timing."""
-    if user_idle_s() < time.time() - t0:
+    """Input since the run started (idle time shorter than the run): stop now; it lags the owner and skews timing.
+    Only with an idle gate (--min-user-idle > 0): the headless simulator takes no input or focus, so by default the
+    owner may keep working (owner 2026-09-26: sampling does not wait for the owner to leave); host load stays gated."""
+    if WATCH_OWNER and user_idle_s() < time.time() - t0:
         defer(f"{stage}：用户回来操作了，停止测量并关闭模拟器，空闲时再测")
 
 
@@ -121,11 +121,19 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--runs", type=int, default=5)
     ap.add_argument("--max-load", type=float, default=12.0, help="1-min load average required before measuring starts")
-    ap.add_argument("--min-user-idle", type=float, default=600.0,
-                    help="app-lightweight idle gate: seconds without keyboard/mouse input before measuring starts")
+    ap.add_argument("--min-user-idle", type=float, default=0.0,
+                    help="optional idle gate: seconds without keyboard/mouse input before measuring starts (and stop "
+                         "when input resumes); 0 = none, the headless simulator never takes input or focus")
     ap.add_argument("--abort-load", type=float, default=40.0,
                     help="reject the sample if the 1-min load exceeds this during timing/idle (gross host contamination)")
+    ap.add_argument("--launch-arg", action="append", default=[],
+                    help="launch argument passed to the app (write --launch-arg=-api_base for a leading dash)")
     a = ap.parse_args()
+    global WATCH_OWNER
+    WATCH_OWNER = a.min_user_idle > 0
+    # values after -dev_pw / -token-like flags: scrubbed from the log markers kept as evidence
+    secrets = [v for k, v in zip(a.launch_arg, a.launch_arg[1:])
+               if k.startswith("-") and re.search(r"(pw|pass|password|token|secret|key|cookie)$", k.lstrip("-"), re.I)]
     idle_s = user_idle_s()
     if idle_s < a.min_user_idle:
         defer(f"用户 {idle_s:.0f}s 前仍有操作，未满 {a.min_user_idle:.0f}s 空闲门，未开模拟器、未测量")
@@ -146,7 +154,12 @@ def main():
         subprocess.run(["ditto", "-c", "-k", "--keepParent", str(app), str(zip_path)], check=True)
         installed = sum(f.stat().st_size for f in app.rglob("*") if f.is_file() and not f.is_symlink())
         udid = device()
-        subprocess.run(["xcrun", "simctl", "bootstatus", udid, "-b"], check=True, capture_output=True)
+        session = sim_lane.Session("iphone", udid, label="points sim_measure (legacy iPhone)", max_load=a.max_load)
+        try:
+            session.__enter__()          # lock, load gate, headless boot; the finally below shuts down and releases
+        except sim_lane.Busy as exc:
+            udid = None
+            defer(f"模拟器锁或负载门：{exc}")
         # A freshly created iOS 27 simulator spends minutes on first-boot work (load > 300 seen 2026-09-29);
         # timing launches during that window measures the host, not the app.
         settle_gate(a.max_load, "开机后", t0=t0)
@@ -159,10 +172,13 @@ def main():
             subprocess.run(["xcrun", "simctl", "terminate", udid, BUNDLE], capture_output=True)
             time.sleep(3)
             start = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            out = sh(["xcrun", "simctl", "launch", udid, BUNDLE])
+            out = sh(["xcrun", "simctl", "launch", udid, BUNDLE, *a.launch_arg])
             pid = int(out.strip().split(":")[-1])
             time.sleep(5)
             ready, done, lines = log_markers(udid, start, pid)
+            for ln in lines:           # SpringBoard echoes the launch arguments: never keep a password in evidence
+                for secret in secrets:
+                    ln["message"] = ln["message"].replace(secret, "<redacted>")
             samples.append({"run": run, "pid": pid, "request_to_ready_ms": ready, "request_to_launch_complete_ms": done, "markers": lines})
             owner_back(t0, "启动计时中")
         load_after_launch = os.getloadavg()
@@ -176,7 +192,7 @@ def main():
         # idle: fresh launch, settle 45 s, 60 s CPU window via shared measure.py
         subprocess.run(["xcrun", "simctl", "terminate", udid, BUNDLE], capture_output=True)
         time.sleep(3)
-        pid = int(sh(["xcrun", "simctl", "launch", udid, BUNDLE]).strip().split(":")[-1])
+        pid = int(sh(["xcrun", "simctl", "launch", udid, BUNDLE, *a.launch_arg]).strip().split(":")[-1])
         time.sleep(45)
         owner_back(t0, "空闲采样前")
         idle_load = os.getloadavg()
@@ -189,7 +205,7 @@ def main():
         measured = True
     finally:
         if udid:
-            subprocess.run(["xcrun", "simctl", "shutdown", udid], capture_output=True)
+            session.__exit__(None, None, None)   # shut down, release the simulator lock
         if not measured:  # a stopped or failed run leaves no multi-hundred-MB build copy behind
             shutil.rmtree(work, ignore_errors=True)
     after = snapshot()
@@ -229,6 +245,9 @@ def main():
     sim.update({"version": version, "configuration": "Release", "measured_at": started.isoformat(),
                 "device": f"iPhone 17 Pro / iOS 27.0 Simulator / {model} / {host} / macOS {macos}",
                 "input_sha256": before["sha256"], "git_head": before["commit"],
+                "data": ("Isolated demo ledger (scripts/demo/ledger.py: local server.py, synthetic account, 30 days of "
+                         "bookings) with a dev login; first data-bearing screen; no production data"
+                         if a.launch_arg else sim.get("data")),
                 "size": raw["size"],
                 "idle": {"process": str(pid), "footprint_mb": idle["footprint_mb"], "cpu_pct": idle["cpu_pct"],
                          "window_s": idle["window_s"], "settle_s": 45,
