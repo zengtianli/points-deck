@@ -1,0 +1,39 @@
+{
+ "schema_version": 1,
+ "platform": "vision",
+ "app_id": "points-deck-ios",
+ "version": "1.0.1",
+ "build": "1",
+ "input_sha256": "d8a829e3be51416d0a5f617d7da462ec0cd871f48214120046db147910ee5095",
+ "runtime_measurement": {
+  "environment": "simulator",
+  "device": "Apple Vision Pro (Apple-Vision-Pro-4K)",
+  "os": "visionOS 27.0",
+  "xcode": "Xcode 27.0 (27A266a)",
+  "evidence": "perf/platforms/vision/measure-20261002-135515.json",
+  "evidence_sha256": "4c281cde383dbadcd2bedcaa6c19b2ad172f41aa74d84ec3a6684a8458f8091f"
+ },
+ "size": {
+  "download_bytes": 4682244,
+  "installed_bytes": 9807936,
+  "download_mb": 4.68,
+  "installed_mb": 9.81,
+  "kind": "simulator .app (Release), not a store slice"
+ },
+ "speed": {
+  "cold_launch_ms": 14015.0,
+  "runs": 5,
+  "discarded_runs": 1,
+  "ready_signal": "os_log",
+  "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+ },
+ "idle": {
+  "memory_mb": 58.0,
+  "cpu_pct": 0.13,
+  "window_s": 60,
+  "settle_s": 45,
+  "method": "shared measure.py idle: CPU-time delta / wall window; phys_footprint peak of 3 samples after the window",
+  "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions"
+ },
+ "measured_at": "2026-10-02T13:55:15+08:00"
+}

@@ -4,18 +4,18 @@
  "platform": "ios",
  "version": "1.0.1 (1)",
  "configuration": "Release",
- "measured_at": "2026-09-30T22:43:46.673554+08:00",
+ "measured_at": "2026-10-02T12:57:41.340771+08:00",
  "device": "iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2",
- "input_sha256": "306f8991b3fc8b7436daa37d382051c02ee55f63ce0605f674d06123bcc20075",
- "data": "Fresh app container on isolated simulator; default first-run data; no production user data imported",
+ "input_sha256": "d8a829e3be51416d0a5f617d7da462ec0cd871f48214120046db147910ee5095",
+ "data": "Isolated demo ledger (scripts/demo/ledger.py: local server.py, synthetic account, 30 days of bookings) with a dev login; first data-bearing screen; no production data",
  "size": {
-  "download_bytes": 5229720,
-  "installed_bytes": 10010812,
+  "download_bytes": 8382143,
+  "installed_bytes": 14939551,
   "kind": "Local simulator Release .app ZIP / .app bytes; not an App Store IPA or device slice"
  },
  "idle": {
-  "process": "63814",
-  "footprint_mb": 22.0,
+  "process": "93277",
+  "footprint_mb": 34.0,
   "cpu_pct": 0.0,
   "window_s": 60,
   "settle_s": 45,
@@ -27,23 +27,23 @@
    "key": "first_screen_ready",
    "label": "模拟器冷启动到首屏就绪",
    "label_en": "Simulator cold launch to first screen ready",
-   "median_ms": 349.7,
+   "median_ms": 613.3,
    "runs": 5,
    "headline": true,
    "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded. Median of 5 runs.",
-   "evidence": "perf/raw/simulator-full-20260930.json",
-   "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
+   "evidence": "perf/raw/simulator-full-20261002.json",
+   "evidence_sha256": "23e69d48a1ab417ed87b2a1155182b9b372cb9b368159f538cfaa0a31636daa2"
   },
   {
    "key": "launch_complete",
    "label": "模拟器冷启动到系统判定启动完成",
    "label_en": "Simulator cold launch to launch completed",
-   "median_ms": 1318.7,
+   "median_ms": 1517.8,
    "runs": 5,
    "headline": false,
    "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded. Median of 5 runs.",
-   "evidence": "perf/raw/simulator-full-20260930.json",
-   "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
+   "evidence": "perf/raw/simulator-full-20261002.json",
+   "evidence_sha256": "23e69d48a1ab417ed87b2a1155182b9b372cb9b368159f538cfaa0a31636daa2"
   }
  ],
  "runtime_measurement": {
@@ -51,8 +51,8 @@
   "device": "iPhone 17 Pro",
   "os": "iOS 27.0",
   "version": "1.0.1 (1)",
-  "evidence": "perf/raw/simulator-full-20260930.json",
-  "evidence_sha256": "65352794532775fd62c26dbeee319a5a8d6b710ebda3fd05e6a77c1f82802bcb"
+  "evidence": "perf/raw/simulator-full-20261002.json",
+  "evidence_sha256": "23e69d48a1ab417ed87b2a1155182b9b372cb9b368159f538cfaa0a31636daa2"
  },
  "build": {
   "configuration": "Release",
@@ -70,5 +70,5 @@
   "input_sha256": "3e92bb24f63fab743df24e6d762e89265d66e1a3af92d10e8d88f470e35914a7",
   "source_same_as_idle_measurement": true
  },
- "git_head": "12594307b6d72360a7a1e575658e4999dd342400"
+ "git_head": "183ae6b7b31c07dbd543bd342f15fa66fc04dc80"
 }
