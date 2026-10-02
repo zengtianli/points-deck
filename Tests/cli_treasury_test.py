@@ -225,6 +225,11 @@ def main() -> int:
         ck("账号密码错 → 1 且带服务端原话", code == 1 and out["ok"] is False and out.get("status") == 401, str(out))
         code, out, _ = run(["state", "--json"], extra={"EDU_API_BASE": "http://127.0.0.1:9"})
         ck("连不上服务端 → 1", code == 1 and out["ok"] is False, str(out))
+        code, out, _ = run(["version", "--json"], user=None, pw=None)
+        ck("version 不登录：命令行版本 + 服务端可达", code == 0 and out["ok"] and out["cli"]
+           and out["server"]["reachable"] is True and out["app"] is None, str(out))
+        code, out, _ = run(["version", "--json"], user=None, pw=None, extra={"EDU_API_BASE": "http://127.0.0.1:9"})
+        ck("version 连不上服务端 → 仍 0，reachable:false", code == 0 and out["server"]["reachable"] is False, str(out))
 
         print("【读】首页 / 流水 / 走势 / 兑换 / 阶梯 / 规则")
         code, st, _ = run(["state", "--json"])

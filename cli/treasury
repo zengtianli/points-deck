@@ -12,6 +12,7 @@
 stdin 按顺序读：--password-stdin → --parent-stdin → --new-stdin，每项一行。
 
 退出码：0 成功；1 服务端拒绝/网络失败（--json 时输出 {"ok": false, "err": ...}）；2 用法或缺凭据。
+`treasury version --json` 不登录：命令行版本、所在 App 的版本（从 .app 里运行时）和服务端是否可达。
 """
 from __future__ import annotations
 
@@ -19,7 +20,9 @@ import argparse
 import base64
 import json
 import os
+import plistlib
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -27,7 +30,8 @@ from http.cookiejar import CookieJar
 from pathlib import Path
 
 DEFAULT_API = "https://edu.tianli.cyou"
-AGENT = "treasury-cli/1.0"
+CLI_VERSION = "1.0"
+AGENT = f"treasury-cli/{CLI_VERSION}"
 CONFIG_KINDS = ("rules", "shop", "tiers")
 
 
@@ -111,13 +115,43 @@ class Secrets:
         return self._line("新密码")
 
 
+def client(args) -> Client:
+    return Client(args.api or os.environ.get("EDU_API_BASE") or DEFAULT_API, timeout=args.timeout)
+
+
+def app_version() -> dict | None:
+    """从 Mac 版 .app 的 Contents/Resources/bin/treasury 运行时，读所在 App 的版本；仓内入口返回 None。"""
+    info = Path(__file__).resolve().parent.parent.parent / "Info.plist"
+    try:
+        d = plistlib.loads(info.read_bytes())
+    except (OSError, plistlib.InvalidFileException, ValueError):
+        return None
+    return {"bundle_id": d.get("CFBundleIdentifier"), "version": d.get("CFBundleShortVersionString"),
+            "build": d.get("CFBundleVersion"), "path": str(info.parent.parent)}
+
+
 def session(args, sec: Secrets) -> Client:
     user = args.user or os.environ.get("EDU_USER") or ""
     if not user:
         raise Fail("缺账号：设 EDU_USER 或用 --user", code=2)
-    c = Client(args.api or os.environ.get("EDU_API_BASE") or DEFAULT_API, timeout=args.timeout)
+    c = client(args)
     c.call("api/login", {"u": user, "p": sec.account()})
     return c
+
+
+def cmd_version(c, a, sec):
+    """不登录：只探 /api/health。连不上不算命令失败 —— 这条命令要回答的就是「连得上吗」。"""
+    t0 = time.monotonic()
+    try:
+        c.call("api/health", timeout=min(a.timeout, 10))
+        server = {"reachable": True, "ms": round((time.monotonic() - t0) * 1000)}
+    except Fail as f:
+        server = {"reachable": False, "err": f.msg}
+    app = app_version()
+    v = {"ok": True, "cli": CLI_VERSION, "app": app, "api": c.base, "server": server}
+    where = f"（{app['bundle_id']} {app['version']} ({app['build']})）" if app else "（仓内入口）"
+    reach = (f"可达 {server['ms']} ms" if server["reachable"] else f"连不上：{server['err']}")
+    return v, lambda: f"treasury {CLI_VERSION}{where}\n服务端 {c.base}：{reach}"
 
 
 # ───────────────────────────── 读 ─────────────────────────────
@@ -504,6 +538,7 @@ def build() -> argparse.ArgumentParser:
     p = cmd("rules", cmd_rules, "加分/扣分规则清单（earn/preview 用的规则 id）")
     p.add_argument("--subject", help="只看一个科目（科目 key）")
     cmd("me", cmd_me, "当前登录的账号")
+    cmd("version", cmd_version, "命令行版本、所在 App 版本与服务端是否可达（不登录、不要凭据）").set_defaults(login=False)
 
     def rule_args(p):
         p.add_argument("rule", help="规则 id（见 treasury rules）")
@@ -588,7 +623,7 @@ def main(argv: list[str]) -> int:
     as_json = getattr(a, "json", False)
     sec = Secrets(a)
     try:
-        c = session(a, sec)
+        c = session(a, sec) if getattr(a, "login", True) else client(a)
         v, text = a.fn(c, a, sec)
     except Fail as f:
         return report_fail(f, as_json)
