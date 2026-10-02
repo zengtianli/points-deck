@@ -37,7 +37,7 @@ struct TiersView: View {
                     withAnimation { proxy.scrollTo(cur, anchor: .center) }
                 }
             }
-            .background(era.background.ignoresSafeArea())
+            .eraBackdrop(era)
             .navigationTitle("等级与待遇")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)

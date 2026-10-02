@@ -61,5 +61,9 @@ struct RegisterView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { store.error = nil; dismiss() } } }
         }
+        #if os(macOS)
+        // Mac 的 sheet 按内容收缩，Form 会被挤成一条；给一个能看全四段的尺寸
+        .frame(minWidth: 440, minHeight: 560)
+        #endif
     }
 }

@@ -11,6 +11,8 @@ import SwiftUI
 ///    进程一死就没了 —— 所以「孩子拿到手机」时它必然是锁着的。
 /// ② 切后台超过 `idleLimit` 自动上锁。家长解锁完随手把手机放桌上，
 ///    这是最现实的泄漏场景，比「被猜到密码」现实得多。
+///    Mac 的窗口晾着时 scenePhase 可能一直是 active，所以 Mac 另数「多久没操作」
+///    （`noteActivity` / `expireIfIdle`，由 MacIdleLock 驱动），同样 10 分钟。
 /// ③ 服务端语义不变：每次记账仍然**带着密码发一次**（~/Apps/edu/web 的「管理密码不发 cookie」
 ///    是有意的）。变的只是密码从内存拿，而不是每次弹框问。
 @MainActor
@@ -25,6 +27,8 @@ final class ParentSession: ObservableObject {
     /// 切后台多久自动上锁。10 分钟：短到「放桌上就锁」，长到不会打断一次连续记账。
     private static let idleLimit: TimeInterval = 600
     private var leftAt: Date?
+    /// 最近一次有人操作的时刻（只在 Mac 上有人喂）。nil = 从没记过，按解锁时刻算。
+    private var lastActivity: Date?
 
     /// 解锁。**密码对不对不在这里判** —— 判它的唯一权威是服务端，
     /// 所以调用方先拿这个密码真记一笔，成了才调 `unlock`。
@@ -33,9 +37,13 @@ final class ParentSession: ObservableObject {
         password = pw
         count = 0
         leftAt = nil
+        lastActivity = Date()
     }
 
-    func noteEarned() { count += 1 }
+    func noteEarned() {
+        count += 1
+        noteActivity()
+    }
 
     /// 独立解锁 —— 拿一个**只读**接口去验密码，验过才置位。
     ///
@@ -51,6 +59,19 @@ final class ParentSession: ObservableObject {
         password = nil
         count = 0
         leftAt = nil
+        lastActivity = nil
+    }
+
+    /// 有人在操作（键盘、点击、滚动）。锁着时不记 —— 没有会话可续。
+    func noteActivity(at now: Date = Date()) {
+        guard isUnlocked else { return }
+        lastActivity = now
+    }
+
+    /// 距最近一次操作超过 `idleLimit` 就上锁。窗口一直 active 也照样会锁。
+    func expireIfIdle(at now: Date = Date()) {
+        guard isUnlocked, let t = lastActivity else { return }
+        if now.timeIntervalSince(t) > Self.idleLimit { lock() }
     }
 
     /// 切到后台记一下时刻；回前台时超时就锁。

@@ -9,21 +9,33 @@ struct ShopView: View {
     @State private var busy: String?
     @State private var toast: String?
     @State private var confirming: LedgerState.ShopItem?
+    /// 宽屏：商品排成自适应网格（每格至少 320pt），不再一条拉满整个屏宽。
+    var wide = false
 
     private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
     var body: some View {
         ScrollView {
+            if wide {
+                VStack(spacing: 16) {
+                    header
+                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 320), spacing: 14)], spacing: 14) {
+                        ForEach(s?.shop ?? []) { item in card(item) }
+                    }
+                    footnote
+                }
+                .padding(24)
+                .contentWidth(1100)
+            } else {
             VStack(spacing: 14) {
                 header
                 ForEach(s?.shop ?? []) { item in card(item) }
-                Text("兑换不许赊账，锁着的也换不了 —— 这两道门都在服务端拦")
-                    .font(.caption2).foregroundStyle(.white.opacity(0.4))
-                    .padding(.top, 6)
+                footnote
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+            }
         }
         .refreshable { await store.refresh() }
         .overlay(alignment: .bottom) {
@@ -45,6 +57,12 @@ struct ShopView: View {
             }
             Button("再想想", role: .cancel) {}
         }
+    }
+
+    private var footnote: some View {
+        Text("兑换不许赊账，锁着的也换不了 —— 这两道门都在服务端拦")
+            .font(.caption2).foregroundStyle(.white.opacity(0.4))
+            .padding(.top, 6)
     }
 
     private var header: some View {
@@ -100,9 +118,12 @@ struct ShopView: View {
                         .foregroundStyle(usable ? .white : .white.opacity(0.35))
                 }
             }
+            // 网格里同一行的卡片要一样高，否则说明文字一行两行的卡片高低错落
+            .minHeight(wide ? 56 : nil)
             .padding(16)
             .background(.white.opacity(usable ? 0.12 : 0.06), in: RoundedRectangle(cornerRadius: 18))
         }
+        .flatButton()
         .disabled(!usable || busy != nil)
     }
 

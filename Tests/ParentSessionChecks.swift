@@ -49,6 +49,20 @@ private final class ParentTransport: URLProtocol {
         precondition(session.isUnlocked)
         session.lock()
         precondition(session.password == nil && !ParentSession().isUnlocked)
-        print("PASS: server refusal stays locked; read-only unlock; ledger count; idle expiry; explicit lock; fresh session locked; 0 real network")
+        // Mac: the window may stay active forever, so inactivity alone must lock the session.
+        session.unlock("synthetic accepted")
+        session.noteActivity(at: time)
+        session.expireIfIdle(at: time.addingTimeInterval(599))
+        precondition(session.isUnlocked, "Activity within ten minutes keeps the session")
+        session.noteActivity(at: time.addingTimeInterval(500))
+        session.expireIfIdle(at: time.addingTimeInterval(1_000))
+        precondition(session.isUnlocked, "New activity restarts the idle window")
+        session.expireIfIdle(at: time.addingTimeInterval(1_101))
+        precondition(!session.isUnlocked && session.password == nil && session.count == 0,
+                     "Ten idle minutes lock the session even while the scene stays active")
+        session.noteActivity(at: time.addingTimeInterval(1_200))
+        session.expireIfIdle(at: time.addingTimeInterval(9_999))
+        precondition(!session.isUnlocked, "Activity on a locked session neither unlocks nor crashes")
+        print("PASS: server refusal stays locked; read-only unlock; ledger count; idle expiry; explicit lock; fresh session locked; Mac inactivity lock; 0 real network")
     }
 }

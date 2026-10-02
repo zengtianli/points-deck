@@ -1,13 +1,17 @@
 import SwiftUI
 
-/// 三个 tab + 右上角家长入口。
+/// 四个 tab + 右上角家长入口。
 ///
 /// 为什么是 TabView 而不是一屏到底：孩子面的三块内容(账本/走势/兑换)是**并列**的，
 /// 不是递进的 —— 塞进一个 ScrollView 会让「还差 N 分」被推到屏外，而那是核心钩子。
-/// 家长面不占 tab：它不是孩子会点的东西，放右上角、且要过 Face ID。
+/// 家长面不占 tab：它不是孩子会点的东西，放右上角、且要输家长密码。
+///
+/// 宽屏（iPad 全屏、Mac、Vision Pro）换成 RegularHomeView 的侧栏 + 看板；
+/// tab 与家长面的开关放在这里，iPad 分屏宽窄来回切时停在同一页。
 struct HomeView: View {
     @EnvironmentObject var store: Store
     @EnvironmentObject var session: ParentSession
+    @Environment(\.wideLayout) private var wide
     // 验证通道：`-tab 1` / `-parent 1` 直接落到某一屏，方便 headless 截图核对。
     // 和 -api_base 一样，只在显式传了 launch 参数时生效。
     @State private var tab = UserDefaults.standard.integer(forKey: "tab")
@@ -16,6 +20,26 @@ struct HomeView: View {
     private var era: Era { store.state?.era ?? .slum }
 
     var body: some View {
+        Group {
+            if wide {
+                RegularHomeView(tab: $tab, showParent: $showParent)
+            } else {
+                compact
+            }
+        }
+        .overlay {
+            if let name = store.promoted {
+                CelebrationView(houseName: name, era: era) { store.promoted = nil }
+                    .transition(.opacity)
+            }
+        }
+        .animation(.easeInOut(duration: 0.25), value: store.promoted)
+        // 主页只在拿到账本之后才出现，所以这里就是「第一屏有数据」的时刻（验收车道的就绪信号）
+        .onAppear { LaneSignal.ready(wide ? "board" : "deck") }
+    }
+
+    /// 窄屏：原来那套分页布局，一行没改（App Store 预览视频就是它）。
+    private var compact: some View {
         ZStack {
             era.background.ignoresSafeArea()
                 .animation(.easeInOut(duration: 0.8), value: era)   // 升档 = 场景切换，不是刷新
@@ -49,13 +73,6 @@ struct HomeView: View {
         .sheet(isPresented: $showParent) {
             ParentView().environmentObject(store).environmentObject(session)
         }
-        .overlay {
-            if let name = store.promoted {
-                CelebrationView(houseName: name, era: era) { store.promoted = nil }
-                    .transition(.opacity)
-            }
-        }
-        .animation(.easeInOut(duration: 0.25), value: store.promoted)
     }
 
     private var topBar: some View {

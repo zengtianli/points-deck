@@ -1,7 +1,10 @@
 name: PointsDeck
 options:
   bundleIdPrefix: cyou.tianli
-  deploymentTarget: { iOS: "18.0", macOS: "15.0" }
+  # visionOS 26：WidgetKit（主 app 里的小组件预览与小组件扩展）在 visionOS 26 之前不可用。
+  # watchOS 11：手表 app 与表盘复杂功能（独立 target，见文件末尾；xcodegen 不许把 watchOS
+  # 写进 supportedDestinations）。
+  deploymentTarget: { iOS: "18.0", macOS: "15.0", visionOS: "26.0", watchOS: "11.0" }
   createIntermediateGroups: true
 settings:
   base:
@@ -12,19 +15,35 @@ settings:
     DEVELOPMENT_TEAM: B9LJH93LA4
     ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
     SWIFT_VERSION: "5.0"
-targets:
-  PointsDeck:
-    type: application
-    supportedDestinations: [iOS, macOS]
-    # 每次构建前从 ~/Apps/edu/web 同步一次时代底图。
-    # 为什么不把图提交进仓:图的 SSOT 在 ~/Apps/edu/web/points/skins/(那边有生图 prompt、seed、
-    # 皮肤清单门)，仓里存一份副本就是第二份，改了图两边会漂。
-    # 为什么必须挂在构建前:漏同步的表现是**编译通过、装上能跑、只是没有背景** ——
-    # 那种缺陷不会报错，只会被当成「设计就这样」。缺源时脚本 exit 1，构建直接失败。
+targetTemplates:
+  # 时代底图：**凡是把 Resources/Skins 打进包的 target 都套这个模板** —— 同步脚本和资源声明
+  # 绑在一起，新加一个 target 只要套了模板，就一定先同步、再拷图。
+  # 为什么不把图提交进仓:图的 SSOT 在 ~/Apps/edu/web/points/skins/(那边有生图 prompt、seed、
+  # 皮肤清单门)，仓里存一份副本就是第二份，改了图两边会漂。
+  # 为什么必须挂在**每个** target 的构建前:漏同步的表现是**编译通过、装上能跑、只是没有背景** ——
+  # 那种缺陷不会报错，只会被当成「设计就这样」。缺源时脚本 exit 1，构建直接失败。
+  # 2026-10-02 实测：原先只挂在主 app 上，全新 checkout 第一次构建时小组件（主 app 的依赖，先编）
+  # 比同步脚本先拷 Skins，打进去的只有 README.md，小组件静默退回兜底配色。
+  # 几个 target 会并发跑这个脚本，脚本自己保证并发安全（只在内容变了时原子替换）。
+  # folder 引用(不是 group)，进包后保持 Skins/ 子目录结构；widget extension 有自己的 bundle，
+  # 主 app 打了包不等于它也有。
+  BundlesSkins:
     preBuildScripts:
       - script: bash "$PROJECT_DIR/sync-skins.sh"
         name: 同步时代底图
         basedOnDependencyAnalysis: false
+    sources:
+      - path: Resources/Skins
+        type: folder
+        buildPhase: resources
+
+targets:
+  PointsDeck:
+    type: application
+    templates: [BundlesSkins]
+    # iPhone / iPad / Vision Pro / Mac 是同一个 target（同名、同图标、同 bundle id）；
+    # Apple Watch 是下面单独的 PointsDeckWatch，iOS 构建时嵌进 PointsDeck.app/Watch/。
+    supportedDestinations: [iOS, macOS, visionOS]
     # 给 Agent 的命令行 treasury 随本机 Mac 版一起装：Contents/Resources/bin/treasury，
     # cli/install.sh 按 bundle id 找到已装的 .app 再链到 ~/.local/bin。只在 macOS 的 build 动作里拷
     # （签名在所有构建阶段之后，脚本会被封进签名）；iOS 包和任何归档（ACTION=install：App Store /
@@ -45,17 +64,18 @@ targets:
     sources:
       # 总部共享：macOS 侧给 iOS-only SwiftUI 修饰符提供同名 no-op，调用点不改（multiplatform.py 注入）
       - path: Shared/PlatformCompat.swift
+      - path: Shared/LaneSignal.swift
       - path: Sources
       # ⚠ 图标资产必须在这儿列出来。漏了的表现是**编译通过、装机通过、桌面白板**——
       #   ASSETCATALOG_COMPILER_APPICON_NAME 指向一个不在工程里的 catalog，
       #   actool 根本没被调起，全程零报错。2026-08-28 实测踩到。
       - path: Resources/Assets.xcassets
-      # 时代底图 —— folder 引用(不是 group)，进包后保持 Skins/ 子目录结构
-      - path: Resources/Skins
-        type: folder
-        buildPhase: resources
+      # 时代底图由 BundlesSkins 模板声明（连同构建前的同步）
     dependencies:
       - target: PointsWidget
+      # 手表 app 只随 iOS 包走（PointsDeck.app/Watch/）；Mac 与 visionOS 包里不带
+      - target: PointsDeckWatch
+        destinationFilters: [iOS]
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck
@@ -81,7 +101,10 @@ targets:
       configVariants: []
   PointsWidget:
     type: app-extension
-    supportedDestinations: [iOS, macOS]
+    templates: [BundlesSkins]
+    # visionOS 也要列上：只给 iOS/macOS 时，Xcode 会把 **iOS 模拟器版**的小组件塞进
+    # visionOS 包（PlugIns 里平台 IOSSIMULATOR，2026-10-02 实测）
+    supportedDestinations: [iOS, macOS, visionOS]
     # ⚠ xcodegen 的 info.path 是**生成目标**，不是「用这个现成文件」——
     # 手写一份 Widget/Info.plist 放那儿会被直接覆盖掉，内容必须写在 properties 里。
     # 少了 NSExtension 的表现是:编译通过、装机报 "Invalid placeholder attributes"。
@@ -104,10 +127,7 @@ targets:
       - path: Sources/AppIdentity.swift
       - path: Sources/Snapshot.swift
       - path: Sources/WidgetViews.swift
-      # widget 也从插画派生配色，同一份资源
-      - path: Resources/Skins
-        type: folder
-        buildPhase: resources
+      # widget 也从插画派生配色，同一份资源（BundlesSkins 模板）
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.widget
@@ -116,4 +136,70 @@ targets:
         "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Mac.PointsWidget.entitlements
         "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         CODE_SIGN_ENTITLEMENTS: Widget.entitlements
+        CURRENT_PROJECT_VERSION: "1"
+
+  # ── Apple Watch ───────────────────────────────────────────────────────────
+  # 孩子抬腕看的只读一面：余额、档位配色、还差 N 分升 X、最近 10 笔；登录态由 iPhone 经
+  # WatchConnectivity 递过来（Sources/WatchLink.swift → Watch/WatchSessionReceiver.swift）。
+  # 业务层与 iPhone 共用同一份文件（Api / Store / Skin / Snapshot），不另写一套。
+  PointsDeckWatch:
+    type: application
+    platform: watchOS
+    templates: [BundlesSkins]
+    sources:
+      - path: Shared/PlatformCompat.swift
+      - path: Sources/Api.swift
+      - path: Sources/Store.swift
+      - path: Sources/Skin.swift
+      - path: Sources/Snapshot.swift
+      - path: Sources/AppIdentity.swift
+      - path: Sources/WidgetViews.swift
+      - path: Shared/LaneSignal.swift
+      - path: Sources/WatchLink.swift
+      - path: Watch
+        excludes: ["*.plist"]
+      # ⚠ 同主 App：资产目录不列进来，手表包零报错地没有图标（2026-10-02 实测 Info.plist 无 CFBundleIcons、
+      #   包里没有 Assets.car）。AppIcon 里那张 platform: watchos 的 1024 只有手表 actool 认。
+      - path: Resources/Assets.xcassets
+    dependencies:
+      - target: PointsWatchWidget
+    info:
+      path: Watch/Info.plist
+      properties:
+        CFBundleDisplayName: "$(APP_DISPLAY_NAME)"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: cyou.tianli.pointsdeck
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.watchkitapp
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_ENTITLEMENTS: Watch.entitlements
+        CURRENT_PROJECT_VERSION: "1"
+    scheme: {}
+  # 表盘复杂功能：同一份 Widget/PointsWidget.swift，watchOS 分支声明 accessory 四种尺寸。
+  PointsWatchWidget:
+    type: app-extension
+    platform: watchOS
+    templates: [BundlesSkins]
+    info:
+      path: Watch/Widget-Info.plist
+      properties:
+        CFBundleDisplayName: "$(APP_DISPLAY_NAME)"
+        CFBundleShortVersionString: "$(MARKETING_VERSION)"
+        CFBundleVersion: "$(CURRENT_PROJECT_VERSION)"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    sources:
+      - path: Widget
+        excludes: ["Info.plist"]
+      - path: Sources/Skin.swift
+      - path: Sources/AppIdentity.swift
+      - path: Sources/Snapshot.swift
+      - path: Sources/WidgetViews.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.watchkitapp.widget
+        CODE_SIGN_ENTITLEMENTS: WatchWidget.entitlements
         CURRENT_PROJECT_VERSION: "1"

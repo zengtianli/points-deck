@@ -33,6 +33,10 @@ struct PointsWidget: Widget {
         #if os(iOS)
         .supportedFamilies([.systemSmall, .systemMedium,
                             .accessoryCircular, .accessoryRectangular, .accessoryInline])   // accessory* = 锁屏，iOS 独有
+        #elseif os(watchOS)
+        // 表盘复杂功能：圆形进度、矩形一行字 + 进度、表盘顶上一行字、四角弧形。
+        // 数据是手表 app 每次刷新写进手表本机钥匙串的快照（同一份 Snapshot），手表 app 不开时会变旧。
+        .supportedFamilies([.accessoryCircular, .accessoryRectangular, .accessoryInline, .accessoryCorner])
         #else
         .supportedFamilies([.systemSmall, .systemMedium])
         #endif

@@ -69,7 +69,7 @@ struct ProfileEditView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 28)
             }
-            .background(era.background.ignoresSafeArea())
+            .eraBackdrop(era)
             .navigationTitle("编辑资料")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)

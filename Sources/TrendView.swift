@@ -7,28 +7,25 @@ import SwiftUI
 struct TrendView: View {
     @EnvironmentObject var store: Store
     @State private var span = 30
+    /// 宽屏把曲线画高一些、内容收窄居中；窄屏用默认值，与原来逐字相同。
+    var chartHeight: CGFloat = 180
+    var maxWidth: CGFloat? = nil
 
     private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
 
-    /// 只取积分那条线：电视时间与心愿是另外两本账，混进同一条曲线就是三本账画成一本。
-    private var points: [(day: String, bal: Int)] {
-        guard let s else { return [] }
-        return s.entries.filter { $0.cur == "pts" }
-            .reversed()                       // entries 已倒序，这里转回时间正序
-            .suffix(span)
-            .map { ($0.when, $0.bal) }
-    }
+    private var points: [TrendPoint] { TrendPoint.series(s, span: span) }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
                 spanPicker
-                chart
-                stats
+                TrendChart(points: points, era: era, height: chartHeight)
+                TrendStats(points: points, era: era, practiceLeft: s?.practiceLeft ?? 0)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
+            .contentWidth(maxWidth)
         }
         .refreshable { await store.refresh() }
     }
@@ -46,17 +43,41 @@ struct TrendView: View {
                                     in: Capsule())
                         .foregroundStyle(span == n ? .black : .white.opacity(0.8))
                 }
+                .flatButton()
             }
             Spacer()
         }
     }
 
-    private var chart: some View {
+}
+
+/// 走势曲线上的一个点：那一笔之后的余额快照（服务端记的 `bal`）。
+struct TrendPoint {
+    let day: String
+    let bal: Int
+
+    /// 只取积分那条线：电视时间与心愿是另外两本账，混进同一条曲线就是三本账画成一本。
+    static func series(_ s: LedgerState?, span: Int) -> [TrendPoint] {
+        guard let s else { return [] }
+        return s.entries.filter { $0.cur == "pts" }
+            .reversed()                       // entries 已倒序，这里转回时间正序
+            .suffix(span)
+            .map { TrendPoint(day: $0.when, bal: $0.bal) }
+    }
+}
+
+/// 余额曲线卡。走势页和宽屏看板共用。
+struct TrendChart: View {
+    let points: [TrendPoint]
+    let era: Era
+    var height: CGFloat = 180
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if points.count < 2 {
                 Text("流水还太少，画不出走势").font(.subheadline)
                     .foregroundStyle(.white.opacity(0.55))
-                    .frame(maxWidth: .infinity, minHeight: 180)
+                    .frame(maxWidth: .infinity, minHeight: height)
             } else {
                 let vals = points.map { Double($0.bal) }
                 let lo = vals.min() ?? 0, hi = vals.max() ?? 1
@@ -90,7 +111,7 @@ struct TrendView: View {
                             .position(pt(vals.count - 1))
                     }
                 }
-                .frame(height: 180)
+                .frame(height: height)
 
                 HStack {
                     Text(points.first?.day ?? "")
@@ -104,8 +125,15 @@ struct TrendView: View {
         .frame(maxWidth: .infinity)
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
     }
+}
 
-    private var stats: some View {
+/// 涨跌 / 最高 / 最低 / 今天刷题余额。
+struct TrendStats: View {
+    let points: [TrendPoint]
+    let era: Era
+    let practiceLeft: Int
+
+    var body: some View {
         let vals = points.map { $0.bal }
         let delta = (vals.last ?? 0) - (vals.first ?? 0)
         return VStack(spacing: 0) {
@@ -116,7 +144,7 @@ struct TrendView: View {
             Divider().overlay(.white.opacity(0.12))
             row("最低", "\(vals.min() ?? 0) 分")
             Divider().overlay(.white.opacity(0.12))
-            row("今天刷题还能得", "\(s?.practiceLeft ?? 0) 分")
+            row("今天刷题还能得", "\(practiceLeft) 分")
         }
         .padding(.horizontal, 18).padding(.vertical, 6)
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))

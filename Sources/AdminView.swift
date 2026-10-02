@@ -65,7 +65,7 @@ struct AdminView: View {
                     .padding(30)
                 }
             }
-            .background(era.background.ignoresSafeArea())
+            .eraBackdrop(era)
             .navigationTitle("管理")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
@@ -181,7 +181,7 @@ struct ShopEditView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .background((store.state?.era ?? .slum).background.ignoresSafeArea())
+        .eraBackdrop(store.state?.era ?? .slum)
         .navigationTitle("兑换商品")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
@@ -271,7 +271,7 @@ struct TierEditView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .background((store.state?.era ?? .slum).background.ignoresSafeArea())
+        .eraBackdrop(store.state?.era ?? .slum)
         .navigationTitle("档位与待遇")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)
@@ -358,7 +358,7 @@ struct RuleListView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .background((store.state?.era ?? .slum).background.ignoresSafeArea())
+        .eraBackdrop(store.state?.era ?? .slum)
         .navigationTitle("积分规则")
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.dark)

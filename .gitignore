@@ -11,6 +11,7 @@ xcuserdata/
 PointsDeck.xcodeproj/
 # 同理:Widget/Info.plist 是 project.yml 的 info.properties 生成的，不是手写的
 Widget/Info.plist
+Watch/*.plist
 
 # 时代底图:SSOT 在 ~/Apps/edu/web/points/skins/，这里只是构建时同步来的副本。
 # 存进仓就是第二份，改了图两边会漂。clone 之后跑 bash sync-skins.sh 就有了
@@ -27,7 +28,9 @@ Resources/Skins/skins.json
 # git-template 的 info/exclude 默认拦所有 *.png(「大 binary 默认拦截,需要再白名单放回」)。
 # 图标是**构建输入**:actool 读它,不进仓则 clone 下来编出来的 app 没图标。
 !Resources/icon-1024.png
-!Resources/Assets.xcassets/AppIcon.appiconset/icon-1024.png
+# 资产目录里的图全是构建输入：Mac 的 mac-*.png、Watch 复用的 1024、Vision 的 AppIcon.solidimagestack 三层。
+# 2026-10-02 实测只放行 icon-1024.png 时，全新 checkout 编出来的 Mac 包没有图标（mac-*.png 从没进仓）。
+!Resources/Assets.xcassets/**/*.png
 # shots/ 是验收证据,几 MB,按上面那条策略留本地不进仓;要复现: bash sim-run.sh
 shots/
 

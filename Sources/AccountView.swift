@@ -24,6 +24,8 @@ struct AccountView: View {
     @State private var parentMsg: String?
     @State private var deletePw = ""
     @State private var deleteErr: String?
+    /// 宽屏把内容收在这个宽度里居中（设置页拉满 1000pt 宽，左边的字和右边的值隔着半个屏）。
+    var maxWidth: CGFloat? = nil
 
     private var s: LedgerState? { store.state }
     private var era: Era { s?.era ?? .slum }
@@ -39,6 +41,7 @@ struct AccountView: View {
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 28)
+            .contentWidth(maxWidth)
         }
         .refreshable { await store.refresh() }
         .sheet(isPresented: $showTiers) {

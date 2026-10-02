@@ -27,6 +27,9 @@ struct ParentView: View {
     @State private var askPassword = false
     @State private var typed = ""
     @State private var pendingUndo: LedgerState.Entry?
+    /// 宽屏把家长面放在右侧的 inspector 栏里（左边的余额随记账实时变）：
+    /// 那里「关闭」是收起 inspector，不是 dismiss 一张 sheet。窄屏不传，仍是 sheet。
+    var onClose: (() -> Void)? = nil
 
     private var s: LedgerState? { store.state }
 
@@ -41,11 +44,11 @@ struct ParentView: View {
                         gateSection
                     }
                     .scrollContentBackground(.hidden)     // 让底下的时代背景透出来
-                    .background((store.state?.era ?? .slum).background.ignoresSafeArea())
+                    .eraBackdrop(store.state?.era ?? .slum)
                 } else {
                     ProgressView().tint(.white)
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background((store.state?.era ?? .slum).background.ignoresSafeArea())
+                        .eraBackdrop(store.state?.era ?? .slum)
                 }
             }
             .navigationTitle("家长记账")
@@ -53,8 +56,11 @@ struct ParentView: View {
             .toolbarBackground(.hidden, for: .navigationBar)
             .preferredColorScheme(.dark)      // 家长面是工具面，但配色跟着 app 走
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                // inspector 里「关闭」放到右侧（iPad 上 inspector 和详情共用一条导航栏，放左边会落到账本那一栏头上）
+                ToolbarItem(placement: onClose == nil ? .cancellationAction : .primaryAction) {
+                    Button("关闭") {
+                        if let onClose { onClose() } else { dismiss() }
+                    }
                 }
                 // 上锁只在解锁着时出现 —— 没解锁时它是个什么都不做的按钮，露着只会让人点
                 if session.isUnlocked {

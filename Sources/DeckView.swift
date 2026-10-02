@@ -2,6 +2,9 @@ import SwiftUI
 
 /// 孩子面第一屏 —— 市值 / 「还差 N 分」/ 流水。
 /// 家长面、走势图、兑换都还没写：先跑通这一屏，看过导航范式再铺开(/appios 硬约束)。
+///
+/// 四块卡片拆成了下面几个独立视图，窄屏这里和宽屏看板（DeckBoard）用的是同一份；
+/// 窄屏的参数与原来逐字相同（底图带 132pt、间距 22），拆分前后截图逐像素一致。
 struct DeckView: View {
     @EnvironmentObject var store: Store
     @State private var shown: Double = 0
@@ -12,10 +15,10 @@ struct DeckView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 22) {
-                    banner
-                    marketValue
-                    nextTier
-                    ledger
+                    EraBanner(era: era, houseName: s?.houseName ?? "", height: 132)
+                    MarketValueCard(state: s, era: era, shown: shown)
+                    NextTierCard(state: s, era: era)
+                    LedgerCard(entries: s?.entries ?? [], era: era)
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 24)
@@ -31,42 +34,66 @@ struct DeckView: View {
             withAnimation(.easeOut(duration: 0.6)) { shown = Double(new) }
         }
     }
+}
 
-    /// 天际线底图带 —— 「住什么房」这件事**得看得见**，不能只是一行字。
-    /// 11 档房名映射到 5 个时代(skins.json 的 era)，所以小木屋与砖瓦房共用一张图 ——
-    /// 那是 ~/Apps/edu/web 既定的美术分档，不在端上另立一套。
-    @ViewBuilder
-    private var banner: some View {
+/// 天际线底图带 —— 「住什么房」这件事**得看得见**，不能只是一行字。
+/// 11 档房名映射到 5 个时代(skins.json 的 era)，所以小木屋与砖瓦房共用一张图 ——
+/// 那是 ~/Apps/edu/web 既定的美术分档，不在端上另立一套。
+struct EraBanner: View {
+    let era: Era
+    let houseName: String
+    var height: CGFloat = 132
+    /// 宽屏看板传 true：底图是约 2:1 的横幅，列窄而带子高（220pt）时按 fill 铺满高度，图会横向撑出列外，
+    /// 所以改成「先占满列宽、再把图裁进去」。窄屏不传，走原来那几行，一个像素不变。
+    var fitsColumn = false
+
+    var body: some View {
         if let img = era.banner {
             ZStack(alignment: .bottomLeading) {
+                if fitsColumn {
+                    Color.clear
+                        .frame(height: height)
+                        .overlay {
+                            Image(uiImage: img).resizable().aspectRatio(contentMode: .fill)
+                        }
+                        .clipped()
+                } else {
                 Image(uiImage: img)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
-                    .frame(height: 132)
+                    .frame(height: height)
                     .clipped()
+                }
                 // 底部压一层渐变，房名压在图上才读得清
                 LinearGradient(colors: [.clear, .black.opacity(0.55)],
                                startPoint: .center, endPoint: .bottom)
-                Text(s?.houseName ?? "")
+                Text(houseName)
                     .font(.title3.weight(.bold))
                     .foregroundStyle(.white)
                     .shadow(radius: 3)
                     .padding(.horizontal, 16).padding(.bottom, 12)
             }
-            .frame(height: 132)
+            .frame(height: height)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.8), value: era)   // 升档时换图也是一次转场
         }
     }
+}
 
-    private var marketValue: some View {
+/// 总市值大字（滚动数字）+ 折合人民币 + 电视时间。`shown` 由外层驱动滚动动画。
+struct MarketValueCard: View {
+    let state: LedgerState?
+    let era: Era
+    let shown: Double
+
+    var body: some View {
         VStack(spacing: 6) {
             Text("总市值").font(.caption).foregroundStyle(.white.opacity(0.6))
             RollingNumber(value: shown).foregroundStyle(.white)
             HStack(spacing: 14) {
-                Text("≈ ¥\(s?.yuan ?? "0.00")")
-                if let tv = s?.tv, tv != 0 {
+                Text("≈ ¥\(state?.yuan ?? "0.00")")
+                if let tv = state?.tv, tv != 0 {
                     Text("📺 \(tv) 分钟")
                 }
             }
@@ -76,11 +103,16 @@ struct DeckView: View {
         .padding(.vertical, 26)
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 22))
     }
+}
 
-    /// 「差一点就完成」必须一直在眼前 —— 这是整套激励的钩子，不是装饰。
-    private var nextTier: some View {
+/// 「差一点就完成」必须一直在眼前 —— 这是整套激励的钩子，不是装饰。
+struct NextTierCard: View {
+    let state: LedgerState?
+    let era: Era
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if let s, let need = s.toNext, let name = s.nextName {
+            if let s = state, let need = s.toNext, let name = s.nextName {
                 Text("还差 \(RollingNumber.grouped(need)) 分升级到「\(name)」")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.white)
@@ -101,12 +133,18 @@ struct DeckView: View {
         .padding(18)
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
     }
+}
 
-    private var ledger: some View {
+/// 最近流水（服务端给的最近 30 笔，倒序）。
+struct LedgerCard: View {
+    let entries: [LedgerState.Entry]
+    let era: Era
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("最近流水").font(.caption).foregroundStyle(.white.opacity(0.6))
-            if let es = s?.entries, !es.isEmpty {
-                ForEach(es) { e in
+            if !entries.isEmpty {
+                ForEach(entries) { e in
                     HStack {
                         VStack(alignment: .leading, spacing: 2) {
                             Text(e.what).font(.subheadline).foregroundStyle(.white)
@@ -114,11 +152,11 @@ struct DeckView: View {
                                 .font(.caption2).foregroundStyle(.white.opacity(0.45))
                         }
                         Spacer()
-                        Text(sign(e))
+                        Text(e.signed)
                             .font(.subheadline.weight(.semibold)).monospacedDigit()
                             .foregroundStyle(e.pts >= 0 ? era.accent : Color(hex: 0xFF9E9E))
                     }
-                    if e.id != es.last?.id { Divider().overlay(.white.opacity(0.12)) }
+                    if e.id != entries.last?.id { Divider().overlay(.white.opacity(0.12)) }
                 }
             } else {
                 Text("还没有流水").font(.subheadline).foregroundStyle(.white.opacity(0.5))
@@ -127,11 +165,5 @@ struct DeckView: View {
         .padding(18)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
-    }
-
-    /// 三种币种走同一条时间线(服务端如此)，所以单位要跟着条目走，不能一律写「分」。
-    private func sign(_ e: LedgerState.Entry) -> String {
-        let unit = e.cur == "tv" ? " 分钟" : (e.cur == "wish" ? " 次" : "")
-        return (e.pts >= 0 ? "+" : "") + "\(e.pts)" + unit
     }
 }

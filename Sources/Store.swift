@@ -58,7 +58,9 @@ final class Store: ObservableObject {
             phase = .loggedIn
             publishSnapshot()
             startEvents()
+            WatchLink.shared.publishSession()
         } catch {
+            // 探测失败不等于退出登录（也可能只是没网）—— 所以这里**不**通知手表下线
             phase = .loggedOut
         }
     }
@@ -74,6 +76,7 @@ final class Store: ObservableObject {
             phase = .loggedIn
             publishSnapshot()
             startEvents()
+            WatchLink.shared.publishSession()
         } catch {
             self.error = error.localizedDescription
             // ⚠ 必须落回 loggedOut：从 restore() 的 dev 分支进来时 phase 还是 .checking，
@@ -115,7 +118,7 @@ final class Store: ObservableObject {
     /// 为什么要退避而不是固定间隔：服务端重启或没网时，固定 1 秒重连会把
     /// 一个已经出问题的服务打得更惨，而且日志会被刷满。
     func startEvents() {
-        guard eventTask == nil else { return }
+        guard Self.livePush, eventTask == nil else { return }
         eventTask = Task { [weak self] in
             var backoff: UInt64 = 2
             while !Task.isCancelled {
@@ -141,6 +144,16 @@ final class Store: ObservableObject {
         }
     }
 
+    /// 手表不开长连接：一条常驻的 SSE 会让手表的无线一直醒着，电量扛不住。
+    /// 手表上抬腕回到前台刷新一次（WatchRootView），复杂功能读刷新时写下的快照。
+    private static var livePush: Bool {
+        #if os(watchOS)
+        return false
+        #else
+        return true
+        #endif
+    }
+
     func stopEvents() {
         eventTask?.cancel()
         eventTask = nil
@@ -158,6 +171,7 @@ final class Store: ObservableObject {
             phase = .loggedIn
             publishSnapshot()
             startEvents()
+            WatchLink.shared.publishSession()
         } catch {
             self.error = error.localizedDescription        // 邮箱已注册 / 格式不对 / 名额满，服务端文案原样
         }
@@ -172,6 +186,7 @@ final class Store: ObservableObject {
             stopEvents()
             state = nil
             phase = .loggedOut
+            WatchLink.shared.publishSignedOut()
             return true
         } catch {
             self.error = error.localizedDescription
@@ -182,6 +197,14 @@ final class Store: ObservableObject {
     func logout() async {
         stopEvents()
         await Api.logout()
+        state = nil
+        phase = .loggedOut
+        WatchLink.shared.publishSignedOut()
+    }
+
+    /// 会话在别处结束了（手表收到 iPhone 退出 / 注销的同步）：只清本地，不再发 /api/logout。
+    func dropSession() {
+        stopEvents()
         state = nil
         phase = .loggedOut
     }

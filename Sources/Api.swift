@@ -24,6 +24,12 @@ enum Api {
 
     /// 服务端发的是 HttpOnly cookie，URLSession 的共享 cookie 存储会自己带上并持久化。
     /// 我们**不碰** cookie 的值 —— 碰了就等于在 app 里复制一份会话状态。
+    ///
+    /// ⚠ 唯一的例外（2026-10-02 放宽）：Apple Watch。手表上没有输入框可登录，
+    /// 由 iPhone 把同一枚 `edu_sess` 经 WatchConnectivity 转过去（`sessionCookie` /
+    /// `installSessionCookie`，只在这两处碰值）。转的是同一个会话、不是新造一份：
+    /// 服务端的 pwv 机制照样管它 —— 改密码，手表和 iPhone 一起下线；iPhone 退出 / 注销时
+    /// 也会发一条不带 cookie 的同步，手表随即删掉。除此之外仍然不读不写 cookie。
     private static func request(_ path: String, body: [String: Any]? = nil,
                                 timeout: TimeInterval = 20) async throws -> [String: Any] {
         var req = URLRequest(url: Api.base.appendingPathComponent(path))
@@ -154,6 +160,27 @@ enum Api {
         _ = try? await request("api/logout", body: [:])
     }
 
+    /// 会话 cookie 的名字（server.py 发的那枚 HttpOnly cookie）。
+    static let sessionCookieName = "edu_sess"
+
+    /// 当前账本地址下的会话 cookie —— **只给 iPhone 转交 Apple Watch 用**（见 `request` 上方的例外）。
+    static func sessionCookie() -> HTTPCookie? {
+        HTTPCookieStorage.shared.cookies(for: base)?.first { $0.name == sessionCookieName }
+    }
+
+    /// 手表装上 iPhone 转来的会话 cookie；`value` 为 nil 就只删不装（iPhone 退出 / 注销了）。
+    /// 装在手表自己的账本地址下，之后 `request` 原样由 URLSession 带上，别处不用改。
+    static func installSessionCookie(_ value: String?, expires: Date?) {
+        let jar = HTTPCookieStorage.shared
+        for c in jar.cookies(for: base) ?? [] where c.name == sessionCookieName { jar.deleteCookie(c) }
+        guard let value, !value.isEmpty, let host = base.host else { return }
+        var props: [HTTPCookiePropertyKey: Any] = [.name: sessionCookieName, .value: value,
+                                                   .domain: host, .path: "/"]
+        if base.scheme == "https" { props[.secure] = "TRUE" }
+        if let expires { props[.expires] = expires }
+        if let c = HTTPCookie(properties: props) { jar.setCookie(c) }
+    }
+
     /// 邮箱注册：`{email, p, nick}` → 服务端派生内部用户名并直接下发 cookie（注册即登录）。
     /// 家长密码按账号各自一把（服务端 2026-09-05 起）：注册时一并设，只有家长知道。
     static func register(email: String, password: String, nick: String, parent: String) async throws {
@@ -233,6 +260,12 @@ struct LedgerState {
         /// 服务端记的**余额快照**。撤销时它会被整条重算 —— 所以走势图读它，
         /// 不在端上累加 pts 求余额(累加出来的曲线和服务端的余额迟早对不上)。
         let bal: Int
+
+        /// 流水金额的显示：三种币种走同一条时间线(服务端如此)，所以单位要跟着条目走，不能一律写「分」。
+        var signed: String {
+            let unit = cur == "tv" ? " 分钟" : (cur == "wish" ? " 次" : "")
+            return (pts >= 0 ? "+" : "") + "\(pts)" + unit
+        }
     }
 
     struct Subject: Identifiable, Hashable {

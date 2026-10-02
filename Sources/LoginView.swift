@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var store: Store
+    @Environment(\.wideLayout) private var wide
     @State private var user = ""
     @State private var password = ""
     @State private var showRegister = false
@@ -11,7 +12,9 @@ struct LoginView: View {
 
     var body: some View {
         ZStack {
-            Era.garden.background.ignoresSafeArea()
+            #if !os(visionOS)
+            Era.garden.background.ignoresSafeArea()   // Vision Pro 上窗口本身是玻璃，不铺不透明底
+            #endif
 
             VStack(spacing: 24) {
                 Spacer()
@@ -61,6 +64,7 @@ struct LoginView: View {
                     .foregroundStyle(.white.opacity(0.45))
             }
             .padding(.horizontal, 28)
+            .contentWidth(wide ? 440 : nil)      // 宽屏：表单不拉满整个窗口
         }
         .animation(.easeInOut(duration: 0.2), value: store.error)
         .sheet(isPresented: $showRegister) { RegisterView() }
