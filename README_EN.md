@@ -8,7 +8,7 @@
 
 **Every point your child earns grows into a home they can see.**
 
-![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-available-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
+![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018%2B%20·%20iPadOS%20·%20macOS%2015%2B%20·%20watchOS%2011%2B%20·%20visionOS%2026%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-available-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
 Made for children: 11 value tiers map to illustrations across 5 eras, making their “home” visible. The entire page palette is sampled from the illustration. The parent password is never written to disk: a points system that lets children award themselves points becomes a point-farming game by the next day. Moving up a tier is celebrated, never punished; moving down is silent.
 
@@ -32,9 +32,36 @@ Made for children: 11 value tiers map to illustrations across 5 eras, making the
 | **Read the ledger like a stock dashboard** | Trends, gains and losses, highs and lows make the ledger understandable and appealing to children. Balances use snapshots carried by each transaction rather than client-side addition, so both ends always agree. |
 | **The parent password is never saved to disk** | A points system that lets children award themselves points soon becomes a farming game. Parents enter the password each time; it stays only in memory and disappears when the app moves to the background. Even an unlocked phone does not let the child add points. All values are calculated on the server; the client does not perform even a single addition. |
 
+## One app, five platforms
+
+One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the same target, and Apple Watch is a watch app that installs with the iPhone package. The ledger lives on the server, so points booked on one device show up on the others on refresh or when the app returns to the foreground.
+
+| Platform | What it looks like | Can you get it now? |
+|---|---|---|
+| iPhone | Four paged screens (ledger / trend / redeem / account) plus Lock Screen and Home Screen widgets | On the [App Store](https://apps.apple.com/app/id6806799638) |
+| iPad | Wide layout: sidebar + ledger board (era banner, value, points to the next tier ‖ trend, stats, entries), parent booking in a side inspector; narrow Split View falls back to the iPhone layout | Same App Store package, but **this wide layout has not been released yet** (the version on sale shows the stretched iPhone layout on iPad) |
+| Mac | Native macOS window with the same sidebar board; the parent lock closes after 10 idle minutes; ships the `treasury` command line inside the app | **Not on the App Store**; local builds only |
+| Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | **Not on the App Store** (the embedded watch app is not in any released build yet) |
+| Apple Vision Pro | The same sidebar board in a system glass window; the era colour is an accent only | **Not on the App Store**; verified on the simulator only |
+
+<table><tr>
+<td align="center" width="50%"><img src="docs/screenshots/07-ipad.png" alt="iPad landscape: sidebar and ledger board"><br><sub>iPad landscape: sidebar and ledger board (simulator screenshot)</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/08-mac.png" alt="Mac: parent booking in the right inspector, the balance stays visible on the left"><br><sub>Mac: parent booking in the right inspector, the balance stays visible on the left (local screenshot, inactive window)</sub></td>
+</tr><tr>
+<td align="center" width="50%"><img src="docs/screenshots/10-vision.png" alt="Apple Vision Pro: the ledger board in a glass window"><br><sub>Apple Vision Pro: the ledger board in a glass window (simulator screenshot, cropped)</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/09-watch.png" width="208" alt="Apple Watch: current tier, balance, points to the next tier"><br><sub>Apple Watch: current tier, balance, points to the next tier (simulator screenshot)</sub></td>
+</tr></table>
+
+The account “小满” and its 30 days of entries in these screenshots are demo data (an isolated ledger that `scripts/demo/ledger.py` starts locally), not any real family's ledger.
+
+### Resource use per platform (measured on simulators)
+
+<!-- platforms:start -->
+<!-- platforms:end -->
+
 ## Availability
 
-Email registration and separate family ledgers are supported. The iOS edition is available on the [App Store](https://apps.apple.com/app/id6806799638). The official build readback on 2026-09-26 identifies version 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
+Email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. The official build readback on 2026-09-26 identifies version 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
@@ -52,6 +79,7 @@ sh cli/install.sh --check  # verify only; --uninstall removes only this product'
 Credentials come only from environment variables or stdin and are never stored or echoed: `EDU_USER` (email or username), `EDU_PASSWORD` (or `--password-stdin`); parent actions need `EDU_PARENT_PW` (or `--parent-stdin`), sent per call like the app's parent lock; `EDU_API_BASE` defaults to `https://edu.tianli.cyou`.
 
 ```bash
+treasury version --json                        # no sign-in: CLI version, the containing app's version, server reachable or not
 treasury state --json                          # balance, current house tier, points to the next tier, TV time, wishes, today's practice allowance
 treasury entries --limit 10 --json             # ledger entries, newest first (the server returns the latest 400)
 treasury preview tr-show --json                # computed by the server, nothing recorded
@@ -84,11 +112,15 @@ Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule
 ```bash
 brew install xcodegen
 xcodegen generate
-xcodebuild -scheme PointsDeck -destination 'generic/platform=iOS Simulator' build
+xcodebuild -scheme PointsDeck -destination 'generic/platform=iOS Simulator' build        # iPhone / iPad (with the embedded watch app)
+xcodebuild -scheme PointsDeck -destination 'platform=macOS' build                        # Mac
+xcodebuild -scheme PointsDeck -destination 'generic/platform=visionOS Simulator' build   # Apple Vision Pro
+xcodebuild -scheme PointsDeckWatch -destination 'generic/platform=watchOS Simulator' build  # Apple Watch on its own
 ```
 
 - The repository’s `*.sh` files are shims for the author’s local fleet scripts (three-platform builds / device installation / TestFlight). They depend on shared tools under `~/Dev` that are not in this repository and explicitly exit when those tools are unavailable.
-- `Shared/PlatformCompat.swift` is a byte-for-byte copy of a shared file, providing same-name no-ops on macOS for iOS-only SwiftUI modifiers. Do not edit it here.
+- `Shared/PlatformCompat.swift` is a byte-for-byte copy of a shared file, providing same-name stand-ins on macOS / visionOS / watchOS for iOS-only SwiftUI modifiers. Do not edit it here.
+- `bash Tests/check-platform-typecheck.sh`: a cheap compile lane for the watch and Vision targets (`swiftc -typecheck` over each target's source list in `project.yml`, no simulator).
 - The preBuildScripts in `project.yml` run `sync-skins.sh` to sync content from the author’s machine into the package. The build stops at this step if that content is missing.
 
 See [DEVELOPING.md](DEVELOPING.md) for development details, including regressions, verification channels, and constraints.
@@ -110,9 +142,9 @@ Download size is App Store data; memory, CPU and launch time are iOS Simulator m
 
 | Download | Idle memory | Idle CPU | Simulator cold launch to first screen ready |
 |---|---|---|---|
-| **3.1 MB** (installed 4.0 MB) | **23.1 MB** | **0%** | **350 ms** |
+| **3.1 MB** (installed 4.0 MB) | **35.7 MB** | **0%** | **613 ms** |
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2 with a local Release build v1.0.1 (1) (2026-09-30), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2 with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->

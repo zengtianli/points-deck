@@ -6,7 +6,7 @@
 
 **孩子的每一分努力，涨成看得见的房子。**
 
-![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018.0%2B%20·%20macOS%2015.0%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-已上架-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
+![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018%2B%20·%20iPadOS%20·%20macOS%2015%2B%20·%20watchOS%2011%2B%20·%20visionOS%2026%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-已上架-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
 给孩子做的：11 档市值映射 5 个时代的插画，「住什么房看得见」，整页配色从插画采样派生。家长密码永不落盘——能自己给自己加分的积分系统，第二天就会变成刷分游戏。升档只庆不罚，回落一声不吭。
 
@@ -30,9 +30,36 @@
 | **像股票盘面一样看自己的账** | 走势、涨跌、最高最低——账本长成孩子看得懂又觉得酷的样子。余额用每条流水自带的快照，端上不自己累加，两边永远对得上。 |
 | **家长密码永不落盘** | 能自己给自己加分的积分系统，第二天就会变成刷分游戏。所以家长密码每次现输、只在内存、切后台就没了——孩子拿到解锁的手机也加不了分。分值一律服务端算，客户端连一个加号都没有。 |
 
+## 一个 App，五个平台
+
+同一个名字、同一个图标、同一本账：iPhone、iPad、Mac、Apple Vision Pro 是同一个 target，Apple Watch 是随 iPhone 包一起装的手表 App。账本都在服务端，哪台设备记的分，别的设备下拉或回到前台就看到。
+
+| 平台 | 长什么样 | 现在能不能装 |
+|---|---|---|
+| iPhone | 分页四屏（账本 / 走势 / 兑换 / 账户）+ 锁屏与主屏小组件 | [App Store](https://apps.apple.com/app/id6806799638) 已上架 |
+| iPad | 宽屏：侧栏 + 账本看板（底图、市值、还差几分 ‖ 走势、统计、流水），家长记账放在右侧栏；分屏窄栏退回 iPhone 布局 | 在售的是同一个包，但**这套宽屏布局还没发版**（在售版本在 iPad 上是拉宽的 iPhone 布局） |
+| Mac | 原生 macOS 窗口，同样的侧栏看板；放着不动 10 分钟家长锁自动落下；包里自带 `treasury` 命令行 | **未上架**，只能本机构建 |
+| Apple Watch | 抬腕看住在哪一档、余额、还差几分升级与进度，翻一页是最近 10 笔；表盘复杂功能四种。只读，不兑换、不记账；登录态由 iPhone 递过来 | **未上架**（随 iPhone 包嵌入的手表 App 还没进任何发行构建） |
+| Apple Vision Pro | 同一套侧栏看板放在系统玻璃窗口里，时代色只做强调色 | **未上架**，只在模拟器上验过 |
+
+<table><tr>
+<td align="center" width="50%"><img src="docs/screenshots/07-ipad.png" alt="iPad 横屏：侧栏 + 账本看板"><br><sub>iPad 横屏：侧栏 + 账本看板（模拟器截图）</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/08-mac.png" alt="Mac：家长记账放在右侧栏，左边余额实时看得到"><br><sub>Mac：家长记账放在右侧栏，左边余额实时看得到（本机截图，窗口未激活）</sub></td>
+</tr><tr>
+<td align="center" width="50%"><img src="docs/screenshots/10-vision.png" alt="Apple Vision Pro：玻璃窗口里的账本看板"><br><sub>Apple Vision Pro：玻璃窗口里的账本看板（模拟器截图，已裁边）</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/09-watch.png" width="208" alt="Apple Watch：住在哪一档、余额、还差几分升级"><br><sub>Apple Watch：住在哪一档、余额、还差几分升级（模拟器截图）</sub></td>
+</tr></table>
+
+截图里的账号「小满」和 30 天流水是演示数据（`scripts/demo/ledger.py` 在本机临时起的隔离账本），不是任何真实家庭的账。
+
+### 各平台资源占用（模拟器实测）
+
+<!-- platforms:start -->
+<!-- platforms:end -->
+
 ## 怎么拿到
 
-已支持邮箱注册与独立家庭账本；iOS 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布。2026-09-26 官方构建回读为 1.0（2），见[发行记录](perf/asc-release.json)；手机当前装机版本与运行性能仍待真机核验。
+已支持邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-09-26 官方构建回读为 1.0（2），见[发行记录](perf/asc-release.json)；手机当前装机版本与运行性能仍待真机核验。
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 
@@ -50,6 +77,7 @@ sh cli/install.sh --check  # 只核对；--uninstall 只删本产品入口的链
 凭据只从环境变量或 stdin 取，不落盘、不回显：`EDU_USER`（邮箱或用户名）、`EDU_PASSWORD`（或 `--password-stdin`）；家长操作要 `EDU_PARENT_PW`（或 `--parent-stdin`），同 App 的家长锁每次现取现发；`EDU_API_BASE` 默认 `https://edu.tianli.cyou`。
 
 ```bash
+treasury version --json                        # 不登录：命令行版本、所在 App 的版本、服务端连不连得上
 treasury state --json                          # 余额、住哪一档、还差多少升档、电视时间、心愿、今天刷题额度
 treasury entries --limit 10 --json             # 流水（新的在前；服务端下发最近 400 笔）
 treasury preview tr-show --json                # 服务端算分，不记账
@@ -82,11 +110,15 @@ treasury config put shop --file shop.json --parent-stdin < parent.txt
 ```bash
 brew install xcodegen
 xcodegen generate
-xcodebuild -scheme PointsDeck -destination 'generic/platform=iOS Simulator' build
+xcodebuild -scheme PointsDeck -destination 'generic/platform=iOS Simulator' build        # iPhone / iPad（连同嵌入的手表 App）
+xcodebuild -scheme PointsDeck -destination 'platform=macOS' build                        # Mac
+xcodebuild -scheme PointsDeck -destination 'generic/platform=visionOS Simulator' build   # Apple Vision Pro
+xcodebuild -scheme PointsDeckWatch -destination 'generic/platform=watchOS Simulator' build  # Apple Watch 单独编
 ```
 
 - 仓里的 `*.sh` 是作者本机舰队脚本的 shim（三平台构建 / 真机装机 / TestFlight），依赖 `~/Dev` 下的总部工具，不在本仓；没有那套工具时它们会明确退出。
-- `Shared/PlatformCompat.swift` 是总部共享文件的逐字节副本（iOS-only SwiftUI 修饰符在 macOS 侧的同名 no-op），别在这里改它。
+- `Shared/PlatformCompat.swift` 是总部共享文件的逐字节副本（iOS-only SwiftUI 修饰符在 macOS / visionOS / watchOS 侧的同名替身），别在这里改它。
+- `bash Tests/check-platform-typecheck.sh`：手表与 Vision 的便宜编译车道（按 `project.yml` 各 target 的源码清单 `swiftc -typecheck`，不起模拟器）。
 - `project.yml` 的 preBuildScripts 会跑 `sync-skins.sh`，从作者本机同步内容进包；没有那份内容时构建会停在这一步。
 
 开发细节（回归、验证通道、约束）见 [DEVELOPING.md](DEVELOPING.md)。
@@ -108,9 +140,9 @@ MIT © 2026 曾田力 (Tianli Zeng)
 
 | 安装包 | 空闲内存 | 空闲 CPU | 模拟器冷启动到首屏就绪 |
 |---|---|---|---|
-| **3.1 MB**（装好后 4.0 MB） | **23.1 MB** | **0%** | **350 ms** |
+| **3.1 MB**（装好后 4.0 MB） | **35.7 MB** | **0%** | **613 ms** |
 
 体积按具体发行构建回读；真机尚未测量，内存、CPU 与启动时间先用 iOS 模拟器实测并标明环境。
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8)（App Store 在售仍为 1.0 (2)）；体积不含用户数据与后续缓存 · 2026-09-30。体积来自 Apple App Store Connect 对应构建的设备切片记录。内存、CPU 与启动时间是 iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2 上本地源码 Release 构建 v1.0.1 (1) 的实测（2026-09-30），只统计 App 进程，不等于真机数值；真机测量尚未完成。内存口径为 phys_footprint；CPU 为 60 秒采样窗内 CPU 时间 ÷ 墙钟；大小按十进制 MB。原始数据见 [perf/lightweight.json](perf/lightweight.json)。</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8)（App Store 在售仍为 1.0 (2)）；体积不含用户数据与后续缓存 · 2026-09-30。体积来自 Apple App Store Connect 对应构建的设备切片记录。内存、CPU 与启动时间是 iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2 上本地源码 Release 构建 v1.0.1 (1) 的实测（2026-10-02），只统计 App 进程，不等于真机数值；真机测量尚未完成。内存口径为 phys_footprint；CPU 为 60 秒采样窗内 CPU 时间 ÷ 墙钟；大小按十进制 MB。原始数据见 [perf/lightweight.json](perf/lightweight.json)。</sub>
 <!-- lightweight:end -->
