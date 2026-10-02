@@ -57,15 +57,15 @@ The account “小满” and its 30 days of entries in these screenshots are dem
 ### Resource use per platform (simulators, and natively on a Mac)
 
 <!-- platforms:start -->
-| Platform | Measured on | Package (zip) | Idle memory | Idle CPU | Cold launch to first data screen | Target |
-|---|---|---|---|---|---|---|
-| iPhone | Simulator · iPhone 17 Pro · iOS 27.0 | 8.4 MB | 43.0 MB | 0% | 1.83 s | ≤ 150 MB · ≤ 0.5% |
-| iPad | Simulator · iPad Pro 13-inch · iPadOS 27.0 | 8.4 MB | 45.0 MB | 0.02% | 0.71 s | ≤ 150 MB · ≤ 0.5% |
-| Mac | Native · Mac16,12 / Apple M4 · macOS 27.2 | 4.7 MB | 59.0 MB | 0% | 0.42 s | ≤ 150 MB · ≤ 0.5% |
-| Apple Watch | Simulator · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB | 23.0 MB | 0.02% | 0.47 s | ≤ 25 MB · ≤ 10 MB package · ≤ 1.5 s |
-| Apple Vision Pro | Simulator · Apple Vision Pro · visionOS 27.0 | 4.7 MB | 58.0 MB | 0.13% | 14.02 s | ≤ 60 MB |
+| Platform | Measured on | Package (zip) | Idle memory | Idle CPU | Cold launch to first data screen | Host load (1 / 5 / 15 min) | Target |
+|---|---|---|---|---|---|---|---|
+| iPhone | Simulator · iPhone 17 Pro · iOS 27.0 | 8.4 MB | 43.0 MB | 0% | 1.80 s | 14.2 / 46.4 / 54.6 | ≤ 150 MB · ≤ 0.5% |
+| iPad | Simulator · iPad Pro 13-inch · iPadOS 27.0 | 8.4 MB | 39.0 MB | 0% | 0.50 s | 12.8 / 42.2 / 52.3 | ≤ 150 MB · ≤ 0.5% |
+| Mac | Native · Mac16,12 / Apple M4 · macOS 27.2 | 4.7 MB | 51.0 MB | 0% | 0.29 s | 13.4 / 31.9 / 39.6 | ≤ 150 MB · ≤ 0.5% |
+| Apple Watch | Simulator · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB | 21.0 MB | 0% | 0.46 s | 14.0 / 47.9 / 73.4 | ≤ 25 MB · ≤ 10 MB package · ≤ 1.5 s |
+| Apple Vision Pro | Simulator · Apple Vision Pro · visionOS 27.0 | 4.7 MB | 60.0 MB | 0.07% | 2.85 s | 13.1 / 37.9 / 50.2 | ≤ 60 MB |
 
-<sub>Measured 2026-10-02; data in `perf/platforms/<platform>.json`. iPhone, iPad, Watch and Vision are Release builds on Xcode simulators, the Mac is a native local Release build; **none of these are real-device numbers, and the package sizes are not App Store slices** (the App Store iPhone size is under "Resource usage" below). Memory is the app process's phys_footprint; CPU is CPU time ÷ wall time over 60 s after a 45 s settle; cold launch is the median time from the launch request to the app's "first data-bearing screen" log (isolated local demo ledger, 5 runs, the first run after install discarded). Simulator launch times swing widely with host load: memory was tight on the measuring day, and the same code on the iPhone lane measured 1.8–4.1 s at different times. Most of the 14 s on Vision Pro is the simulator's own overhead (from process spawn to the app's first log line, plus visionOS scene and RealityKit setup); the app itself takes about 2 s from fetching the ledger to drawing its first screen.</sub>
+<sub>**These numbers were measured on a heavily loaded host**: right before each lane's timed launches the 10-core host's load average was 12.8–14.2 (1 min), 31.9–47.9 (5 min) and 39.6–73.4 (15 min) (the "Host load" column), all above its core count; the measurement gate only requires the 1-minute load to be under 1.5× the cores. Cold launch is the number most sensitive to host load, so the launch times here are likely pessimistic (slow) and should come out lower when re-measured on an idle machine. Measured 2026-10-02; data in `perf/platforms/<platform>.json`. iPhone, iPad, Watch and Vision are Release builds on Xcode simulators, the Mac is a native local Release build; **none of these are real-device numbers, and the package sizes are not App Store slices** (the App Store iPhone size is under "Resource usage" below). Memory is the app process's phys_footprint; CPU is CPU time ÷ wall time over 60 s after a 45 s settle; cold launch is the median time from the launch request to the app's "first data-bearing screen" log (isolated local demo ledger, 5 runs, the first run after install discarded). Simulator launch times swing widely with host load: with memory tight on 2026-10-02, the same code on the iPhone lane measured 1.8–4.1 s at different times. Most of a Vision Pro cold launch is the simulator's own overhead (from process spawn to the app's first log line, plus visionOS scene and RealityKit setup), which stretches past ten seconds on a busy host; the app itself takes about 2 s from fetching the ledger to drawing its first screen.</sub>
 <!-- platforms:end -->
 
 ## Availability
