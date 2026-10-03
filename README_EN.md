@@ -149,11 +149,11 @@ MIT © 2026 Tianli Zeng (曾田力)
 
 Download size is App Store data; memory, CPU and launch time are iOS Simulator measurements, not physical-device figures.
 
-| Download | Idle memory | Idle CPU | Simulator cold launch to first screen ready |
+| Download | Idle memory | Idle CPU | Simulator cold launch to first data-bearing screen |
 |---|---|---|---|
-| **3.1 MB** (installed 4.0 MB) | **34.6 MB** | **0%** | **347 ms** |
+| **3.1 MB** (installed 4.0 MB) | **45.1 MB** | **0%** | **1.8 s** |
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro / iOS 27.0 Simulator / Mac16,12 / Apple M4 / macOS 27.2 with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->
