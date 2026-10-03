@@ -14,6 +14,7 @@ struct PointsDeckApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .appLifecycleMobile(productID: "points-deck", channel: MobileProductLifecycle.channel, configuration: MobileProductLifecycle.configuration)
                 .environmentObject(store)
                 .environmentObject(session)
         }

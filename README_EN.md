@@ -157,3 +157,14 @@ Sizes are read back for this exact distribution build. The physical device is no
 
 <sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->
+
+
+## Configuration and app updates
+
+New builds include a “Configuration and Updates” button below the main interface. The installed version and build come from the app bundle.
+
+This app has no independent portable preference settings. Credentials, permissions, device identifiers and user content continue to use their existing entry points.
+
+The iPhone and iPad update check reads the App Store release and opens this app's system store page. Network failures remain visible. App-version checking is separate from refreshing study materials or backend data.
+
+A source version bump does not mean a new phone build has already been distributed; release and installation records identify the available build.
