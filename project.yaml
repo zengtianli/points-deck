@@ -56,17 +56,21 @@ sop:
   # size_mb / cold_launch_ms 由 README 与交接对照。
   platforms:
     iphone:
+      input_normalization: {proof: perf/input-normalizations/finder-iphone.json, sha256: 16c9dc0f1f29beca648a7762c171e7de5e384b29ce518f74809df534bb3695ae}
       simulator: {device_type: iPhone-17-Pro}
       store_shots: shots/appstore/iphone/*.png
       distribution: app_store
     ipad:
+      input_normalization: {proof: perf/input-normalizations/finder-ipad.json, sha256: 417206fd5c0ab717084d80ea9d0f46f120bf4483a2bd482845012e5165ece8b5}
       simulator: {device_type: iPad-Pro-13-inch-M5-12GB}
       store_shots: shots/appstore/ipad/*.png
       distribution: app_store
     mac:
+      input_normalization: {proof: perf/input-normalizations/finder-mac.json, sha256: 525cf2503ecda44bede96eb5105c8cb4a43bd2180995c79dca892887c2d92401}
       store_shots: shots/appstore/mac/*.png
       distribution: none
     watch:
+      input_normalization: {proof: perf/input-normalizations/finder-watch.json, sha256: 9c1756cf7eef1b98d523e42180582fb66e094fe1b79ccea1e830c092ab5c1249}
       scheme: PointsDeckWatch
       bundle_id: cyou.tianli.pointsdeck.watchkitapp
       source: [Watch/**]
@@ -75,6 +79,7 @@ sop:
       budget: {memory_mb: 25, cpu: 0.5, size_mb: 10, cold_launch_ms: 1500}
       distribution: none
     vision:
+      input_normalization: {proof: perf/input-normalizations/finder-vision.json, sha256: ef0f725b3e4d95c48b2dbad21d7e88bfdf96d0beffb2057c8652d3fa11a3212e}
       simulator: {device_type: Apple-Vision-Pro-4K}
       store_shots: shots/appstore/vision/*.png
       budget: {memory_mb: 60, cpu: 0.5}
