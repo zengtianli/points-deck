@@ -17,14 +17,20 @@ final class MacHostedTests: XCTestCase {
             menu.items.flatMap { [$0] + ($0.submenu.map(items) ?? []) }
         }
         let commands = items(menu)
+        for item in commands where !item.keyEquivalent.isEmpty {
+            print("POINTS_MAC_KEY \(item.keyEquivalent) \(item.action.map(NSStringFromSelector) ?? "nil")")
+        }
         XCTAssertTrue(commands.contains { $0.action == NSSelectorFromString("terminate:") && $0.keyEquivalent == "q" })
         XCTAssertTrue(commands.contains { $0.keyEquivalent == "w" })
         let closed = expectation(forNotification: NSWindow.willCloseNotification, object: window)
+        window.makeMain()
         window.makeKey()
-        let key = try XCTUnwrap(NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: .command,
-            timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
-            context: nil, characters: "w", charactersIgnoringModifiers: "w", isARepeat: false, keyCode: 13))
-        XCTAssertTrue(menu.performKeyEquivalent(with: key))
+        try await Task.sleep(for: .milliseconds(250))
+        let close = try XCTUnwrap(commands.first { $0.keyEquivalent == "w" &&
+            $0.action == NSSelectorFromString("performClose:") && $0.keyEquivalentModifierMask == .command })
+        // The host is deliberately inactive. Execute the real Cmd-W selector
+        // on its own window without dispatching a key to the user's active App.
+        XCTAssertTrue(NSApp.sendAction(try XCTUnwrap(close.action), to: window, from: close))
         await fulfillment(of: [closed], timeout: 10)
     }
 }

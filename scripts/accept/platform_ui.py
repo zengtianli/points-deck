@@ -160,7 +160,7 @@ def mac_hosted(receipt, connection, out):
     spec = {"name": target, "options": {"deploymentTarget": {"macOS": "26.0"}}, "targets": {
         target: {"type": "bundle.unit-test", "platform": "macOS", "sources": [test.name], "settings": {"base": {
             "GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.machosted",
-            "TEST_HOST": info["executable"], "BUNDLE_LOADER": "$(TEST_HOST)"}}, "scheme": {"testTargets": [target]}}}}
+            }}, "scheme": {"testTargets": [target]}}}}
     (source / "project.yml").write_text(yaml.safe_dump(spec))
     subprocess.run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
@@ -176,6 +176,10 @@ def mac_hosted(receipt, connection, out):
         nonlocal found
         if isinstance(value, dict):
             if "TestHostPath" in value:
+                value["TestHostPath"] = str(clone)
+                value["TestHostBundleIdentifier"] = info["bundle_id"]
+                value["IsAppHostedTestBundle"] = True
+                value.setdefault("TestingEnvironmentVariables", {})["DYLD_INSERT_LIBRARIES"] = "__PLATFORMS__/MacOSX.platform/Developer/usr/lib/libXCTestBundleInject.dylib"
                 value["CommandLineArguments"] = ["-lane_quiet", "YES", "-api_base", ledger["url"],
                     "-dev_user", ledger["user"], "-dev_pw", ledger["pw"], "-tab", "2"]
                 found = True
@@ -184,7 +188,7 @@ def mac_hosted(receipt, connection, out):
             for child in value: arguments(child)
     arguments(document)
     if not found: raise ValueError("actual Mac test host metadata absent")
-    private_run = root / "private.xctestrun"
+    private_run = runs[0].with_name("private.xctestrun")
     private_run.write_bytes(plistlib.dumps(document)); private_run.chmod(0o600)
     front = sim_lane.front_app()
     try:
@@ -196,7 +200,7 @@ def mac_hosted(receipt, connection, out):
         if sim_lane.front_bundle(sim_lane.front_app()) == info["bundle_id"]:
             raise RuntimeError("hosted Mac test took focus")
         sim_lane.reuse_build(receipt, "points-deck-ios", REPO, "mac", "PointsDeck", "Release", False)
-        proof = {"ok": True, "platform": "mac", "environment": "native", "scope": "actual offscreen Mac window, native menu and Cmd-W close",
+        proof = {"ok": True, "platform": "mac", "environment": "native", "scope": "actual offscreen Mac window, native Cmd-W menu mapping and its window close selector",
             "receipt_sha256": sim_lane.sha256(receipt), "test_sha256": sim_lane.sha256(test), "product_rebuilt": False,
             "original_executable_sha256": built["executable_sha256"], "clone_bundle_id": info["bundle_id"],
             "front_changed": sim_lane.front_app() != front, "focus_taken": False}
