@@ -22,3 +22,5 @@
 当前 [Mac 本地包证据](mac/current-artifact.json) 已核深签名和可执行文件，测试包位于 `build/accept/mac/Growth Treasury.app`；TestFlight **1.0.2（11）** 已回读 VALID / IN_BETA_TESTING，family 组有 2 位测试成员，主包、Watch、小组件真实归档均为 build 11。原件见 [发行记录](../raw/testflight-1.0.2-11.json)。
 
 用户要求的 [本会话 HTML 汇报](../../docs/reports/points-session-20261004.html) 包含实际改动、真实截图、必要修复、额外耗时与未完成项。网站只同步了账号协议和部分操作，完整视觉未与原生 App 统一；这是明确交付缺项，不计入已完成结论。
+
+用户再次明确先理解需求、核清底座再做，并强调时间对工作有直接影响。[需求与底座诊断](../../docs/reports/points-next-scope-20261004.md) 已列出原规则、具体脚本缺口、最小修法、下一轮顺序和停止条件；该诊断不触发已通过平台重测，也不等同于底座代码已经修复。
