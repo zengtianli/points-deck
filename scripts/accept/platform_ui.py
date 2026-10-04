@@ -190,7 +190,7 @@ def mac_hosted(receipt, connection, out):
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--phase", choices=("build", "ui", "watch"), required=True)
+    ap.add_argument("--phase", choices=("product", "build", "ui", "watch"), required=True)
     ap.add_argument("--platform", choices=("ipad", "vision", "mac"), default="ipad")
     ap.add_argument("--receipt", type=Path)
     ap.add_argument("--connection", type=Path)
@@ -200,6 +200,16 @@ def main():
     started = time.time()
     try:
         with ownership("Points real native UI / paired WC"):
+            if a.phase == "product":
+                sys.path.insert(0, str(Path.home() / "Apps/.claude/skills/app-lightweight/scripts"))
+                import platform_measure
+                with contextlib.ExitStack() as leases:
+                    built = platform_measure.cached_build("points-deck-ios", REPO, a.platform,
+                                                         "PointsDeck", False, leases)
+                    receipt = Path(built["work_dir"]) / "build.json"
+                    sim_lane.reuse_build(receipt, "points-deck-ios", REPO, a.platform, "PointsDeck", "Release", False)
+                    print(json.dumps({"ok": True, "receipt": str(receipt), "receipt_sha256": sim_lane.sha256(receipt)}))
+                return 0
             if a.platform == "mac":
                 if a.phase != "ui": raise ValueError("Mac hosted acceptance uses ui phase with the actual Release receipt")
                 mac_hosted(a.receipt, a.connection, a.out)
