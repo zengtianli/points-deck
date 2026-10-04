@@ -40,6 +40,19 @@ final class PlatformUITests: XCTestCase {
         attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
 
+    func revealSignout() {
+        let signout = app.buttons["退出登录"].firstMatch
+        #if os(visionOS)
+        // The application contains multiple spatial windows and has no scene ID.
+        // The actual account window supplies the scene for native scroll events.
+        let area = app.windows.containing(.button, identifier: "账号安全").firstMatch
+        XCTAssertTrue(area.waitForExistence(timeout: 10), app.debugDescription)
+        #else
+        let area = app
+        #endif
+        for _ in 0..<8 where !signout.isHittable { area.swipeUp() }
+    }
+
     func testCoreEditingAndReopen() throws {
         #if os(iOS)
         XCUIDevice.shared.orientation = .landscapeLeft
@@ -74,14 +87,15 @@ final class PlatformUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["账号安全"].waitForExistence(timeout: 20), "stored-session reopen")
         picture("stored-session-reopen")
-        let signout = app.buttons["退出登录"].firstMatch
-        for _ in 0..<8 where !signout.isHittable { app.swipeUp() }
+        revealSignout()
         tap("退出登录"); tap("退出登录")
         tap("密码登录")
         fill("手机号、邮箱或原用户名", env["POINTS_QA_USER"]!)
         let password = app.secureTextFields["登录密码"].firstMatch
         XCTAssertTrue(password.waitForExistence(timeout: 10))
         password.tap(); password.typeText(env["POINTS_QA_PASSWORD"]!)
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value.length == %d", env["POINTS_QA_PASSWORD"]!.count), object: password)], timeout: 10), .completed)
         tap("进入账本")
         XCTAssertTrue(app.buttons["账号安全"].waitForExistence(timeout: 20), "native password form enters original ledger")
     }
@@ -91,8 +105,7 @@ final class PlatformUITests: XCTestCase {
         // The runner observes the actual Watch home before continuing this test.
         Thread.sleep(forTimeInterval: 90)
         tap("账户")
-        let signout = app.buttons["退出登录"].firstMatch
-        for _ in 0..<8 where !signout.isHittable { app.swipeUp() }
+        revealSignout()
         tap("退出登录")
         tap("退出登录")
         XCTAssertTrue(app.buttons["进入账本"].waitForExistence(timeout: 15))
