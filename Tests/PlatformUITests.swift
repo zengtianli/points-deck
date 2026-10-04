@@ -70,6 +70,16 @@ final class PlatformUITests: XCTestCase {
         app.launch()
         XCTAssertTrue(app.buttons["账号安全"].waitForExistence(timeout: 20), "stored-session reopen")
         picture("stored-session-reopen")
+        let signout = app.buttons["退出登录"].firstMatch
+        for _ in 0..<8 where !signout.isHittable { app.swipeUp() }
+        tap("退出登录"); tap("退出登录")
+        tap("密码登录")
+        fill("手机号、邮箱或原用户名", env["POINTS_QA_USER"]!)
+        let password = app.secureTextFields["登录密码"].firstMatch
+        XCTAssertTrue(password.waitForExistence(timeout: 10))
+        password.tap(); password.typeText(env["POINTS_QA_PASSWORD"]!)
+        tap("进入账本")
+        XCTAssertTrue(app.buttons["账号安全"].waitForExistence(timeout: 20), "native password form enters original ledger")
     }
 
     func testPhoneWatchLogout() throws {

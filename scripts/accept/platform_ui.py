@@ -118,10 +118,76 @@ def run_tests(runner, device, ledger, out, case):
         raise RuntimeError("real UI tests did not report success")
 
 
+def mac_hosted(receipt, connection, out):
+    built = sim_lane.reuse_build(receipt, "points-deck-ios", REPO, "mac", "PointsDeck", "Release", False)
+    ledger = json.loads(connection.read_text())
+    if not ledger["url"].startswith("http://127.0.0.1:"):
+        raise ValueError("only isolated ledger allowed")
+    test = REPO / "Tests/MacHostedTests.swift"
+    root = out / "hosted"
+    root.mkdir(parents=True, exist_ok=True)
+    clone = sim_lane.uielement_copy(Path(built["app_path"]), root)
+    info = sim_lane.bundle_info(clone)
+    if not info["bundle_id"].endswith(".lane"):
+        raise ValueError("hosted Mac test must use the original isolated lane clone")
+    source = root / "source"; source.mkdir(exist_ok=True)
+    shutil.copy2(test, source / test.name)
+    target = "PointsMacHostedTests"
+    spec = {"name": target, "options": {"deploymentTarget": {"macOS": "26.0"}}, "targets": {
+        target: {"type": "bundle.unit-test", "platform": "macOS", "sources": [test.name], "settings": {"base": {
+            "GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.machosted",
+            "TEST_HOST": info["executable"], "BUNDLE_LOADER": "$(TEST_HOST)"}}, "scheme": {"testTargets": [target]}}}}
+    (source / "project.yml").write_text(yaml.safe_dump(spec))
+    subprocess.run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
+                   check=True, stdout=subprocess.DEVNULL)
+    command(["xcodebuild", "-project", target + ".xcodeproj", "-scheme", target,
+             "-configuration", "Debug", "-destination", "platform=macOS", "-derivedDataPath", str(root / "dd"),
+             "CODE_SIGNING_ALLOWED=NO", "build-for-testing"], source, out / "build.log",
+             env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir("macosx")})
+    runs = list((root / "dd/Build/Products").glob("*.xctestrun"))
+    if len(runs) != 1: raise ValueError("Mac test-only build lacks one actual xctestrun")
+    document = plistlib.loads(runs[0].read_bytes())
+    found = False
+    def arguments(value):
+        nonlocal found
+        if isinstance(value, dict):
+            if "TestHostPath" in value:
+                value["CommandLineArguments"] = ["-lane_quiet", "YES", "-api_base", ledger["url"],
+                    "-dev_user", ledger["user"], "-dev_pw", ledger["pw"], "-tab", "2"]
+                found = True
+            for child in value.values(): arguments(child)
+        elif isinstance(value, list):
+            for child in value: arguments(child)
+    arguments(document)
+    if not found: raise ValueError("actual Mac test host metadata absent")
+    private_run = root / "private.xctestrun"
+    private_run.write_bytes(plistlib.dumps(document)); private_run.chmod(0o600)
+    front = sim_lane.front_app()
+    try:
+        command(["xcodebuild", "test-without-building", "-xctestrun", str(private_run), "-destination", "platform=macOS",
+            "-collect-test-diagnostics", "never", "-parallel-testing-enabled", "NO", "-resultBundlePath", str(out / "ui.xcresult")],
+            source, out / "ui.log", env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir("macosx")})
+        if "TEST EXECUTE SUCCEEDED" not in (out / "ui.log").read_text(errors="replace"):
+            raise RuntimeError("Mac actual hosted test did not succeed")
+        if sim_lane.front_bundle(sim_lane.front_app()) == info["bundle_id"]:
+            raise RuntimeError("hosted Mac test took focus")
+        sim_lane.reuse_build(receipt, "points-deck-ios", REPO, "mac", "PointsDeck", "Release", False)
+        proof = {"ok": True, "platform": "mac", "environment": "native", "scope": "actual offscreen Mac window, native menu and Cmd-W close",
+            "receipt_sha256": sim_lane.sha256(receipt), "test_sha256": sim_lane.sha256(test), "product_rebuilt": False,
+            "original_executable_sha256": built["executable_sha256"], "clone_bundle_id": info["bundle_id"],
+            "front_changed": sim_lane.front_app() != front, "focus_taken": False}
+        (out / "proof.json").write_text(json.dumps(proof, indent=1) + "\n")
+        print(json.dumps(proof))
+    finally:
+        for pid in sim_lane.pids_of(info["executable"]):
+            sim_lane.mac_terminate(pid, clone)
+        private_run.unlink(missing_ok=True)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--phase", choices=("build", "ui", "watch"), required=True)
-    ap.add_argument("--platform", choices=("ipad", "vision"), default="ipad")
+    ap.add_argument("--platform", choices=("ipad", "vision", "mac"), default="ipad")
     ap.add_argument("--receipt", type=Path)
     ap.add_argument("--connection", type=Path)
     ap.add_argument("--out", type=Path, required=True)
@@ -130,6 +196,10 @@ def main():
     started = time.time()
     try:
         with ownership("Points real native UI / paired WC"):
+            if a.platform == "mac":
+                if a.phase != "ui": raise ValueError("Mac hosted acceptance uses ui phase with the actual Release receipt")
+                mac_hosted(a.receipt, a.connection, a.out)
+                return 0
             runner = build_runner(a.platform, a.out / "runners")
             if a.phase == "build":
                 print(json.dumps({"ok": True, "runner": runner}))
