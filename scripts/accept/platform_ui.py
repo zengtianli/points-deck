@@ -18,6 +18,8 @@ import signal
 import subprocess
 import sys
 import time
+import urllib.request
+from http.cookiejar import CookieJar
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(Path.home() / "Apps/chapter/engine"),
@@ -120,6 +122,22 @@ def run_tests(runner, device, ledger, out, case):
         "-resultBundlePath", str(out / "ui.xcresult")], Path(runner["source"]), out / "ui.log", env=env)
     if "TEST EXECUTE SUCCEEDED" not in (out / "ui.log").read_text(errors="replace"):
         raise RuntimeError("real UI tests did not report success")
+
+
+def saved_configuration(ledger):
+    client = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(CookieJar()))
+    request = urllib.request.Request(ledger["url"] + "/api/login",
+        data=json.dumps({"u": ledger["user"], "p": ledger["pw"]}).encode(),
+        headers={"Content-Type": "application/json"})
+    client.open(request, timeout=10).read()
+    config = json.loads(client.open(ledger["url"] + "/api/config", timeout=10).read())
+    saved = {}
+    for key, label, points in (("rules", "QA-Points-Project", 7), ("shop", "QA-Points-Reward", 4)):
+        matches = [row for row in config[key] if row.get("label") == label and row.get("pts") == points]
+        if not matches:
+            raise RuntimeError("actual native save absent from server configuration: " + label)
+        saved[key] = {"label": label, "points": points, "count": len(matches)}
+    return saved
 
 
 def mac_hosted(receipt, connection, out):
@@ -233,6 +251,7 @@ def main():
                     sim_lane.boot(phone, 420)
                     sim_lane.simctl("install", phone, built["app_path"])
                     run_tests(runner, phone, ledger, a.out, "testCoreEditingAndReopen")
+                    (a.out / "saved-config.json").write_text(json.dumps(saved_configuration(ledger), indent=1))
                 else:
                     phone = sim_lane.ensure_device("iphone", "iPhone-17-Pro", "Points Pair Phone")["udid"]
                     watch = sim_lane.ensure_device("watch", "Apple-Watch-Series-12-46mm", "Points Pair Watch")["udid"]
