@@ -11,6 +11,7 @@ import fcntl
 import json
 import shutil
 import sys
+import time
 
 REPO = Path(__file__).resolve().parents[2]
 sys.path[:0] = [str(Path.home() / "Apps/chapter/engine"),
@@ -45,6 +46,10 @@ def main():
         with (app_sop.STATE_DIR / "lock").open("a+") as global_lock:
             fcntl.flock(global_lock, fcntl.LOCK_EX)
             gate = app_sop.steady(False, allow_owner_now=False)
+            deadline = time.monotonic() + 600
+            while not gate[0] and time.monotonic() < deadline:
+                time.sleep(10)
+                gate = app_sop.steady(False, allow_owner_now=False)
             if not gate[0] or not app_sop.on_ac_power():
                 raise sim_lane.Busy(gate[1])
             if a.platform == "mac":
@@ -79,6 +84,14 @@ def main():
                                         "udid": device["udid"]})
                         lane.terminate(built["bundle_id"])
                     if a.platform == "ipad":
+                        result = lane.launch(built["bundle_id"], arguments(2) + ["-lane_orientation", "landscape"],
+                            "log", 60, baseline, sim_lane.bundle_info(Path(built["app_path"]))["executable"])
+                        if result["errors"]:
+                            raise sim_lane.LaneError(str(result["errors"]))
+                        lane.shot(a.out / "landscape-score.png")
+                        records.append({"tab": 2, "orientation": "landscape", "screenshot": "landscape-score.png",
+                                        "ready_signal": result["ready_signal"], "verdict": result["verdict"]})
+                        lane.terminate(built["bundle_id"])
                         previous = sim_lane.simctl("ui", device["udid"], "content_size").stdout.strip()
                         try:
                             sim_lane.simctl("ui", device["udid"], "content_size", "accessibility-extra-extra-extra-large")

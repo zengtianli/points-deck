@@ -293,7 +293,6 @@ def main():
                     watch_app = sim_lane.find_product(Path(built["app_path"]) / "Watch", "PointsDeckWatch")
                     sim_lane.simctl("install", phone, built["app_path"])
                     sim_lane.simctl("install", watch, str(watch_app))
-                    sim_lane.simctl("launch", "--terminate-running-process", watch, "cyou.tianli.pointsdeck.watchkitapp", "-api_base", ledger["url"])
                     # No Watch login arguments or cookie/context injection anywhere in this path.
                     stream = sim_lane.ReadyStream("cyou.tianli.pointsdeck.watchkitapp", watch)
                     import threading
@@ -305,6 +304,7 @@ def main():
                             sim_lane.simctl("io", watch, "screenshot", str(a.out / "watch-signed-in.png"))
                     waiter = threading.Thread(target=observe); waiter.start()
                     try:
+                        sim_lane.simctl("launch", "--terminate-running-process", watch, "cyou.tianli.pointsdeck.watchkitapp", "-api_base", ledger["url"])
                         run_tests(runner, phone, ledger, a.out, "testPhoneWatchLogout")
                         waiter.join(160)
                         if not observed.get("watch_home_ready_at"):
