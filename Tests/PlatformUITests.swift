@@ -11,7 +11,8 @@ final class PlatformUITests: XCTestCase {
         app.launchArguments = ["-api_base", env["POINTS_QA_BASE"]!, "-dev_user", env["POINTS_QA_USER"]!,
                                "-dev_pw", env["POINTS_QA_PASSWORD"]!, "-tab", "2"]
         app.launch()
-        XCTAssertTrue(app.staticTexts["当前积分 1133"].waitForExistence(timeout: 20), app.debugDescription)
+        let balance = app.staticTexts.matching(NSPredicate(format: "label IN %@", ["当前积分 1133", "当前积分 1,133"])).firstMatch
+        XCTAssertTrue(balance.waitForExistence(timeout: 20), app.debugDescription)
     }
 
     func tap(_ label: String) {

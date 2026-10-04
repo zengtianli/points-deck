@@ -50,26 +50,33 @@ def main():
             if a.platform == "mac":
                 for tab in range(5):
                     result = sim_lane.run_mac_quiet(Path(built["app_path"]),
-                        arguments(tab) + ["-lane_window", "760x540"], a.out / f"tab-{tab}.png", 60)
+                        arguments(tab) + ["-lane_window", "1440x900"], a.out / f"tab-{tab}.png", 60)
                     if not result["ok"]:
                         raise sim_lane.LaneError(str(result.get("errors")))
                     records.append({"tab": tab, "stored_session": tab > 0,
                                     "quiet": result.get("quiet"), "screenshot": f"tab-{tab}.png"})
+                minimum = sim_lane.run_mac_quiet(Path(built["app_path"]),
+                    arguments(2) + ["-lane_window", "760x540"], a.out / "minimum-score.png", 60)
+                if not minimum["ok"]:
+                    raise sim_lane.LaneError(str(minimum.get("errors")))
+                records.append({"tab": 2, "window": "760x540", "quiet": minimum.get("quiet"),
+                                "screenshot": "minimum-score.png"})
             else:
                 kind = app["sop"]["platforms"][a.platform]["simulator"]["device_type"]
                 device = sim_lane.ensure_device(a.platform, kind)
                 with sim_lane.Session(a.platform, device["udid"], label=f"Points actual {a.platform} five views",
                                       lock_wait=0, load_wait=0) as lane:
                     lane.install(Path(built["app_path"]))
+                    baseline, _ = lane.baseline()
                     for tab in range(5):
-                        result = lane.launch(built["bundle_id"], arguments(tab), "log", 60, None,
-                            sim_lane.bundle_info(Path(built["app_path"]))["executable"],
-                            functional_thin=a.platform == "ipad")
+                        result = lane.launch(built["bundle_id"], arguments(tab), "log", 60, baseline,
+                            sim_lane.bundle_info(Path(built["app_path"]))["executable"])
                         if result["errors"]:
                             raise sim_lane.LaneError(str(result["errors"]))
                         image = lane.shot(a.out / f"tab-{tab}.png")
                         records.append({"tab": tab, "stored_session": tab > 0, "screenshot": image.name,
-                                        "ready_signal": result["ready_signal"], "udid": device["udid"]})
+                                        "ready_signal": result["ready_signal"], "verdict": result["verdict"],
+                                        "udid": device["udid"]})
                         lane.terminate(built["bundle_id"])
                     if a.platform == "ipad":
                         previous = sim_lane.simctl("ui", device["udid"], "content_size").stdout.strip()
