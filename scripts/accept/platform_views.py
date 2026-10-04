@@ -26,7 +26,10 @@ def main():
     ap.add_argument("--receipt", type=Path, required=True)
     ap.add_argument("--connection", type=Path, required=True)
     ap.add_argument("--out", type=Path, required=True)
+    ap.add_argument("--only-landscape", action="store_true", help="finish iPad physical rotation using the original LaneRotator")
     a = ap.parse_args()
+    if a.only_landscape and a.platform != "ipad":
+        raise ValueError("physical orientation applies only to iPad")
     if __import__("os").environ.get("SOP_OWNER_NOW") == "1":
         raise ValueError("original admission cannot be overridden")
     built = sim_lane.reuse_build(a.receipt, "points-deck-ios", REPO, a.platform, "PointsDeck", "Release", False)
@@ -37,6 +40,11 @@ def main():
     before = app_sop.lane_inputs(app, a.platform)["input_sha256"]
     a.out.mkdir(parents=True, exist_ok=True)
     records = []
+    if a.only_landscape:
+        previous_capture = json.loads((a.out / "capture.json").read_text())
+        if previous_capture["input_sha256"] != before or previous_capture["receipt_sha256"] != sim_lane.sha256(a.receipt):
+            raise ValueError("existing captures do not bind this actual Release")
+        records = [record for record in previous_capture["captures"] if "orientation" not in record]
     def arguments(tab):
         args = ["-api_base", ledger["url"], "-tab", str(tab)]
         if tab == 0:
@@ -73,7 +81,7 @@ def main():
                                       lock_wait=0, load_wait=0) as lane:
                     lane.install(Path(built["app_path"]))
                     baseline, _ = lane.baseline()
-                    for tab in range(5):
+                    for tab in ([] if a.only_landscape else range(5)):
                         result = lane.launch(built["bundle_id"], arguments(tab), "log", 60, baseline,
                             sim_lane.bundle_info(Path(built["app_path"]))["executable"])
                         if result["errors"]:
@@ -84,14 +92,24 @@ def main():
                                         "udid": device["udid"]})
                         lane.terminate(built["bundle_id"])
                     if a.platform == "ipad":
+                        rotation = sim_lane.rotate_device(device["udid"], "landscape", verify_screen=True)
+                        if not rotation["ok"]:
+                            raise sim_lane.LaneError(str(rotation["errors"]))
                         result = lane.launch(built["bundle_id"], arguments(2) + ["-lane_orientation", "landscape"],
                             "log", 60, baseline, sim_lane.bundle_info(Path(built["app_path"]))["executable"])
                         if result["errors"]:
                             raise sim_lane.LaneError(str(result["errors"]))
-                        lane.shot(a.out / "landscape-score.png")
+                        image = lane.shot(a.out / "landscape-score.png")
+                        if sim_lane.screen_orientation(sim_lane.png_size(image)) != "landscape":
+                            raise sim_lane.LaneError("actual iPad frame is not landscape")
                         records.append({"tab": 2, "orientation": "landscape", "screenshot": "landscape-score.png",
-                                        "ready_signal": result["ready_signal"], "verdict": result["verdict"]})
+                                        "ready_signal": result["ready_signal"], "verdict": result["verdict"],
+                                        "rotation": rotation})
                         lane.terminate(built["bundle_id"])
+                        restored = sim_lane.rotate_device(device["udid"], "portrait", verify_screen=True)
+                        if not restored["ok"]:
+                            raise sim_lane.LaneError(str(restored["errors"]))
+                    if a.platform == "ipad" and not a.only_landscape:
                         previous = sim_lane.simctl("ui", device["udid"], "content_size").stdout.strip()
                         try:
                             sim_lane.simctl("ui", device["udid"], "content_size", "accessibility-extra-extra-extra-large")
