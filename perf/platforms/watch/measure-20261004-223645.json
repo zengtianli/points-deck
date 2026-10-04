@@ -1,0 +1,203 @@
+{
+ "schema_version": 1,
+ "platform": "watch",
+ "app_id": "points-deck-ios",
+ "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+ "measured_at": "2026-10-04T22:36:45+08:00",
+ "completed_at": "2026-10-04T22:40:18+08:00",
+ "build": {
+  "configuration": "Release",
+  "scheme": "PointsDeck",
+  "bundle_id": "cyou.tianli.pointsdeck.watchkitapp",
+  "version": "1.0.2",
+  "build": "9",
+  "sdk": "watchsimulator27.0",
+  "executable_sha256": "bc5684a247de717ad1cd33855be518cf95d652b0762d5292483412c154db9c7b",
+  "signing": "unsigned simulator build (CODE_SIGNING_ALLOWED=NO)",
+  "seconds": 29.6,
+  "xcode": {
+   "name": "Xcode.app",
+   "version": "27.0",
+   "build": "27A266a",
+   "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+  },
+  "reuse": {
+   "receipt": "/private/tmp/points-other-platforms/release-accessibility/watch-Release.json",
+   "receipt_sha256": "bad7448428e2475d89f906be70d6f034e9f85d84724b2fc85708dd585e7f0b5d",
+   "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/src",
+   "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+   "source_file_count": 79
+  }
+ },
+ "measurement": {
+  "environment": "simulator",
+  "device": "Apple Watch Series 12 (46mm) (Apple-Watch-Series-12-46mm)",
+  "os": "watchOS 27.0",
+  "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
+  "install_seconds": 7.5,
+  "samples": [
+   {
+    "run": 0,
+    "pid": 57074,
+    "ready_seconds": 1.61,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 1,
+    "pid": 57181,
+    "ready_seconds": 0.773,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 2,
+    "pid": 57274,
+    "ready_seconds": 0.683,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 3,
+    "pid": 57375,
+    "ready_seconds": 0.807,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 4,
+    "pid": 57479,
+    "ready_seconds": 0.584,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 5,
+    "pid": 57576,
+    "ready_seconds": 0.795,
+    "ready_signal": "os_log",
+    "errors": []
+   }
+  ],
+  "idle": {
+   "process": "57686",
+   "footprint_mb": 23.0,
+   "cpu_pct": 0.0,
+   "window_s": 60
+  },
+  "loads": {
+   "before_launches": [
+    9.4599609375,
+    17.52001953125,
+    23.27197265625
+   ],
+   "counted_launches": [
+    {
+     "run": 1,
+     "before": [
+      8.07763671875,
+      16.8232421875,
+      22.9228515625
+     ],
+     "after": [
+      8.07763671875,
+      16.8232421875,
+      22.9228515625
+     ]
+    },
+    {
+     "run": 2,
+     "before": [
+      7.7509765625,
+      16.6103515625,
+      22.8115234375
+     ],
+     "after": [
+      7.4501953125,
+      16.40087890625,
+      22.701171875
+     ]
+    },
+    {
+     "run": 3,
+     "before": [
+      7.173828125,
+      16.19482421875,
+      22.59130859375
+     ],
+     "after": [
+      6.75927734375,
+      15.958984375,
+      22.47021484375
+     ]
+    },
+    {
+     "run": 4,
+     "before": [
+      6.75927734375,
+      15.958984375,
+      22.47021484375
+     ],
+     "after": [
+      6.4580078125,
+      15.74365234375,
+      22.35595703125
+     ]
+    },
+    {
+     "run": 5,
+     "before": [
+      6.1005859375,
+      15.51513671875,
+      22.236328125
+     ],
+     "after": [
+      5.69189453125,
+      15.27392578125,
+      22.11181640625
+     ]
+    }
+   ],
+   "after_launches": [
+    5.69189453125,
+    15.27392578125,
+    22.11181640625
+   ],
+   "before_idle": [
+    4.28173828125,
+    13.39892578125,
+    21.025390625
+   ]
+  },
+  "orientation": null,
+  "rotation": null,
+  "device_selection": {
+   "mode": "configured/default",
+   "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
+   "name": "Apple Watch Series 12 (46mm)",
+   "state_before": "Shutdown",
+   "shutdown_verified": false
+  },
+  "with_helpers": false,
+  "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions",
+  "settle_s": 45
+ },
+ "size": {
+  "download_bytes": 2976440,
+  "installed_bytes": 4125987,
+  "download_mb": 2.98,
+  "installed_mb": 4.13
+ },
+ "speed": {
+  "cold_launch_ms": 773.0,
+  "runs": 5,
+  "discarded_runs": 1,
+  "ready_signal": "os_log",
+  "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+ },
+ "tool_sha256": {
+  "platform_measure.py": "cdef5bdba5585bef40c5dc2fbf347966d48c1af52681e799d34b68c7d33ec87b",
+  "measure.py": "9b4f3cb22190a295fade42759bdb19f27da7c5dbd13449e78cb14743472ed94c",
+  "sim_lane.py": "156f4bf813e94618f68dbeb41c17b19eeb5239731ebf12d00332c309ea771c80"
+ }
+}
