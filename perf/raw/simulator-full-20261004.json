@@ -1,0 +1,274 @@
+{
+ "schema_version": 1,
+ "app_id": "points-deck-ios",
+ "environment": "simulator",
+ "mode": "full",
+ "measured_at": "2026-10-04T06:50:36.004820+08:00",
+ "completed_at": "2026-10-04T06:59:23.850150+08:00",
+ "version": "1.0.2 (9)",
+ "configuration": "Release",
+ "bundle_id": "cyou.tianli.pointsdeck",
+ "binary_sha256": "d30a18322ebe7d52a2656b6e963bbdca7e8f0a9201b0c043a6830624b742034a",
+ "build_receipt": {
+  "configuration": "Release",
+  "seconds": 113.9,
+  "xcode": "Xcode.app 27.0 (27A266a)",
+  "source_sha256": "bd809f9248af5ace82680b62fffe1aa44f3cf452963d3ff638592cbbcdc36181",
+  "source_file_count": 77,
+  "source_dirty": false,
+  "git_head": "3b0a2a549deecbd61ba4377dd9e84a4403c7722c",
+  "built_from": "working-tree copy (exactly the files app_sop hashes as sop.source)",
+  "source_unchanged": true
+ },
+ "simulator_device": "iPhone 17 Pro",
+ "simulator_os": "iOS 27.0",
+ "simulator_udid": "64736945-A931-47F2-A7E3-E2B23851F42A",
+ "host": "Mac16,12 / Apple M4 / macOS 27.2",
+ "load_average_at_start": [
+  4.1650390625,
+  18.74658203125,
+  23.44140625
+ ],
+ "load_average_before_launches": [
+  9.53466796875,
+  20.09912109375,
+  23.0546875
+ ],
+ "load_average_after_launches": [
+  6.32373046875,
+  17.21923828125,
+  21.77197265625
+ ],
+ "load_average_before_idle": [
+  4.41845703125,
+  14.9873046875,
+  20.6826171875
+ ],
+ "load_gates": {
+  "start_max": 12.0,
+  "abort_above": 40.0
+ },
+ "measurement_tool_sha256": "9b4f3cb22190a295fade42759bdb19f27da7c5dbd13449e78cb14743472ed94c",
+ "probe_sha256": "f2156c1ae41f80883e8f1e71fb9329e8d361ebac2c6b9dfb775a37550e14a9e1",
+ "scope": "Simulator App process only; excludes CoreSimulator, Simulator GUI, system services and inactive extensions",
+ "launch": {
+  "samples": [
+   {
+    "run": 0,
+    "pid": 17889,
+    "request_to_ready_ms": 1164.3,
+    "request_to_launch_complete_ms": 1606.0,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:56:24.843758+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:25.120075+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 17889"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:26.008029+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:26.449713+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:17889] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:56:26.682835+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:17889] Dropping launch assertion."
+     }
+    ]
+   },
+   {
+    "run": 1,
+    "pid": 17983,
+    "request_to_ready_ms": 378.9,
+    "request_to_launch_complete_ms": 1335.6,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:56:35.823755+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:35.857501+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 17983"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:36.202634+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:37.159386+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:17983] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:56:37.188172+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:17983] Dropping launch assertion."
+     }
+    ]
+   },
+   {
+    "run": 2,
+    "pid": 18069,
+    "request_to_ready_ms": 364.8,
+    "request_to_launch_complete_ms": 1320.3,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:56:46.138212+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:46.169204+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 18069"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:46.503047+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:47.458480+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:18069] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:56:47.487184+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:18069] Dropping launch assertion."
+     }
+    ]
+   },
+   {
+    "run": 3,
+    "pid": 18155,
+    "request_to_ready_ms": 394.4,
+    "request_to_launch_complete_ms": 1321.6,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:56:56.661229+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:56.691424+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 18155"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:57.055655+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:56:57.982845+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:18155] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:56:58.032901+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:18155] Dropping launch assertion."
+     }
+    ]
+   },
+   {
+    "run": 4,
+    "pid": 18250,
+    "request_to_ready_ms": 380.0,
+    "request_to_launch_complete_ms": 1323.6,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:57:07.225922+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:07.264519+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 18250"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:07.605937+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:08.549516+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:18250] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:57:08.576093+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:18250] Dropping launch assertion."
+     }
+    ]
+   },
+   {
+    "run": 5,
+    "pid": 18337,
+    "request_to_ready_ms": 346.0,
+    "request_to_launch_complete_ms": 1299.1,
+    "markers": [
+     {
+      "timestamp": "2026-10-04 06:57:17.667190+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Requesting launch of cyou.tianli.pointsdeck with options: {\n    arguments =     (\n        \"-api_base\",\n        \"http://127.0.0.1:55258\",\n        \"-dev_user\",\n        xiaoman,\n        \"-dev_pw\",\n        \"<redacted>\"\n    );\n    environment =     {\n    };\n}"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:17.683921+0800",
+      "process": "CoreSimulatorBridge",
+      "message": "Launch successful for 'cyou.tianli.pointsdeck', pid: 18337"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:18.013236+0800",
+      "process": "SpringBoard",
+      "message": "[(FBSceneManager):sceneID:cyou.tianli.pointsdeck-default] scene content state changed: ready"
+     },
+     {
+      "timestamp": "2026-10-04 06:57:18.966259+0800",
+      "process": "SpringBoard",
+      "message": "[app<cyou.tianli.pointsdeck>:18337] Dropping launch assertion."
+     },
+     {
+      "timestamp": "2026-10-04 06:57:19.006442+0800",
+      "process": "InputUI",
+      "message": "[app<cyou.tianli.pointsdeck>:18337] Dropping launch assertion."
+     }
+    ]
+   }
+  ],
+  "discarded_runs": 1,
+  "runs": 5,
+  "ready_median_ms": 378.9,
+  "launch_complete_median_ms": 1321.6,
+  "method": "Simulator unified log: CoreSimulatorBridge \"Requesting launch of <bundle>\" -> SpringBoard scene content state \"ready\" / SpringBoard \"Dropping launch assertion\". App terminated 3 s before each run; first run after install discarded."
+ },
+ "size": {
+  "download_bytes": 8637960,
+  "installed_bytes": 15698239,
+  "kind": "Local simulator Release .app ZIP / .app bytes; not an App Store IPA or device slice"
+ },
+ "idle": {
+  "process": "18436",
+  "footprint_mb": 31.0,
+  "cpu_pct": 0.0,
+  "window_s": 60,
+  "settle_s": 45
+ },
+ "source_unchanged_during_measurement": true
+}

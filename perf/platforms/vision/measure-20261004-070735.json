@@ -1,0 +1,197 @@
+{
+ "schema_version": 1,
+ "platform": "vision",
+ "app_id": "points-deck-ios",
+ "input_sha256": "bd809f9248af5ace82680b62fffe1aa44f3cf452963d3ff638592cbbcdc36181",
+ "measured_at": "2026-10-04T07:07:35+08:00",
+ "completed_at": "2026-10-04T07:16:20+08:00",
+ "build": {
+  "configuration": "Release",
+  "scheme": "PointsDeck",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "version": "1.0.2",
+  "build": "9",
+  "sdk": "xrsimulator27.0",
+  "executable_sha256": "d44c08b508e1e6b70e94ee6dee71c105585023c8fae040b7b9184e30a951fdaf",
+  "signing": "unsigned simulator build (CODE_SIGNING_ALLOWED=NO)",
+  "seconds": 86.0,
+  "xcode": {
+   "name": "Xcode.app",
+   "version": "27.0",
+   "build": "27A266a",
+   "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+  },
+  "reuse": null
+ },
+ "measurement": {
+  "environment": "simulator",
+  "device": "Apple Vision Pro (Apple-Vision-Pro-4K)",
+  "os": "visionOS 27.0",
+  "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF",
+  "install_seconds": 18.2,
+  "samples": [
+   {
+    "run": 0,
+    "pid": 27122,
+    "ready_seconds": 4.129,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 1,
+    "pid": 27309,
+    "ready_seconds": 2.302,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 2,
+    "pid": 27445,
+    "ready_seconds": 2.06,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 3,
+    "pid": 27610,
+    "ready_seconds": 2.123,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 4,
+    "pid": 27752,
+    "ready_seconds": 2.262,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 5,
+    "pid": 28050,
+    "ready_seconds": 2.278,
+    "ready_signal": "os_log",
+    "errors": []
+   }
+  ],
+  "idle": {
+   "process": "28199",
+   "footprint_mb": 59.0,
+   "cpu_pct": 0.05,
+   "window_s": 60
+  },
+  "loads": {
+   "before_launches": [
+    11.44580078125,
+    21.72021484375,
+    21.08154296875
+   ],
+   "counted_launches": [
+    {
+     "run": 1,
+     "before": [
+      8.8623046875,
+      20.2939453125,
+      20.5859375
+     ],
+     "after": [
+      8.26171875,
+      19.7900390625,
+      20.4033203125
+     ]
+    },
+    {
+     "run": 2,
+     "before": [
+      8.40087890625,
+      19.62744140625,
+      20.34228515625
+     ],
+     "after": [
+      7.55712890625,
+      19.07861328125,
+      20.138671875
+     ]
+    },
+    {
+     "run": 3,
+     "before": [
+      7.35205078125,
+      18.8447265625,
+      20.0498046875
+     ],
+     "after": [
+      6.8427734375,
+      18.35595703125,
+      19.86181640625
+     ]
+    },
+    {
+     "run": 4,
+     "before": [
+      6.77490234375,
+      18.150390625,
+      19.7802734375
+     ],
+     "after": [
+      6.38037109375,
+      17.50537109375,
+      19.52099609375
+     ]
+    },
+    {
+     "run": 5,
+     "before": [
+      6.38037109375,
+      17.50537109375,
+      19.52099609375
+     ],
+     "after": [
+      6.3818359375,
+      16.9580078125,
+      19.28955078125
+     ]
+    }
+   ],
+   "after_launches": [
+    6.3818359375,
+    16.9580078125,
+    19.28955078125
+   ],
+   "before_idle": [
+    4.89990234375,
+    14.62353515625,
+    18.25537109375
+   ]
+  },
+  "orientation": null,
+  "rotation": null,
+  "device_selection": {
+   "mode": "configured/default",
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF",
+   "name": "Apple Vision Pro",
+   "state_before": "Shutdown",
+   "shutdown_verified": false
+  },
+  "with_helpers": false,
+  "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions",
+  "settle_s": 45
+ },
+ "size": {
+  "download_bytes": 4937136,
+  "installed_bytes": 10588768,
+  "download_mb": 4.94,
+  "installed_mb": 10.59
+ },
+ "speed": {
+  "cold_launch_ms": 2262.0,
+  "runs": 5,
+  "discarded_runs": 1,
+  "ready_signal": "os_log",
+  "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+ },
+ "tool_sha256": {
+  "platform_measure.py": "8b477d9572258fad9afd2d42393b1d68453ed984fdccc640581049f8253e048c",
+  "measure.py": "9b4f3cb22190a295fade42759bdb19f27da7c5dbd13449e78cb14743472ed94c",
+  "sim_lane.py": "ba7cbd20ded10311bdc948675314205e5be797537da2eb9ae33ac2844e1d3d34"
+ }
+}
