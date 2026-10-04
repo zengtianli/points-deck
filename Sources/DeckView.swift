@@ -20,9 +20,8 @@ struct DeckView: View {
                     EraBanner(era: era, houseName: s?.houseName ?? "", height: 132)
                     MarketValueCard(state: s, era: era, shown: shown)
                     NextTierCard(state: s, era: era)
-                    Picker("流水筛选", selection: $filter) {
-                        ForEach(["全部", "加分", "减分", "兑换"], id: \.self) { Text($0).tag($0) }
-                    }.pickerStyle(.segmented)
+                    TreasuryChoice(title: "流水筛选", selection: $filter,
+                                   options: ["全部", "加分", "减分", "兑换"].map { ($0, $0) })
                     LazyVStack(spacing: 10) {
                         ForEach((s?.entries ?? []).filter { entry in
                             filter == "全部" || (filter == "加分" && entry.pts > 0) ||

@@ -23,9 +23,8 @@ struct LoginView: View {
                 Image(systemName: "leaf.circle.fill").font(.system(size: 64)).foregroundStyle(TreasuryTheme.accent)
                 Text(AppIdentity.displayName).font(.largeTitle.bold()).multilineTextAlignment(.center)
                 Text("记录每一份努力，积攒家庭约定的奖励").foregroundStyle(.secondary)
-                Picker("登录方式", selection: $passwordMode) {
-                    Text("手机号登录").tag(false); Text("密码登录").tag(true)
-                }.pickerStyle(.segmented).frame(minHeight: 48)
+                TreasuryChoice(title: "登录方式", selection: $passwordMode,
+                               options: [("手机号登录", false), ("密码登录", true)]).frame(minHeight: 48)
                 if passwordMode {
                 VStack(alignment: .leading, spacing: 14) {
                     Text("手机号、邮箱或原用户名").font(.subheadline)

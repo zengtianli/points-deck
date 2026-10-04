@@ -6,6 +6,35 @@ enum TreasuryTheme {
     static let card = Color.white
 }
 
+/// visionOS 的系统分段控件使用玻璃材质文字，在浅色账本上会白字白底。
+/// 本端使用有明确对比度的选择按钮；其余平台保留原系统控件。
+struct TreasuryChoice<Value: Hashable>: View {
+    let title: String
+    @Binding var selection: Value
+    let options: [(String, Value)]
+
+    var body: some View {
+        #if os(visionOS)
+        HStack(spacing: 6) {
+            ForEach(options, id: \.1) { label, value in
+                Button { selection = value } label: {
+                    Text(label).font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, minHeight: 48)
+                        .foregroundStyle(selection == value ? Color.white : Color(hex: 0x25352F))
+                        .background(selection == value ? TreasuryTheme.accent : Color.white,
+                                    in: RoundedRectangle(cornerRadius: 12))
+                }.buttonStyle(.plain)
+                    .accessibilityAddTraits(selection == value ? .isSelected : [])
+            }
+        }.accessibilityLabel(title)
+        #else
+        Picker(title, selection: $selection) {
+            ForEach(options, id: \.1) { label, value in Text(label).tag(value) }
+        }.pickerStyle(.segmented)
+        #endif
+    }
+}
+
 struct HomeView: View {
     @EnvironmentObject var store: Store
     @State private var tab = UserDefaults.standard.integer(forKey: "tab")

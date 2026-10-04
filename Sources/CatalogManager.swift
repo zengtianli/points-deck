@@ -179,7 +179,7 @@ struct CatalogEditor: View {
                 TextField(draft.kind == "rules" ? "项目名" : "奖励名", text: $label)
                 if simple {
                     if draft.kind == "rules" {
-                        Picker("类型", selection: $negative) { Text("加分").tag(false); Text("减分").tag(true) }.pickerStyle(.segmented)
+                        TreasuryChoice(title: "类型", selection: $negative, options: [("加分", false), ("减分", true)])
                     }
                     TextField(draft.kind == "rules" ? "正整数分值" : "所需积分", text: $points).keyboardType(.numberPad)
                 } else { Text("这是参数型项目。原公式保留，分值请在「更多设置」中编辑。").font(.footnote) }

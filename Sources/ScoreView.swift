@@ -17,9 +17,7 @@ struct ScoreView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
                 Text("当前积分 \(store.state?.balance ?? 0)").font(.title2.bold()).monospacedDigit()
-                Picker("记分类型", selection: $negative) {
-                    Text("加分").tag(false); Text("减分").tag(true)
-                }.pickerStyle(.segmented)
+                TreasuryChoice(title: "记分类型", selection: $negative, options: [("加分", false), ("减分", true)])
                 if rules.isEmpty {
                     ContentUnavailableView("还没有\(negative ? "减分" : "加分")项目", systemImage: "plus.circle",
                                            description: Text("点右上角「新建」，设置自己的名称和积分。"))
@@ -154,7 +152,7 @@ struct TemporaryScoreView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Picker("类型", selection: $negative) { Text("加分").tag(false); Text("减分").tag(true) }.pickerStyle(.segmented)
+                TreasuryChoice(title: "类型", selection: $negative, options: [("加分", false), ("减分", true)])
                 TextField("整数分值", text: $points).keyboardType(.numberPad)
                 TextField("简短说明", text: $label)
                 if let error { Text(error).foregroundStyle(.red) }

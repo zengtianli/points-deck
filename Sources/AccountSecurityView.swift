@@ -203,7 +203,7 @@ struct PasswordRecoveryView: View {
                     Text("密码已重置，原账本保留。所有旧会话已失效，请重新登录。")
                     Button("返回登录") { dismiss() }
                 } else {
-                    Picker("恢复方式", selection: $phoneMode) { Text("手机号").tag(true); Text("邮箱").tag(false) }.pickerStyle(.segmented)
+                    TreasuryChoice(title: "恢复方式", selection: $phoneMode, options: [("手机号", true), ("邮箱", false)])
                         .onChange(of: phoneMode) { _, _ in grant = ""; emailGrant = "" }
                     if phoneMode {
                         TextField("已验证的 +86 绑定手机号", text: $phone).keyboardType(.phonePad).textContentType(.telephoneNumber).privacySensitive()
