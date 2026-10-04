@@ -267,10 +267,25 @@ def main():
                         sim_lane.simctl("pair", watch, phone)
                     elif len(existing) != 1 or existing[0]["phone"]["udid"] != phone or existing[0]["watch"]["udid"] != watch:
                         raise ValueError("dedicated pair associated elsewhere")
-                    active = plistlib.loads((Path.home() / "Library/Developer/CoreSimulator/Devices/device_set.plist").read_bytes())["DevicePairs"]
-                    peers = [(key, value) for key, value in active.items() if value.get("companion") == phone or value.get("gizmo") == watch]
-                    if len(peers) != 1 or peers[0][1].get("companion") != phone or peers[0][1].get("gizmo") != watch or peers[0][1].get("active") is not True:
-                        raise ValueError("actual CoreSimulator pair is not the active peer")
+                    # simctl pair returns before device_set.plist is flushed.
+                    # Activate only our dedicated pair, then await both native records.
+                    pairs = json.loads(sim_lane.simctl("list", "pairs", "--json").stdout)["pairs"]
+                    pair_ids = [key for key, row in pairs.items()
+                                if row["phone"]["udid"] == phone and row["watch"]["udid"] == watch]
+                    if len(pair_ids) != 1:
+                        raise ValueError("dedicated native pair absent or ambiguous")
+                    sim_lane.simctl("pair_activate", pair_ids[0])
+                    deadline = time.monotonic() + 20
+                    while True:
+                        active = plistlib.loads((Path.home() / "Library/Developer/CoreSimulator/Devices/device_set.plist").read_bytes())["DevicePairs"]
+                        peers = [(key, value) for key, value in active.items() if value.get("companion") == phone or value.get("gizmo") == watch]
+                        if (len(peers) == 1 and peers[0][0] == pair_ids[0] and
+                            peers[0][1].get("companion") == phone and
+                            peers[0][1].get("gizmo") == watch and peers[0][1].get("active") is True):
+                            break
+                        if time.monotonic() >= deadline:
+                            raise ValueError("actual CoreSimulator pair is not the active peer")
+                        time.sleep(.5)
                     (a.out / "actual-pair.json").write_text(json.dumps({"pair_id": peers[0][0], "phone": phone, "watch": watch, "active": True}, indent=1))
                     for udid in (phone, watch):
                         sim_lane.boot(udid, 420)
