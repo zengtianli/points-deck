@@ -5,26 +5,29 @@
   "command": "bash scripts/accept/run.sh recovery",
   "exit_code": 0,
   "status": "passed",
-  "started_at": "2026-10-02T17:06:21.528784+08:00",
-  "finished_at": "2026-10-02T17:06:33.589221+08:00",
-  "input_sha256": "aacbb39a386ba1b921145bc4596a1ea88ec5f74694328bab9ad5fc1cd2a28b23",
+  "started_at": "2026-10-04T22:32:14.661648+08:00",
+  "finished_at": "2026-10-04T22:32:25.488158+08:00",
+  "input_sha256": "23cfa2629d01cc6f8461d45a027ff5e3353690e3b3017097da70113928408c80",
   "log": "perf/acceptance/recovery.log",
-  "log_sha256": "f9b6c6adabfb3d4e638ea4abbd8d6c33df923746f57efeb668b6580012f42397",
-  "summary": "故障与恢复：生产 Swift 客户端对本地真实账本服务 9 项通过",
+  "log_sha256": "4c8743ad6c8ae94162fee1130e614503dcc2d932cb2b20dd282d1a935d7b0a2d",
+  "summary": "故障与恢复：生产 Swift 客户端对本地真实账本服务 8 项通过",
   "detail": {
-    "summary": "故障与恢复：生产 Swift 客户端对本地真实账本服务 9 项通过",
+    "summary": "故障与恢复：生产 Swift 客户端对本地真实账本服务 8 项通过",
     "passed": true,
     "steps": [
       "错登录密码被拒（「用户名或密码不对」），正确密码随后可登录",
-      "错家长密码：会话保持上锁、记账被拒（「家长密码不对」），余额不变",
       "兑换未到档位商品被拒（「「今晚吃什么我说了算」要住进「砖瓦房」才能换（1200 分）」），不扣分",
       "非法规则配置被服务端整笔拒绝，原配置不变",
       "服务停止：0.0 秒内报错（Could not connect to the server.）",
       "网关返回非 JSON：提示「连不上账本(HTTP 502)」",
-      "服务重启后免重新登录，余额 1000 与流水 30 条完整",
-      "家长会话后台超过 10 分钟自动上锁",
+      "服务重启后免重新登录，余额 1000 与流水 80 条完整",
+      "稳定标识重试只有一笔；重复撤销恢复原余额",
       "客户端隔离 HOME 写入 1 个文件，其中含密码明文 0 个"
     ],
-    "scope": "macOS 编译同一份 Sources/Api.swift + ParentSession.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+    "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+  },
+  "previous_observation": {
+    "path": "perf/acceptance/attempts/recovery/20261004T223214658702+0800-olk0tw1u",
+    "manifest_sha256": "ba9945233ade901f336703a6ceb71942a0c58607c221c76e2b83f907d83f8fc6"
   }
 }

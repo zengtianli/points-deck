@@ -1,0 +1,94 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/points-other-platforms/watch-pair/runners/ipad-ui-c7f507f5c93d3a7e/dd/Build/Products/PointsQAHost_iphonesimulator27.0-arm64-x86_64.xctestrun -destination id=128A591A-5771-4089-9817-88A97B7158B7 -destination-timeout 120 -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:PointsQAUITests/PlatformUITests/testPhoneWatchLogout" -resultBundlePath /private/tmp/points-other-platforms/watch-pair/ui.xcresult
+
+Writing result bundle at path:
+	/private/tmp/points-other-platforms/watch-pair/ui.xcresult
+
+2026-10-04 21:18:43.426982+0800 PointsQAUITests-Runner[8004:52006231] [Default] Running tests...
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-04 21:18:51.221.
+Test Suite 'PointsQAUITests.xctest' started at 2026-10-04 21:18:51.232.
+Test Suite 'PlatformUITests' started at 2026-10-04 21:18:51.232.
+Test Case '-[PointsQAUITests.PlatformUITests testPhoneWatchLogout]' started.
+    t =     0.01s Start Test at 2026-10-04 21:18:51.246
+    t =     0.57s Set Up
+    t =     0.57s     Open cyou.tianli.pointsdeck
+    t =     0.58s         Launch cyou.tianli.pointsdeck
+    t =     0.97s             Setting up automation session
+objc[8004]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.UNDqRH/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x102fb0398) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.UNDqRH/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x106078310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     6.29s             Wait for cyou.tianli.pointsdeck to idle
+    t =     8.64s     Waiting 20.0s for StaticText (First Match) to exist
+    t =     9.71s         Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =     9.72s             Checking existence of `StaticText (First Match)`
+    t =   101.62s Waiting 10.0s for "账户" Button to exist
+    t =   102.68s     Checking `Expect predicate `existsNoRetry == 1` for object "账户" Button`
+    t =   102.71s         Checking existence of `"账户" Button`
+    t =   103.65s Get all elements bound by index for: Elements matching predicate '"账户" IN identifiers'
+    t =   104.19s Find the "账户" Button
+    t =   104.66s Tap "person.crop.circle" Button
+    t =   104.66s     Wait for cyou.tianli.pointsdeck to idle
+    t =   104.67s     Find the "person.crop.circle" Button
+    t =   104.77s     Check for interrupting elements affecting "person.crop.circle" Button
+    t =   105.37s     Synthesize event
+    t =   106.80s     Wait for cyou.tianli.pointsdeck to idle
+    t =   109.99s Find the "退出登录" Button
+    t =   111.16s     Find the "退出登录" Button (retry 1)
+    t =   112.28s     Find the "退出登录" Button (retry 2)
+    t =   112.38s Swipe up Application 'cyou.tianli.pointsdeck'
+    t =   112.38s     Wait for cyou.tianli.pointsdeck to idle
+    t =   112.38s     Find the Application 'cyou.tianli.pointsdeck'
+    t =   112.43s     Check for interrupting elements affecting "成长小金库" Application
+    t =   112.49s     Synthesize event
+    t =   112.96s     Wait for cyou.tianli.pointsdeck to idle
+    t =   113.89s Find the "退出登录" Button
+    t =   114.08s Find the "退出登录" Button
+    t =   114.25s Find the "退出登录" Button
+    t =   114.39s Find the "退出登录" Button
+    t =   114.52s Find the "退出登录" Button
+    t =   114.64s Find the "退出登录" Button
+    t =   114.77s Find the "退出登录" Button
+    t =   114.93s Waiting 10.0s for "退出登录" Button to exist
+    t =   115.96s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =   115.96s         Checking existence of `"退出登录" Button`
+    t =   116.08s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =   116.16s Find the "退出登录" Button
+    t =   116.25s Tap "退出登录" Button
+    t =   116.25s     Wait for cyou.tianli.pointsdeck to idle
+    t =   116.25s     Find the "退出登录" Button
+    t =   116.33s     Check for interrupting elements affecting "退出登录" Button
+    t =   116.40s     Synthesize event
+    t =   116.72s     Wait for cyou.tianli.pointsdeck to idle
+    t =   118.18s Waiting 10.0s for "退出登录" Button to exist
+    t =   119.24s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =   119.25s         Checking existence of `"退出登录" Button`
+    t =   119.39s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =   119.48s Find the "退出登录" Button
+    t =   119.71s Tap "退出登录" Button
+    t =   119.71s     Wait for cyou.tianli.pointsdeck to idle
+    t =   119.72s     Find the "退出登录" Button
+    t =   119.79s     Check for interrupting elements affecting "退出登录" Button
+    t =   119.87s     Synthesize event
+    t =   120.18s     Wait for cyou.tianli.pointsdeck to idle
+    t =   120.58s Waiting 15.0s for "进入账本" Button to exist
+    t =   121.63s     Checking `Expect predicate `existsNoRetry == 1` for object "进入账本" Button`
+    t =   121.64s         Checking existence of `"进入账本" Button`
+    t =   121.71s Find the Application 'cyou.tianli.pointsdeck'
+    t =   122.04s Added attachment named 'phone-signed-out'
+    t =   142.05s Tear Down
+Test Case '-[PointsQAUITests.PlatformUITests testPhoneWatchLogout]' passed (142.402 seconds).
+Test Suite 'PlatformUITests' passed at 2026-10-04 21:21:13.649.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.402 (142.417) seconds
+Test Suite 'PointsQAUITests.xctest' passed at 2026-10-04 21:21:13.653.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.402 (142.421) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 21:21:13.653.
+	 Executed 1 test, with 0 failures (0 unexpected) in 142.402 (142.432) seconds
+2026-10-04 21:21:14.057 xcodebuild[7918:52004726] [MT] IDETestOperationsObserverDebug: 163.479 elapsed -- Testing started completed.
+2026-10-04 21:21:14.057 xcodebuild[7918:52004726] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 21:21:14.057 xcodebuild[7918:52004726] [MT] IDETestOperationsObserverDebug: 163.479 sec, +163.479 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/points-other-platforms/watch-pair/ui.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

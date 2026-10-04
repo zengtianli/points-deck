@@ -1,0 +1,421 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/points-other-platforms/vision-ui/runners/vision-ui-a129de6863dc1fbb/dd/Build/Products/PointsQAHost_xrsimulator27.0-arm64-x86_64.xctestrun -destination id=4EA6A65D-4301-4527-B125-152AC0076CAF -destination-timeout 120 -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:PointsQAUITests/PlatformUITests/testCoreEditingAndReopen" -resultBundlePath /private/tmp/points-other-platforms/vision-ui/ui.xcresult
+
+Writing result bundle at path:
+	/private/tmp/points-other-platforms/vision-ui/ui.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:visionOS Simulator, arch:arm64, id:4EA6A65D-4301-4527-B125-152AC0076CAF, OS:27.0, name:Apple Vision Pro }
+{ platform:visionOS Simulator, arch:arm64, variant:Designed for [iPad,iPhone], id:4EA6A65D-4301-4527-B125-152AC0076CAF, OS:27.0, name:Apple Vision Pro }
+2026-10-04 21:54:44.896767+0800 PointsQAUITests-Runner[30404:52187197] [assertions] failed to observe with mask <BLSXPCBacklightProxyObserverMask: 0x1084348b0; didUpdateToState: YES; eventsArray: YES> error:<XPC error received on message reply handler (3:BSServiceConnectionErrorDomain) "The operation couldn’t be completed. XPC error received on message reply handler">
+2026-10-04 21:54:44.920731+0800 PointsQAUITests-Runner[30404:52186354] [Default] Running tests...
+2026-10-04 21:54:44.936248+0800 PointsQAUITests-Runner[30404:52186354] [XPCErrors] non-launching port is incompatible with service identifier "com.apple.PointerUI.pointeruid.default-service"
+2026-10-04 21:54:45.225615+0800 PointsQAUITests-Runner[30404:52187198] [plugin] AddInstanceForFactory: No factory registered for id <CFUUID 0x10553d640> F8BB1C28-BAE8-11D6-9C31-00039315CD46
+2026-10-04 21:54:45.248713+0800 PointsQAUITests-Runner[30404:52187197] [connection] nw_socket_copy_info [C1:2] getsockopt TCP_INFO failed [102: Operation not supported on socket]
+2026-10-04 21:54:45.248804+0800 PointsQAUITests-Runner[30404:52187197] [] nw_socket_copy_info getsockopt TCP_INFO failed [102: Operation not supported on socket]
+objc[30404]: Class AXMRUIAccessibilityAssertionService is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.XROS.SimulatorRuntime-v24.13.362.0.r05rLk/Library/Developer/CoreSimulator/Profiles/Runtimes/xrOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/PrivateFrameworks/AccessibilityUIUtilities.framework/AccessibilityUIUtilities (0x1f011a060) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.XROS.SimulatorRuntime-v24.13.362.0.r05rLk/Library/Developer/CoreSimulator/Profiles/Runtimes/xrOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/PrivateFrameworks/MuseAccessibilityUI.framework/MuseAccessibilityUI (0x108338118). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+2026-10-04 21:54:46.616191+0800 PointsQAUITests-Runner[30404:52186354] [AXCommon] Failed to load auxiliary bundle file:///private/var/run/com.apple.security.cryptexd/mnt/com.apple.XROS.SimulatorRuntime-v24.13.362.0.r05rLk/Library/Developer/CoreSimulator/Profiles/Runtimes/xrOS%2027.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/MuseUIKit: (null)
+    t =      nans Interface orientation changed to Unknown
+Test Suite 'Selected tests' started at 2026-10-04 21:54:48.846.
+Test Suite 'PointsQAUITests.xctest' started at 2026-10-04 21:54:48.852.
+Test Suite 'PlatformUITests' started at 2026-10-04 21:54:48.852.
+Test Case '-[PointsQAUITests.PlatformUITests testCoreEditingAndReopen]' started.
+    t =     0.01s Start Test at 2026-10-04 21:54:48.861
+    t =     0.39s Set Up
+    t =     0.39s     Open cyou.tianli.pointsdeck
+    t =     0.39s         Launch cyou.tianli.pointsdeck
+    t =     1.46s             Setting up automation session
+    t =     4.08s             Wait for cyou.tianli.pointsdeck to idle
+    t =     6.14s     Waiting 20.0s for StaticText (First Match) to exist
+    t =     7.19s         Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =     7.19s             Checking existence of `StaticText (First Match)`
+    t =     7.48s Waiting 10.0s for "账本" Button to exist
+    t =     8.50s     Checking `Expect predicate `existsNoRetry == 1` for object "账本" Button`
+    t =     8.50s         Checking existence of `"账本" Button`
+    t =     8.61s Get all elements bound by index for: Elements matching predicate '"账本" IN identifiers'
+    t =     8.71s Find the "账本" Button
+    t =     8.87s Tap "账本" Button
+    t =     8.87s     Wait for cyou.tianli.pointsdeck to idle
+    t =     8.87s     Find the "账本" Button
+    t =     8.93s     Check for interrupting elements affecting "账本" Button
+    t =     8.94s         Wait for com.apple.SurfBoard to idle
+    t =     9.08s     Synthesize event
+    t =     9.96s     Wait for cyou.tianli.pointsdeck to idle
+    t =     9.97s Find the Application 'cyou.tianli.pointsdeck'
+    t =    11.19s Added attachment named 'ledger-real-data'
+    t =    11.19s Waiting 10.0s for "走势" Button to exist
+    t =    12.19s     Checking `Expect predicate `existsNoRetry == 1` for object "走势" Button`
+    t =    12.20s         Checking existence of `"走势" Button`
+    t =    12.34s Get all elements bound by index for: Elements matching predicate '"走势" IN identifiers'
+    t =    12.38s Find the "走势" Button
+    t =    12.47s Tap "走势" Button
+    t =    12.47s     Wait for cyou.tianli.pointsdeck to idle
+    t =    12.47s     Find the "走势" Button
+    t =    12.51s     Check for interrupting elements affecting "走势" Button
+    t =    12.51s         Wait for com.apple.SurfBoard to idle
+    t =    12.52s     Synthesize event
+    t =    12.95s     Wait for cyou.tianli.pointsdeck to idle
+    t =    12.97s Find the Application 'cyou.tianli.pointsdeck'
+    t =    14.15s Added attachment named 'trend-real-data'
+    t =    14.15s Waiting 10.0s for "加分" Button to exist
+    t =    15.18s     Checking `Expect predicate `existsNoRetry == 1` for object "加分" Button`
+    t =    15.18s         Checking existence of `"加分" Button`
+    t =    15.21s Get all elements bound by index for: Elements matching predicate '"加分" IN identifiers'
+    t =    15.24s Find the "加分" Button
+    t =    15.33s Tap "加分" Button
+    t =    15.33s     Wait for cyou.tianli.pointsdeck to idle
+    t =    15.33s     Find the "加分" Button
+    t =    15.36s     Check for interrupting elements affecting "加分" Button
+    t =    15.36s         Wait for com.apple.SurfBoard to idle
+    t =    15.37s     Synthesize event
+    t =    15.81s     Wait for cyou.tianli.pointsdeck to idle
+    t =    15.84s Waiting 10.0s for "新建" Button to exist
+    t =    16.89s     Checking `Expect predicate `existsNoRetry == 1` for object "新建" Button`
+    t =    16.90s         Checking existence of `"新建" Button`
+    t =    16.92s Get all elements bound by index for: Elements matching predicate '"新建" IN identifiers'
+    t =    17.00s Find the "新建" Button
+    t =    17.13s Tap "新建" Button
+    t =    17.13s     Wait for cyou.tianli.pointsdeck to idle
+    t =    17.14s     Find the "新建" Button
+    t =    17.21s     Check for interrupting elements affecting "新建" Button
+    t =    17.22s         Wait for com.apple.SurfBoard to idle
+    t =    17.23s     Synthesize event
+    t =    17.97s     Wait for cyou.tianli.pointsdeck to idle
+    t =    18.74s Waiting 10.0s for "项目名" TextField to exist
+    t =    19.79s     Checking `Expect predicate `existsNoRetry == 1` for object "项目名" TextField`
+    t =    19.79s         Checking existence of `"项目名" TextField`
+    t =    19.91s Tap "项目名" TextField
+    t =    19.91s     Wait for cyou.tianli.pointsdeck to idle
+    t =    20.17s     Find the "项目名" TextField
+    t =    20.30s     Check for interrupting elements affecting "项目名" TextField
+    t =    20.31s         Wait for com.apple.SurfBoard to idle
+    t =    20.32s     Synthesize event
+    t =    21.27s     Wait for cyou.tianli.pointsdeck to idle
+    t =    21.28s Find the "项目名" TextField
+    t =    21.38s Type '' into "项目名" TextField
+    t =    21.38s     Wait for cyou.tianli.pointsdeck to idle
+    t =    21.38s     Find the "项目名" TextField
+    t =    21.45s     Check for interrupting elements affecting "项目名" TextField
+    t =    21.46s         Wait for com.apple.SurfBoard to idle
+    t =    21.47s     Synthesize event
+    t =    21.73s     Wait for cyou.tianli.pointsdeck to idle
+    t =    21.73s Type 'QA-Points-Project' into "项目名" TextField
+    t =    21.73s     Wait for cyou.tianli.pointsdeck to idle
+    t =    21.74s     Find the "项目名" TextField
+    t =    21.83s     Check for interrupting elements affecting "项目名" TextField
+    t =    21.83s         Wait for com.apple.SurfBoard to idle
+    t =    21.84s     Synthesize event
+    t =    22.37s     Wait for cyou.tianli.pointsdeck to idle
+    t =    23.40s Checking `Expect predicate `value == "QA-Points-Project"` for object "项目名" TextField`
+    t =    23.40s     Find the "项目名" TextField
+    t =    23.48s Waiting 10.0s for "正整数分值" TextField to exist
+    t =    24.50s     Checking `Expect predicate `existsNoRetry == 1` for object "正整数分值" TextField`
+    t =    24.51s         Checking existence of `"正整数分值" TextField`
+    t =    24.57s Tap "正整数分值" TextField
+    t =    24.57s     Wait for cyou.tianli.pointsdeck to idle
+    t =    24.57s     Find the "正整数分值" TextField
+    t =    24.63s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    24.63s         Wait for com.apple.SurfBoard to idle
+    t =    24.64s     Synthesize event
+    t =    25.10s     Wait for cyou.tianli.pointsdeck to idle
+    t =    25.11s Find the "正整数分值" TextField
+    t =    25.17s Type '' into "正整数分值" TextField
+    t =    25.17s     Wait for cyou.tianli.pointsdeck to idle
+    t =    25.17s     Find the "正整数分值" TextField
+    t =    25.22s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    25.23s         Wait for com.apple.SurfBoard to idle
+    t =    25.24s     Synthesize event
+    t =    25.50s     Wait for cyou.tianli.pointsdeck to idle
+    t =    25.50s Type '7' into "正整数分值" TextField
+    t =    25.50s     Wait for cyou.tianli.pointsdeck to idle
+    t =    25.51s     Find the "正整数分值" TextField
+    t =    25.61s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    25.66s         Wait for com.apple.SurfBoard to idle
+    t =    25.67s     Synthesize event
+    t =    25.93s     Wait for cyou.tianli.pointsdeck to idle
+    t =    26.99s Checking `Expect predicate `value == "7"` for object "正整数分值" TextField`
+    t =    26.99s     Find the "正整数分值" TextField
+    t =    27.07s Find the Application 'cyou.tianli.pointsdeck'
+    t =    28.53s Added attachment named 'project-keyboard-input'
+    t =    28.53s Waiting 10.0s for "完成" Button to exist
+    t =    29.59s     Checking `Expect predicate `existsNoRetry == 1` for object "完成" Button`
+    t =    29.60s         Checking existence of `"完成" Button`
+    t =    29.64s Get all elements bound by index for: Elements matching predicate '"完成" IN identifiers'
+    t =    29.80s Find the "完成" Button
+    t =    30.00s Tap "完成" Button
+    t =    30.00s     Wait for cyou.tianli.pointsdeck to idle
+    t =    30.01s     Find the "完成" Button
+    t =    30.13s     Check for interrupting elements affecting "完成" Button
+    t =    30.14s         Wait for com.apple.SurfBoard to idle
+    t =    30.15s     Synthesize event
+    t =    30.80s     Wait for cyou.tianli.pointsdeck to idle
+    t =    30.97s Waiting 10.0s for "保存" Button to exist
+    t =    31.99s     Checking `Expect predicate `existsNoRetry == 1` for object "保存" Button`
+    t =    31.99s         Checking existence of `"保存" Button`
+    t =    32.32s Get all elements bound by index for: Elements matching predicate '"保存" IN identifiers'
+    t =    32.51s Find the "保存" Button
+    t =    32.82s Tap "保存" Button
+    t =    32.82s     Wait for cyou.tianli.pointsdeck to idle
+    t =    32.82s     Find the "保存" Button
+    t =    32.98s     Check for interrupting elements affecting "保存" Button
+    t =    32.99s         Wait for com.apple.SurfBoard to idle
+    t =    33.00s     Synthesize event
+    t =    33.41s     Wait for cyou.tianli.pointsdeck to idle
+    t =    33.66s Find the "保存" Button
+    t =    33.70s Waiting 10.0s for "关闭" Button to exist
+    t =    34.80s     Checking `Expect predicate `existsNoRetry == 1` for object "关闭" Button`
+    t =    34.80s         Checking existence of `"关闭" Button`
+    t =    34.82s Get all elements bound by index for: Elements matching predicate '"关闭" IN identifiers'
+    t =    34.93s Find the "关闭" Button
+    t =    35.12s Tap "关闭" Button
+    t =    35.12s     Wait for cyou.tianli.pointsdeck to idle
+    t =    35.12s     Find the "关闭" Button
+    t =    35.27s     Check for interrupting elements affecting "关闭" Button
+    t =    35.27s         Wait for com.apple.SurfBoard to idle
+    t =    35.28s     Synthesize event
+    t =    35.74s     Wait for cyou.tianli.pointsdeck to idle
+    t =    36.69s Waiting 10.0s for "兑换" Button to exist
+    t =    37.69s     Checking `Expect predicate `existsNoRetry == 1` for object "兑换" Button`
+    t =    37.70s         Checking existence of `"兑换" Button`
+    t =    37.81s Get all elements bound by index for: Elements matching predicate '"兑换" IN identifiers'
+    t =    37.89s Find the "兑换" Button
+    t =    38.09s Tap "兑换" Button
+    t =    38.09s     Wait for cyou.tianli.pointsdeck to idle
+    t =    38.09s     Find the "兑换" Button
+    t =    38.19s     Check for interrupting elements affecting "兑换" Button
+    t =    38.20s         Wait for com.apple.SurfBoard to idle
+    t =    38.21s     Synthesize event
+    t =    40.15s     Wait for cyou.tianli.pointsdeck to idle
+    t =    40.25s Waiting 10.0s for "新建" Button to exist
+    t =    41.29s     Checking `Expect predicate `existsNoRetry == 1` for object "新建" Button`
+    t =    41.30s         Checking existence of `"新建" Button`
+    t =    41.47s Get all elements bound by index for: Elements matching predicate '"新建" IN identifiers'
+    t =    41.57s Find the "新建" Button
+    t =    41.72s Tap "新建" Button
+    t =    41.72s     Wait for cyou.tianli.pointsdeck to idle
+    t =    41.72s     Find the "新建" Button
+    t =    41.79s     Check for interrupting elements affecting "新建" Button
+    t =    41.79s         Wait for com.apple.SurfBoard to idle
+    t =    41.80s     Synthesize event
+    t =    42.33s     Wait for cyou.tianli.pointsdeck to idle
+    t =    42.55s Waiting 10.0s for "奖励名" TextField to exist
+    t =    43.58s     Checking `Expect predicate `existsNoRetry == 1` for object "奖励名" TextField`
+    t =    43.58s         Checking existence of `"奖励名" TextField`
+    t =    43.66s Tap "奖励名" TextField
+    t =    43.66s     Wait for cyou.tianli.pointsdeck to idle
+    t =    44.21s     Find the "奖励名" TextField
+    t =    44.28s     Check for interrupting elements affecting "奖励名" TextField
+    t =    44.29s         Wait for com.apple.SurfBoard to idle
+    t =    44.30s     Synthesize event
+    t =    44.80s     Wait for cyou.tianli.pointsdeck to idle
+    t =    44.81s Find the "奖励名" TextField
+    t =    44.87s Type '' into "奖励名" TextField
+    t =    44.87s     Wait for cyou.tianli.pointsdeck to idle
+    t =    44.87s     Find the "奖励名" TextField
+    t =    44.92s     Check for interrupting elements affecting "奖励名" TextField
+    t =    44.93s         Wait for com.apple.SurfBoard to idle
+    t =    44.93s     Synthesize event
+    t =    45.18s     Wait for cyou.tianli.pointsdeck to idle
+    t =    45.18s Type 'QA-Points-Reward' into "奖励名" TextField
+    t =    45.18s     Wait for cyou.tianli.pointsdeck to idle
+    t =    45.18s     Find the "奖励名" TextField
+    t =    45.29s     Check for interrupting elements affecting "奖励名" TextField
+    t =    45.30s         Wait for com.apple.SurfBoard to idle
+    t =    45.31s     Synthesize event
+    t =    45.86s     Wait for cyou.tianli.pointsdeck to idle
+    t =    47.09s Checking `Expect predicate `value == "QA-Points-Reward"` for object "奖励名" TextField`
+    t =    47.09s     Find the "奖励名" TextField
+    t =    47.18s Waiting 10.0s for "所需积分" TextField to exist
+    t =    48.20s     Checking `Expect predicate `existsNoRetry == 1` for object "所需积分" TextField`
+    t =    48.20s         Checking existence of `"所需积分" TextField`
+    t =    48.30s Tap "所需积分" TextField
+    t =    48.30s     Wait for cyou.tianli.pointsdeck to idle
+    t =    48.30s     Find the "所需积分" TextField
+    t =    48.38s     Check for interrupting elements affecting "所需积分" TextField
+    t =    48.38s         Wait for com.apple.SurfBoard to idle
+    t =    48.40s     Synthesize event
+    t =    48.91s     Wait for cyou.tianli.pointsdeck to idle
+    t =    48.92s Find the "所需积分" TextField
+    t =    48.99s Type '' into "所需积分" TextField
+    t =    48.99s     Wait for cyou.tianli.pointsdeck to idle
+    t =    49.00s     Find the "所需积分" TextField
+    t =    49.07s     Check for interrupting elements affecting "所需积分" TextField
+    t =    49.08s         Wait for com.apple.SurfBoard to idle
+    t =    49.10s     Synthesize event
+    t =    49.35s     Wait for cyou.tianli.pointsdeck to idle
+    t =    49.36s Type '4' into "所需积分" TextField
+    t =    49.36s     Wait for cyou.tianli.pointsdeck to idle
+    t =    49.37s     Find the "所需积分" TextField
+    t =    49.46s     Check for interrupting elements affecting "所需积分" TextField
+    t =    49.51s         Wait for com.apple.SurfBoard to idle
+    t =    49.52s     Synthesize event
+    t =    49.79s     Wait for cyou.tianli.pointsdeck to idle
+    t =    50.80s Checking `Expect predicate `value == "4"` for object "所需积分" TextField`
+    t =    50.80s     Find the "所需积分" TextField
+    t =    50.88s Find the Application 'cyou.tianli.pointsdeck'
+    t =    52.23s Added attachment named 'reward-keyboard-input'
+    t =    52.23s Waiting 10.0s for "完成" Button to exist
+    t =    53.26s     Checking `Expect predicate `existsNoRetry == 1` for object "完成" Button`
+    t =    53.30s         Checking existence of `"完成" Button`
+    t =    53.35s Get all elements bound by index for: Elements matching predicate '"完成" IN identifiers'
+    t =    53.46s Find the "完成" Button
+    t =    53.62s Tap "完成" Button
+    t =    53.62s     Wait for cyou.tianli.pointsdeck to idle
+    t =    53.62s     Find the "完成" Button
+    t =    53.71s     Check for interrupting elements affecting "完成" Button
+    t =    53.72s         Wait for com.apple.SurfBoard to idle
+    t =    53.73s     Synthesize event
+    t =    54.24s     Wait for cyou.tianli.pointsdeck to idle
+    t =    54.27s Waiting 10.0s for "保存" Button to exist
+    t =    55.27s     Checking `Expect predicate `existsNoRetry == 1` for object "保存" Button`
+    t =    55.27s         Checking existence of `"保存" Button`
+    t =    55.62s Get all elements bound by index for: Elements matching predicate '"保存" IN identifiers'
+    t =    55.86s Find the "保存" Button
+    t =    56.07s Tap "保存" Button
+    t =    56.07s     Wait for cyou.tianli.pointsdeck to idle
+    t =    56.07s     Find the "保存" Button
+    t =    56.17s     Check for interrupting elements affecting "保存" Button
+    t =    56.18s         Wait for com.apple.SurfBoard to idle
+    t =    56.18s     Synthesize event
+    t =    56.59s     Wait for cyou.tianli.pointsdeck to idle
+    t =    57.79s Checking `Expect predicate `enabled == 0` for object "保存" Button`
+    t =    57.79s     Find the "保存" Button
+    t =    57.82s Waiting 10.0s for "关闭" Button to exist
+    t =    58.87s     Checking `Expect predicate `existsNoRetry == 1` for object "关闭" Button`
+    t =    58.87s         Checking existence of `"关闭" Button`
+    t =    58.90s Get all elements bound by index for: Elements matching predicate '"关闭" IN identifiers'
+    t =    58.99s Find the "关闭" Button
+    t =    59.15s Tap "关闭" Button
+    t =    59.15s     Wait for cyou.tianli.pointsdeck to idle
+    t =    59.15s     Find the "关闭" Button
+    t =    59.29s     Check for interrupting elements affecting "关闭" Button
+    t =    59.29s         Wait for com.apple.SurfBoard to idle
+    t =    59.30s     Synthesize event
+    t =    59.71s     Wait for cyou.tianli.pointsdeck to idle
+    t =    60.80s Waiting 10.0s for "账户" Button to exist
+    t =    61.89s     Checking `Expect predicate `existsNoRetry == 1` for object "账户" Button`
+    t =    61.89s         Checking existence of `"账户" Button`
+    t =    61.98s Get all elements bound by index for: Elements matching predicate '"账户" IN identifiers'
+    t =    62.07s Find the "账户" Button
+    t =    62.20s Tap "账户" Button
+    t =    62.20s     Wait for cyou.tianli.pointsdeck to idle
+    t =    62.21s     Find the "账户" Button
+    t =    62.29s     Check for interrupting elements affecting "账户" Button
+    t =    62.30s         Wait for com.apple.SurfBoard to idle
+    t =    62.31s     Synthesize event
+    t =    63.39s     Wait for cyou.tianli.pointsdeck to idle
+    t =    63.44s Waiting 10.0s for "账号安全" Button to exist
+    t =    64.49s     Checking `Expect predicate `existsNoRetry == 1` for object "账号安全" Button`
+    t =    64.49s         Checking existence of `"账号安全" Button`
+    t =    64.61s Find the Application 'cyou.tianli.pointsdeck'
+    t =    65.82s Added attachment named 'account-native-entry'
+    t =    65.83s Terminate cyou.tianli.pointsdeck:30566
+    t =    66.90s Open cyou.tianli.pointsdeck
+    t =    66.90s     Launch cyou.tianli.pointsdeck
+    t =    66.96s         Setting up automation session
+    t =    71.49s         Wait for cyou.tianli.pointsdeck to idle
+    t =    74.94s Waiting 20.0s for "账号安全" Button to exist
+    t =    75.96s     Checking `Expect predicate `existsNoRetry == 1` for object "账号安全" Button`
+    t =    75.96s         Checking existence of `"账号安全" Button`
+    t =    76.17s Find the Application 'cyou.tianli.pointsdeck'
+    t =    77.33s Added attachment named 'stored-session-reopen'
+    t =    77.33s Waiting 10.0s for Window (First Match) to exist
+    t =    78.36s     Checking `Expect predicate `existsNoRetry == 1` for object Window (First Match)`
+    t =    78.37s         Checking existence of `Window (First Match)`
+    t =    78.45s Find the "退出登录" Button
+    t =    79.53s     Find the "退出登录" Button (retry 1)
+    t =    80.61s     Find the "退出登录" Button (retry 2)
+    t =    80.69s Swipe up Window (First Match)
+    t =    80.70s     Wait for cyou.tianli.pointsdeck to idle
+    t =    80.70s     Find the Window (First Match)
+    t =    80.78s     Check for interrupting elements affecting Window
+    t =    80.79s         Wait for com.apple.SurfBoard to idle
+    t =    80.80s     Synthesize event
+    t =    81.35s     Wait for cyou.tianli.pointsdeck to idle
+    t =    82.36s Find the "退出登录" Button
+    t =    82.55s Find the "退出登录" Button
+    t =    82.69s Find the "退出登录" Button
+    t =    82.85s Find the "退出登录" Button
+    t =    82.99s Find the "退出登录" Button
+    t =    83.15s Find the "退出登录" Button
+    t =    83.30s Find the "退出登录" Button
+    t =    83.45s Waiting 10.0s for "退出登录" Button to exist
+    t =    84.49s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =    84.50s         Checking existence of `"退出登录" Button`
+    t =    84.57s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =    84.62s Find the "退出登录" Button
+    t =    84.72s Tap "退出登录" Button
+    t =    84.72s     Wait for cyou.tianli.pointsdeck to idle
+    t =    84.72s     Find the "退出登录" Button
+    t =    84.76s     Check for interrupting elements affecting "退出登录" Button
+    t =    84.77s         Wait for com.apple.SurfBoard to idle
+    t =    84.77s     Synthesize event
+    t =    85.16s     Wait for cyou.tianli.pointsdeck to idle
+    t =    85.17s Waiting 10.0s for "退出登录" Button to exist
+    t =    86.19s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =    86.20s         Checking existence of `"退出登录" Button`
+    t =    86.21s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =    86.21s Find the "退出登录" Button
+    t =    86.27s Tap "退出登录" Button
+    t =    86.27s     Wait for cyou.tianli.pointsdeck to idle
+    t =    86.27s     Find the "退出登录" Button
+    t =    86.27s     Check for interrupting elements affecting "退出登录" Button
+    t =    86.28s         Wait for com.apple.SurfBoard to idle
+    t =    86.28s     Synthesize event
+    t =    86.66s     Wait for cyou.tianli.pointsdeck to idle
+    t =    86.72s Waiting 10.0s for "密码登录" Button to exist
+    t =    87.72s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    87.72s         Checking existence of `"密码登录" Button`
+    t =    87.77s         Capturing element debug description
+    t =    88.79s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    88.80s         Checking existence of `"密码登录" Button`
+    t =    88.84s         Capturing element debug description
+    t =    89.76s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    89.76s         Checking existence of `"密码登录" Button`
+    t =    89.78s         Capturing element debug description
+    t =    90.79s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    90.80s         Checking existence of `"密码登录" Button`
+    t =    90.83s         Capturing element debug description
+    t =    91.78s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    91.79s         Checking existence of `"密码登录" Button`
+    t =    91.81s         Capturing element debug description
+    t =    92.74s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    92.75s         Checking existence of `"密码登录" Button`
+    t =    92.79s         Capturing element debug description
+    t =    93.80s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    93.80s         Checking existence of `"密码登录" Button`
+    t =    93.84s         Capturing element debug description
+    t =    94.78s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    94.78s         Checking existence of `"密码登录" Button`
+    t =    94.81s         Capturing element debug description
+    t =    95.74s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    95.74s         Checking existence of `"密码登录" Button`
+    t =    95.76s         Capturing element debug description
+    t =    96.73s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =    96.73s         Checking existence of `"密码登录" Button`
+    t =    96.75s         Capturing element debug description
+    t =    96.76s     Checking existence of `"密码登录" Button`
+    t =    96.77s Collecting debug information to assist test failure triage
+    t =    96.77s     Requesting snapshot of accessibility hierarchy for app with pid 31160
+/tmp/points-other-platforms/vision-ui/runners/vision-ui-a129de6863dc1fbb/source/Tests/PlatformUITests.swift:20: error: -[PointsQAUITests.PlatformUITests testCoreEditingAndReopen] : XCTAssertTrue failed - missing button: 密码登录
+    t =    97.07s Tear Down
+Test Case '-[PointsQAUITests.PlatformUITests testCoreEditingAndReopen]' failed (98.253 seconds).
+Test Suite 'PlatformUITests' failed at 2026-10-04 21:56:27.115.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.253 (98.263) seconds
+Test Suite 'PointsQAUITests.xctest' failed at 2026-10-04 21:56:27.118.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.253 (98.266) seconds
+Test Suite 'Selected tests' failed at 2026-10-04 21:56:27.118.
+	 Executed 1 test, with 1 failure (0 unexpected) in 98.253 (98.273) seconds
+2026-10-04 21:56:28.419 xcodebuild[30336:52185364] [MT] IDETestOperationsObserverDebug: 121.230 elapsed -- Testing started completed.
+2026-10-04 21:56:28.419 xcodebuild[30336:52185364] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 21:56:28.419 xcodebuild[30336:52185364] [MT] IDETestOperationsObserverDebug: 121.230 sec, +121.230 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/points-other-platforms/vision-ui/ui.xcresult
+
+Failing tests:
+	PlatformUITests.testCoreEditingAndReopen()
+
+** TEST EXECUTE FAILED **
+
+Testing started

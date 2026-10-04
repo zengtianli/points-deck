@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "scope": "four current Chapter platform native launches; these are not five-run cold-start resource measurements",
+  "observations": [
+    {
+      "platform": "ipad",
+      "status": "passed",
+      "input_sha256": "9e5fa8293c578e3670594284877881056261901a87627a9773d9febbb2082860",
+      "original": "perf/acceptance/launch_ipad.json",
+      "sha256": "45d522be6f53a0006cd14913126efccbb7e8e3ec2d80d452b1053dcd7cfb4f8b",
+      "finished_at": "2026-10-04T22:18:59.208450+08:00",
+      "ready_seconds": 2.317,
+      "environment": "simulator"
+    },
+    {
+      "platform": "watch",
+      "status": "passed",
+      "input_sha256": "df69e7745d365540680c064de27da53c83e1ac47d1f8e3240d10a7dc6dc0ec4d",
+      "original": "perf/acceptance/launch_watch.json",
+      "sha256": "08e4faa3a7ac0913b7c6089ba8b71578d660bccaf4657058e09e0c1cfb854b64",
+      "finished_at": "2026-10-04T22:21:03.223892+08:00",
+      "ready_seconds": 1.656,
+      "environment": "simulator"
+    },
+    {
+      "platform": "mac",
+      "status": "passed",
+      "input_sha256": "4b60697f62ca789f8c723b2c8145045c0b564aa3de174fb73bb4c864dc2f8c00",
+      "original": "perf/acceptance/launch_mac.json",
+      "sha256": "7ceb2dd99060a5f5fca1c8bbdc380e04da26adcfa1f737c0f21679e158c0830c",
+      "finished_at": "2026-10-04T22:21:25.182697+08:00",
+      "ready_seconds": 1.297,
+      "environment": "native"
+    },
+    {
+      "platform": "vision",
+      "status": "passed",
+      "input_sha256": "c87dabc1166259a8c9643f2acb380331189463289d67d0b6b307e483dc96660c",
+      "original": "perf/acceptance/launch_vision.json",
+      "sha256": "83fce56ff5b51fd1926a887b884eaa6b4259a7ba5702753aa8956d0c8b44a5e6",
+      "finished_at": "2026-10-04T22:34:24.838039+08:00",
+      "ready_seconds": 3.799,
+      "environment": "simulator"
+    }
+  ]
+}

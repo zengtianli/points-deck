@@ -5,27 +5,30 @@
   "command": "bash scripts/accept/run.sh functionality",
   "exit_code": 0,
   "status": "passed",
-  "started_at": "2026-10-02T17:06:21.529351+08:00",
-  "finished_at": "2026-10-02T17:06:32.952963+08:00",
-  "input_sha256": "aacbb39a386ba1b921145bc4596a1ea88ec5f74694328bab9ad5fc1cd2a28b23",
+  "started_at": "2026-10-04T22:31:54.885771+08:00",
+  "finished_at": "2026-10-04T22:32:08.276532+08:00",
+  "input_sha256": "23cfa2629d01cc6f8461d45a027ff5e3353690e3b3017097da70113928408c80",
   "log": "perf/acceptance/functionality.log",
-  "log_sha256": "d4c2b9124dca5db9957c71f49bc9e7dd53bd621cafb18a5386bccf133d1f9977",
-  "summary": "功能：生产 Swift 客户端对本地真实账本服务 10 项通过",
+  "log_sha256": "c736c6dafda48caaa58e13d3e60998715ff0e7a5e1dd041cf8d95d7a13d59933",
+  "summary": "功能：生产 Swift 客户端对本地真实账本服务 9 项通过",
   "detail": {
-    "summary": "功能：生产 Swift 客户端对本地真实账本服务 10 项通过",
+    "summary": "功能：生产 Swift 客户端对本地真实账本服务 9 项通过",
     "passed": true,
     "steps": [
-      "登录并读取首屏：余额 1000、小木屋、流水 30 条、阶梯 11 档",
+      "登录并读取首屏：余额 1000、小木屋、流水 80 条、阶梯 11 档",
       "服务端预览「听写全对一次」= 10 pts",
-      "家长会话解锁（只读 /api/config 验证，未记账）",
-      "解锁状态记一笔：余额 1000 → 1010，会话计数 1",
+      "登录后直接记一笔：余额 1000 → 1010",
       "撤销最近一笔：余额回到 1000",
       "兑换已解锁商品「多看一集动画」扣 150 分（无需家长密码）",
       "修改昵称并回读",
       "实时推送：家长加分后收到 ledger 事件",
-      "上锁并退出登录：账本不可再读",
+      "退出登录：账本不可再读",
       "客户端隔离 HOME 写入 0 个文件，其中含密码明文 0 个"
     ],
-    "scope": "macOS 编译同一份 Sources/Api.swift + ParentSession.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+    "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+  },
+  "previous_observation": {
+    "path": "perf/acceptance/attempts/functionality/20261004T223154882651+0800-3wzvqfpo",
+    "manifest_sha256": "c7ada6783a220d567f37f44414295c0b75235a460800ae9d70cb491df23125a8"
   }
 }

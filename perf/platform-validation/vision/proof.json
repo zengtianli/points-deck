@@ -1,0 +1,13 @@
+{
+ "ok": true,
+ "phase": "ui",
+ "platform": "vision",
+ "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+ "receipt_sha256": "9ba400431a720f9e6c4118d09285ae6a526905176b4574bce26887a99c1b1c18",
+ "test_sha256": "523ff6daeb8c7da45c0547bb332974a99a9ea14b8256dd09ffb01f188bcf3060",
+ "seconds": 345.8,
+ "environment": "simulator",
+ "product_rebuilt": false,
+ "watch_credentials_injected": null,
+ "cleanup": "owned devices shutdown; canonical locks released on exit"
+}

@@ -1,18 +1,18 @@
 {
   "version": "1.0.2",
-  "build": "10",
+  "build": "11",
   "source_kind": "app_store_connect",
   "distribution": "TestFlight（内测组 family）",
-  "queried_at": "2026-10-04T11:21:13.492486+00:00",
+  "queried_at": "2026-10-04T14:13:10.082910+00:00",
   "app_id": "6806799638",
   "bundle_id": "cyou.tianli.pointsdeck",
-  "build_id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+  "build_id": "dc0ec998-a536-42c0-9722-311950e3b00f",
   "processing_state": "VALID",
   "device_install_verified": false,
-  "source_commit": "c5c2f43d04e88550f0454af0d947367107b5b34e",
+  "source_commit": "39ea3453d17d2b2aabe847d7f6399178a38af21b",
   "source_kind_detail": {
     "builder": "local official push-testflight.sh --testflight-only",
-    "evidence": "perf/raw/testflight-1.0.2-10.json"
+    "evidence": "perf/raw/testflight-1.0.2-11.json"
   },
   "app_store": {
     "live_version": "1.0",
@@ -23,10 +23,37 @@
     "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
   },
   "previous": {
-    "version": "1.0.1",
-    "build": "8",
-    "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
-    "source_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea"
+    "version": "1.0.2",
+    "build": "10",
+    "source_kind": "app_store_connect",
+    "distribution": "TestFlight（内测组 family）",
+    "queried_at": "2026-10-04T11:21:13.492486+00:00",
+    "app_id": "6806799638",
+    "bundle_id": "cyou.tianli.pointsdeck",
+    "build_id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+    "processing_state": "VALID",
+    "device_install_verified": false,
+    "source_commit": "c5c2f43d04e88550f0454af0d947367107b5b34e",
+    "source_kind_detail": {
+      "builder": "local official push-testflight.sh --testflight-only",
+      "evidence": "perf/raw/testflight-1.0.2-10.json"
+    },
+    "app_store": {
+      "live_version": "1.0",
+      "live_build": "2",
+      "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+      "live_state": "READY_FOR_SALE",
+      "pending_version": "1.0.1",
+      "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
+    },
+    "previous": {
+      "version": "1.0.1",
+      "build": "8",
+      "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+      "source_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea"
+    },
+    "source_note": "新版五栏与 PRD 1.3 已进有测试成员的 family 内测组；未提交商店审核，手机须由用户在 TestFlight 更新，未冒充已安装。"
   },
-  "source_note": "新版五栏与 PRD 1.3 已进有测试成员的 family 内测组；未提交商店审核，手机须由用户在 TestFlight 更新，未冒充已安装。"
+  "source_note": "PRD1.3 五栏与新建页修复已进 family 内测组；主包/Watch/Widget 均 build11；未提交商店审核，未核实设备更新。",
+  "internal_build_state": "IN_BETA_TESTING"
 }

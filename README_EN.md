@@ -12,7 +12,7 @@
 
 A family points ledger operated by parents: record progress, earn agreed rewards, and see effort accumulate. Shared server rules and APIs provide the ledger, 11 home tiers, and illustrations across 5 eras.
 
-Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. The updated backend is live. TestFlight **1.0.2 (10)** is VALID and available to the populated family internal group; no App Store review was submitted. Update through TestFlight on the device. The older screenshots below and historical performance samples describe the earlier version. See the [development handoff](handoffs/prd-1.2-20261004.md) for current validation scope.
+Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. The updated backend is live. TestFlight **1.0.2 (11)** is VALID and available to the populated family internal group; no App Store review was submitted. The opening phone screenshots show the earlier release; the four-platform gallery contains actual captures from this work. The resource table only shows measurements bound to current inputs. See the [platform validation record](perf/platform-validation/README.md) for behavior and environments, and the [development handoff](handoffs/prd-1.2-20261004.md) for ongoing work.
 
 <p>Earlier release screenshots; current device/simulator evidence is linked from the handoff.</p>
 <table><tr>
@@ -43,17 +43,17 @@ One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the s
 
 | Platform | What it looks like | Can you get it now? |
 |---|---|---|
-| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; TestFlight 1.0.2 (10) is available for this update |
-| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; TestFlight 1.0.2 (10) is available for this update |
-| Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local builds only |
-| Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | **Not on the App Store** (the embedded watch app is not in any released build yet) |
+| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; TestFlight 1.0.2 (11) is available for this update |
+| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; TestFlight 1.0.2 (11) is available for this update |
+| Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local test app at `build/accept/mac/Growth Treasury.app` |
+| Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | Embedded in the iPhone TestFlight 1.0.2 (11) package; no separate Watch App Store release |
 | Apple Vision Pro | The same sidebar board in a system glass window; the era colour is an accent only | **Not on the App Store**; verified on the simulator only |
 
 <table><tr>
-<td align="center" width="50%"><img src="docs/screenshots/07-ipad.png" alt="iPad landscape: sidebar and ledger board"><br><sub>iPad landscape: sidebar and ledger board (simulator screenshot)</sub></td>
-<td align="center" width="50%"><img src="docs/screenshots/08-mac.png" alt="Mac: parent booking in the right inspector, the balance stays visible on the left"><br><sub>Mac: parent booking in the right inspector, the balance stays visible on the left (local screenshot, inactive window)</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/07-ipad.png" alt="iPad landscape: five-tab navigation and scoring cards"><br><sub>iPad landscape: five-tab navigation and scoring cards (simulator screenshot)</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/08-mac.png" alt="Mac: five sidebar destinations and scoring cards"><br><sub>Mac: five sidebar destinations and scoring cards (local screenshot, inactive window)</sub></td>
 </tr><tr>
-<td align="center" width="50%"><img src="docs/screenshots/10-vision.png" alt="Apple Vision Pro: the ledger board in a glass window"><br><sub>Apple Vision Pro: the ledger board in a glass window (simulator screenshot, cropped)</sub></td>
+<td align="center" width="50%"><img src="docs/screenshots/10-vision.png" alt="Apple Vision Pro: the ledger board in a glass window"><br><sub>Apple Vision Pro: the ledger board in a glass window (full simulator frame)</sub></td>
 <td align="center" width="50%"><img src="docs/screenshots/09-watch.png" width="208" alt="Apple Watch: current tier, balance, points to the next tier"><br><sub>Apple Watch: current tier, balance, points to the next tier (simulator screenshot)</sub></td>
 </tr></table>
 
@@ -62,20 +62,20 @@ The account “小满” and its 30 days of entries in these screenshots are dem
 ### Resource use per platform (simulators, and natively on a Mac)
 
 <!-- platforms:start -->
-| Platform | Measured on | Package (zip) | Idle memory | Idle CPU | Cold launch to first data screen | Host load (1 / 5 / 15 min) | Target |
+| Platform | Measured on | Package / installed | Idle memory | Idle CPU | Cold launch to first data screen | Host load (1 / 5 / 15 min) | Target |
 |---|---|---|---|---|---|---|---|
-| iPhone | Simulator · iPhone 17 Pro · iOS 27.0 | 8.4 MB | 43.0 MB | 0% | 1.80 s | 14.2 / 46.4 / 54.6 | ≤ 150 MB · ≤ 0.5% |
-| iPad | Simulator · iPad Pro 13-inch · iPadOS 27.0 | 8.4 MB | 39.0 MB | 0% | 0.50 s | 12.8 / 42.2 / 52.3 | ≤ 150 MB · ≤ 0.5% |
-| Mac | Native · Mac16,12 / Apple M4 · macOS 27.2 | 4.7 MB | 51.0 MB | 0% | 0.29 s | 13.4 / 31.9 / 39.6 | ≤ 150 MB · ≤ 0.5% |
-| Apple Watch | Simulator · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB | 21.0 MB | 0% | 0.46 s | 14.0 / 47.9 / 73.4 | ≤ 25 MB · ≤ 10 MB package · ≤ 1.5 s |
-| Apple Vision Pro | Simulator · Apple Vision Pro · visionOS 27.0 | 4.7 MB | 60.0 MB | 0.07% | 2.85 s | 13.1 / 37.9 / 50.2 | ≤ 60 MB |
+| iPhone | Current version not measured (history retained) | — | — | — | — | — | ≤ 100 MiB · ≤ 0.5% · ≤ 20 MB package · ≤ 5 s |
+| iPad | Simulator · iPad Pro 13-inch · iPadOS 27.0 | 9.0 MB zip | 31.0 MiB | 0% | 0.90 s | 38.8 / 27.0 / 36.4 | ≤ 120 MiB · ≤ 0.5% · ≤ 25 MB package · ≤ 5 s |
+| Mac | Native · Mac16,12 / Apple M4 · macOS 27.2 | 13.1 MB installed | 42.0 MiB | 0% | 0.45 s | 4.7 / 11.0 / 19.2 | ≤ 150 MiB · ≤ 0.5% · ≤ 30 MB installed · ≤ 3 s |
+| Apple Watch | Simulator · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB zip | 23.0 MiB | 0% | 0.77 s | 9.5 / 17.5 / 23.3 | ≤ 25 MiB · ≤ 0.5% · ≤ 10 MB package · ≤ 1.5 s |
+| Apple Vision Pro | Current version not measured (history retained) | — | — | — | — | — | ≤ 60 MiB · ≤ 0.5% · ≤ 30 MB package · ≤ 10 s |
 
-<sub>**These numbers were measured on a heavily loaded host**: right before each lane's timed launches the 10-core host's load average was 12.8–14.2 (1 min), 31.9–47.9 (5 min) and 39.6–73.4 (15 min) (the "Host load" column), all above its core count; the measurement gate only requires the 1-minute load to be under 1.5× the cores. Cold launch is the number most sensitive to host load, so the launch times here are likely pessimistic (slow) and should come out lower when re-measured on an idle machine. Measured 2026-10-02; data in `perf/platforms/<platform>.json`. iPhone, iPad, Watch and Vision are Release builds on Xcode simulators, the Mac is a native local Release build; **none of these are real-device numbers, and the package sizes are not App Store slices** (the App Store iPhone size is under "Resource usage" below). Memory is the app process's phys_footprint; CPU is CPU time ÷ wall time over 60 s after a 45 s settle; cold launch is the median time from the launch request to the app's "first data-bearing screen" log (isolated local demo ledger, 5 runs, the first run after install discarded). Simulator launch times swing widely with host load: with memory tight on 2026-10-02, the same code on the iPhone lane measured 1.8–4.1 s at different times. Most of a Vision Pro cold launch is the simulator's own overhead (from process spawn to the app's first log line, plus visionOS scene and RealityKit setup), which stretches past ten seconds on a busy host; the app itself takes about 2 s from fetching the ledger to drawing its first screen.</sub>
+<sub>**These numbers were measured on a heavily loaded host**: right before each lane's timed launches the 10-core host's load average was 4.7–38.8 (1 min), 11.0–27.0 (5 min) and 19.2–36.4 (15 min) (the "Host load" column); some exceed its core count. The measurement gate requires the 1-minute load to be under 1.5× the cores. Cold launch is the number most sensitive to host load, so the launch times here are likely pessimistic (slow) and should come out lower when re-measured on an idle machine. Measured 2026-10-04; data in `perf/platforms/<platform>.json`. iPhone, iPad, Watch and Vision are Release builds on Xcode simulators; the Mac is a native local Release build. **Mobile results are not physical-device measurements, and package sizes are not App Store slices**. This is host-only, excluding WebKit/XPC and system totals. Memory is the app process's phys_footprint in MiB; CPU is CPU time ÷ wall time over 60 s after a 45 s settle; cold launch is the median time from the launch request to the app's "first data-bearing screen" log (isolated local demo ledger, 5 runs, the first run after install discarded). Simulator launch times swing widely with host load: with memory tight on 2026-10-02, the same code on the iPhone lane measured 1.8–4.1 s at different times. Most of a Vision Pro cold launch is the simulator's own overhead (from process spawn to the app's first log line, plus visionOS scene and RealityKit setup), which stretches past ten seconds on a busy host; the app itself takes about 2 s from fetching the ledger to drawing its first screen.</sub>
 <!-- platforms:end -->
 
 ## Availability
 
-Email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. The official build readback on 2026-09-26 identifies version 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
+Email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. The official readback on 2026-10-04 confirms TestFlight 1.0.2 (11) in the populated family internal group; the live App Store version remains 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
@@ -163,7 +163,7 @@ Download size is App Store data; memory, CPU and launch time are iOS Simulator m
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · historical TestFlight build 1.0.1 (8) (current test build: 1.0.2 (10); App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · historical TestFlight build 1.0.1 (8) (current test build: 1.0.2 (11); App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->
 
 

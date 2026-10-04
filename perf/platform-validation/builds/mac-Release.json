@@ -1,0 +1,44 @@
+{
+ "ok": true,
+ "platform": "mac",
+ "configuration": "Release",
+ "scheme": "PointsDeck",
+ "compilation_conditions": [],
+ "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/dd/Build/Products/Release/PointsDeck.app",
+ "bundle_id": "cyou.tianli.pointsdeck",
+ "version": "1.0.2",
+ "build": "9",
+ "executable_sha256": "407b1147a8e7dbf7751933d28d58039a3c5421eab097dc6248629de0b6df415a",
+ "sdk": "macosx27.0",
+ "xcode": {
+  "name": "Xcode.app",
+  "version": "27.0",
+  "build": "27A266a",
+  "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+ },
+ "destination": "platform=macOS,arch=arm64",
+ "signing": "ad-hoc, entitlements stripped, no sandbox, no hardened runtime (local lane build)",
+ "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/build-mac-Release.log",
+ "work_dir": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y",
+ "seconds": 23.3,
+ "generated_info_plists": [
+  {
+   "source_path": "src/Watch/Info.plist",
+   "backup_path": "cache-provenance/xcodegen-info.6hh94eqk/Watch/Info.plist",
+   "sha256": "edffe1cc9c3881a375e5be1ecb97cd9d9ae666acc9bc6d14c0652f3fb215179f",
+   "targets": [
+    "PointsDeckWatch"
+   ],
+   "reason": "XcodeGen target info.path; absent from original sources"
+  },
+  {
+   "source_path": "src/Watch/Widget-Info.plist",
+   "backup_path": "cache-provenance/xcodegen-info.6hh94eqk/Watch/Widget-Info.plist",
+   "sha256": "53e1b982e486c15873df5b577394766be09e775d715becdef03e930dbec350ea",
+   "targets": [
+    "PointsWatchWidget"
+   ],
+   "reason": "XcodeGen target info.path; absent from original sources"
+  }
+ ]
+}

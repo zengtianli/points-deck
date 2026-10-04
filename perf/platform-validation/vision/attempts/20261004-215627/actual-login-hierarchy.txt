@@ -1,0 +1,37 @@
+Application, 0x1123097c0, pid: 31160, label: '成长小金库' <App element pid: 31160>
+  Other, 0x112309900, {{0.0, 0.0}, {1100.0, 760.0}}, identifier: 'cyou.tianli.pointsdeck' <AX element pid: 31160, elementOrHash.elementID: 4375771136.5>
+    Window, 0x112309a40, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4412473344.6>
+      Other, 0x112309b80, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4600164224.9>
+        Other, 0x112309cc0, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4600158464.12>
+    Window (Main), 0x112309e00, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4330193920.4>
+      Other, 0x112309f40, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4393423872.10>
+        Other, 0x11230a080, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4391623424.13>
+          Other, 0x11230a1c0, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4330771456.15>
+            Other, 0x11230a300, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4413844096.16>
+              ScrollView, 0x11230a440, {{0.0, 0.0}, {1100.0, 760.0}} <AX element pid: 31160, elementOrHash.elementID: 4376113152.310>
+                Other, 0x11230b5c0, {{0.0, 0.0}, {1100.0, 904.5}} <AX element pid: 31160, elementOrHash.elementID: 4778837248.311>
+                  Image, 0x11230b700, {{518.0, 57.5}, {64.0, 64.0}}, identifier: 'leaf.circle.fill', label: 'Leaf In A Filled Circle' <AX element pid: 31160, elementOrHash.elementID: 4779923552.313>
+                  StaticText, 0x11230b840, {{481.0, 147.0}, {138.0, 35.0}}, label: '成长小金库' <AX element pid: 31160, elementOrHash.elementID: 4779929152.314>
+                  StaticText, 0x11230b980, {{406.8, 202.0}, {286.5, 20.5}}, label: '记录每一份努力，积攒家庭约定的奖励' <AX element pid: 31160, elementOrHash.elementID: 4779929472.315>
+                  Button, 0x11230bac0, {{354.0, 242.5}, {193.0, 48.0}}, label: '登录方式', Selected <AX element pid: 31160, elementOrHash.elementID: 4779929632.316>
+                  Button, 0x11230bc00, {{553.0, 242.5}, {193.0, 48.0}}, label: '登录方式' <AX element pid: 31160, elementOrHash.elementID: 4779929792.317>
+                  TextField, 0x11230bd40, {{368.0, 324.5}, {364.0, 22.0}}, placeholderValue: '+86 家长手机号' <AX element pid: 31160, elementOrHash.elementID: 4412474624.318>
+                  Button, 0x11230be80, {{354.0, 374.5}, {150.0, 44.0}}, label: '获取短信验证码', Disabled <AX element pid: 31160, elementOrHash.elementID: 4779930112.319>
+                  StaticText, 0x112227d40, {{354.0, 432.5}, {385.5, 34.0}}, label: '+86 家长手机号；短信签名「恒创联众」，有效5分钟。收不到可等待重发或改用邮箱。' <AX element pid: 31160, elementOrHash.elementID: 4779930272.320>
+                  Button, 0x1122c2800, {{354.0, 478.5}, {392.0, 44.0}}, label: '号码长期未用／登录环境变化时补充验证' <AX element pid: 31160, elementOrHash.elementID: 4779930752.321>
+                    StaticText, 0x1122c2e40, {{354.0, 478.5}, {392.0, 44.0}}, label: '号码长期未用／登录环境变化时补充验证' <AX element pid: 31160, elementOrHash.elementID: 4779930432.329>
+                    Image, 0x1122c2f80, {{719.5, 492.5}, {9.5, 16.5}}, identifier: 'collapsed' <AX element pid: 31160, elementOrHash.elementID: 4779930592.330>
+                  Button, 0x1122c3200, {{500.5, 546.5}, {99.5, 44.0}}, label: '进入账本', Disabled <AX element pid: 31160, elementOrHash.elementID: 4779930912.322>
+                  Button, 0x1122c3340, {{458.0, 616.5}, {184.0, 44.0}}, label: '没有账号？注册账号' <AX element pid: 31160, elementOrHash.elementID: 4779931072.323>
+                  Button, 0x1122c3480, {{500.5, 684.5}, {99.5, 44.0}}, label: '忘记密码' <AX element pid: 31160, elementOrHash.elementID: 4779931232.324>
+                  Button, 0x1122c35c0, {{458.0, 752.5}, {184.0, 44.0}}, label: '隐私政策与使用约定' <AX element pid: 31160, elementOrHash.elementID: 4779931392.325>
+                  StaticText, 0x1122c3700, {{356.5, 818.5}, {387.0, 34.0}}, label: '原账号和原密码可继续登录。短信暂不可用或其他地区可使用邮箱注册与密码登录。' <AX element pid: 31160, elementOrHash.elementID: 4779931552.326>
+                Other, 0x1122c3840, {{1085.0, 0.0}, {12.0, 714.0}}, identifier: 'WolfScrollIndicatorVertical' <AX element pid: 31160, elementOrHash.elementID: 4779481344.312>
+                  Other, 0x1122c3980, {{1085.0, 0.0}, {12.0, 714.0}} <AX element pid: 31160, elementOrHash.elementID: 4779483904.327>
+                    Other, 0x1122c3ac0, {{1085.0, 309.0}, {12.0, 96.0}} <AX element pid: 31160, elementOrHash.elementID: 4779518464.331>
+                      Other, 0x1122c3c00, {{1088.0, 312.0}, {6.0, 75.5}} <AX element pid: 31160, elementOrHash.elementID: 4779483264.332>
+                  Other, 0x1122c3d40, {{1075.0, 299.0}, {32.0, 116.0}} <AX element pid: 31160, elementOrHash.elementID: 4779480704.328>
+    Window, 0x1122c3e80, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4598770176.7>
+      Other, 0x1122c30c0, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4600166144.11>
+        Other, 0x1122c2080, {{0.0, 0.0}, {1500.0, 1292.0}} <AX element pid: 31160, elementOrHash.elementID: 4412839552.14>
+    Other, 0x1122c21c0, {{0.0, 0.0}, {50.0, 50.0}} <AX element pid: 31160, elementOrHash.elementID: 4749466240.8>

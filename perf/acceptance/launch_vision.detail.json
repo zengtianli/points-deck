@@ -1,17 +1,18 @@
 {
-  "summary": "Apple Vision Pro 模拟器 Apple Vision Pro 启动冒烟通过：os_log 7.694 s，截图 3840×2160",
+  "summary": "Apple Vision Pro 模拟器 Apple Vision Pro 启动冒烟通过：os_log 3.799 s，截图 3840×2160",
   "passed": true,
   "platform": "vision",
   "environment": "simulator",
   "scheme": "PointsDeck",
   "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
-  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "method": "核验仓外构建回执与当前源码、产物及工具链后复用；沿共享 sim_lane 静默启动并截图，不抢焦点",
   "build": {
-    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.jpmuynxd/dd/Build/Products/Debug-xrsimulator/PointsDeck.app",
+    "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.87f887a88839dfde5da3ffbdb87bf05760205da33c75e0f9fbb2358c4099e09c/sim-lane-build.yuru55su/dd/Build/Products/Release-xrsimulator/PointsDeck.app",
     "bundle_id": "cyou.tianli.pointsdeck",
-    "version": "1.0.1",
-    "build": "1",
-    "executable_sha256": "9cbfa452f56e1e4b2aaa52fb96bdc6e9184adced8f70289c24a1403429f004ef",
+    "version": "1.0.2",
+    "build": "9",
+    "configuration": "Release",
+    "executable_sha256": "e2cfd2ccefe11d816f2f2634f7e8de899dd2d3917971d5360b6d7d393c2df6b0",
     "sdk": "xrsimulator27.0",
     "xcode": {
       "name": "Xcode.app",
@@ -19,7 +20,14 @@
       "build": "27A266a",
       "developer_dir": "/Applications/Xcode.app/Contents/Developer"
     },
-    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.jpmuynxd/build-vision-Debug.log"
+    "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.87f887a88839dfde5da3ffbdb87bf05760205da33c75e0f9fbb2358c4099e09c/sim-lane-build.yuru55su/build-vision-Release.log",
+    "reuse": {
+      "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.87f887a88839dfde5da3ffbdb87bf05760205da33c75e0f9fbb2358c4099e09c/sim-lane-build.yuru55su/build.json",
+      "receipt_sha256": "9ba400431a720f9e6c4118d09285ae6a526905176b4574bce26887a99c1b1c18",
+      "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.87f887a88839dfde5da3ffbdb87bf05760205da33c75e0f9fbb2358c4099e09c/sim-lane-build.yuru55su/src",
+      "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+      "source_file_count": 79
+    }
   },
   "device": {
     "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF",
@@ -29,16 +37,20 @@
   },
   "launch_args": [
     "-api_base",
-    "http://127.0.0.1:58152",
+    "http://127.0.0.1:54844",
     "-dev_user",
     "xiaoman",
     "-dev_pw",
     "<redacted>"
   ],
+  "waits": {
+    "lock_seconds": 300,
+    "load_seconds": 300
+  },
   "run": {
     "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF",
-    "pid": 49995,
-    "ready_seconds": 7.694,
+    "pid": 54623,
+    "ready_seconds": 3.799,
     "ready_signal": "os_log",
     "size": [
       3840,
@@ -51,9 +63,11 @@
     "non_blank": true,
     "changed_from_baseline": true,
     "stable": true,
-    "diff_baseline": 0.1538,
-    "diff_prev": 0.0
+    "diff_baseline": 0.1431,
+    "diff_prev": 0.00042
   },
   "screenshot": "perf/platforms/vision/launch.png",
-  "screenshot_sha256": "e4545d69f3682e6a9cb13262bb2c12e5cfc9f5865f6f436e3ba87701d057f7de"
+  "screenshot_sha256": "47cb6de02bca008cbc30cbfb4a41c86759a4c2bd8dbcec89ebe0dd7fc663920d",
+  "capture_reusable": false,
+  "capture_note": "启动参数含敏感值，本次不导出可复用运行原件"
 }

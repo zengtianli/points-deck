@@ -1,0 +1,8 @@
+{
+  "ok": false,
+  "source_commit": "1502eab",
+  "scope": "new item saves, stored-session reopen and actual window scrolling passed; password-mode option could not be found by its name",
+  "failure": "both native login choices were named 登录方式 in actual AX hierarchy",
+  "fixed_by": "39ea345",
+  "original_xcresult": "/private/tmp/points-other-platforms/vision-ui/attempts/20261004-220301/ui.xcresult"
+}

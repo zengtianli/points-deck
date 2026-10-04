@@ -1,0 +1,1160 @@
+{
+ "ok": true,
+ "scope": "actual current Mac Release bundled treasury version/state/config against isolated actual HTTP backend",
+ "cli_sha256": "64755cfe7c4205452826f943cc3ae6c46c14c5941042750f612fa1ae2d0430fc",
+ "matches_production_cli": true,
+ "artifact": "/Users/tianli/Apps/edu/ios/points/01-源程序/build/accept/mac/Growth Treasury.app",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "records": [
+  {
+   "command": "version",
+   "returncode": 0,
+   "response": {
+    "ok": true,
+    "cli": "1.3",
+    "app": {
+     "bundle_id": "cyou.tianli.pointsdeck",
+     "version": "1.0.2",
+     "build": "9",
+     "path": "/Users/tianli/Apps/edu/ios/points/01-源程序/build/accept/mac/Growth Treasury.app"
+    },
+    "api": "http://127.0.0.1:60348",
+    "server": {
+     "reachable": true,
+     "ms": 11
+    }
+   }
+  },
+  {
+   "command": "state",
+   "returncode": 0,
+   "response": {
+    "ok": true,
+    "user": "xiaoman",
+    "nick": "小满",
+    "balance": 1133,
+    "yuan": 11.33,
+    "house": {
+     "tier": 2,
+     "name": "小木屋",
+     "era": "cottage",
+     "at": 600,
+     "top": 10,
+     "next": {
+      "name": "砖瓦房",
+      "at": 1200,
+      "bonus": 100,
+      "unlock": [
+       "sh-pick"
+      ],
+      "points_to_go": 67
+     }
+    },
+    "tv": 0,
+    "wish": 0,
+    "practice_left": 30,
+    "has_parent": false,
+    "today": "2026-10-04",
+    "entries_total": 162
+   }
+  },
+  {
+   "command": "config",
+   "returncode": 0,
+   "response": {
+    "ok": true,
+    "scope": "account",
+    "server_scoped": true,
+    "subjects": [
+     {
+      "k": "chinese",
+      "name": "语文",
+      "icon": "📖",
+      "color": "#c0392b"
+     },
+     {
+      "k": "math",
+      "name": "数学",
+      "icon": "🔢",
+      "color": "#2563eb"
+     },
+     {
+      "k": "english",
+      "name": "英语",
+      "icon": "🔤",
+      "color": "#7c3aed"
+     },
+     {
+      "k": "science",
+      "name": "科学",
+      "icon": "🔬",
+      "color": "#0891b2"
+     },
+     {
+      "k": "pe",
+      "name": "体育",
+      "icon": "⚽",
+      "color": "#059669"
+     },
+     {
+      "k": "trumpet",
+      "name": "小号",
+      "icon": "🎺",
+      "color": "#d97706"
+     },
+     {
+      "k": "morals",
+      "name": "道法品德",
+      "icon": "💎",
+      "color": "#db2777"
+     },
+     {
+      "k": "chores",
+      "name": "劳动",
+      "icon": "🧹",
+      "color": "#65a30d"
+     },
+     {
+      "k": "daily",
+      "name": "日常",
+      "icon": "⏰",
+      "color": "#64748b"
+     },
+     {
+      "k": "special",
+      "name": "爸爸特别奖励",
+      "icon": "🎖️",
+      "color": "#e11d48"
+     },
+     {
+      "k": "practice",
+      "name": "刷题",
+      "icon": "✏️",
+      "color": "#4f46e5"
+     }
+    ],
+    "rules": [
+     {
+      "kind": "fixed",
+      "label": "听写全对一次",
+      "subject": "chinese",
+      "id": "cn-dict-all",
+      "pts": 10
+     },
+     {
+      "kind": "per",
+      "pts": -1,
+      "subject": "chinese",
+      "label": "听写错字",
+      "hint": "错了几个字",
+      "unit": "个",
+      "id": "cn-dict-wrong"
+     },
+     {
+      "subject": "chinese",
+      "label": "作业 A+3 星",
+      "pts": 10,
+      "kind": "fixed",
+      "id": "cn-hw-3star"
+     },
+     {
+      "label": "作业 A+2 星",
+      "id": "cn-hw-2star",
+      "pts": 5,
+      "kind": "fixed",
+      "subject": "chinese"
+     },
+     {
+      "kind": "fixed",
+      "id": "cn-unit-all",
+      "subject": "chinese",
+      "pts": 20,
+      "label": "单元注音、写词语全对"
+     },
+     {
+      "id": "cn-unit-wrong",
+      "label": "单元注音、写词语错字",
+      "kind": "per",
+      "pts": -1,
+      "hint": "错了几个",
+      "subject": "chinese",
+      "unit": "个"
+     },
+     {
+      "label": "得赞 / 被表扬一次",
+      "subject": "chinese",
+      "pts": 10,
+      "id": "cn-praise",
+      "kind": "fixed"
+     },
+     {
+      "calc": "exam_cn",
+      "label": "单元以上考试（基础/阅读/作文）",
+      "subject": "chinese",
+      "id": "cn-exam",
+      "note": "原表写的是「扣 1 分奖 50、扣 2 分奖 30、扣 3 分奖 10」，按满分 100 换算成绝对分数 99/98/97",
+      "kind": "calc"
+     },
+     {
+      "min": 5,
+      "max": 10,
+      "id": "cn-bookclub",
+      "kind": "range",
+      "subject": "chinese",
+      "label": "聊书吧老师表扬一次"
+     },
+     {
+      "subject": "chinese",
+      "id": "cn-newword",
+      "unit": "个",
+      "label": "认识课外生字（会读写组词）",
+      "pts": 3,
+      "hint": "两个字算一次的话填 2",
+      "kind": "per"
+     },
+     {
+      "unit": "个字",
+      "kind": "tv",
+      "per": 2,
+      "subject": "chinese",
+      "id": "cn-newword-tv",
+      "label": "学会生字换电视时间",
+      "tv": 1
+     },
+     {
+      "label": "自觉完成学霸一课",
+      "subject": "chinese",
+      "pts": 50,
+      "kind": "fixed",
+      "id": "cn-xueba"
+     },
+     {
+      "label": "学霸一课全对",
+      "subject": "chinese",
+      "id": "cn-xueba-all",
+      "pts": 100,
+      "kind": "fixed"
+     },
+     {
+      "id": "cn-recite",
+      "max": 50,
+      "min": 10,
+      "kind": "range",
+      "subject": "chinese",
+      "label": "诗歌小古文背诵并理解"
+     },
+     {
+      "id": "cn-read-ontime",
+      "label": "约定时间内读完一篇",
+      "kind": "fixed",
+      "subject": "chinese",
+      "pts": 6
+     },
+     {
+      "kind": "fixed",
+      "subject": "chinese",
+      "id": "cn-read-all",
+      "pts": 100,
+      "label": "阅读题全对"
+     },
+     {
+      "label": "作文 300 字以内",
+      "kind": "range",
+      "note": "原表就是 2-10 分自己定，不按字数折算",
+      "max": 10,
+      "subject": "chinese",
+      "id": "cn-essay-short",
+      "min": 2
+     },
+     {
+      "kind": "calc",
+      "calc": "essay",
+      "label": "作文 300 字以上",
+      "subject": "chinese",
+      "id": "cn-essay-long"
+     },
+     {
+      "cur": "tv",
+      "kind": "range",
+      "label": "作文改奖影视时间",
+      "id": "cn-essay-tv",
+      "min": 1,
+      "note": "原表写「或者相应奖励看影视时间」，但没给换算率 —— 分钟数自己定",
+      "subject": "chinese",
+      "max": 60
+     },
+     {
+      "pts": 0,
+      "note": "不加分，记一次心愿",
+      "id": "cn-wish",
+      "kind": "fixed",
+      "wish": true,
+      "subject": "chinese",
+      "label": "总分 93 以上 · 满足心愿一个"
+     },
+     {
+      "id": "cn-repeat-err",
+      "kind": "per",
+      "unit": "个",
+      "hint": "重复错了几个",
+      "pts": -2,
+      "subject": "chinese",
+      "label": "字词重复错误"
+     },
+     {
+      "note": "周末可以弥补的除外",
+      "id": "cn-hw-undone",
+      "subject": "chinese",
+      "label": "作业未完成",
+      "kind": "fixed",
+      "pts": -10
+     },
+     {
+      "subject": "chinese",
+      "pts": -10,
+      "id": "cn-lose-like",
+      "label": "被老师扣 1 赞",
+      "kind": "fixed"
+     },
+     {
+      "label": "被老师批评一次",
+      "kind": "fixed",
+      "id": "cn-scolded",
+      "subject": "chinese",
+      "pts": -10
+     },
+     {
+      "kind": "fixed",
+      "label": "约定做法忘记",
+      "id": "cn-forget",
+      "subject": "chinese",
+      "pts": -2
+     },
+     {
+      "subject": "chinese",
+      "id": "cn-argue",
+      "pts": -5,
+      "kind": "fixed",
+      "label": "作业订正狡辩 / 无理辩解"
+     },
+     {
+      "subject": "chinese",
+      "label": "漏一题",
+      "pts": -5,
+      "kind": "per",
+      "hint": "漏了几题",
+      "id": "cn-miss-q",
+      "unit": "题"
+     },
+     {
+      "min": -100,
+      "label": "没有完成基本卷面",
+      "note": "原表只写「扣 10 分以上」，没给上限 —— -100 是我们定的操作上限",
+      "kind": "range",
+      "max": -10,
+      "subject": "chinese",
+      "id": "cn-bad-paper"
+     },
+     {
+      "pts": 3,
+      "subject": "math",
+      "id": "ma-oral-all",
+      "kind": "fixed",
+      "label": "口算每次全对"
+     },
+     {
+      "unit": "页",
+      "label": "练习手册 / 课堂作业每页全对",
+      "hint": "几页全对",
+      "id": "ma-page-all",
+      "kind": "per",
+      "subject": "math",
+      "pts": 3
+     },
+     {
+      "subject": "math",
+      "id": "ma-excellent",
+      "label": "被老师评为优",
+      "pts": 5,
+      "kind": "fixed"
+     },
+     {
+      "kind": "fixed",
+      "id": "ma-quiz85",
+      "label": "小练习卷 85 分以上",
+      "pts": 5,
+      "subject": "math"
+     },
+     {
+      "pts": 10,
+      "kind": "fixed",
+      "subject": "math",
+      "id": "ma-exam85",
+      "label": "单元 / 期中 / 期末 85 分以上"
+     },
+     {
+      "subject": "math",
+      "label": "被江老师点赞",
+      "id": "ma-like",
+      "pts": 5,
+      "kind": "fixed"
+     },
+     {
+      "calc": "improve3",
+      "kind": "calc",
+      "label": "比上次每增加 3 分",
+      "subject": "math",
+      "id": "ma-improve"
+     },
+     {
+      "kind": "fixed",
+      "pts": 15,
+      "label": "拍照表扬一次",
+      "subject": "math",
+      "id": "ma-photo"
+     },
+     {
+      "kind": "fixed",
+      "subject": "math",
+      "label": "额外完成一张口算并全对",
+      "pts": 5,
+      "id": "ma-extra-oral"
+     },
+     {
+      "id": "ma-extra-paper",
+      "subject": "math",
+      "label": "自主完成提优卷且 90 分以上",
+      "pts": 10,
+      "kind": "fixed"
+     },
+     {
+      "label": "作业未完成 / 上课不认真被点名",
+      "pts": -10,
+      "subject": "math",
+      "id": "ma-called-out",
+      "kind": "fixed"
+     },
+     {
+      "subject": "math",
+      "pts": -5,
+      "id": "ma-argue",
+      "kind": "fixed",
+      "label": "作业订正狡辩 / 无理辩解"
+     },
+     {
+      "id": "ma-fail",
+      "kind": "fixed",
+      "subject": "math",
+      "pts": -5,
+      "label": "75 分以下或一半没做完"
+     },
+     {
+      "kind": "fixed",
+      "pts": 5,
+      "id": "en-praise",
+      "note": "重复不算",
+      "subject": "english",
+      "label": "英语课堂得赞 / 表扬一次"
+     },
+     {
+      "max": 10,
+      "id": "en-class-good",
+      "subject": "english",
+      "label": "E 伴学正课状态好",
+      "kind": "range",
+      "min": 5
+     },
+     {
+      "kind": "fixed",
+      "label": "E 伴学抗遗忘全对",
+      "subject": "english",
+      "pts": 5,
+      "id": "en-review-all"
+     },
+     {
+      "hint": "几个词",
+      "subject": "english",
+      "label": "流利读出并翻译新单词",
+      "id": "en-newword",
+      "pts": 3,
+      "unit": "个",
+      "kind": "per"
+     },
+     {
+      "label": "认识单词换电视时间",
+      "per": 3,
+      "subject": "english",
+      "unit": "个词",
+      "kind": "tv",
+      "tv": 1,
+      "id": "en-newword-tv"
+     },
+     {
+      "hint": "几个词",
+      "kind": "per",
+      "subject": "english",
+      "id": "en-spell",
+      "unit": "个",
+      "pts": 2,
+      "label": "在会读基础上还能默写"
+     },
+     {
+      "note": "重复不算",
+      "pts": 10,
+      "label": "学会日常用语并会用",
+      "kind": "fixed",
+      "subject": "english",
+      "id": "en-phrase"
+     },
+     {
+      "pts": -2,
+      "id": "en-forget",
+      "unit": "个",
+      "kind": "per",
+      "label": "抗遗忘第五轮：重复错 / 忘读音或中文",
+      "subject": "english",
+      "hint": "几个词"
+     },
+     {
+      "subject": "english",
+      "id": "en-argue",
+      "kind": "fixed",
+      "pts": -5,
+      "label": "作业订正狡辩 / 无理辩解"
+     },
+     {
+      "subject": "pe",
+      "kind": "calc",
+      "id": "pe-rope",
+      "label": "跳绳",
+      "calc": "rope"
+     },
+     {
+      "kind": "calc",
+      "id": "pe-situp",
+      "calc": "situp",
+      "subject": "pe",
+      "label": "仰卧起坐"
+     },
+     {
+      "id": "pe-badminton",
+      "kind": "fixed",
+      "pts": 7,
+      "subject": "pe",
+      "label": "羽毛球练习 20 分钟以上"
+     },
+     {
+      "kind": "fixed",
+      "id": "pe-praised",
+      "pts": 10,
+      "label": "被老师 / 他人表扬",
+      "subject": "pe"
+     },
+     {
+      "kind": "fixed",
+      "id": "pe-run",
+      "pts": 20,
+      "subject": "pe",
+      "label": "晨跑 / 夜跑半小时以上"
+     },
+     {
+      "kind": "range",
+      "min": 5,
+      "subject": "pe",
+      "max": 20,
+      "label": "其他运动酌情",
+      "id": "pe-other"
+     },
+     {
+      "subject": "pe",
+      "id": "pe-skip-day",
+      "note": "周末可以弥补的除外",
+      "kind": "fixed",
+      "pts": -10,
+      "label": "漏一天锻炼"
+     },
+     {
+      "label": "被老师批评 / 扣 1 赞",
+      "pts": -10,
+      "kind": "fixed",
+      "id": "pe-scolded",
+      "subject": "pe"
+     },
+     {
+      "id": "tr-full",
+      "kind": "fixed",
+      "label": "全套吹完无明显瑕疵",
+      "pts": 5,
+      "subject": "trumpet"
+     },
+     {
+      "pts": 10,
+      "subject": "trumpet",
+      "kind": "fixed",
+      "id": "tr-video",
+      "label": "小号视频获老师表扬一次"
+     },
+     {
+      "id": "tr-perform",
+      "kind": "fixed",
+      "pts": 20,
+      "subject": "trumpet",
+      "label": "主动为亲朋好友表演获好评"
+     },
+     {
+      "id": "tr-show",
+      "kind": "fixed",
+      "label": "参加演出一次",
+      "pts": 100,
+      "subject": "trumpet"
+     },
+     {
+      "note": "经人肯定后算，两次以后不再累加",
+      "pts": 1,
+      "subject": "morals",
+      "label": "说有道理 / 上进的金句",
+      "kind": "fixed",
+      "id": "mo-goodword"
+     },
+     {
+      "id": "mo-praised",
+      "min": 5,
+      "subject": "morals",
+      "kind": "range",
+      "max": 10,
+      "label": "亲戚朋友邻居夸奖（有具体事项）"
+     },
+     {
+      "kind": "range",
+      "id": "mo-activity",
+      "min": 5,
+      "label": "积极参加校内外活动",
+      "subject": "morals",
+      "max": 20
+     },
+     {
+      "kind": "range",
+      "subject": "morals",
+      "min": 50,
+      "id": "mo-rank",
+      "max": 200,
+      "label": "活动获得名次"
+     },
+     {
+      "pts": -10,
+      "kind": "fixed",
+      "note": "不认真听课、随便讲话、队列不整齐等",
+      "subject": "morals",
+      "label": "违反课堂纪律被批评 / 扣 1 赞",
+      "id": "mo-discipline"
+     },
+     {
+      "subject": "morals",
+      "kind": "fixed",
+      "label": "剩饭菜 / 值日不负责被批评",
+      "pts": -10,
+      "id": "mo-duty"
+     },
+     {
+      "label": "忘带书籍 / 文体用具被批评",
+      "subject": "morals",
+      "id": "mo-forget-item",
+      "kind": "fixed",
+      "pts": -5
+     },
+     {
+      "id": "ch-dish-self",
+      "label": "洗自己碗筷一次",
+      "pts": 2,
+      "kind": "fixed",
+      "subject": "chores"
+     },
+     {
+      "subject": "chores",
+      "id": "ch-dish-all",
+      "pts": 10,
+      "kind": "fixed",
+      "label": "洗全家碗筷"
+     },
+     {
+      "id": "ch-sweep",
+      "kind": "range",
+      "min": 2,
+      "subject": "chores",
+      "max": 10,
+      "label": "扫地一次"
+     },
+     {
+      "subject": "chores",
+      "kind": "fixed",
+      "label": "扔垃圾一次",
+      "id": "ch-trash",
+      "pts": 1
+     },
+     {
+      "subject": "chores",
+      "id": "ch-desk",
+      "kind": "fixed",
+      "pts": 1,
+      "label": "整理书桌"
+     },
+     {
+      "min": 2,
+      "max": 10,
+      "id": "ch-wash",
+      "label": "洗袜子 / 短裤 / 衣服",
+      "kind": "range",
+      "subject": "chores"
+     },
+     {
+      "id": "ch-bed",
+      "kind": "range",
+      "subject": "chores",
+      "min": 2,
+      "label": "叠被子 / 整理床铺",
+      "max": 5
+     },
+     {
+      "max": 10,
+      "subject": "chores",
+      "min": 2,
+      "label": "主动帮忙洗菜 / 烧菜",
+      "kind": "range",
+      "id": "ch-cook"
+     },
+     {
+      "label": "其他家务酌情",
+      "min": 1,
+      "note": "原表只写「酌情加分」没给数值，这个范围是我们定的",
+      "max": 20,
+      "kind": "range",
+      "subject": "chores",
+      "id": "ch-other"
+     },
+     {
+      "label": "提醒后不干力所能及的家务",
+      "pts": -1,
+      "kind": "fixed",
+      "id": "ch-refuse",
+      "subject": "chores"
+     },
+     {
+      "label": "讲废话，提醒后仍不改",
+      "subject": "daily",
+      "pts": -5,
+      "kind": "fixed",
+      "id": "da-nonsense"
+     },
+     {
+      "label": "故意拖延，提醒后不改",
+      "note": "做作业、收拾书包、吃饭、洗澡、锻炼、吹小号等",
+      "kind": "range",
+      "id": "da-delay",
+      "min": -20,
+      "max": -2,
+      "subject": "daily"
+     },
+     {
+      "tv": -1,
+      "unit": "分钟",
+      "note": "原表这句写在语文行末尾（「每拖延2分钟减少1分钟影视时间」），按事情性质归到日常",
+      "per": 2,
+      "kind": "tv",
+      "subject": "daily",
+      "id": "da-delay-tv",
+      "hint": "拖延了几分钟",
+      "label": "拖延扣影视时间"
+     },
+     {
+      "note": "原表只有「爸爸特别奖励」这六个字，没给分值 —— 1~500 是我们定的操作范围",
+      "subject": "special",
+      "id": "sp-bonus",
+      "min": 1,
+      "kind": "range",
+      "label": "爸爸特别奖励",
+      "max": 500
+     },
+     {
+      "archived": false,
+      "subject": "chinese",
+      "color": "mint",
+      "description": "",
+      "pts": 7,
+      "kind": "fixed",
+      "label": "QA-Points-Project",
+      "icon": "star.fill",
+      "id": "custom-7d5049f0-f008-48c0-b524-1e2852e44208",
+      "requires_tier": false
+     }
+    ],
+    "shop": [
+     {
+      "id": "sh-icecream",
+      "pts": 200,
+      "icon": "🍦",
+      "label": "一个冰淇淋"
+     },
+     {
+      "id": "sh-anime",
+      "label": "多看一集动画",
+      "pts": 150,
+      "icon": "📺"
+     },
+     {
+      "label": "多玩 30 分钟",
+      "icon": "🎮",
+      "pts": 300,
+      "id": "sh-game30"
+     },
+     {
+      "label": "周末晚睡半小时",
+      "id": "sh-late",
+      "icon": "🌙",
+      "pts": 250
+     },
+     {
+      "label": "今晚吃什么我说了算",
+      "icon": "🍜",
+      "pts": 400,
+      "id": "sh-pick"
+     },
+     {
+      "id": "sh-wish",
+      "icon": "🌠",
+      "pts": 1500,
+      "label": "满足一个心愿"
+     },
+     {
+      "id": "sh-park",
+      "pts": 800,
+      "label": "周末去公园 / 游乐场",
+      "icon": "🎡"
+     },
+     {
+      "label": "买一本自己挑的书",
+      "icon": "📕",
+      "id": "sh-book",
+      "pts": 1000
+     },
+     {
+      "pts": 1000,
+      "id": "sh-cash10",
+      "label": "现金 10 元",
+      "icon": "💰"
+     },
+     {
+      "pts": 5000,
+      "label": "现金 50 元",
+      "icon": "💴",
+      "id": "sh-cash50"
+     },
+     {
+      "icon": "🎁",
+      "label": "一个大玩具",
+      "id": "sh-toy",
+      "pts": 6000
+     },
+     {
+      "icon": "🚄",
+      "id": "sh-trip",
+      "pts": 20000,
+      "label": "一次短途旅行"
+     },
+     {
+      "kind": "fixed",
+      "requires_tier": false,
+      "color": "mint",
+      "pts": 4,
+      "id": "custom-cc2c455e-9cf2-4e4e-a7ad-981e9e437f60",
+      "archived": false,
+      "description": "",
+      "icon": "gift.fill",
+      "label": "QA-Points-Reward",
+      "subject": "chinese"
+     }
+    ],
+    "calcs": {
+     "rope": {
+      "label": "跳绳",
+      "doc": "表里的原档位，不重复累计 —— 从高到低第一个符合的生效。",
+      "inputs": [
+       {
+        "k": "g",
+        "label": "跳了几组",
+        "hint": "3"
+       },
+       {
+        "k": "n",
+        "label": "每分钟个数",
+        "hint": "190"
+       }
+      ],
+      "tiers": [
+       {
+        "if": "n>=190 && g>=3",
+        "pts": 120,
+        "why": "3 组 190 个以上"
+       },
+       {
+        "if": "n>=190 && g>=2",
+        "pts": 100,
+        "why": "2 组 190 个"
+       },
+       {
+        "if": "n>=190 && g>=1",
+        "pts": 80,
+        "why": "1 组 190 个"
+       },
+       {
+        "if": "n>=180 && g>=3",
+        "pts": 50,
+        "why": "3 组 180 个以上"
+       },
+       {
+        "if": "n>=180 && g>=2",
+        "pts": 30,
+        "why": "2 组 180 个"
+       },
+       {
+        "if": "n>=180 && g>=1",
+        "pts": 10,
+        "why": "1 组 180 个"
+       },
+       {
+        "if": "n>=170 && g>=3",
+        "pts": 5,
+        "why": "3 组 170 个以上"
+       }
+      ],
+      "else": {
+       "pts": 0,
+       "why": "没到 3 组 170 个的最低档"
+      }
+     },
+     "situp": {
+      "label": "仰卧起坐",
+      "doc": "48 个/分以上 15 分，之后每多 5 个再加 1 分。",
+      "inputs": [
+       {
+        "k": "n",
+        "label": "每分钟个数",
+        "hint": "48"
+       }
+      ],
+      "tiers": [
+       {
+        "if": "n>=48",
+        "pts": "15 + floor((n - 48) / 5)",
+        "why": "48 个以上，每多 5 个再 +1"
+       }
+      ],
+      "else": {
+       "pts": 0,
+       "why": "没到 48 个/分"
+      }
+     },
+     "exam_cn": {
+      "label": "语文单元以上考试",
+      "doc": "满分 100 分；扣 1 分奖 50，扣 2 分奖 30，扣 3 分奖 10；85 分以下少一分扣 5 分。",
+      "inputs": [
+       {
+        "k": "s",
+        "label": "考了多少分",
+        "hint": "98"
+       }
+      ],
+      "tiers": [
+       {
+        "if": "s>=100",
+        "pts": 100,
+        "why": "满分"
+       },
+       {
+        "if": "s>=99",
+        "pts": 50,
+        "why": "扣 1 分"
+       },
+       {
+        "if": "s>=98",
+        "pts": 30,
+        "why": "扣 2 分"
+       },
+       {
+        "if": "s>=97",
+        "pts": 10,
+        "why": "扣 3 分"
+       },
+       {
+        "if": "s>=85",
+        "pts": 0,
+        "why": "85 分以上，不奖不罚"
+       }
+      ],
+      "else": {
+       "pts": "-5 * (85 - s)",
+       "why": "85 分以下，少一分扣 5 分"
+      }
+     },
+     "improve3": {
+      "label": "数学比上次进步",
+      "doc": "每增加 3 分奖励 5 分。",
+      "inputs": [
+       {
+        "k": "now",
+        "label": "这次分数",
+        "hint": "92"
+       },
+       {
+        "k": "last",
+        "label": "上次分数",
+        "hint": "86"
+       }
+      ],
+      "tiers": [
+       {
+        "if": "now>last",
+        "pts": "5 * floor((now - last) / 3)",
+        "why": "每进步 3 分 +5"
+       }
+      ],
+      "else": {
+       "pts": 0,
+       "why": "没有比上次高"
+      }
+     },
+     "essay": {
+      "label": "作文 300 字以上",
+      "doc": "300 字以上 20 分，400 字以上 30 分，以此类推每 100 字 +10。300 字以内是 2-10 分家长自己定（另一条规则）。",
+      "inputs": [
+       {
+        "k": "w",
+        "label": "写了多少字",
+        "hint": "350"
+       }
+      ],
+      "tiers": [
+       {
+        "if": "w>=300",
+        "pts": "20 + 10 * floor((w - 300) / 100)",
+        "why": "300 字 20 分，之后每 100 字 +10"
+       }
+      ],
+      "else": {
+       "pts": 0,
+       "why": "不到 300 字 —— 用「作文 300 字以内」那条，2-10 分自己定"
+      }
+     }
+    },
+    "tiers": [
+     {
+      "at": 0,
+      "name": "破帐篷",
+      "era": "slum",
+      "bonus": 0,
+      "unlock": [
+       "sh-icecream",
+       "sh-anime"
+      ]
+     },
+     {
+      "at": 200,
+      "name": "茅草屋",
+      "era": "slum",
+      "bonus": 20,
+      "unlock": [
+       "sh-game30"
+      ]
+     },
+     {
+      "at": 600,
+      "name": "小木屋",
+      "era": "cottage",
+      "bonus": 50,
+      "unlock": [
+       "sh-late"
+      ]
+     },
+     {
+      "at": 1200,
+      "name": "砖瓦房",
+      "era": "cottage",
+      "bonus": 100,
+      "unlock": [
+       "sh-pick"
+      ]
+     },
+     {
+      "at": 2500,
+      "name": "温馨小院",
+      "era": "garden",
+      "bonus": 150,
+      "unlock": [
+       "sh-wish"
+      ]
+     },
+     {
+      "at": 4500,
+      "name": "二层小楼",
+      "era": "garden",
+      "bonus": 200,
+      "unlock": [
+       "sh-park"
+      ]
+     },
+     {
+      "at": 8000,
+      "name": "花园洋房",
+      "era": "garden",
+      "bonus": 300,
+      "unlock": [
+       "sh-book",
+       "sh-cash10"
+      ]
+     },
+     {
+      "at": 14000,
+      "name": "豪华别墅",
+      "era": "manor",
+      "bonus": 500,
+      "unlock": [
+       "sh-cash50"
+      ]
+     },
+     {
+      "at": 25000,
+      "name": "雄伟城堡",
+      "era": "manor",
+      "bonus": 800,
+      "unlock": [
+       "sh-toy"
+      ]
+     },
+     {
+      "at": 40000,
+      "name": "金碧辉煌宫殿",
+      "era": "golden",
+      "bonus": 1500,
+      "unlock": [
+       "sh-trip"
+      ]
+     },
+     {
+      "at": 65000,
+      "name": "云端天堂",
+      "era": "golden",
+      "bonus": 3000,
+      "unlock": []
+     }
+    ],
+    "eras": {
+     "slum": "贫民窟",
+     "cottage": "普通人家",
+     "garden": "小康之家",
+     "manor": "豪宅",
+     "golden": "金碧辉煌"
+    },
+    "revision": "962724db66f94b21b81d67f1858b941b0bff7f438f5da32a81f2a7791c87b487"
+   }
+  }
+ ]
+}

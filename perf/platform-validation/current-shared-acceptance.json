@@ -1,0 +1,71 @@
+{
+  "ok": true,
+  "observations": [
+    {
+      "check": "functionality",
+      "status": "passed",
+      "input_sha256": "23cfa2629d01cc6f8461d45a027ff5e3353690e3b3017097da70113928408c80",
+      "original": "perf/acceptance/functionality.json",
+      "sha256": "1bfb2bea6b459942d3fe2dbcfec59386b7bc81db709fc2eb69326a85e5fe9ad9",
+      "finished_at": "2026-10-04T22:32:08.276532+08:00",
+      "detail": {
+        "summary": "功能：生产 Swift 客户端对本地真实账本服务 9 项通过",
+        "passed": true,
+        "steps": [
+          "登录并读取首屏：余额 1000、小木屋、流水 80 条、阶梯 11 档",
+          "服务端预览「听写全对一次」= 10 pts",
+          "登录后直接记一笔：余额 1000 → 1010",
+          "撤销最近一笔：余额回到 1000",
+          "兑换已解锁商品「多看一集动画」扣 150 分（无需家长密码）",
+          "修改昵称并回读",
+          "实时推送：家长加分后收到 ledger 事件",
+          "退出登录：账本不可再读",
+          "客户端隔离 HOME 写入 0 个文件，其中含密码明文 0 个"
+        ],
+        "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+      }
+    },
+    {
+      "check": "recovery",
+      "status": "passed",
+      "input_sha256": "23cfa2629d01cc6f8461d45a027ff5e3353690e3b3017097da70113928408c80",
+      "original": "perf/acceptance/recovery.json",
+      "sha256": "59a459f51611954c787f27fe8d627ed781fd71aacce12084c7493badf61decf5",
+      "finished_at": "2026-10-04T22:32:25.488158+08:00",
+      "detail": {
+        "summary": "故障与恢复：生产 Swift 客户端对本地真实账本服务 8 项通过",
+        "passed": true,
+        "steps": [
+          "错登录密码被拒（「用户名或密码不对」），正确密码随后可登录",
+          "兑换未到档位商品被拒（「「今晚吃什么我说了算」要住进「砖瓦房」才能换（1200 分）」），不扣分",
+          "非法规则配置被服务端整笔拒绝，原配置不变",
+          "服务停止：0.0 秒内报错（Could not connect to the server.）",
+          "网关返回非 JSON：提示「连不上账本(HTTP 502)」",
+          "服务重启后免重新登录，余额 1000 与流水 80 条完整",
+          "稳定标识重试只有一笔；重复撤销恢复原余额",
+          "客户端隔离 HOME 写入 1 个文件，其中含密码明文 0 个"
+        ],
+        "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+      }
+    },
+    {
+      "check": "privacy",
+      "status": "passed",
+      "input_sha256": "23cfa2629d01cc6f8461d45a027ff5e3353690e3b3017097da70113928408c80",
+      "original": "perf/acceptance/privacy.json",
+      "sha256": "19ae795062675b4f366616561d0fa138a0e946f1e4347b17a38eda18eaa397ef",
+      "finished_at": "2026-10-04T22:32:42.389182+08:00",
+      "detail": {
+        "summary": "隐私边界：生产 Swift 客户端对本地真实账本服务 4 项通过；静态：37 个 Swift 源文件无跟踪 SDK，联网主机仅 ['api.github.com', 'apps.apple.com', 'edu.tianli.cyou', 'itunes.apple.com']，版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串",
+        "passed": true,
+        "steps": [
+          "未登录读不到账本",
+          "普通账号可直接记本户账；跨户撤销和站点重置被拒",
+          "重新登录原账号，余额与流水完整",
+          "客户端隔离 HOME 写入 0 个文件，其中含密码明文 0 个"
+        ],
+        "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py 的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"
+      }
+    }
+  ]
+}

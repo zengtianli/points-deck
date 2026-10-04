@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "job_id": "624a402c3c9e450cb2bed551fb5140c7",
+  "original": "perf/platforms/ipad.json",
+  "evidence": {
+    "schema_version": 1,
+    "platform": "ipad",
+    "app_id": "points-deck-ios",
+    "version": "1.0.2",
+    "build": "9",
+    "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+    "runtime_measurement": {
+      "environment": "simulator",
+      "device": "iPad Pro 13-inch (M5) (iPad-Pro-13-inch-M5-12GB)",
+      "os": "iPadOS 27.0",
+      "xcode": "Xcode 27.0 (27A266a)",
+      "evidence": "perf/platforms/ipad/measure-20261004-222146.json",
+      "evidence_sha256": "4a0d92676e12ef83ee79dcb4cd2d97e26eaf85a77c381b69668b58b10cc2bb82"
+    },
+    "size": {
+      "download_bytes": 9026244,
+      "installed_bytes": 17708527,
+      "download_mb": 9.03,
+      "installed_mb": 17.71,
+      "kind": "simulator .app (Release), not a store slice"
+    },
+    "speed": {
+      "cold_launch_ms": 897.0,
+      "runs": 5,
+      "discarded_runs": 1,
+      "ready_signal": "os_log",
+      "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+    },
+    "idle": {
+      "memory_mb": 31.0,
+      "cpu_pct": 0.0,
+      "window_s": 60,
+      "settle_s": 45,
+      "method": "shared measure.py idle: CPU-time delta / wall window; phys_footprint peak of 3 samples after the window",
+      "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions"
+    },
+    "measured_at": "2026-10-04T22:21:46+08:00"
+  }
+}

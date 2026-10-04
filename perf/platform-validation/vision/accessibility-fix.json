@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "scope": "only visionOS branch of TreasuryChoice changed; other platform choice implementation and remaining production files unchanged",
+  "before_commit": "1502eab",
+  "after_commit": "39ea3453d17d2b2aabe847d7f6399178a38af21b",
+  "changed_production_files": [
+    "Sources/HomeView.swift"
+  ],
+  "before_sha256": "c1f8f23460e9edfff8dd36e6cf3521e2e3eacd17db9fc0195453e7655b599676",
+  "after_sha256": "678438860eb61338c14619ea92a1b4151690227b906ab33637c16d555acce3cb",
+  "non_vision_choice_equal": true,
+  "new_build_receipts_required": true,
+  "previous_platform_observations_retained_without_rebinding": true
+}

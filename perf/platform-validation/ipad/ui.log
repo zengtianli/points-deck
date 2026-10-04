@@ -1,0 +1,511 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/points-other-platforms/ipad-ui/runners/ipad-ui-c7f507f5c93d3a7e/dd/Build/Products/PointsQAHost_iphonesimulator27.0-arm64-x86_64.xctestrun -destination id=A19C635F-A987-4E08-931A-A5874216E34D -destination-timeout 120 -parallel-testing-enabled NO -collect-test-diagnostics never "-only-testing:PointsQAUITests/PlatformUITests/testCoreEditingAndReopen" -resultBundlePath /private/tmp/points-other-platforms/ipad-ui/ui.xcresult
+
+Writing result bundle at path:
+	/private/tmp/points-other-platforms/ipad-ui/ui.xcresult
+
+2026-10-04 20:49:24.658746+0800 PointsQAUITests-Runner[84354:51844142] [Default] Running tests...
+2026-10-04 20:49:24.803110+0800 PointsQAUITests-Runner[84354:51844142] [UIKit App Config] Update the Info.plist: Launch screens will soon be required.
+    t =      nans Interface orientation changed to Portrait
+Test Suite 'Selected tests' started at 2026-10-04 20:49:30.426.
+Test Suite 'PointsQAUITests.xctest' started at 2026-10-04 20:49:30.427.
+Test Suite 'PlatformUITests' started at 2026-10-04 20:49:30.428.
+Test Case '-[PointsQAUITests.PlatformUITests testCoreEditingAndReopen]' started.
+    t =     0.02s Start Test at 2026-10-04 20:49:30.446
+    t =     0.32s Set Up
+    t =     0.33s     Open cyou.tianli.pointsdeck
+    t =     0.33s         Launch cyou.tianli.pointsdeck
+    t =     0.63s             Setting up automation session
+objc[84354]: Class UIAccessibilityLoaderWebShared is implemented in both /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.UNDqRH/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebKit.axbundle/WebKit (0x10ab44398) and /private/var/run/com.apple.security.cryptexd/mnt/com.apple.iPhoneOS.SimulatorRuntime-v24.1.434.0.UNDqRH/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 27.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/AccessibilityBundles/WebCore.axbundle/WebCore (0x10b09c310). This may cause spurious casting failures and mysterious crashes. One of the duplicates must be removed or renamed.
+    t =     4.82s             Wait for cyou.tianli.pointsdeck to idle
+    t =     6.90s     Waiting 20.0s for StaticText (First Match) to exist
+    t =     8.00s         Checking `Expect predicate `existsNoRetry == 1` for object StaticText (First Match)`
+    t =     8.00s             Checking existence of `StaticText (First Match)`
+    t =     8.44s Setting device orientation to Landscape Left
+    t =     8.45s     Device orientation changed to Landscape Left
+    t =     8.49s     Interface orientation changed to Landscape Right
+    t =     8.72s     Wait for cyou.tianli.pointsdeck to idle
+    t =     8.85s     Wait for com.apple.springboard to idle
+    t =     9.21s Waiting 10.0s for "账本" Button to exist
+    t =    10.29s     Checking `Expect predicate `existsNoRetry == 1` for object "账本" Button`
+    t =    10.29s         Checking existence of `"账本" Button`
+    t =    10.31s Get all elements bound by index for: Elements matching predicate '"账本" IN identifiers'
+    t =    10.53s Find the "账本" Button
+    t =    10.73s Tap "list.bullet.rectangle" Button
+    t =    10.73s     Wait for cyou.tianli.pointsdeck to idle
+    t =    10.74s     Find the "list.bullet.rectangle" Button
+    t =    10.90s     Check for interrupting elements affecting "list.bullet.rectangle" Button
+    t =    11.03s         Wait for com.apple.springboard to idle
+    t =    11.09s     Synthesize event
+    t =    11.55s     Wait for cyou.tianli.pointsdeck to idle
+    t =    13.10s Find the Application 'cyou.tianli.pointsdeck'
+    t =    13.40s Added attachment named 'ledger-real-data'
+    t =    13.40s Waiting 10.0s for "走势" Button to exist
+    t =    14.48s     Checking `Expect predicate `existsNoRetry == 1` for object "走势" Button`
+    t =    14.49s         Checking existence of `"走势" Button`
+    t =    14.50s Get all elements bound by index for: Elements matching predicate '"走势" IN identifiers'
+    t =    14.53s Find the "走势" Button
+    t =    14.57s Tap "chart.line.uptrend.xyaxis" Button
+    t =    14.57s     Wait for cyou.tianli.pointsdeck to idle
+    t =    14.57s     Find the "chart.line.uptrend.xyaxis" Button
+    t =    14.60s     Check for interrupting elements affecting "chart.line.uptrend.xyaxis" Button
+    t =    14.63s         Wait for com.apple.springboard to idle
+    t =    14.68s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    14.69s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    14.70s     Synthesize event
+    t =    14.99s     Wait for cyou.tianli.pointsdeck to idle
+    t =    16.27s Find the Application 'cyou.tianli.pointsdeck'
+    t =    16.51s Added attachment named 'trend-real-data'
+    t =    16.51s Waiting 10.0s for "加分" Button to exist
+    t =    17.57s     Checking `Expect predicate `existsNoRetry == 1` for object "加分" Button`
+    t =    17.57s         Checking existence of `"加分" Button`
+    t =    17.58s Get all elements bound by index for: Elements matching predicate '"加分" IN identifiers'
+    t =    17.61s Find the "加分" Button
+    t =    17.65s Tap "plusminus.circle.fill" Button
+    t =    17.65s     Wait for cyou.tianli.pointsdeck to idle
+    t =    17.66s     Find the "plusminus.circle.fill" Button
+    t =    17.68s     Check for interrupting elements affecting "plusminus.circle.fill" Button
+    t =    17.72s         Wait for com.apple.springboard to idle
+    t =    17.74s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    17.74s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    17.75s     Synthesize event
+    t =    18.05s     Wait for cyou.tianli.pointsdeck to idle
+    t =    19.29s Waiting 10.0s for "新建" Button to exist
+    t =    20.35s     Checking `Expect predicate `existsNoRetry == 1` for object "新建" Button`
+    t =    20.35s         Checking existence of `"新建" Button`
+    t =    20.39s Get all elements bound by index for: Elements matching predicate '"新建" IN identifiers'
+    t =    20.50s Find the "新建" Button
+    t =    20.64s Tap "新建" Button
+    t =    20.64s     Wait for cyou.tianli.pointsdeck to idle
+    t =    20.64s     Find the "新建" Button
+    t =    20.74s     Check for interrupting elements affecting "新建" Button
+    t =    20.83s         Wait for com.apple.springboard to idle
+    t =    20.85s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    20.86s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    20.86s     Synthesize event
+    t =    21.18s     Wait for cyou.tianli.pointsdeck to idle
+    t =    21.90s Waiting 10.0s for "项目名" TextField to exist
+    t =    22.98s     Checking `Expect predicate `existsNoRetry == 1` for object "项目名" TextField`
+    t =    22.98s         Checking existence of `"项目名" TextField`
+    t =    23.27s Tap "项目名" TextField
+    t =    23.27s     Wait for cyou.tianli.pointsdeck to idle
+    t =    23.50s     Find the "项目名" TextField
+    t =    23.65s     Check for interrupting elements affecting "项目名" TextField
+    t =    23.90s         Wait for com.apple.springboard to idle
+    t =    23.94s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    23.94s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    23.95s     Synthesize event
+    t =    24.35s     Wait for cyou.tianli.pointsdeck to idle
+    t =    27.38s Find the "项目名" TextField
+    t =    27.70s Type '' into "项目名" TextField
+    t =    27.70s     Wait for cyou.tianli.pointsdeck to idle
+    t =    27.75s     Find the "项目名" TextField
+    t =    27.96s     Check for interrupting elements affecting "项目名" TextField
+    t =    28.21s         Wait for com.apple.springboard to idle
+    t =    28.25s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    28.27s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    28.28s     Synthesize event
+    t =    28.51s     Wait for cyou.tianli.pointsdeck to idle
+    t =    28.53s Type 'QA-Points-Project' into "项目名" TextField
+    t =    28.53s     Wait for cyou.tianli.pointsdeck to idle
+    t =    28.54s     Find the "项目名" TextField
+    t =    28.72s     Check for interrupting elements affecting "项目名" TextField
+    t =    28.93s         Wait for com.apple.springboard to idle
+    t =    28.97s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    28.98s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    28.99s     Synthesize event
+    t =    29.49s     Wait for cyou.tianli.pointsdeck to idle
+    t =    29.49s Find the "项目名" TextField
+    t =    29.69s Waiting 10.0s for "正整数分值" TextField to exist
+    t =    30.75s     Checking `Expect predicate `existsNoRetry == 1` for object "正整数分值" TextField`
+    t =    30.75s         Checking existence of `"正整数分值" TextField`
+    t =    30.94s Tap "正整数分值" TextField
+    t =    30.95s     Wait for cyou.tianli.pointsdeck to idle
+    t =    30.95s     Find the "正整数分值" TextField
+    t =    31.13s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    31.36s         Wait for com.apple.springboard to idle
+    t =    31.40s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    31.40s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    31.41s     Synthesize event
+    t =    31.72s     Wait for cyou.tianli.pointsdeck to idle
+    t =    32.17s Find the "正整数分值" TextField
+    t =    32.47s Type '' into "正整数分值" TextField
+    t =    32.47s     Wait for cyou.tianli.pointsdeck to idle
+    t =    32.48s     Find the "正整数分值" TextField
+    t =    32.81s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    33.11s         Wait for com.apple.springboard to idle
+    t =    33.19s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    33.22s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    33.24s     Synthesize event
+    t =    33.50s     Wait for cyou.tianli.pointsdeck to idle
+    t =    33.51s Type '7' into "正整数分值" TextField
+    t =    33.51s     Wait for cyou.tianli.pointsdeck to idle
+    t =    33.51s     Find the "正整数分值" TextField
+    t =    33.71s     Check for interrupting elements affecting "正整数分值" TextField
+    t =    33.97s         Wait for com.apple.springboard to idle
+    t =    34.02s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    34.03s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    34.04s     Synthesize event
+    t =    34.28s     Wait for cyou.tianli.pointsdeck to idle
+    t =    34.28s Find the "正整数分值" TextField
+    t =    34.53s Find the Application 'cyou.tianli.pointsdeck'
+    t =    35.19s Added attachment named 'project-keyboard-input'
+    t =    35.19s Waiting 10.0s for "完成" Button to exist
+    t =    36.26s     Checking `Expect predicate `existsNoRetry == 1` for object "完成" Button`
+    t =    36.26s         Checking existence of `"完成" Button`
+    t =    36.40s Get all elements bound by index for: Elements matching predicate '"完成" IN identifiers'
+    t =    36.74s Find the "完成" Button
+    t =    37.21s Tap "完成" Button
+    t =    37.21s     Wait for cyou.tianli.pointsdeck to idle
+    t =    37.22s     Find the "完成" Button
+    t =    37.49s     Check for interrupting elements affecting "完成" Button
+    t =    37.75s         Wait for com.apple.springboard to idle
+    t =    37.79s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    37.79s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    37.80s     Synthesize event
+    t =    38.12s     Wait for cyou.tianli.pointsdeck to idle
+    t =    39.25s Waiting 10.0s for "保存" Button to exist
+    t =    40.32s     Checking `Expect predicate `existsNoRetry == 1` for object "保存" Button`
+    t =    40.32s         Checking existence of `"保存" Button`
+    t =    40.40s Get all elements bound by index for: Elements matching predicate '"保存" IN identifiers'
+    t =    40.67s Find the "保存" Button
+    t =    40.97s Tap "保存" Button
+    t =    40.97s     Wait for cyou.tianli.pointsdeck to idle
+    t =    40.98s     Find the "保存" Button
+    t =    41.25s     Check for interrupting elements affecting "保存" Button
+    t =    41.46s         Wait for com.apple.springboard to idle
+    t =    41.50s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    41.50s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    41.51s     Synthesize event
+    t =    41.85s     Wait for cyou.tianli.pointsdeck to idle
+    t =    42.63s Find the "保存" Button
+    t =    42.86s Waiting 10.0s for "关闭" Button to exist
+    t =    43.92s     Checking `Expect predicate `existsNoRetry == 1` for object "关闭" Button`
+    t =    43.92s         Checking existence of `"关闭" Button`
+    t =    44.01s Get all elements bound by index for: Elements matching predicate '"关闭" IN identifiers'
+    t =    44.32s Find the "关闭" Button
+    t =    44.66s Tap "关闭" Button
+    t =    44.66s     Wait for cyou.tianli.pointsdeck to idle
+    t =    44.66s     Find the "关闭" Button
+    t =    44.93s     Check for interrupting elements affecting "关闭" Button
+    t =    45.14s         Wait for com.apple.springboard to idle
+    t =    45.19s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    45.19s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    45.20s     Synthesize event
+    t =    45.55s     Wait for cyou.tianli.pointsdeck to idle
+    t =    46.39s Waiting 10.0s for "兑换" Button to exist
+    t =    47.45s     Checking `Expect predicate `existsNoRetry == 1` for object "兑换" Button`
+    t =    47.46s         Checking existence of `"兑换" Button`
+    t =    47.50s Get all elements bound by index for: Elements matching predicate '"兑换" IN identifiers'
+    t =    47.69s Find the "兑换" Button
+    t =    47.92s Tap "gift.fill" Button
+    t =    47.92s     Wait for cyou.tianli.pointsdeck to idle
+    t =    47.93s     Find the "gift.fill" Button
+    t =    48.12s     Check for interrupting elements affecting "gift.fill" Button
+    t =    48.29s         Wait for com.apple.springboard to idle
+    t =    48.33s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    48.34s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    48.35s     Synthesize event
+    t =    48.68s     Wait for cyou.tianli.pointsdeck to idle
+    t =    50.75s Waiting 10.0s for "新建" Button to exist
+    t =    51.78s     Checking `Expect predicate `existsNoRetry == 1` for object "新建" Button`
+    t =    51.78s         Checking existence of `"新建" Button`
+    t =    51.85s Get all elements bound by index for: Elements matching predicate '"新建" IN identifiers'
+    t =    51.95s Find the "新建" Button
+    t =    52.08s Tap "新建" Button
+    t =    52.08s     Wait for cyou.tianli.pointsdeck to idle
+    t =    52.08s     Find the "新建" Button
+    t =    52.19s     Check for interrupting elements affecting "新建" Button
+    t =    52.31s         Wait for com.apple.springboard to idle
+    t =    52.35s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    52.36s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    52.37s     Synthesize event
+    t =    52.71s     Wait for cyou.tianli.pointsdeck to idle
+    t =    53.38s Waiting 10.0s for "奖励名" TextField to exist
+    t =    54.42s     Checking `Expect predicate `existsNoRetry == 1` for object "奖励名" TextField`
+    t =    54.42s         Checking existence of `"奖励名" TextField`
+    t =    54.94s Tap "奖励名" TextField
+    t =    54.94s     Wait for cyou.tianli.pointsdeck to idle
+    t =    54.98s     Find the "奖励名" TextField
+    t =    55.23s     Check for interrupting elements affecting "奖励名" TextField
+    t =    55.45s         Wait for com.apple.springboard to idle
+    t =    55.49s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    55.50s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    55.50s     Synthesize event
+    t =    55.81s     Wait for cyou.tianli.pointsdeck to idle
+    t =    56.39s Find the "奖励名" TextField
+    t =    56.79s Type '' into "奖励名" TextField
+    t =    56.79s     Wait for cyou.tianli.pointsdeck to idle
+    t =    56.84s     Find the "奖励名" TextField
+    t =    57.15s     Check for interrupting elements affecting "奖励名" TextField
+    t =    57.40s         Wait for com.apple.springboard to idle
+    t =    57.45s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    57.46s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    57.48s     Synthesize event
+    t =    57.71s     Wait for cyou.tianli.pointsdeck to idle
+    t =    57.72s Type 'QA-Points-Reward' into "奖励名" TextField
+    t =    57.73s     Wait for cyou.tianli.pointsdeck to idle
+    t =    57.74s     Find the "奖励名" TextField
+    t =    58.05s     Check for interrupting elements affecting "奖励名" TextField
+    t =    58.30s         Wait for com.apple.springboard to idle
+    t =    58.36s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    58.37s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    58.38s     Synthesize event
+    t =    58.87s     Wait for cyou.tianli.pointsdeck to idle
+    t =    58.88s Find the "奖励名" TextField
+    t =    59.11s Waiting 10.0s for "所需积分" TextField to exist
+    t =    60.15s     Checking `Expect predicate `existsNoRetry == 1` for object "所需积分" TextField`
+    t =    60.15s         Checking existence of `"所需积分" TextField`
+    t =    60.37s Tap "所需积分" TextField
+    t =    60.37s     Wait for cyou.tianli.pointsdeck to idle
+    t =    60.38s     Find the "所需积分" TextField
+    t =    60.62s     Check for interrupting elements affecting "所需积分" TextField
+    t =    60.84s         Wait for com.apple.springboard to idle
+    t =    60.89s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    60.89s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    60.90s     Synthesize event
+    t =    61.21s     Wait for cyou.tianli.pointsdeck to idle
+    t =    61.44s Find the "所需积分" TextField
+    t =    61.69s Type '' into "所需积分" TextField
+    t =    61.69s     Wait for cyou.tianli.pointsdeck to idle
+    t =    61.70s     Find the "所需积分" TextField
+    t =    61.93s     Check for interrupting elements affecting "所需积分" TextField
+    t =    62.17s         Wait for com.apple.springboard to idle
+    t =    62.24s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    62.25s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    62.26s     Synthesize event
+    t =    62.49s     Wait for cyou.tianli.pointsdeck to idle
+    t =    62.50s Type '4' into "所需积分" TextField
+    t =    62.50s     Wait for cyou.tianli.pointsdeck to idle
+    t =    62.50s     Find the "所需积分" TextField
+    t =    62.75s     Check for interrupting elements affecting "所需积分" TextField
+    t =    62.98s         Wait for com.apple.springboard to idle
+    t =    63.03s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    63.04s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    63.05s     Synthesize event
+    t =    63.28s     Wait for cyou.tianli.pointsdeck to idle
+    t =    63.29s Find the "所需积分" TextField
+    t =    63.53s Find the Application 'cyou.tianli.pointsdeck'
+    t =    64.12s Added attachment named 'reward-keyboard-input'
+    t =    64.12s Waiting 10.0s for "完成" Button to exist
+    t =    65.15s     Checking `Expect predicate `existsNoRetry == 1` for object "完成" Button`
+    t =    65.15s         Checking existence of `"完成" Button`
+    t =    65.29s Get all elements bound by index for: Elements matching predicate '"完成" IN identifiers'
+    t =    65.59s Find the "完成" Button
+    t =    65.88s Tap "完成" Button
+    t =    65.88s     Wait for cyou.tianli.pointsdeck to idle
+    t =    65.89s     Find the "完成" Button
+    t =    66.15s     Check for interrupting elements affecting "完成" Button
+    t =    66.38s         Wait for com.apple.springboard to idle
+    t =    66.42s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    66.43s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    66.43s     Synthesize event
+    t =    66.78s     Wait for cyou.tianli.pointsdeck to idle
+    t =    67.64s Waiting 10.0s for "保存" Button to exist
+    t =    68.68s     Checking `Expect predicate `existsNoRetry == 1` for object "保存" Button`
+    t =    68.68s         Checking existence of `"保存" Button`
+    t =    68.77s Get all elements bound by index for: Elements matching predicate '"保存" IN identifiers'
+    t =    68.98s Find the "保存" Button
+    t =    69.25s Tap "保存" Button
+    t =    69.25s     Wait for cyou.tianli.pointsdeck to idle
+    t =    69.26s     Find the "保存" Button
+    t =    69.46s     Check for interrupting elements affecting "保存" Button
+    t =    69.63s         Wait for com.apple.springboard to idle
+    t =    69.68s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    69.68s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    69.69s     Synthesize event
+    t =    70.03s     Wait for cyou.tianli.pointsdeck to idle
+    t =    71.84s Checking `Expect predicate `enabled == 0` for object "保存" Button`
+    t =    71.84s     Find the "保存" Button
+    t =    71.96s Waiting 10.0s for "关闭" Button to exist
+    t =    73.02s     Checking `Expect predicate `existsNoRetry == 1` for object "关闭" Button`
+    t =    73.02s         Checking existence of `"关闭" Button`
+    t =    73.11s Get all elements bound by index for: Elements matching predicate '"关闭" IN identifiers'
+    t =    73.33s Find the "关闭" Button
+    t =    73.57s Tap "关闭" Button
+    t =    73.57s     Wait for cyou.tianli.pointsdeck to idle
+    t =    73.58s     Find the "关闭" Button
+    t =    73.83s     Check for interrupting elements affecting "关闭" Button
+    t =    74.04s         Wait for com.apple.springboard to idle
+    t =    74.09s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    74.10s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    74.11s     Synthesize event
+    t =    74.47s     Wait for cyou.tianli.pointsdeck to idle
+    t =    75.39s Waiting 10.0s for "账户" Button to exist
+    t =    76.43s     Checking `Expect predicate `existsNoRetry == 1` for object "账户" Button`
+    t =    76.43s         Checking existence of `"账户" Button`
+    t =    76.47s Get all elements bound by index for: Elements matching predicate '"账户" IN identifiers'
+    t =    76.59s Find the "账户" Button
+    t =    76.75s Tap "person.crop.circle" Button
+    t =    76.75s     Wait for cyou.tianli.pointsdeck to idle
+    t =    76.76s     Find the "person.crop.circle" Button
+    t =    76.90s     Check for interrupting elements affecting "person.crop.circle" Button
+    t =    77.03s         Wait for com.apple.springboard to idle
+    t =    77.09s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    77.09s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =    77.10s     Synthesize event
+    t =    77.44s     Wait for cyou.tianli.pointsdeck to idle
+    t =    79.53s Waiting 10.0s for "账号安全" Button to exist
+    t =    80.64s     Checking `Expect predicate `existsNoRetry == 1` for object "账号安全" Button`
+    t =    80.65s         Checking existence of `"账号安全" Button`
+    t =    80.83s Find the Application 'cyou.tianli.pointsdeck'
+    t =    81.29s Added attachment named 'account-native-entry'
+    t =    81.29s Terminate cyou.tianli.pointsdeck:84439
+    t =    82.36s Open cyou.tianli.pointsdeck
+    t =    82.37s     Launch cyou.tianli.pointsdeck
+    t =    83.44s         Setting up automation session
+    t =    91.29s         Wait for cyou.tianli.pointsdeck to idle
+    t =    96.08s Waiting 20.0s for "账号安全" Button to exist
+    t =    97.13s     Checking `Expect predicate `existsNoRetry == 1` for object "账号安全" Button`
+    t =    97.13s         Checking existence of `"账号安全" Button`
+    t =    97.70s Find the Application 'cyou.tianli.pointsdeck'
+    t =    98.20s Added attachment named 'stored-session-reopen'
+    t =    98.20s Find the "退出登录" Button
+    t =    99.53s     Find the "退出登录" Button (retry 1)
+    t =   100.67s     Find the "退出登录" Button (retry 2)
+    t =   100.84s Swipe up Application 'cyou.tianli.pointsdeck'
+    t =   100.84s     Wait for cyou.tianli.pointsdeck to idle
+    t =   100.86s     Find the Application 'cyou.tianli.pointsdeck'
+    t =   100.95s     Check for interrupting elements affecting "成长小金库" Application
+    t =   101.05s         Wait for com.apple.springboard to idle
+    t =   101.11s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   101.11s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   101.13s     Synthesize event
+    t =   101.65s     Wait for cyou.tianli.pointsdeck to idle
+    t =   102.17s Find the "退出登录" Button
+    t =   102.49s Find the "退出登录" Button
+    t =   102.77s Find the "退出登录" Button
+    t =   103.05s Find the "退出登录" Button
+    t =   103.35s Find the "退出登录" Button
+    t =   103.61s Find the "退出登录" Button
+    t =   103.84s Find the "退出登录" Button
+    t =   104.08s Waiting 10.0s for "退出登录" Button to exist
+    t =   105.13s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =   105.13s         Checking existence of `"退出登录" Button`
+    t =   105.37s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =   105.49s Find the "退出登录" Button
+    t =   105.68s Tap "退出登录" Button
+    t =   105.68s     Wait for cyou.tianli.pointsdeck to idle
+    t =   105.70s     Find the "退出登录" Button
+    t =   105.81s     Check for interrupting elements affecting "退出登录" Button
+    t =   105.94s         Wait for com.apple.springboard to idle
+    t =   106.02s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   106.02s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   106.04s     Synthesize event
+    t =   106.43s     Wait for cyou.tianli.pointsdeck to idle
+    t =   108.25s Waiting 10.0s for "退出登录" Button to exist
+    t =   109.31s     Checking `Expect predicate `existsNoRetry == 1` for object "退出登录" Button`
+    t =   109.31s         Checking existence of `"退出登录" Button`
+    t =   109.56s Get all elements bound by index for: Elements matching predicate '"退出登录" IN identifiers'
+    t =   109.70s Find the "退出登录" Button
+    t =   109.90s Tap "退出登录" Button
+    t =   109.90s     Wait for cyou.tianli.pointsdeck to idle
+    t =   109.91s     Find the "退出登录" Button
+    t =   110.06s     Check for interrupting elements affecting "退出登录" Button
+    t =   110.22s         Wait for com.apple.springboard to idle
+    t =   110.29s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   110.29s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   110.30s     Synthesize event
+    t =   110.64s     Wait for cyou.tianli.pointsdeck to idle
+    t =   111.02s Waiting 10.0s for "密码登录" Button to exist
+    t =   112.08s     Checking `Expect predicate `existsNoRetry == 1` for object "密码登录" Button`
+    t =   112.10s         Checking existence of `"密码登录" Button`
+    t =   112.32s Get all elements bound by index for: Elements matching predicate '"密码登录" IN identifiers'
+    t =   112.53s Find the "密码登录" Button
+    t =   112.59s Tap "密码登录" Button
+    t =   112.59s     Wait for cyou.tianli.pointsdeck to idle
+    t =   112.59s     Find the "密码登录" Button
+    t =   112.63s     Check for interrupting elements affecting "密码登录" Button
+    t =   112.67s         Wait for com.apple.springboard to idle
+    t =   112.74s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   112.74s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   112.76s     Synthesize event
+    t =   113.11s     Wait for cyou.tianli.pointsdeck to idle
+    t =   114.75s Waiting 10.0s for "手机号、邮箱或原用户名" TextField to exist
+    t =   115.81s     Checking `Expect predicate `existsNoRetry == 1` for object "手机号、邮箱或原用户名" TextField`
+    t =   115.81s         Checking existence of `"手机号、邮箱或原用户名" TextField`
+    t =   115.84s Tap "手机号、邮箱或原用户名" TextField
+    t =   115.84s     Wait for cyou.tianli.pointsdeck to idle
+    t =   115.85s     Find the "手机号、邮箱或原用户名" TextField
+    t =   115.87s     Check for interrupting elements affecting "手机号、邮箱或原用户名" TextField
+    t =   115.91s         Wait for com.apple.springboard to idle
+    t =   115.97s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   115.97s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   115.99s     Synthesize event
+    t =   116.35s     Wait for cyou.tianli.pointsdeck to idle
+    t =   118.09s Find the "手机号、邮箱或原用户名" TextField
+    t =   118.14s Type '' into "手机号、邮箱或原用户名" TextField
+    t =   118.14s     Wait for cyou.tianli.pointsdeck to idle
+    t =   118.40s     Find the "手机号、邮箱或原用户名" TextField
+    t =   118.46s     Check for interrupting elements affecting "手机号、邮箱或原用户名" TextField
+    t =   118.54s         Wait for com.apple.springboard to idle
+    t =   118.60s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   118.62s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   118.64s     Synthesize event
+    t =   118.87s     Wait for cyou.tianli.pointsdeck to idle
+    t =   118.88s Type 'xiaoman' into "手机号、邮箱或原用户名" TextField
+    t =   118.88s     Wait for cyou.tianli.pointsdeck to idle
+    t =   118.88s     Find the "手机号、邮箱或原用户名" TextField
+    t =   118.93s     Check for interrupting elements affecting "手机号、邮箱或原用户名" TextField
+    t =   119.00s         Wait for com.apple.springboard to idle
+    t =   119.07s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   119.08s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   119.10s     Synthesize event
+    t =   119.46s     Wait for cyou.tianli.pointsdeck to idle
+    t =   119.47s Find the "手机号、邮箱或原用户名" TextField
+    t =   119.50s Waiting 10.0s for "登录密码" SecureTextField to exist
+    t =   120.57s     Checking `Expect predicate `existsNoRetry == 1` for object "登录密码" SecureTextField`
+    t =   120.57s         Checking existence of `"登录密码" SecureTextField`
+    t =   120.60s Tap "登录密码" SecureTextField
+    t =   120.60s     Wait for cyou.tianli.pointsdeck to idle
+    t =   120.61s     Find the "登录密码" SecureTextField
+    t =   120.65s     Check for interrupting elements affecting "登录密码" SecureTextField
+    t =   120.72s         Wait for com.apple.springboard to idle
+    t =   120.77s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   120.79s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   120.81s     Synthesize event
+    t =   121.13s     Wait for cyou.tianli.pointsdeck to idle
+    t =   121.32s Type '<redacted>' into "登录密码" SecureTextField
+    t =   121.32s     Wait for cyou.tianli.pointsdeck to idle
+    t =   121.33s     Find the "登录密码" SecureTextField
+    t =   121.36s     Check for interrupting elements affecting "登录密码" SecureTextField
+    t =   121.42s         Wait for com.apple.springboard to idle
+    t =   121.48s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   121.49s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   121.51s     Synthesize event
+    t =   122.03s     Wait for cyou.tianli.pointsdeck to idle
+    t =   122.04s Waiting 10.0s for "进入账本" Button to exist
+    t =   123.09s     Checking `Expect predicate `existsNoRetry == 1` for object "进入账本" Button`
+    t =   123.10s         Checking existence of `"进入账本" Button`
+    t =   123.14s Get all elements bound by index for: Elements matching predicate '"进入账本" IN identifiers'
+    t =   123.20s Find the "进入账本" Button
+    t =   123.29s Tap "进入账本" Button
+    t =   123.29s     Wait for cyou.tianli.pointsdeck to idle
+    t =   123.30s     Find the "进入账本" Button
+    t =   123.37s     Check for interrupting elements affecting "进入账本" Button
+    t =   123.44s         Wait for com.apple.springboard to idle
+    t =   123.49s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   123.50s Ignoring failure to get hierarchy for remote element in process 84567 (Error getting main window kAXErrorServerNotFound)
+    t =   123.51s     Synthesize event
+    t =   123.93s     Wait for cyou.tianli.pointsdeck to idle
+    t =   123.95s Waiting 20.0s for "账号安全" Button to exist
+    t =   125.03s     Checking `Expect predicate `existsNoRetry == 1` for object "账号安全" Button`
+    t =   125.03s         Checking existence of `"账号安全" Button`
+    t =   125.54s Tear Down
+Test Case '-[PointsQAUITests.PlatformUITests testCoreEditingAndReopen]' passed (126.282 seconds).
+Test Suite 'PlatformUITests' passed at 2026-10-04 20:51:36.732.
+	 Executed 1 test, with 0 failures (0 unexpected) in 126.282 (126.305) seconds
+Test Suite 'PointsQAUITests.xctest' passed at 2026-10-04 20:51:36.737.
+	 Executed 1 test, with 0 failures (0 unexpected) in 126.282 (126.310) seconds
+Test Suite 'Selected tests' passed at 2026-10-04 20:51:36.738.
+	 Executed 1 test, with 0 failures (0 unexpected) in 126.282 (126.312) seconds
+2026-10-04 20:51:37.394 xcodebuild[84274:51843185] [MT] IDETestOperationsObserverDebug: 146.567 elapsed -- Testing started completed.
+2026-10-04 20:51:37.394 xcodebuild[84274:51843185] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 20:51:37.394 xcodebuild[84274:51843185] [MT] IDETestOperationsObserverDebug: 146.567 sec, +146.567 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/points-other-platforms/ipad-ui/ui.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

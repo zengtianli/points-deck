@@ -1,0 +1,12 @@
+{
+ "ok": true,
+ "platform": "watch",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "source": "actual phone-to-Watch WC login; no Watch credentials injected",
+ "files": [
+  {
+   "file": "shots/appstore/watch/01-balance.png",
+   "sha256": "ad16ee4c0e7d03f8fd264b14ff4c72e20e04570891db043680e3bc45ff829e01"
+  }
+ ]
+}

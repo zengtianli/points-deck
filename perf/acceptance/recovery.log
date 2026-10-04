@@ -1,12 +1,11 @@
 ACCEPT: 错登录密码被拒（「用户名或密码不对」），正确密码随后可登录
-ACCEPT: 错家长密码：会话保持上锁、记账被拒（「家长密码不对」），余额不变
 ACCEPT: 兑换未到档位商品被拒（「「今晚吃什么我说了算」要住进「砖瓦房」才能换（1200 分）」），不扣分
 ACCEPT: 非法规则配置被服务端整笔拒绝，原配置不变
 ACCEPT: 服务停止：0.0 秒内报错（Could not connect to the server.）
 ACCEPT: 网关返回非 JSON：提示「连不上账本(HTTP 502)」
-ACCEPT: 服务重启后免重新登录，余额 1000 与流水 30 条完整
-ACCEPT: 家长会话后台超过 10 分钟自动上锁
+ACCEPT: 服务重启后免重新登录，余额 1000 与流水 80 条完整
+ACCEPT: 稳定标识重试只有一笔；重复撤销恢复原余额
 PASS recovery
-scripts/accept/run.sh: line 70: 22766 Terminated: 15          ( cd "$server_dir" && exec "$py" server.py serve ) > "$scratch/server.log" 2>&1
+scripts/accept/run.sh: line 78: 53467 Terminated: 15          ( cd "$server_dir" && exec "$py" server.py serve ) > "$scratch/server.log" 2>&1
 ACCEPT: 客户端隔离 HOME 写入 1 个文件，其中含密码明文 0 个
-故障与恢复：生产 Swift 客户端对本地真实账本服务 9 项通过
+故障与恢复：生产 Swift 客户端对本地真实账本服务 8 项通过

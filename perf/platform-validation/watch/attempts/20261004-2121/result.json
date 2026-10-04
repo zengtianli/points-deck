@@ -1,0 +1,9 @@
+{
+ "ok": false,
+ "phone_ui_test": "PASS",
+ "watch_home_ready": false,
+ "watch_credentials_injected": false,
+ "reason": "Actual Watch never entered WatchHome within receiver observation; no transport PASS inferred from phone test",
+ "xcresult": "/private/tmp/points-other-platforms/watch-pair/ui.xcresult",
+ "production_input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62"
+}

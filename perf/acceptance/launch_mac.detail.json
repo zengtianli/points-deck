@@ -1,17 +1,18 @@
 {
-  "summary": "Mac 本机 启动冒烟通过：os_log 1.489 s，截图 2880×1800",
+  "summary": "Mac 本机 启动冒烟通过：os_log 1.297 s，截图 2200×1520",
   "passed": true,
   "platform": "mac",
   "environment": "native",
   "scheme": "PointsDeck",
   "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
-  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "method": "核验仓外构建回执与当前源码、产物及工具链后复用；沿共享 sim_lane 静默启动并截图，不抢焦点",
   "build": {
-    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.n8xcu581/dd/Build/Products/Debug/PointsDeck.app",
+    "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/dd/Build/Products/Release/PointsDeck.app",
     "bundle_id": "cyou.tianli.pointsdeck",
-    "version": "1.0.1",
-    "build": "1",
-    "executable_sha256": "1565776d7343c2a5078850ea63713d82da25b27296097ee1e426b30f0626535d",
+    "version": "1.0.2",
+    "build": "9",
+    "configuration": "Release",
+    "executable_sha256": "407b1147a8e7dbf7751933d28d58039a3c5421eab097dc6248629de0b6df415a",
     "sdk": "macosx27.0",
     "xcode": {
       "name": "Xcode.app",
@@ -19,24 +20,35 @@
       "build": "27A266a",
       "developer_dir": "/Applications/Xcode.app/Contents/Developer"
     },
-    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.n8xcu581/build-mac-Debug.log"
+    "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/build-mac-Release.log",
+    "reuse": {
+      "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/build.json",
+      "receipt_sha256": "b426d60dd98de40ae4e464a01204a41ca38e5f138a7400367aff620a42ea635a",
+      "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/src",
+      "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+      "source_file_count": 79
+    }
   },
   "launch_args": [
     "-api_base",
-    "http://127.0.0.1:56670",
+    "http://127.0.0.1:51790",
     "-dev_user",
     "xiaoman",
     "-dev_pw",
     "<redacted>"
   ],
+  "waits": {
+    "lock_seconds": 300,
+    "load_seconds": 300
+  },
   "run": {
     "udid": null,
     "pid": null,
-    "ready_seconds": 1.489,
+    "ready_seconds": 1.297,
     "ready_signal": "os_log",
     "size": [
-      2880,
-      1800
+      2200,
+      1520
     ],
     "runtime": null,
     "device": null
@@ -49,5 +61,5 @@
     "diff_prev": null
   },
   "screenshot": "perf/platforms/mac/launch.png",
-  "screenshot_sha256": "b1a70ebaa44621e0adcdf182b843214cb8492d85970c0e324374a8f07a6d0c9d"
+  "screenshot_sha256": "e0193c381bec39bd12029c4728b19820c1176922d0aebb08fdccb8e429300554"
 }

@@ -1,0 +1,62 @@
+Command line invocation:
+    /Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild test-without-building -xctestrun /private/tmp/points-other-platforms/mac-ui-v5/hosted/dd/Build/Products/private.xctestrun -destination platform=macOS -collect-test-diagnostics never -parallel-testing-enabled NO -resultBundlePath /private/tmp/points-other-platforms/mac-ui-v5/ui.xcresult
+
+Writing result bundle at path:
+	/private/tmp/points-other-platforms/mac-ui-v5/ui.xcresult
+
+--- xcodebuild: WARNING: Using the first of multiple matching destinations:
+{ platform:macOS, arch:arm64e, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:x86_64, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64e, variant:Mac Catalyst, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64, variant:Mac Catalyst, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:x86_64, variant:Mac Catalyst, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64e, variant:DriverKit, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64, variant:DriverKit, id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64e, variant:Designed for [iPad,iPhone], id:00008132-000665C92EF0801C, name:My Mac }
+{ platform:macOS, arch:arm64, variant:Designed for [iPad,iPhone], id:00008132-000665C92EF0801C, name:My Mac }
+2026-10-04 21:09:37.286893+0800 PointsDeck[213:51946428] [Application] Error registering app with intents framework: Error Domain=LNProcessInstanceRegistryClientErrorDomain Code=4 "Registration with the Process Instance Registry is asynchronous; use registerWithCompletionHandler: to obtain the process instance identifier." UserInfo={NSLocalizedDescription=Registration with the Process Instance Registry is asynchronous; use registerWithCompletionHandler: to obtain the process instance identifier.}
+2026-10-04 21:09:37.287508+0800 PointsDeck[213:51946398] [Connection] Unable to get remoteObjectProxy, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 21:09:37.287528+0800 PointsDeck[213:51946398] [Connection] Unable to register with Process Instance Registry, error: Error Domain=NSCocoaErrorDomain Code=4097 "connection to service named com.apple.linkd.autoShortcut" UserInfo={NSDebugDescription=connection to service named com.apple.linkd.autoShortcut}
+2026-10-04 21:09:37.325891+0800 PointsDeck[213:51946350] [lane] lane-quiet accessory
+Test Suite 'All tests' started at 2026-10-04 21:09:37.473.
+Test Suite 'PointsMacHostedTests.xctest' started at 2026-10-04 21:09:37.473.
+Test Suite 'MacHostedTests' started at 2026-10-04 21:09:37.474.
+Test Case '-[PointsMacHostedTests.MacHostedTests testWindowMenuAndCloseKey]' started.
+POINTS_MAC_KEY h hide:
+POINTS_MAC_KEY h hideOtherApplications:
+POINTS_MAC_KEY h unhideAllApplications:
+POINTS_MAC_KEY q terminate:
+POINTS_MAC_KEY n menuAction:
+POINTS_MAC_KEY w performClose:
+POINTS_MAC_KEY w closeAll:
+POINTS_MAC_KEY z undo:
+POINTS_MAC_KEY z redo:
+POINTS_MAC_KEY x cut:
+POINTS_MAC_KEY c copy:
+POINTS_MAC_KEY v paste:
+POINTS_MAC_KEY a selectAll:
+POINTS_MAC_KEY d startDictation:
+POINTS_MAC_KEY   orderFrontCharacterPalette:
+POINTS_MAC_KEY   orderFrontCharacterPalette:
+POINTS_MAC_KEY e orderFrontCharacterPalette:
+POINTS_MAC_KEY m performMiniaturize:
+POINTS_MAC_KEY ? showHelp:
+POINTS_MAC_KEY s toggleSidebar:
+Test Case '-[PointsMacHostedTests.MacHostedTests testWindowMenuAndCloseKey]' passed (0.261 seconds).
+Test Suite 'MacHostedTests' passed at 2026-10-04 21:09:37.735.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.261 (0.261) seconds
+Test Suite 'PointsMacHostedTests.xctest' passed at 2026-10-04 21:09:37.735.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.261 (0.261) seconds
+Test Suite 'All tests' passed at 2026-10-04 21:09:37.735.
+	 Executed 1 test, with 0 failures (0 unexpected) in 0.261 (0.262) seconds
+2026-10-04 21:09:38.069 xcodebuild[199:51946202] [MT] IDETestOperationsObserverDebug: 1.052 elapsed -- Testing started completed.
+2026-10-04 21:09:38.069 xcodebuild[199:51946202] [MT] IDETestOperationsObserverDebug: 0.000 sec, +0.000 sec -- start
+2026-10-04 21:09:38.069 xcodebuild[199:51946202] [MT] IDETestOperationsObserverDebug: 1.052 sec, +1.052 sec -- end
+
+Test session results, code coverage, and logs:
+	/tmp/points-other-platforms/mac-ui-v5/ui.xcresult
+
+** TEST EXECUTE SUCCEEDED **
+
+Testing started

@@ -1,0 +1,33 @@
+{
+ "ok": true,
+ "platform": "vision",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "source": "actual source-verified Release full simulator frames",
+ "files": [
+  {
+   "file": "shots/appstore/vision/01-ledger.png",
+   "sha256": "47cb6de02bca008cbc30cbfb4a41c86759a4c2bd8dbcec89ebe0dd7fc663920d",
+   "source": "perf/platform-validation/vision/captures/tab-0.png"
+  },
+  {
+   "file": "shots/appstore/vision/02-trend.png",
+   "sha256": "eaa5778002e13cf09001a6402bfea3259c7ed924428ad80f62154aa201cc1e87",
+   "source": "perf/platform-validation/vision/captures/tab-1.png"
+  },
+  {
+   "file": "shots/appstore/vision/03-score.png",
+   "sha256": "c7af0d5dc5e55fa590ed09af6f433e03e450b999d448d365a612efe4217a63c4",
+   "source": "perf/platform-validation/vision/captures/tab-2.png"
+  },
+  {
+   "file": "shots/appstore/vision/04-reward.png",
+   "sha256": "b63217abf4e77924158e921dc64ec4bd65475411cf478a21cfc42343c43df380",
+   "source": "perf/platform-validation/vision/captures/tab-3.png"
+  },
+  {
+   "file": "shots/appstore/vision/05-account.png",
+   "sha256": "22bc1d5a5ba949d57a5e7c85d64363b1d1ba8633d26ae13ad7b98c4a9a115f01",
+   "source": "perf/platform-validation/vision/captures/tab-4.png"
+  }
+ ]
+}

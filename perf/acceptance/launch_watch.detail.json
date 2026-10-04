@@ -1,17 +1,18 @@
 {
-  "summary": "Apple Watch 模拟器 Apple Watch Series 12 (46mm) 启动冒烟通过：os_log 1.541 s，截图 416×496",
+  "summary": "Apple Watch 模拟器 Apple Watch Series 12 (46mm) 启动冒烟通过：os_log 1.656 s，截图 416×496",
   "passed": true,
   "platform": "watch",
   "environment": "simulator",
   "scheme": "PointsDeckWatch",
   "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
-  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "method": "核验仓外构建回执与当前源码、产物及工具链后复用；沿共享 sim_lane 静默启动并截图，不抢焦点",
   "build": {
-    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.bsyu4ftd/dd/Build/Products/Debug-watchsimulator/PointsDeckWatch.app",
+    "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/dd/Build/Products/Release-iphonesimulator/PointsDeck.app/Watch/PointsDeckWatch.app",
     "bundle_id": "cyou.tianli.pointsdeck.watchkitapp",
-    "version": "1.0.1",
-    "build": "1",
-    "executable_sha256": "b5e55e0ab545ec0d028df70d1f863b75b815fde00139566aad2c3d28873f5152",
+    "version": "1.0.2",
+    "build": "9",
+    "configuration": "Release",
+    "executable_sha256": "bc5684a247de717ad1cd33855be518cf95d652b0762d5292483412c154db9c7b",
     "sdk": "watchsimulator27.0",
     "xcode": {
       "name": "Xcode.app",
@@ -19,7 +20,14 @@
       "build": "27A266a",
       "developer_dir": "/Applications/Xcode.app/Contents/Developer"
     },
-    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.bsyu4ftd/build-watch-Debug.log"
+    "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build-ipad-Release.log",
+    "reuse": {
+      "receipt": "/private/tmp/points-other-platforms/release-accessibility/watch-Release.json",
+      "receipt_sha256": "bad7448428e2475d89f906be70d6f034e9f85d84724b2fc85708dd585e7f0b5d",
+      "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/src",
+      "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+      "source_file_count": 79
+    }
   },
   "device": {
     "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
@@ -29,16 +37,20 @@
   },
   "launch_args": [
     "-api_base",
-    "http://127.0.0.1:57030",
+    "http://127.0.0.1:50971",
     "-dev_user",
     "xiaoman",
     "-dev_pw",
     "<redacted>"
   ],
+  "waits": {
+    "lock_seconds": 300,
+    "load_seconds": 300
+  },
   "run": {
     "udid": "71612A23-0E31-4E0A-9C3A-F5EE4E69FCE1",
-    "pid": 45779,
-    "ready_seconds": 1.541,
+    "pid": 47425,
+    "ready_seconds": 1.656,
     "ready_signal": "os_log",
     "size": [
       416,
@@ -51,9 +63,11 @@
     "non_blank": true,
     "changed_from_baseline": true,
     "stable": true,
-    "diff_baseline": 0.9424,
+    "diff_baseline": 0.9363,
     "diff_prev": 0.0
   },
   "screenshot": "perf/platforms/watch/launch.png",
-  "screenshot_sha256": "5cecc6497ea3f03c011123ae2fed1e080a0d0e547b91ee9bc37363fe77262fe8"
+  "screenshot_sha256": "572be5b3e098a4c59a4b593d4bec24287687e6f967978d02d1d8a16b006fc7f0",
+  "capture_reusable": false,
+  "capture_note": "启动参数含敏感值，本次不导出可复用运行原件"
 }

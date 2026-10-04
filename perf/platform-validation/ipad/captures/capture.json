@@ -1,0 +1,124 @@
+{
+ "ok": true,
+ "scope": "real five views, minimum Mac window / largest iPad text, stored-session reopen",
+ "platform": "ipad",
+ "environment": "simulator",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.bbpvlek8/build.json",
+ "receipt_sha256": "01a551a6b8c62b0a2b54b6e520df1945d47d36b02985df72004a315476cd2519",
+ "captures": [
+  {
+   "tab": 0,
+   "stored_session": false,
+   "screenshot": "tab-0.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.8385,
+    "diff_prev": 0.0
+   },
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D"
+  },
+  {
+   "tab": 1,
+   "stored_session": true,
+   "screenshot": "tab-1.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.816,
+    "diff_prev": 0.0
+   },
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D"
+  },
+  {
+   "tab": 2,
+   "stored_session": true,
+   "screenshot": "tab-2.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.7991,
+    "diff_prev": 0.0
+   },
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D"
+  },
+  {
+   "tab": 3,
+   "stored_session": true,
+   "screenshot": "tab-3.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.8029,
+    "diff_prev": 0.0
+   },
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D"
+  },
+  {
+   "tab": 4,
+   "stored_session": true,
+   "screenshot": "tab-4.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.8028,
+    "diff_prev": 0.0
+   },
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D"
+  },
+  {
+   "tab": 2,
+   "dynamic_type": "accessibility-extra-extra-extra-large",
+   "screenshot": "score-largest-type.png"
+  },
+  {
+   "tab": 2,
+   "orientation": "landscape",
+   "screenshot": "landscape-score.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 1.0,
+    "diff_prev": 0.0
+   },
+   "rotation": {
+    "ok": true,
+    "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
+    "orientation": "landscape",
+    "rotator": {
+     "xctestrun": "/Users/tianli/Library/Caches/sim-lane/rotator/665dfc7e6737ef82/Products/RotatorHost_iphonesimulator27.0-arm64-x86_64.xctestrun",
+     "cached": true,
+     "key": "665dfc7e6737ef82"
+    },
+    "errors": [],
+    "load_1_5_15": [
+     114.8,
+     61.4,
+     83.4
+    ],
+    "simulator_app_opened": false,
+    "screen": [
+     2752,
+     2064
+    ],
+    "seconds": 16.6
+   }
+  }
+ ],
+ "limitations": [
+  "interactive sheet controls and system input were not exercised by this capture"
+ ]
+}

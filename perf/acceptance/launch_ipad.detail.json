@@ -1,17 +1,18 @@
 {
-  "summary": "iPad 模拟器 iPad Pro 13-inch (M5) 启动冒烟通过：os_log 3.077 s，截图 2064×2752",
+  "summary": "iPad 模拟器 iPad Pro 13-inch (M5) 启动冒烟通过：os_log 2.317 s，截图 2064×2752",
   "passed": true,
   "platform": "ipad",
   "environment": "simulator",
   "scheme": "PointsDeck",
   "sim_lane": "/Users/tianli/Dev/tools/dev/lib/tools/macapp/ios/sim_lane.py",
-  "method": "sim_lane 在仓外临时副本构建，在无窗口模拟器启动并截图；Mac 线静默启动（open -g -j + App -lane_quiet，不上屏不进 Dock，App 进程内离屏渲染截图）；不合成输入、不抢焦点",
+  "method": "核验仓外构建回执与当前源码、产物及工具链后复用；沿共享 sim_lane 静默启动并截图，不抢焦点",
   "build": {
-    "app_path": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.31tsr4jg/dd/Build/Products/Debug-iphonesimulator/PointsDeck.app",
+    "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/dd/Build/Products/Release-iphonesimulator/PointsDeck.app",
     "bundle_id": "cyou.tianli.pointsdeck",
-    "version": "1.0.1",
-    "build": "1",
-    "executable_sha256": "3e53108a40e8ebce6eab5f9cc95c56c04f1cbd4ce5fb9e6933f280f50f8d4c13",
+    "version": "1.0.2",
+    "build": "9",
+    "configuration": "Release",
+    "executable_sha256": "4a05a4ea429af98b1af8490b763d71c161bd2b0ff395d0df6232e22d91e2894a",
     "sdk": "iphonesimulator27.0",
     "xcode": {
       "name": "Xcode.app",
@@ -19,7 +20,14 @@
       "build": "27A266a",
       "developer_dir": "/Applications/Xcode.app/Contents/Developer"
     },
-    "log": "/var/folders/x7/qptxw08j00v__67yzr3gcd000000gp/T/sim-lane-build.31tsr4jg/build-ipad-Debug.log"
+    "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build-ipad-Release.log",
+    "reuse": {
+      "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build.json",
+      "receipt_sha256": "7abb57b3e9f078ac3bc76c839d33c07a2fa2d47eab5f0a482eb966f0b2ec34f6",
+      "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/src",
+      "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+      "source_file_count": 79
+    }
   },
   "device": {
     "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
@@ -29,16 +37,20 @@
   },
   "launch_args": [
     "-api_base",
-    "http://127.0.0.1:55428",
+    "http://127.0.0.1:50325",
     "-dev_user",
     "xiaoman",
     "-dev_pw",
     "<redacted>"
   ],
+  "waits": {
+    "lock_seconds": 300,
+    "load_seconds": 300
+  },
   "run": {
     "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
-    "pid": 40060,
-    "ready_seconds": 3.077,
+    "pid": 46190,
+    "ready_seconds": 2.317,
     "ready_signal": "os_log",
     "size": [
       2064,
@@ -49,11 +61,24 @@
   },
   "verdict": {
     "non_blank": true,
-    "changed_from_baseline": true,
-    "stable": true,
-    "diff_baseline": 0.8267,
-    "diff_prev": 0.0
+    "changed_from_baseline": null,
+    "stable": null,
+    "diff_baseline": null,
+    "diff_prev": null
   },
   "screenshot": "perf/platforms/ipad/launch.png",
-  "screenshot_sha256": "779115ba5f98b8e7d4e768d665421e916492ec458592813cd56bb9fea39b25dc"
+  "screenshot_sha256": "4cfe1d221038f2551dc2538d662cb53ca7a4e174a0819cd13a47383514022e14",
+  "capture_mode": "functional_thin",
+  "baseline_stable": null,
+  "functional_orientation": {
+    "declared": null,
+    "requested": null,
+    "extra_orientation_tested": false,
+    "actual_size": [
+      2064,
+      2752
+    ]
+  },
+  "capture_reusable": false,
+  "capture_note": "实际核心功能薄图；没有系统基线/稳定比较，不导出 Store 复用原件"
 }

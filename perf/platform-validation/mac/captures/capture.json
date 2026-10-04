@@ -1,0 +1,50 @@
+{
+ "ok": true,
+ "scope": "real five views, minimum Mac window / largest iPad text, stored-session reopen",
+ "platform": "mac",
+ "environment": "native",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.kf5tut4c/build.json",
+ "receipt_sha256": "c8b1bbeed4bab322c152975ea3c25a9b1f179b4c745eec6ab7eab42567f3d731",
+ "captures": [
+  {
+   "tab": 0,
+   "stored_session": false,
+   "quiet": true,
+   "screenshot": "tab-0.png"
+  },
+  {
+   "tab": 1,
+   "stored_session": true,
+   "quiet": true,
+   "screenshot": "tab-1.png"
+  },
+  {
+   "tab": 2,
+   "stored_session": true,
+   "quiet": true,
+   "screenshot": "tab-2.png"
+  },
+  {
+   "tab": 3,
+   "stored_session": true,
+   "quiet": true,
+   "screenshot": "tab-3.png"
+  },
+  {
+   "tab": 4,
+   "stored_session": true,
+   "quiet": true,
+   "screenshot": "tab-4.png"
+  },
+  {
+   "tab": 2,
+   "window": "760x540",
+   "quiet": true,
+   "screenshot": "minimum-score.png"
+  }
+ ],
+ "limitations": [
+  "interactive sheet controls and system input were not exercised by this capture"
+ ]
+}

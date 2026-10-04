@@ -1,0 +1,34 @@
+{
+ "ok": true,
+ "platform": "mac",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "files": [
+  {
+   "file": "shots/appstore/mac/01-ledger.png",
+   "sha256": "46efee567a78ee4756fa68f81479171c71380f1f3ed38b3d2cb18096d4b8d0ae",
+   "source": "perf/platform-validation/mac/captures/tab-0.png"
+  },
+  {
+   "file": "shots/appstore/mac/02-trend.png",
+   "sha256": "fc84d3c4c8a9074ff2421420ee3613a6199fc6a5ce3da0991e0ef9883c5ad163",
+   "source": "perf/platform-validation/mac/captures/tab-1.png"
+  },
+  {
+   "file": "shots/appstore/mac/03-score.png",
+   "sha256": "21f7f9cadf5d690127faaf07357be9a79b9ee22b7b0a902ee67f2d28cb128cc5",
+   "source": "perf/platform-validation/mac/captures/tab-2.png"
+  },
+  {
+   "file": "shots/appstore/mac/04-reward.png",
+   "sha256": "5ba68f95b6987db139bc0f0c202f35deee23cc1275e638a2e6a7a4ee752ee4b3",
+   "source": "perf/platform-validation/mac/captures/tab-3.png"
+  },
+  {
+   "file": "shots/appstore/mac/05-account.png",
+   "sha256": "11d7d2908a0c75eeb3cca2e2258cde0b750d760d40650f8cbe730c4bbe0801c0",
+   "source": "perf/platform-validation/mac/captures/tab-4.png"
+  }
+ ],
+ "display_type": "APP_DESKTOP",
+ "source": "actual offscreen native Release window"
+}

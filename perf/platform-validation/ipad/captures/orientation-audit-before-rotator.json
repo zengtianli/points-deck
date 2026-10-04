@@ -1,0 +1,10 @@
+{
+ "ok": false,
+ "requested_orientation": "landscape",
+ "actual_orientation": "portrait",
+ "size": [
+  2064,
+  2752
+ ],
+ "note": "App geometry request alone did not rotate the simulator display. Original five views and large-text images remain valid; physical landscape requires LaneRotator."
+}

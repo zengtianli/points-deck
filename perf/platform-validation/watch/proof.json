@@ -1,0 +1,13 @@
+{
+ "ok": true,
+ "phase": "watch",
+ "platform": "watch",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "receipt_sha256": "01a551a6b8c62b0a2b54b6e520df1945d47d36b02985df72004a315476cd2519",
+ "test_sha256": "f701b43ab5bb8b98e7f4aae08bbc90ef2d88f61c4e149781db62824a67b10ecb",
+ "seconds": 602.8,
+ "environment": "simulator",
+ "product_rebuilt": false,
+ "watch_credentials_injected": false,
+ "cleanup": "owned devices shutdown; canonical locks released on exit"
+}

@@ -1,0 +1,51 @@
+{
+ "ok": true,
+ "platform": "watch",
+ "configuration": "Release",
+ "scheme": "PointsDeck",
+ "compilation_conditions": [],
+ "app_path": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/dd/Build/Products/Release-iphonesimulator/PointsDeck.app/Watch/PointsDeckWatch.app",
+ "bundle_id": "cyou.tianli.pointsdeck.watchkitapp",
+ "version": "1.0.2",
+ "build": "9",
+ "executable_sha256": "bc5684a247de717ad1cd33855be518cf95d652b0762d5292483412c154db9c7b",
+ "sdk": "watchsimulator27.0",
+ "xcode": {
+  "name": "Xcode.app",
+  "version": "27.0",
+  "build": "27A266a",
+  "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+ },
+ "destination": "generic/platform=iOS Simulator",
+ "signing": "unsigned simulator build (CODE_SIGNING_ALLOWED=NO)",
+ "log": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build-ipad-Release.log",
+ "work_dir": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n",
+ "seconds": 29.6,
+ "generated_info_plists": [
+  {
+   "source_path": "src/Watch/Info.plist",
+   "backup_path": "cache-provenance/xcodegen-info.130gy7wg/Watch/Info.plist",
+   "sha256": "edffe1cc9c3881a375e5be1ecb97cd9d9ae666acc9bc6d14c0652f3fb215179f",
+   "targets": [
+    "PointsDeckWatch"
+   ],
+   "reason": "XcodeGen target info.path; absent from original sources"
+  },
+  {
+   "source_path": "src/Watch/Widget-Info.plist",
+   "backup_path": "cache-provenance/xcodegen-info.130gy7wg/Watch/Widget-Info.plist",
+   "sha256": "53e1b982e486c15873df5b577394766be09e775d715becdef03e930dbec350ea",
+   "targets": [
+    "PointsWatchWidget"
+   ],
+   "reason": "XcodeGen target info.path; absent from original sources"
+  }
+ ],
+ "target_scheme": "PointsDeckWatch",
+ "embedded_watch_origin": {
+  "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build.json",
+  "receipt_sha256": "7abb57b3e9f078ac3bc76c839d33c07a2fa2d47eab5f0a482eb966f0b2ec34f6",
+  "iphone_app": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/dd/Build/Products/Release-iphonesimulator/PointsDeck.app",
+  "watch_app": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/dd/Build/Products/Release-iphonesimulator/PointsDeck.app/Watch/PointsDeckWatch.app"
+ }
+}

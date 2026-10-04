@@ -1,0 +1,28 @@
+{
+ "ok": true,
+ "environment": "native",
+ "scope": "actual Keychain storage, independent processes",
+ "production_sources": {
+  "Shared/PlatformCompat.swift": "e70a1876bb795eaa5ee1b928fc816fc6ecfd87bfea7170a324247544e3a35e7a",
+  "Sources/Skin.swift": "77dc1fd78349571b9b44e9fc946001724d36e014e6e9f30d90c10908d0395c22",
+  "Sources/Api.swift": "ab4a1508652c551c49a5ba576fe83024732be15d354a93c5936f1b3c535fb577",
+  "Sources/Snapshot.swift": "75be973e400fae31f977743bde751a83e807f25dd2c7326190832238e1e830f5",
+  "scripts/accept/storage.swift": "74804d740ec9c768e2ed8b02eba54e4b8a1c69bac11fb3c211d29589c0c4911f"
+ },
+ "assertions": [
+  "PASS: isolated lane bundle",
+  "PASS: stable request saved",
+  "PASS: production snapshot written and read",
+  "PASS: production ledger cache survives process restart",
+  "PASS: cached account and ledger preserved",
+  "PASS: pending request survives process restart",
+  "PASS: snapshot survives process restart",
+  "PASS: confirmed request removed",
+  "PASS: logout ledger removal persists",
+  "PASS: logout pending removal persists",
+  "PASS: logout snapshot empty persists"
+ ],
+ "processes": 4,
+ "installed_product_entries_changed": false,
+ "limitations": "Mac Keychain execution; simulator Keychain/Widget groups are separate scopes"
+}

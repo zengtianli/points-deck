@@ -1,0 +1,57 @@
+{
+  "ok": true,
+  "scope": "actual current Mac Release bundled CLI version/state/config against isolated real HTTP server",
+  "artifact": "/Users/tianli/Apps/edu/ios/points/01-源程序/build/accept/mac/Growth Treasury.app",
+  "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+  "cli_sha256": "64755cfe7c4205452826f943cc3ae6c46c14c5941042750f612fa1ae2d0430fc",
+  "records": [
+    {
+      "command": [
+        "version",
+        "--json"
+      ],
+      "returncode": 0,
+      "response": {
+        "ok": true,
+        "cli": "1.3",
+        "app": {
+          "bundle_id": "cyou.tianli.pointsdeck",
+          "version": "1.0.2",
+          "build": "9",
+          "path": "/Users/tianli/Apps/edu/ios/points/01-源程序/build/accept/mac/Growth Treasury.app"
+        },
+        "api": "http://127.0.0.1:60348",
+        "server": {
+          "reachable": true,
+          "ms": 7
+        }
+      }
+    },
+    {
+      "command": [
+        "state",
+        "--json"
+      ],
+      "returncode": 0,
+      "response": {
+        "ok": true,
+        "balance": 1133,
+        "entries_total": 162
+      }
+    },
+    {
+      "command": [
+        "config",
+        "get",
+        "--json"
+      ],
+      "returncode": 0,
+      "response": {
+        "ok": true,
+        "server_scoped": true,
+        "rules": 87,
+        "shop": 16
+      }
+    }
+  ]
+}

@@ -1,9 +1,7 @@
-静态：31 个 Swift 源文件无跟踪 SDK，联网主机仅 ['edu.tianli.cyou']，家长密码只在内存，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串
-ACCEPT: 未登录读取账本被拒（「没登录」）
-ACCEPT: 孩子登录态下无家长密码：记账、调分、撤销、读配置 4 类请求全部被拒，余额不变
-ACCEPT: 两户隔离：新账号 0 分、看不到第一户 30 条流水；跨户家长密码与跨户撤销均被拒
-ACCEPT: 第一户账本未被另一户改动
-ACCEPT: 家长密码只在会话内存：上锁即清空，新会话默认上锁
+静态：37 个 Swift 源文件无跟踪 SDK，联网主机仅 ['api.github.com', 'apps.apple.com', 'edu.tianli.cyou', 'itunes.apple.com']，版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串
+ACCEPT: 未登录读不到账本
+ACCEPT: 普通账号可直接记本户账；跨户撤销和站点重置被拒
+ACCEPT: 重新登录原账号，余额与流水完整
 PASS privacy
 ACCEPT: 客户端隔离 HOME 写入 0 个文件，其中含密码明文 0 个
-隐私边界：生产 Swift 客户端对本地真实账本服务 6 项通过；静态：31 个 Swift 源文件无跟踪 SDK，联网主机仅 ['edu.tianli.cyou']，家长密码只在内存，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串
+隐私边界：生产 Swift 客户端对本地真实账本服务 4 项通过；静态：37 个 Swift 源文件无跟踪 SDK，联网主机仅 ['api.github.com', 'apps.apple.com', 'edu.tianli.cyou', 'itunes.apple.com']，版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 8 个字段无凭据，权限仅网络+沙盒+共享钥匙串

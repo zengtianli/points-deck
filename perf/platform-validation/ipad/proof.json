@@ -1,0 +1,13 @@
+{
+ "ok": true,
+ "phase": "ui",
+ "platform": "ipad",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "receipt_sha256": "01a551a6b8c62b0a2b54b6e520df1945d47d36b02985df72004a315476cd2519",
+ "test_sha256": "0e1fc63bb7988914b9ac1a8ffee229024f0a1d4f103f048e22e5648d23157e6a",
+ "seconds": 175.8,
+ "environment": "simulator",
+ "product_rebuilt": false,
+ "watch_credentials_injected": null,
+ "cleanup": "owned devices shutdown; canonical locks released on exit"
+}

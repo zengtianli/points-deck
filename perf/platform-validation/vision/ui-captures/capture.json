@@ -1,0 +1,29 @@
+{
+  "ok": true,
+  "source_commit": "39ea345",
+  "producer": "actual XCTest app window screenshots",
+  "store_dimension_checked": false,
+  "scope": "window regions, not full simulator frames; modal may extend beyond app screenshot region",
+  "captures": [
+    {
+      "file": "ledger.png",
+      "sha256": "c1c6233ea8de65dfcbd7b30c215e8fe7712fac19bd74d9f32c4cb1979c0ed78b"
+    },
+    {
+      "file": "trend.png",
+      "sha256": "e9a3d6a2dbe51f2e2f460a58f17ece896ea0ccfaf20d6399fe160776f8272cb0"
+    },
+    {
+      "file": "project-input.png",
+      "sha256": "8cdb3a7b96ed0c5fac6680db831a11508018dd6905ab516de84368f3a590db19"
+    },
+    {
+      "file": "reward-input.png",
+      "sha256": "765dc69f899b831fdfdb1e5cfd31de47f821bb5fc23a180763664f254b8298c2"
+    },
+    {
+      "file": "stored-reopen.png",
+      "sha256": "9ab41dc47610f37059846cebc02e46c2def556049afdb3f176a8399f6de23237"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "job_id": "3bf22bb7b5b44b819df9f1713a321637",
+  "original": "perf/platforms/mac.json",
+  "evidence": {
+    "schema_version": 1,
+    "platform": "mac",
+    "app_id": "points-deck-ios",
+    "version": "1.0.2",
+    "build": "9",
+    "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+    "runtime_measurement": {
+      "environment": "native",
+      "device": "Mac16,12 / Apple M4",
+      "os": "macOS 27.2",
+      "xcode": "Xcode 27.0 (27A266a)",
+      "evidence": "perf/platforms/mac/measure-20261004-224040.json",
+      "evidence_sha256": "f36728f5f90bf7a0e595879bec56ede0263ccda6e0e77f2d64667551e0b48088"
+    },
+    "size": {
+      "download_bytes": 5372702,
+      "installed_bytes": 13053690,
+      "download_mb": 5.37,
+      "installed_mb": 13.05,
+      "kind": "local ad-hoc Release .app, not a store package"
+    },
+    "speed": {
+      "cold_launch_ms": 454.0,
+      "runs": 5,
+      "discarded_runs": 1,
+      "ready_signal": "os_log",
+      "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+    },
+    "idle": {
+      "memory_mb": 42.0,
+      "cpu_pct": 0.0,
+      "window_s": 60,
+      "settle_s": 45,
+      "method": "shared measure.py idle: CPU-time delta / wall window; phys_footprint peak of 3 samples after the window",
+      "scope": "Local ad-hoc Release build, main process only, quiet launch (hidden, no Dock icon, window never on screen)"
+    },
+    "measured_at": "2026-10-04T22:40:40+08:00"
+  }
+}

@@ -1,0 +1,13 @@
+{
+ "ok": true,
+ "platform": "mac",
+ "environment": "native",
+ "scope": "actual offscreen Mac window, native Cmd-W menu mapping and its window close selector",
+ "receipt_sha256": "c8b1bbeed4bab322c152975ea3c25a9b1f179b4c745eec6ab7eab42567f3d731",
+ "test_sha256": "10d953cb16e10f2dfca2f23e0d4bb20c6284d777e9e423dc2ed537460398c504",
+ "product_rebuilt": false,
+ "original_executable_sha256": "06d46f94118f09b9c6004c7ae64e8f4c9ab5f74547b99e2fcf9d351b2d543b85",
+ "clone_bundle_id": "cyou.tianli.pointsdeck.lane",
+ "front_changed": false,
+ "focus_taken": false
+}

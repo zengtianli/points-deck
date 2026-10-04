@@ -1,0 +1,84 @@
+{
+ "ok": true,
+ "scope": "real five views, minimum Mac window / largest iPad text, stored-session reopen",
+ "platform": "vision",
+ "environment": "simulator",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.87f887a88839dfde5da3ffbdb87bf05760205da33c75e0f9fbb2358c4099e09c/sim-lane-build.xh2j149v/build.json",
+ "receipt_sha256": "ae9813e428aafcb18013854134dda0f8d9dc06255d79426cda91e0d227e72e31",
+ "captures": [
+  {
+   "tab": 0,
+   "stored_session": false,
+   "screenshot": "tab-0.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.1436,
+    "diff_prev": 0.0
+   },
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF"
+  },
+  {
+   "tab": 1,
+   "stored_session": true,
+   "screenshot": "tab-1.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.1483,
+    "diff_prev": 0.0
+   },
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF"
+  },
+  {
+   "tab": 2,
+   "stored_session": true,
+   "screenshot": "tab-2.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.1431,
+    "diff_prev": 0.0
+   },
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF"
+  },
+  {
+   "tab": 3,
+   "stored_session": true,
+   "screenshot": "tab-3.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.1416,
+    "diff_prev": 0.0
+   },
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF"
+  },
+  {
+   "tab": 4,
+   "stored_session": true,
+   "screenshot": "tab-4.png",
+   "ready_signal": "os_log",
+   "verdict": {
+    "non_blank": true,
+    "changed_from_baseline": true,
+    "stable": true,
+    "diff_baseline": 0.1357,
+    "diff_prev": 0.0
+   },
+   "udid": "4EA6A65D-4301-4527-B125-152AC0076CAF"
+  }
+ ],
+ "limitations": [
+  "interactive sheet controls and system input were not exercised by this capture"
+ ]
+}

@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "source_commit": "39ea345",
+  "source_input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+  "artifact": "/Users/tianli/Apps/edu/ios/points/01-\u6e90\u7a0b\u5e8f/build/accept/mac/Growth Treasury.app",
+  "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.701e8e9ddc4f1b14eb9956b769b238a0077b2931357c24ab204253d7621e9726/sim-lane-build.43l89u0y/build.json",
+  "receipt_sha256": "b426d60dd98de40ae4e464a01204a41ca38e5f138a7400367aff620a42ea635a",
+  "executable_sha256": "407b1147a8e7dbf7751933d28d58039a3c5421eab097dc6248629de0b6df415a",
+  "bundled_cli_sha256": "64755cfe7c4205452826f943cc3ae6c46c14c5941042750f612fa1ae2d0430fc",
+  "deep_signature_verified": true,
+  "installed_in_Applications": false
+}

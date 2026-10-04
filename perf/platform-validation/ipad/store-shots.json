@@ -1,0 +1,33 @@
+{
+ "ok": true,
+ "platform": "ipad",
+ "input_sha256": "56c51f7df2371e3d57f570c7006da250401c09ff01a2eabadd38f262dfa53c62",
+ "source": "actual source-verified Release full simulator frames",
+ "files": [
+  {
+   "file": "shots/appstore/ipad/01-ledger.png",
+   "sha256": "4cfe1d221038f2551dc2538d662cb53ca7a4e174a0819cd13a47383514022e14",
+   "source": "perf/platform-validation/ipad/captures/tab-0.png"
+  },
+  {
+   "file": "shots/appstore/ipad/02-trend.png",
+   "sha256": "a094256006347d5a3545e7ddd908a4b39845b0e58ec1a7a99b200373f5769273",
+   "source": "perf/platform-validation/ipad/captures/tab-1.png"
+  },
+  {
+   "file": "shots/appstore/ipad/03-score.png",
+   "sha256": "fa643bf045d7d921f4e4615eeb177f72ffa3e61d577cf9fa24a645516892190b",
+   "source": "perf/platform-validation/ipad/captures/tab-2.png"
+  },
+  {
+   "file": "shots/appstore/ipad/04-reward.png",
+   "sha256": "74f0432f7e6d87d7a59121c6bfd6d1e9723992f5ae71381ca380e98b84718677",
+   "source": "perf/platform-validation/ipad/captures/tab-3.png"
+  },
+  {
+   "file": "shots/appstore/ipad/05-account.png",
+   "sha256": "b8b3eb99edf035c878df07db407b91fb27775dfbeae5b52eb86cb9cbd0cead02",
+   "source": "perf/platform-validation/ipad/captures/tab-4.png"
+  }
+ ]
+}

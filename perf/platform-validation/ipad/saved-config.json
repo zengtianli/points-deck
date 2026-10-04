@@ -1,0 +1,12 @@
+{
+ "rules": {
+  "label": "QA-Points-Project",
+  "points": 7,
+  "count": 1
+ },
+ "shop": {
+  "label": "QA-Points-Reward",
+  "points": 4,
+  "count": 1
+ }
+}

@@ -1,0 +1,15 @@
+{
+  "ok": true,
+  "input_stable": true,
+  "job_id": "4604b30ce6b041609715dc3328cfa4be",
+  "original_result": "/Users/tianli/Library/Logs/app-sop/points-deck-ios-test-20261004-221559.result.json",
+  "result": {
+    "app_id": "points-deck-ios",
+    "head": "846098c146a5707518fa244f5b4dd119de08ee803e31d84f3a771092330a20ea",
+    "ok": true,
+    "at": "2026-10-04 22:17",
+    "log": "/Users/tianli/Library/Logs/app-sop/points-deck-ios-test-20261004-221559.log",
+    "input_stable": true,
+    "environment": "registered_command"
+  }
+}
