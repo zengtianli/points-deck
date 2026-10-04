@@ -11,7 +11,9 @@ origin: own
 sop:
   account:
     mode: password
-    rationale: 公开注册的家长账号，邮箱用于登录与自助恢复；完整原生入口和邮件验证按 ../PRD.md 补齐
+    rationale: 公开家长账号优先手机号验证码，保留邮箱与密码；注册、换绑和找回按 ../PRD.md 实施，短信通道待真实投递验收
+    verification_channels: [phone, email]
+    phone_login: true
     inputs:
     - ../../../web/points/server.py
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
