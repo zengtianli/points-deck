@@ -1,6 +1,6 @@
 #!/bin/bash
 # Fixed acceptance runner for Chapter app_sop: `scripts/accept/run.sh <functionality|recovery|privacy>`.
-# Compiles the production client (Sources/Api.swift, ParentSession.swift, Skin.swift + Shared/PlatformCompat.swift)
+# Compiles the production client (Sources/Api.swift, Skin.swift + Shared/PlatformCompat.swift)
 # with scripts/accept/<check>.swift and drives it against a throwaway local ledger started from the real
 # ~/Apps/edu/web/points/server.py (scratch EDU_POINTS_HOME, synthetic passwords, random localhost port).
 # Never touches edu.tianli.cyou, the user's keychain, cookies, preferences, mouse, keyboard or clipboard.
@@ -43,6 +43,14 @@ export EDU_POINTS_HOME="$scratch/ledger" EDU_POINTS_PORT="$port" EDU_POINTS_STAT
 export EDU_KID_USER=acceptkid EDU_KID_PW="kid-$RANDOM-$RANDOM" EDU_PARENT_PW="parent-$RANDOM-$RANDOM"
 ( cd "$server_dir" && "$py" server.py init >/dev/null && "$py" server.py seed 30 --force >/dev/null )
 
+( cd "$server_dir" && "$py" - <<'PYSEED'
+import secrets, server
+users=server.load_users();salt=secrets.token_hex(8)
+users['users']['otherfamily']={'nick':'另一户','salt':salt,'hash':server.hash_pw('another long unique phrase',salt),'pwv':1,'site_admin':False}
+server.save_users(users)
+PYSEED
+)
+
 start_server() {
   ( cd "$server_dir" && exec "$py" server.py serve ) >"$scratch/server.log" 2>&1 &
   server_pid=$!
@@ -56,7 +64,7 @@ stop_server() { kill "$server_pid" 2>/dev/null; wait "$server_pid" 2>/dev/null |
 start_server
 
 xcrun --sdk macosx swiftc -target "$(uname -m)-apple-macos15.0" -parse-as-library \
-  Shared/PlatformCompat.swift Sources/Skin.swift Sources/Api.swift Sources/ParentSession.swift \
+  Shared/PlatformCompat.swift Sources/Skin.swift Sources/Api.swift \
   scripts/accept/Common.swift "scripts/accept/$check.swift" -o "$scratch/accept"
 
 # The recovery check stops and restarts the server itself; it reports any new pid through this file.
@@ -90,7 +98,7 @@ summary = (f"{label}：生产 Swift 客户端对本地真实账本服务 {len(st
 if static:
     summary += "；" + static.strip().splitlines()[-1]
 json.dump({"summary": summary, "passed": ok, "steps": steps,
-           "scope": "macOS 编译同一份 Sources/Api.swift + ParentSession.swift，驱动 ~/Apps/edu/web/points/server.py "
+           "scope": "macOS 编译同一份 Sources/Api.swift，驱动 ~/Apps/edu/web/points/server.py "
                     "的隔离临时账本（合成账号/密码、随机本地端口）；不含 SwiftUI 界面、Widget、真机与线上 edu.tianli.cyou"},
           open(path, "w"), ensure_ascii=False, indent=2)
 print(summary)

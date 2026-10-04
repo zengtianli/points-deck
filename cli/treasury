@@ -2,12 +2,12 @@
 """treasury —— Growth Treasury · 成长小金库 的命令行（给 Agent 用，GUI 给人用）。
 
 和 App、edu.tianli.cyou 网页走**同一个服务端**（~/Apps/edu/web/points/server.py 的 /api/*）：
-分值、档位、解锁、透支、家长密码、并发锁全在服务端判，这里只组装请求、整理输出，不算分。
+分值、档位、解锁、余额、账号归属、并发锁全在服务端判，这里只组装请求、整理输出，不算分。
 
 凭据（都不落盘，cookie 只在本进程内存里）：
   EDU_USER        账号（邮箱或用户名），或 --user
   EDU_PASSWORD    账号密码，或 --password-stdin（stdin 第 1 行）
-  EDU_PARENT_PW   家长密码，或 --parent-stdin（stdin 下一行）；每次现取现发，同 App 的家长锁
+  EDU_PARENT_PW   仅站点管理命令使用的独立管理密码；家庭操作不读取
   EDU_API_BASE    服务端地址，默认 https://edu.tianli.cyou（本地隔离测试服用 http://127.0.0.1:<端口>）
 stdin 按顺序读：--password-stdin → --parent-stdin → --new-stdin，每项一行。
 
@@ -23,14 +23,16 @@ import os
 import plistlib
 import sys
 import time
+import datetime
 import urllib.error
 import urllib.parse
 import urllib.request
+import uuid
 from http.cookiejar import CookieJar
 from pathlib import Path
 
 DEFAULT_API = "https://edu.tianli.cyou"
-CLI_VERSION = "1.0"
+CLI_VERSION = "1.3"
 AGENT = f"treasury-cli/{CLI_VERSION}"
 CONFIG_KINDS = ("rules", "shop", "tiers")
 
@@ -74,6 +76,20 @@ class Client:
             # 服务端的 err 是给人看的中文，原样透出（同 App：不包成「请求失败」）
             raise Fail(str(obj.get("err") or f"HTTP {status}"), status=status)
         return obj
+
+
+    def transaction(self, path, body):
+        try:
+            return self.call(path, body)
+        except Fail as exc:
+            if exc.status is None:
+                try:
+                    result = self.call("api/request_result", {"request_id": body["request_id"]})
+                    if result.get("found"):
+                        return result
+                except Fail:
+                    pass
+            raise Fail(f"{exc.msg}；请求标识 {body['request_id']}，重试请沿用 --request-id", code=exc.code, status=exc.status) from exc
 
 
 class Secrets:
@@ -178,7 +194,7 @@ def cmd_state(c, a, sec):
         line = f"{v['nick']}（{v['user']}）余额 {v['balance']} 分（{v['yuan']:.2f} 元）· 住「{h['name']}」"
         line += f" · 还差 {n['points_to_go']} 分到「{n['name']}」" if n else " · 已是最高档"
         return (line + f"\n电视 {v['tv']} 分钟 · 心愿 {v['wish']} 个 · 今天刷题还能得 {v['practice_left']} 分"
-                + f" · 流水共 {v['entries_total']} 笔" + ("" if v["has_parent"] else " · 还没设家长密码"))
+                + f" · 流水共 {v['entries_total']} 笔" + "")
     return v, text
 
 
@@ -210,8 +226,9 @@ def cmd_entries(c, a, sec):
 
 def cmd_trend(c, a, sec):
     """同 TrendView：只取积分那条线，用每条流水自带的 bal 快照，不在端上累加。"""
-    st = c.call("api/state")
-    pts = [e for e in st.get("entries") or [] if (e.get("cur") or "pts") == "pts"][-a.span:]
+    st = c.call("api/state", query={"all": "1"})
+    cutoff = (datetime.date.today() - datetime.timedelta(days=max(1, a.span) - 1)).isoformat()
+    pts = [e for e in st.get("entries") or [] if (e.get("cur") or "pts") == "pts" and (a.span == 0 or e.get("day", "") >= cutoff)]
     vals = [int(e["bal"]) for e in pts]
     v = {"ok": True, "span": a.span, "points": [{"day": e["day"], "bal": int(e["bal"])} for e in pts],
          "change": (vals[-1] - vals[0]) if vals else 0, "high": max(vals) if vals else 0,
@@ -320,10 +337,10 @@ def cmd_earn(c, a, sec):
         v, _ = cmd_preview(c, a, sec)
         v["dry_run"] = True
         return v, lambda: f"（预览，未记账）{v['label']}：{v['pts']:+d} {v['cur']}"
-    b["admin"] = sec.parent()
+    b["request_id"] = a.request_id or str(uuid.uuid4())
     if a.note:
         b["note"] = a.note
-    r = c.call("api/earn", b)
+    r = c.transaction("api/earn", b)
     e = r.get("entry")
     v = {"ok": True, "skipped": bool(r.get("skipped")), "why": r.get("why") or "",
          "entry": _entry(e) if e else None, "balance": r.get("balance"), "cur": r.get("cur")}
@@ -337,12 +354,12 @@ def cmd_adjust(c, a, sec):
         v = {"ok": True, "dry_run": True, "pts": a.pts, "balance": st.get("balance"),
              "balance_after": st.get("balance", 0) + a.pts}
         return v, lambda: f"（预演，未调账）{a.pts:+d} → 余额 {v['balance_after']}"
-    b = {"pts": a.pts, "admin": sec.parent()}
+    b = {"pts": a.pts, "request_id": a.request_id or str(uuid.uuid4())}
     if a.label:
         b["label"] = a.label
     if a.note:
         b["note"] = a.note
-    r = c.call("api/adjust", b)
+    r = c.transaction("api/adjust", b)
     v = {"ok": True, "entry": _entry(r["entry"]), "balance": r.get("balance")}
     return v, lambda: f"调账 {a.pts:+d}「{v['entry']['label']}」· 余额 {v['balance']} #{v['entry']['id']}"
 
@@ -355,7 +372,7 @@ def cmd_undo(c, a, sec):
             raise Fail("找不到这笔（服务端只下发最近 400 笔）")
         v = {"ok": True, "dry_run": True, "entry": _entry(hit)}
         return v, lambda: f"（预演，未撤销）将删掉：{hit['ts'][:16]} {hit['pts']:+d}「{hit['label']}」"
-    r = c.call("api/undo", {"id": a.entry_id, "admin": sec.parent()})
+    r = c.call("api/undo", {"id": a.entry_id})
     v = {"ok": True, "removed": _entry(hit) if hit else {"id": a.entry_id}, "balance": r.get("balance")}
     return v, lambda: f"已撤销 #{a.entry_id}（挪进账本的 deleted 区留底）· 余额 {v['balance']}"
 
@@ -370,10 +387,12 @@ def cmd_spend(c, a, sec):
                "would_succeed": bool(it["affordable"])}
         return out, lambda: (f"（预演，未兑换）{it['label']} {it['pts']} 分："
                              + ("可以换" if it["affordable"] else ("还没解锁" if not it["unlocked"] else "余额不够")))
-    b = {"item": a.item}
+    b = {"item": a.item, "request_id": a.request_id or str(uuid.uuid4())}
+    if a.expected_pts is not None: b["expected_pts"] = a.expected_pts
+    if a.revision: b["expected_revision"] = a.revision
     if a.note:
         b["note"] = a.note
-    r = c.call("api/spend", b)
+    r = c.transaction("api/spend", b)
     v = {"ok": True, "entry": _entry(r["entry"]), "balance": r.get("balance")}
     return v, lambda: f"兑换「{v['entry']['label']}」{v['entry']['pts']:+d} · 余额 {v['balance']}"
 
@@ -395,9 +414,9 @@ def require_scoped_server(r: dict, what: str) -> None:
 
 
 def cmd_config_get(c, a, sec):
-    r = c.call("api/config", {"admin": sec.parent()})
+    r = c.call("api/config", {})
     v = {"ok": True, "scope": scope_of(r), "server_scoped": "scope" in r, **{k: r.get(k) for k in
-         ("subjects", "rules", "shop", "calcs", "tiers", "eras")}}
+         ("subjects", "rules", "shop", "calcs", "tiers", "eras", "revision")}}
     return v, lambda: (f"配置范围：{SCOPE_TEXT.get(v['scope'], v['scope'])} · 规则 {len(v['rules'] or [])} 条"
                        f" · 商品 {len(v['shop'] or [])} 件 · 档位 {len(v['tiers'] or [])} 档")
 
@@ -410,9 +429,12 @@ def cmd_config_put(c, a, sec):
     items = raw.get("items") if isinstance(raw, dict) else raw
     if not isinstance(items, list):
         raise Fail("文件要是 JSON 数组（或 {\"items\": [...]}），整段替换", code=2)
-    admin = sec.parent()
-    require_scoped_server(c.call("api/config", {"admin": admin}), "改配置")
-    r = c.call("api/config_put", {"admin": admin, "kind": a.kind, "items": items})
+    scope = c.call("api/config", {})
+    require_scoped_server(scope, "改配置")
+    revision = a.revision or (raw.get("revision") if isinstance(raw, dict) else None)
+    if not revision:
+        raise Fail("需提供读取配置时的 revision（--revision 或 JSON 的 revision 字段），防止覆盖另一设备改动", code=2)
+    r = c.call("api/config_put", {"revision": revision, "kind": a.kind, "items": items})
     v = {"ok": True, "kind": a.kind, "count": len(items), "scope": scope_of(r)}
     return v, lambda: f"已整段替换 {a.kind}（{len(items)} 条）· 写入范围：{SCOPE_TEXT.get(v['scope'], v['scope'])}"
 
@@ -439,6 +461,7 @@ def cmd_me(c, a, sec):
     r = c.call("api/me")
     v = {"ok": True, "user": r.get("u"), "nick": r.get("nick"), "has_email": bool(r.get("email")),
          "created": r.get("created"), "avatar": r.get("avatar")}
+    v.update(phone_verified=bool(r.get("phone_verified")), email_verified=bool(r.get("email_verified")), has_password=r.get("has_password", True))
     return v, lambda: f"{v['nick']}（{v['user']}）· {'邮箱账号' if v['has_email'] else '用户名账号'} · 加入 {str(v['created'])[:10]}"
 
 
@@ -447,9 +470,54 @@ def cmd_account_passwd(c, a, sec):
     return {"ok": True}, lambda: "账号密码已改（其他设备的登录全部下线）"
 
 
-def cmd_account_parent(c, a, sec):
-    c.call("api/parent_set", {"p": sec.account(), "parent": sec.new()})
-    return {"ok": True}, lambda: "本账号的家长密码已设好"
+def cmd_request_result(c, a, sec):
+    value = c.call("api/request_result", {"request_id": a.request_id})
+    return value, lambda: json.dumps(value, ensure_ascii=False)
+
+
+def cmd_account_security(c, a, sec):
+    if a.sub == "code-send":
+        value = c.call("api/email_send", {"email": a.email, "purpose": a.purpose,
+                                         "password": sec.account() if a.purpose.startswith("email_") else ""})
+    elif a.sub == "code-verify":
+        value = c.call("api/email_verify", {"challenge": a.challenge, "code": sec._line("验证码")})
+    elif a.sub == "register":
+        value = c.call("api/register", {"email": a.email, "p": sec.new(), "nick": a.nick or "", "grant": sec._line("注册授权")})
+    elif a.sub == "recover":
+        value = c.call("api/recover", {"new": sec.new(), "grant": sec._line("找回授权")})
+    else:
+        value = c.call("api/email_bind", {"email": a.email, "password": sec.account(), "grant": sec._line("新邮箱授权"),
+                                         "old_grant": sec._line("旧邮箱授权") if a.old_grant_stdin else ""})
+    return value, lambda: json.dumps(value, ensure_ascii=False)
+
+
+def cmd_phone_security(c, a, sec):
+    identity = sec._line("当前手机身份授权") if getattr(a, "identity_grant_stdin", False) else ""
+    if a.sub == "phone-send":
+        rid = a.request_id or uuid.uuid4().hex
+        body = {"phone": a.phone, "purpose": a.purpose, "request_id": rid, "identity_grant": identity,
+                "password": sec.account() if a.purpose in ("phone_new", "phone_change_new", "phone_old") and not identity else ""}
+        try:
+            value = c.call("api/phone_send", body)
+        except Fail as exc:
+            raise Fail(f"{exc}；发送标识 {rid}。超时不自动重发；复用该标识核对，60秒后才主动新发", code=exc.code, status=exc.status) from exc
+    elif a.sub == "phone-verify":
+        value = c.call("api/phone_verify", {"challenge": a.challenge, "code": sec._line("短信验证码")})
+    else:
+        body = {"identity_grant": identity}
+        if a.sub in ("phone-register", "phone-login", "phone-recover", "phone-bind"):
+            body["grant"] = sec._line("对应用途手机授权")
+        if a.sub == "phone-register":
+            body["agreed"] = a.agree
+        elif a.sub in ("phone-recover", "password-set"):
+            body["new"] = sec.new()
+        elif a.sub == "phone-bind":
+            body.update(phone=a.phone, password=sec.account() if not identity else "",
+                        old_grant=sec._line("原手机授权") if a.old_grant_stdin else "")
+        if getattr(a, "risk_password_stdin", False): body["password"] = sec._line("独立原密码")
+        if getattr(a, "risk_email_grant_stdin", False): body["email_grant"] = sec._line("独立邮箱授权")
+        value = c.call("api/" + a.sub.replace("-", "_"), body)
+    return value, lambda: json.dumps(value, ensure_ascii=False)
 
 
 def cmd_account_delete(c, a, sec):
@@ -460,7 +528,7 @@ def cmd_account_delete(c, a, sec):
 
 
 def cmd_users_list(c, a, sec):
-    """同 App 家长页的用户管理。范围由服务端判（响应里的 scope）；旧服务端不带 scope 时不知道这把家长密码
+    """独立站点用户管理。范围由服务端判（响应里的 scope）；旧服务端不带 scope 时不知道管理凭据
     该管多大范围 —— 只列本账号自己这一行，别人的账号、昵称、余额和注销汇总一律不带出来。"""
     r = c.call("api/users", {"admin": sec.parent()})
     users, dels, hidden = r.get("users") or [], r.get("account_deletions") or {}, 0
@@ -500,10 +568,10 @@ EXAMPLES = """示例：
   EDU_USER=me@example.com EDU_PASSWORD=… treasury state --json
   treasury entries --limit 10 --json
   treasury preview tr-show --json                         # 服务端算分，不记账
-  printf '%s\\n' "$PARENT" | treasury earn cn-dict-wrong --n 3 --parent-stdin --json
+  treasury earn cn-dict-wrong --n 3 --request-id example-operation-0001 --json
   treasury spend sh-icecream --dry-run
-  treasury config put shop --file shop.json --parent-stdin < parent.txt
-纯界面的留在 App：家长锁倒计时、SSE 实时刷新、桌面小组件、升档庆祝动画、配色预览。"""
+  treasury config put shop --file shop.json --revision "$REVISION" --json
+纯界面的留在 App：SSE 实时刷新、桌面小组件、升档庆祝动画、配色预览。"""
 
 
 def build() -> argparse.ArgumentParser:
@@ -513,6 +581,7 @@ def build() -> argparse.ArgumentParser:
     ap.add_argument("--api", help="服务端地址（默认 $EDU_API_BASE 或 https://edu.tianli.cyou）")
     ap.add_argument("--user", help="账号：邮箱或用户名（默认 $EDU_USER）")
     ap.add_argument("--password-stdin", action="store_true", help="账号密码从 stdin 第 1 行读（默认 $EDU_PASSWORD）")
+    ap.add_argument("--phone-grant-stdin", action="store_true", help="用一次性短信登录授权取得本次命令会话（stdin 最先读取）")
     ap.add_argument("--timeout", type=float, default=20, help="单次请求超时秒数（默认 20）")
     sub = ap.add_subparsers(dest="cmd", metavar="命令")
 
@@ -532,12 +601,14 @@ def build() -> argparse.ArgumentParser:
     p.add_argument("--since", help="只看这一天及以后（YYYY-MM-DD）")
     p.add_argument("--cur", choices=("pts", "tv", "wish"), help="只看一种币种")
     p = cmd("trend", cmd_trend, "走势：最近 N 笔积分的余额快照、涨跌、最高、最低（同 App 走势页）")
-    p.add_argument("--span", type=int, default=30, choices=(14, 30, 100), help="取最近几笔（14/30/100，默认 30）")
+    p.add_argument("--span", type=int, default=30, choices=(0, 7, 30), help="最近天数（7/30，0 为全部）")
     cmd("shop", cmd_shop, "兑换清单：每件的价格、是否解锁、要住进哪一档、够不够换")
     cmd("tiers", cmd_tiers, "家园阶梯：每档门槛、时代、贺礼、解锁的商品，标出当前档")
     p = cmd("rules", cmd_rules, "加分/扣分规则清单（earn/preview 用的规则 id）")
     p.add_argument("--subject", help="只看一个科目（科目 key）")
     cmd("me", cmd_me, "当前登录的账号")
+    p = cmd("request-result", cmd_request_result, "查询原操作结果，超时后先核对")
+    p.add_argument("request_id")
     cmd("version", cmd_version, "命令行版本、所在 App 版本与服务端是否可达（不登录、不要凭据）").set_defaults(login=False)
 
     def rule_args(p):
@@ -547,24 +618,29 @@ def build() -> argparse.ArgumentParser:
         p.add_argument("--input", action="append", metavar="键=值", help="计算器输入（calc 类规则，可重复）")
 
     rule_args(cmd("preview", cmd_preview, "预览一条规则算出来几分（服务端算，不记账）"))
-    p = cmd("earn", cmd_earn, "家长记一笔加分/扣分（要家长密码）", parent=True)
+    p = cmd("earn", cmd_earn, "记一笔加分/扣分（当前账号）", parent=True)
+    p.add_argument("--request-id", help="一次操作的稳定标识；重试沿用")
     rule_args(p)
     p.add_argument("--note", help="备注")
     p.add_argument("--dry-run", action="store_true", help="只预览不记账")
-    p = cmd("adjust", cmd_adjust, "家长手动调账 ±分（要家长密码；不许扣穿）", parent=True)
+    p = cmd("adjust", cmd_adjust, "临时记一笔 ±分（减分允许负余额）", parent=True)
+    p.add_argument("--request-id", help="一次操作的稳定标识；重试沿用")
     p.add_argument("pts", type=int, help="分值，正加负扣")
     p.add_argument("--label", help="事由（默认「家长手动加分/扣分」）")
     p.add_argument("--note", help="备注")
     p.add_argument("--dry-run", action="store_true", help="只算调完的余额，不调账")
-    p = cmd("undo", cmd_undo, "家长撤销一笔（要家长密码；条目挪进 deleted 区留底）", parent=True)
+    p = cmd("undo", cmd_undo, "撤销一笔（直接移入 deleted，恢复走势）", parent=True)
     p.add_argument("entry_id", help="流水 id（见 treasury entries）")
     p.add_argument("--dry-run", action="store_true", help="只显示将撤销哪一笔")
-    p = cmd("spend", cmd_spend, "兑换一件商品（不要家长密码；未解锁或余额不够会被拒）")
+    p = cmd("spend", cmd_spend, "兑换奖励（校验当前价格、条件与余额）")
+    p.add_argument("--request-id", help="一次兑换的稳定标识；重试沿用")
+    p.add_argument("--expected-pts", type=int, help="确认时的价格，变化时拒绝")
+    p.add_argument("--revision", help="确认时的配置版本")
     p.add_argument("item", help="商品 id（见 treasury shop）")
     p.add_argument("--note", help="备注")
     p.add_argument("--dry-run", action="store_true", help="只看能不能换，不兑换")
 
-    pc = sub.add_parser("config", help="规则/商品/档位配置（要家长密码）", description="规则/商品/档位配置（要家长密码）")
+    pc = sub.add_parser("config", help="当前家庭的规则/奖励/档位配置", description="当前家庭的规则/奖励/档位配置")
     csub = pc.add_subparsers(dest="sub", metavar="动作", required=True)
     p = csub.add_parser("get", help="读当前生效的配置")
     p.add_argument("--json", action="store_true")
@@ -572,6 +648,7 @@ def build() -> argparse.ArgumentParser:
     p.set_defaults(fn=cmd_config_get)
     p = csub.add_parser("put", help="整段替换一类配置（服务端整体校验，不过就一个字不写）")
     p.add_argument("kind", choices=CONFIG_KINDS)
+    p.add_argument("--revision", help="编辑时读取的配置版本")
     p.add_argument("--file", required=True, help="JSON 数组文件（或 {\"items\": [...]}）")
     p.add_argument("--json", action="store_true")
     p.add_argument("--parent-stdin", action="store_true")
@@ -582,21 +659,47 @@ def build() -> argparse.ArgumentParser:
     p.add_argument("--emoji", help="预设头像（state 里的 avatars 之一）")
     p.add_argument("--avatar-file", help="上传头像图片（png/jpeg/webp，≤200KB）")
 
-    pa = sub.add_parser("account", help="账号：改密码 / 设家长密码 / 注销", description="账号：改密码 / 设家长密码 / 注销")
+    pa = sub.add_parser("account", help="账号：邮件验证 / 注册 / 绑定 / 改密 / 找回 / 注销", description="账号：邮件验证 / 注册 / 绑定 / 改密 / 找回 / 注销")
     asub = pa.add_subparsers(dest="sub", metavar="动作", required=True)
-    for name, fn, h in (("passwd", cmd_account_passwd, "改账号密码（新密码从 stdin）"),
-                        ("parent-password", cmd_account_parent, "设置/修改本账号的家长密码（新密码从 stdin）")):
+    for name, fn, h in (("passwd", cmd_account_passwd, "改登录密码（当前密码；新密码从 stdin）"),):
         p = asub.add_parser(name, help=h, description=h)
         p.add_argument("--json", action="store_true")
         p.add_argument("--new-stdin", action="store_true", help="新密码从 stdin 读（必需）")
         p.set_defaults(fn=fn)
+    for name in ("code-send", "code-verify", "register", "recover", "email-bind"):
+        p = asub.add_parser(name, help="共享账号接口；验证码与授权只从 stdin 读")
+        p.add_argument("--json", action="store_true")
+        p.set_defaults(fn=cmd_account_security, login=name == "email-bind")
+        if name in ("code-send", "register", "email-bind"): p.add_argument("--email", required=True)
+        if name == "code-send": p.add_argument("--purpose", required=True, choices=("register", "recover", "email_new", "email_old"))
+        if name == "code-verify": p.add_argument("--challenge", required=True)
+        if name == "register": p.add_argument("--nick")
+        if name in ("register", "recover"): p.add_argument("--new-stdin", action="store_true", required=True)
+        if name == "email-bind": p.add_argument("--old-grant-stdin", action="store_true")
     p = asub.add_parser("delete", help="注销本账号（不可恢复，须 --yes）")
     p.add_argument("--yes", action="store_true")
     p.add_argument("--json", action="store_true")
     p.set_defaults(fn=cmd_account_delete)
 
-    pu = sub.add_parser("users", help="家长用户管理（要家长密码；公开账号只看得到/管得了自己）",
-                        description="家长用户管理（要家长密码；公开账号只看得到/管得了自己）")
+    for name in ("phone-send", "phone-verify", "phone-register", "phone-login", "phone-bind", "phone-recover", "password-set"):
+        p = asub.add_parser(name, help="手机账号接口；OTP/授权只从 stdin 读，短信结果不冒充实际收信")
+        p.add_argument("--json", action="store_true")
+        p.set_defaults(fn=cmd_phone_security, login=name in ("phone-bind", "password-set"))
+        if name in ("phone-send", "phone-bind"): p.add_argument("--phone", required=True)
+        if name == "phone-send":
+            p.add_argument("--purpose", required=True, choices=("register", "login", "phone_new", "phone_change_new", "phone_old", "phone_identity", "phone_recover"))
+            p.add_argument("--request-id")
+        if name == "phone-verify": p.add_argument("--challenge", required=True)
+        if name == "phone-register": p.add_argument("--agree", action="store_true", required=True)
+        if name in ("phone-bind", "phone-send", "password-set"): p.add_argument("--identity-grant-stdin", action="store_true")
+        if name == "phone-bind": p.add_argument("--old-grant-stdin", action="store_true")
+        if name in ("phone-recover", "password-set"): p.add_argument("--new-stdin", action="store_true", required=True)
+        if name in ("phone-login", "phone-recover"):
+            p.add_argument("--risk-password-stdin", action="store_true")
+            p.add_argument("--risk-email-grant-stdin", action="store_true")
+
+    pu = sub.add_parser("users", help="站点用户管理（须显式管理员身份及独立运维密码）",
+                        description="站点用户管理（须显式管理员身份及独立运维密码）")
     usub = pu.add_subparsers(dest="sub", metavar="动作", required=True)
     p = usub.add_parser("list", help="列账号与余额")
     p.set_defaults(fn=cmd_users_list)
@@ -623,7 +726,12 @@ def main(argv: list[str]) -> int:
     as_json = getattr(a, "json", False)
     sec = Secrets(a)
     try:
-        c = session(a, sec) if getattr(a, "login", True) else client(a)
+        needs_login = (getattr(a, "login", True) or (getattr(a, "sub", None) == "code-send" and a.purpose.startswith("email_"))
+                       or (getattr(a, "sub", None) == "phone-send" and a.purpose.startswith("phone_") and a.purpose != "phone_recover"))
+        if a.phone_grant_stdin:
+            c = client(a); c.call("api/phone_login", {"grant": sec._line("短信登录授权")})
+        else:
+            c = session(a, sec) if needs_login else client(a)
         v, text = a.fn(c, a, sec)
     except Fail as f:
         return report_fail(f, as_json)

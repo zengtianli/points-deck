@@ -27,21 +27,22 @@ struct TrendView: View {
             .padding(.bottom, 24)
             .contentWidth(maxWidth)
         }
-        .refreshable { await store.refresh() }
+        .refreshable { await store.loadHistory() }
+        .task { await store.loadHistory() }
     }
 
     private var spanPicker: some View {
         HStack(spacing: 8) {
-            ForEach([14, 30, 100], id: \.self) { n in
+            ForEach([7, 30, 0], id: \.self) { n in
                 Button {
                     withAnimation(.easeInOut(duration: 0.25)) { span = n }
                 } label: {
-                    Text("近 \(n) 笔")
+                    Text(n == 0 ? "全部" : "近 \(n) 天")
                         .font(.caption.weight(.medium))
-                        .padding(.horizontal, 14).padding(.vertical, 7)
-                        .background(span == n ? era.accent.opacity(0.9) : .white.opacity(0.12),
+                        .padding(.horizontal, 14).frame(minHeight: 48)
+                        .background(span == n ? TreasuryTheme.accent.opacity(0.15) : TreasuryTheme.card,
                                     in: Capsule())
-                        .foregroundStyle(span == n ? .black : .white.opacity(0.8))
+                        .foregroundStyle(span == n ? TreasuryTheme.accent : .primary)
                 }
                 .flatButton()
             }
@@ -59,9 +60,15 @@ struct TrendPoint {
     /// 只取积分那条线：电视时间与心愿是另外两本账，混进同一条曲线就是三本账画成一本。
     static func series(_ s: LedgerState?, span: Int) -> [TrendPoint] {
         guard let s else { return [] }
+        let date = Calendar.current.date(byAdding: .day, value: -(max(1, span) - 1), to: Date()) ?? Date()
+        let formatter = DateFormatter(); formatter.dateFormat = "yyyy-MM-dd"
+        let cutoff = formatter.string(from: date)
         return s.entries.filter { $0.cur == "pts" }
             .reversed()                       // entries 已倒序，这里转回时间正序
-            .suffix(span)
+            .filter { entry in
+                guard span > 0 else { return true }
+                return entry.when >= cutoff
+            }
             .map { TrendPoint(day: $0.when, bal: $0.bal) }
     }
 }
@@ -74,9 +81,9 @@ struct TrendChart: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if points.count < 2 {
-                Text("流水还太少，画不出走势").font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.55))
+            if points.isEmpty {
+                Text("还没有流水，去「加分」记第一笔。").font(.subheadline)
+                    .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: height)
             } else {
                 let vals = points.map { Double($0.bal) }
@@ -85,7 +92,7 @@ struct TrendChart: View {
 
                 GeometryReader { geo in
                     let w = geo.size.width, h = geo.size.height
-                    let step = w / Double(vals.count - 1)
+                    let step = w / Double(max(1, vals.count - 1))
                     let pt: (Int) -> CGPoint = { i in
                         CGPoint(x: Double(i) * step,
                                 y: h - (vals[i] - lo) / span * (h - 12) - 6)
@@ -118,12 +125,12 @@ struct TrendChart: View {
                     Spacer()
                     Text(points.last?.day ?? "")
                 }
-                .font(.caption2).foregroundStyle(.white.opacity(0.45))
+                .font(.caption2).foregroundStyle(.secondary)
             }
         }
         .padding(18)
         .frame(maxWidth: .infinity)
-        .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
+        .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 18))
     }
 }
 
@@ -138,7 +145,7 @@ struct TrendStats: View {
         let delta = (vals.last ?? 0) - (vals.first ?? 0)
         return VStack(spacing: 0) {
             row("这段涨跌", (delta >= 0 ? "+" : "") + "\(delta) 分",
-                color: delta >= 0 ? era.accent : Color(hex: 0xFF9E9E))
+                color: delta >= 0 ? era.accent : Color(hex: 0xB44740))
             Divider().overlay(.white.opacity(0.12))
             row("最高", "\(vals.max() ?? 0) 分")
             Divider().overlay(.white.opacity(0.12))
@@ -147,12 +154,12 @@ struct TrendStats: View {
             row("今天刷题还能得", "\(practiceLeft) 分")
         }
         .padding(.horizontal, 18).padding(.vertical, 6)
-        .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
+        .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 18))
     }
 
-    private func row(_ k: String, _ v: String, color: Color = .white) -> some View {
+    private func row(_ k: String, _ v: String, color: Color = .primary) -> some View {
         HStack {
-            Text(k).font(.subheadline).foregroundStyle(.white.opacity(0.7))
+            Text(k).font(.subheadline).foregroundStyle(.secondary)
             Spacer()
             Text(v).font(.subheadline.weight(.semibold)).monospacedDigit().foregroundStyle(color)
         }

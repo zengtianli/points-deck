@@ -21,6 +21,14 @@ extension EnvironmentValues {
 }
 
 extension View {
+    /// 手机和平板表单服从分屏宽度；桌面窗口保留可用的初始尺寸。
+    func treasurySheetSize(minHeight: CGFloat) -> some View {
+        #if os(macOS) || os(visionOS)
+        self.frame(minWidth: 340, minHeight: minHeight)
+        #else
+        self
+        #endif
+    }
     /// 时代底色。iPhone / iPad / Mac 铺整页渐变（与原来逐字相同）；
     /// visionOS 不铺 —— 窗口本身是玻璃，盖一层不透明渐变就把它变成了一块平板，
     /// 时代色在那边只做强调色（tint / accent）。
@@ -66,36 +74,3 @@ extension View {
         }
     }
 }
-
-#if os(macOS)
-/// Mac 上家长会话的「无操作自动上锁」。
-///
-/// iPhone 靠「切后台超过 10 分钟」上锁（ParentSession.scenePhaseChanged），可 Mac 的窗口
-/// 晾在桌面上时 scenePhase 可能一直是 active —— 家长解锁完走开，那把锁就永远不落。
-/// 所以 Mac 另数「多久没碰这个 app」：本 app 收到的键盘、鼠标点击与滚动都算一次活动，
-/// 每 30 秒看一眼，超过同样的 10 分钟就上锁。别的 app 在前台时本 app 收不到事件，时间照样累计。
-struct MacIdleLock: ViewModifier {
-    @EnvironmentObject var session: ParentSession
-    @State private var monitor: Any?
-    private let tick = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-
-    func body(content: Content) -> some View {
-        content
-            .onAppear {
-                guard monitor == nil else { return }
-                let s = session          // 拿住对象本身，别让闭包去读 @EnvironmentObject 的包装
-                monitor = NSEvent.addLocalMonitorForEvents(
-                    matching: [.keyDown, .leftMouseDown, .rightMouseDown, .otherMouseDown, .scrollWheel]
-                ) { event in
-                    MainActor.assumeIsolated { s.noteActivity() }
-                    return event
-                }
-            }
-            .onDisappear {
-                if let monitor { NSEvent.removeMonitor(monitor) }
-                monitor = nil
-            }
-            .onReceive(tick) { now in session.expireIfIdle(at: now) }
-    }
-}
-#endif

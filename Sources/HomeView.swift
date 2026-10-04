@@ -1,120 +1,54 @@
 import SwiftUI
 
-/// 四个 tab + 右上角家长入口。
-///
-/// 为什么是 TabView 而不是一屏到底：孩子面的三块内容(账本/走势/兑换)是**并列**的，
-/// 不是递进的 —— 塞进一个 ScrollView 会让「还差 N 分」被推到屏外，而那是核心钩子。
-/// 家长面不占 tab：它不是孩子会点的东西，放右上角、且要输家长密码。
-///
-/// 宽屏（iPad 全屏、Mac、Vision Pro）换成 RegularHomeView 的侧栏 + 看板；
-/// tab 与家长面的开关放在这里，iPad 分屏宽窄来回切时停在同一页。
+enum TreasuryTheme {
+    static let background = Color(hex: 0xF8F7F2)
+    static let accent = Color(hex: 0x257F70)
+    static let card = Color.white
+}
+
 struct HomeView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
-    @Environment(\.wideLayout) private var wide
-    // 验证通道：`-tab 1` / `-parent 1` 直接落到某一屏，方便 headless 截图核对。
-    // 和 -api_base 一样，只在显式传了 launch 参数时生效。
     @State private var tab = UserDefaults.standard.integer(forKey: "tab")
-    @State private var showParent = UserDefaults.standard.bool(forKey: "parent")
-
-    private var era: Era { store.state?.era ?? .slum }
-
     var body: some View {
         Group {
-            if wide {
-                RegularHomeView(tab: $tab, showParent: $showParent)
-            } else {
-                compact
+            #if os(iOS)
+            TabView(selection: $tab) {
+                NavigationStack { DeckView().navigationTitle("账本") }
+                    .tabItem { Label("账本", systemImage: "list.bullet.rectangle") }.tag(0)
+                NavigationStack { TrendView().navigationTitle("走势") }
+                    .tabItem { Label("走势", systemImage: "chart.line.uptrend.xyaxis") }.tag(1)
+                NavigationStack { ScoreView() }
+                    .tabItem { Label("加分", systemImage: "plusminus.circle.fill") }.tag(2)
+                NavigationStack { ShopView() }
+                    .tabItem { Label("兑换", systemImage: "gift.fill") }.tag(3)
+                NavigationStack { AccountView() }
+                    .tabItem { Label("账户", systemImage: "person.crop.circle") }.tag(4)
+            }
+            .tabViewStyle(.tabBarOnly)
+            #else
+            RegularHomeView(tab: $tab)
+            #endif
+        }
+        .background(TreasuryTheme.background).tint(TreasuryTheme.accent).preferredColorScheme(.light)
+        .safeAreaInset(edge: .bottom) {
+            if store.offline {
+                Text("离线：显示上次账本，恢复网络后刷新；当前无法记账。")
+                    .font(.caption).padding(10).frame(maxWidth: .infinity).background(.regularMaterial)
+            }
+            if let message = store.notice {
+                HStack {
+                    Text(message).font(.subheadline)
+                    Spacer()
+                    if let id = store.undoEntryID {
+                        Button("撤销") { Task { await store.undoEntry(id) } }.frame(minWidth: 48, minHeight: 48)
+                    }
+                }.padding(.horizontal, 16)
+                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16)).padding(.horizontal, 12)
             }
         }
         .overlay {
-            if let name = store.promoted {
-                CelebrationView(houseName: name, era: era) { store.promoted = nil }
-                    .transition(.opacity)
-            }
+            if let name = store.promoted { CelebrationView(houseName: name, era: store.state?.era ?? .slum) { store.promoted = nil } }
         }
-        .animation(.easeInOut(duration: 0.25), value: store.promoted)
-        // 主页只在拿到账本之后才出现，所以这里就是「第一屏有数据」的时刻（验收车道的就绪信号）
-        .onAppear { LaneSignal.ready(wide ? "board" : "deck") }
-    }
-
-    /// 窄屏：原来那套分页布局，一行没改（App Store 预览视频就是它）。
-    private var compact: some View {
-        ZStack {
-            era.background.ignoresSafeArea()
-                .animation(.easeInOut(duration: 0.8), value: era)   // 升档 = 场景切换，不是刷新
-
-            VStack(spacing: 0) {
-                topBar
-                #if os(iOS)
-                TabView(selection: $tab) {
-                    DeckView().tag(0)
-                    TrendView().tag(1)
-                    ShopView().tag(2)
-                    AccountView().tag(3)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                #else
-                // Mac 没有分页式 TabView，而系统 TabView 会再画一条自己的标签栏（与下面的 tabBar 双份）。
-                // 直接按 tab 切页，底部自家 tabBar 照旧。
-                Group {
-                    switch tab {
-                    case 1: TrendView()
-                    case 2: ShopView()
-                    case 3: AccountView()
-                    default: DeckView()
-                    }
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                #endif
-                tabBar
-            }
-        }
-        .sheet(isPresented: $showParent) {
-            ParentView().environmentObject(store).environmentObject(session)
-        }
-    }
-
-    private var topBar: some View {
-        HStack {
-            // 房名交给账本页的底图带去说(压在插画上)，这里不再重复一遍
-            Text(store.state?.nick ?? "—")
-                .font(.headline).foregroundStyle(.white)
-            Spacer()
-            Button { showParent = true } label: {
-                Image(systemName: "lock.shield")
-                    .font(.title3)
-                    .foregroundStyle(.white.opacity(0.75))
-            }
-            .accessibilityLabel("家长记账")
-        }
-        .padding(.horizontal, 20)
-        .padding(.top, 8)
-        .padding(.bottom, 12)
-    }
-
-    private var tabBar: some View {
-        HStack(spacing: 0) {
-            item(0, "账本", "list.bullet.rectangle")
-            item(1, "走势", "chart.line.uptrend.xyaxis")
-            item(2, "兑换", "gift")
-            item(3, "账户", "person.crop.circle")
-        }
-        .padding(.top, 10)
-        .padding(.bottom, 6)
-        .background(.white.opacity(0.08))
-    }
-
-    private func item(_ i: Int, _ title: String, _ icon: String) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) { tab = i }
-        } label: {
-            VStack(spacing: 4) {
-                Image(systemName: icon).font(.system(size: 18))
-                Text(title).font(.caption2)
-            }
-            .foregroundStyle(tab == i ? era.accent : .white.opacity(0.5))
-            .frame(maxWidth: .infinity)
-        }
+        .onAppear { LaneSignal.ready("treasury") }
     }
 }

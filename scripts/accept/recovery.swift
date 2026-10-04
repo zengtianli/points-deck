@@ -12,15 +12,6 @@ import Foundation
         let s0 = try await Api.state()
         A.step("错登录密码被拒（「\(wrongLogin!)」），正确密码随后可登录")
 
-        let session = ParentSession()
-        let wrongParent = await A.failure { try await session.unlock(password: "definitely-wrong") }
-        A.expect(wrongParent != nil && !session.isUnlocked, "错家长密码不解锁")
-        guard let rule = A.fixedRule(s0) else { A.expect(false, "有固定加分规则"); return }
-        let wrongEarn = await A.failure { _ = try await Api.earn(RuleInput(rule: rule), admin: "definitely-wrong") }
-        let afterWrongEarn = try await A.balance()
-        A.expect(wrongEarn != nil && afterWrongEarn == s0.balance, "错家长密码记账被拒且余额不变")
-        A.step("错家长密码：会话保持上锁、记账被拒（「\(wrongParent!)」），余额不变")
-
         let locked = s0.shop.first { !s0.isUnlocked($0.id) }
         if let locked {
             let refused = await A.failure { try await Api.spend(item: locked.id) }
@@ -28,7 +19,8 @@ import Foundation
             A.expect(refused != nil && afterRefused == s0.balance, "未解锁商品兑换被拒且不扣分")
             A.step("兑换未到档位商品被拒（「\(refused!)」），不扣分")
         }
-        let badConfig = await A.failure { try await Api.configPut(A.parentPw, kind: "rules", items: [["id": "bad"]]) }
+        let cfg = try await Api.config()
+        let badConfig = await A.failure { _ = try await Api.configPut(kind: "rules", items: [["id": "bad"]], revision: cfg.revision) }
         A.expect(badConfig != nil, "非法配置整笔拒绝")
         A.expect(try await Api.config(A.parentPw).rules.count == s0.rules.count, "拒绝后规则数不变")
         A.step("非法规则配置被服务端整笔拒绝，原配置不变")
@@ -56,13 +48,15 @@ import Foundation
         A.expect(s1.balance == s0.balance && s1.entries.map(\.id) == s0.entries.map(\.id), "服务重启后余额与流水完整")
         A.step("服务重启后免重新登录，余额 \(s1.balance) 与流水 \(s1.entries.count) 条完整")
 
-        // 家长会话：解锁后切后台超过 10 分钟，回前台自动上锁。
-        try await session.unlock(password: A.parentPw)
-        let t = Date()
-        session.scenePhaseChanged(to: .background, at: t)
-        session.scenePhaseChanged(to: .active, at: t.addingTimeInterval(601))
-        A.expect(!session.isUnlocked && session.password == nil, "后台超 10 分钟自动上锁")
-        A.step("家长会话后台超过 10 分钟自动上锁")
+        let rid = UUID().uuidString
+        let first = try await Api.transaction("api/adjust", body: ["pts": 3, "label": "断线重试"], requestID: rid)
+        let again = try await Api.transaction("api/adjust", body: ["pts": 3, "label": "断线重试"], requestID: rid)
+        let retriedBalance = try await A.balance()
+        A.expect(first.entryID == again.entryID && retriedBalance == s1.balance + 3, "同标识重试只记一笔")
+        try await Api.undo(id: first.entryID!)
+        try await Api.undo(id: first.entryID!)
+        A.expect(try await A.balance() == s1.balance, "重复撤销幂等且余额恢复")
+        A.step("稳定标识重试只有一笔；重复撤销恢复原余额")
         print("PASS recovery")
     }
 

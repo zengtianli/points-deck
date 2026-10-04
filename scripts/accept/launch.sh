@@ -26,5 +26,9 @@ code=$?
 read -r url user pw < <(printf '%s' "$info" | "$py" -c 'import json,sys; d=json.load(sys.stdin); print(d["url"], d["user"], d["pw"])')
 echo "演示账本 ${url}（${user}，临时数据目录）"
 
-"$py" "$SOP_PLATFORM_LAUNCH" --arg=-api_base --arg="$url" --arg=-dev_user --arg="$user" --arg=-dev_pw --arg="$pw"
+args=(--arg=-api_base --arg="$url" --arg=-dev_user --arg="$user" --arg=-dev_pw --arg="$pw")
+# 本轮验证当前 App 核心首屏；iPhone/iPad 复用共享薄启动，不附加系统基线与旋转采样。
+# 性能、分屏与大字体的专项覆盖另列，不能把本项当作它们已通过。
+case "$lane" in iphone|ipad) args+=(--functional-thin);; esac
+"$py" "$SOP_PLATFORM_LAUNCH" "${args[@]}"
 exit $?

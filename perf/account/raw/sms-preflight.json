@@ -1,0 +1,34 @@
+{
+  "provider": "aliyun-pnvs",
+  "endpoint": "dypnsapi.aliyuncs.com",
+  "configuration": {
+    "sign_name": "",
+    "scheme_prefix": "",
+    "templates": {
+      "register": "",
+      "login": "",
+      "bind": "",
+      "change": "",
+      "recover": ""
+    }
+  },
+  "credential_presence": {
+    "ALIBABA_CLOUD_ACCESS_KEY_ID": false,
+    "ALIBABA_CLOUD_ACCESS_KEY_SECRET": false,
+    "ALIBABA_CLOUD_SECURITY_TOKEN": false
+  },
+  "credential_file_present": false,
+  "issues": [
+    "missing_sign_name",
+    "invalid_or_missing_scheme_prefix",
+    "missing_or_invalid_template_register",
+    "missing_or_invalid_template_login",
+    "missing_or_invalid_template_bind",
+    "missing_or_invalid_template_change",
+    "missing_or_invalid_template_recover",
+    "local_credentials_not_found_cloud_role_not_checked"
+  ],
+  "network_called": false,
+  "sent": false,
+  "live_delivery_verified": false
+}

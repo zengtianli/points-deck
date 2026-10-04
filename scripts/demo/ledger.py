@@ -6,7 +6,7 @@
 
 start runs the real ~/Apps/edu/web/points/server.py on a random 127.0.0.1 port with its data home inside --dir,
 registers a synthetic child account (nickname 小满), and books 30 days of history through the server's own
-endpoints (earn / spend / adjust with the synthetic parent password), so balances, tier bonuses, unlocks and the
+endpoints (earn / spend / adjust with the synthetic account session), so balances, tier bonuses, unlocks and the
 trend are computed by the server exactly as in production. Rule and shop ids come from the server's rules.json
 (an unknown id stops the run). Timestamps are then spread over the last 30 days, order preserved, 07:00-21:59,
 newest entry a few minutes ago. Prints one JSON object: url, port, pid, user, pw, parent_pw, balance, dir.
@@ -24,6 +24,7 @@ import json
 import os
 import random
 import secrets
+import re
 import shutil
 import signal
 import socket
@@ -129,7 +130,7 @@ class Client:
 
 
 def serve(py: str, env: dict, log: Path) -> subprocess.Popen:
-    proc = subprocess.Popen([py, "server.py", "serve"], cwd=SERVER_DIR, env=env, stdout=open(log, "a"),
+    proc = subprocess.Popen([py, "test_mail_service.py", "serve"], cwd=SERVER_DIR, env=env, stdout=open(log, "a"),
                             stderr=subprocess.STDOUT, start_new_session=True)
     for _ in range(100):
         try:
@@ -192,15 +193,20 @@ def start(work: Path) -> dict:
     base = f"http://127.0.0.1:{port}"
     try:
         c = Client(base)
-        c.post("/api/register", {"u": USER, "p": pw, "nick": NICK})
+        address = USER + "@example.test"
+        challenge = c.post("/api/email_send", {"purpose": "register", "email": address})
+        message = json.loads((home / "test-outbox.json").read_text())[-1][2]
+        code = re.search(r"验证码：(\d{6})", message).group(1)
+        grant = c.post("/api/email_verify", {"challenge": challenge["challenge"], "code": code})["grant"]
+        c.post("/api/register", {"email": address, "grant": grant, "p": pw, "nick": NICK})
         c.post("/api/profile", {"emoji": AVATAR})
         for op in ops:
             if op[0] == "earn":
-                c.post("/api/earn", {"rule": op[1], "admin": parent, **({"pts": op[2]} if len(op) > 2 else {})})
+                c.post("/api/earn", {"rule": op[1], **({"pts": op[2]} if len(op) > 2 else {})})
             elif op[0] == "spend":
                 c.post("/api/spend", {"item": op[1]})
             else:
-                c.post("/api/adjust", {"pts": op[1], "label": op[2], "admin": parent})
+                c.post("/api/adjust", {"pts": op[1], "label": op[2]})
         spread(home / "ledgers" / f"{USER}.json")
         state = json.loads(c.op.open(base + "/api/state", timeout=15).read())
     except BaseException:

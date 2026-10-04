@@ -1,69 +1,48 @@
 import SwiftUI
 
-/// 邮箱注册。规则（邮箱格式 / 密码至少 6 位 / 邮箱是否已注册 / 名额）全在服务端，
-/// 这里只做「两次密码是否一致」—— 服务端收不到第二个字段，没法替我们判。
 struct RegisterView: View {
     @EnvironmentObject var store: Store
     @Environment(\.dismiss) private var dismiss
     @State private var email = ""
     @State private var nick = ""
-    @State private var pw1 = ""
-    @State private var pw2 = ""
-    @State private var parent = ""
-
-    private var mismatch: Bool { !pw2.isEmpty && pw1 != pw2 }
-
+    @State private var password = ""
+    @State private var confirm = ""
+    @State private var grant = ""
+    @State private var agreed = false
+    @State private var terms = false
+    @State private var privacy = false
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    TextField("邮箱", text: $email)
-                        .textContentType(.emailAddress).keyboardType(.emailAddress)
+                Section("验证邮箱") {
+                    TextField("邮箱", text: $email).textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
+                    EmailVerification(email: email, purpose: "register", grant: $grant)
+                }
+                Section("设置账号") {
+                    PasswordInput(title: "密码（15–128 字符）", text: $password, new: true)
+                    PasswordInput(title: "确认密码", text: $confirm, new: true)
                     TextField("昵称（可选）", text: $nick)
-                } footer: {
-                    Text("邮箱就是登录名，网页版 edu.tianli.cyou 用同一个账号。新账号从 0 分起步。")
+                    if !confirm.isEmpty && password != confirm { Text("两次密码不一致").foregroundStyle(.red) }
+                    Text("支持系统生成密码、空格与中文。新账号从0分起步。").font(.footnote)
                 }
                 Section {
-                    SecureField("密码（至少 6 位）", text: $pw1).textContentType(.newPassword)
-                    SecureField("再输一次", text: $pw2).textContentType(.newPassword)
-                    if mismatch { Text("两次输入不一致").font(.caption).foregroundStyle(.red) }
-                } footer: {
-                    Text("注册即同意隐私政策：只保存邮箱、昵称与积分账本，可随时在「我的 → 注销账号」整体删除。")
+                    Button("阅读用户协议") { terms = true }
+                    Button("阅读隐私政策") { privacy = true }
+                    Toggle("我已阅读并同意用户协议与隐私政策", isOn: $agreed)
                 }
-                Section {
-                    SecureField("家长密码（至少 4 位）", text: $parent).textContentType(.newPassword)
-                } header: {
-                    Text("家长密码")
-                } footer: {
-                    Text("只有家长知道的那把：记账、撤销、改规则都要它。孩子拿到手机也加不了分。")
-                }
-                if let e = store.error {
-                    Section { Text(e).foregroundStyle(.red) }
-                }
-                Section {
-                    Button {
-                        Task {
-                            await store.register(email: email.trimmingCharacters(in: .whitespaces),
-                                                 password: pw1, nick: nick.trimmingCharacters(in: .whitespaces),
-                                                 parent: parent)
-                            if store.phase == .loggedIn { dismiss() }
-                        }
-                    } label: {
-                        HStack { Spacer()
-                            if store.busy { ProgressView() } else { Text("注册并登录").fontWeight(.semibold) }
-                            Spacer() }
+                if let error = store.error { Text(error).foregroundStyle(.red) }
+                Button(store.busy ? "注册中" : "注册并登录") {
+                    Task {
+                        await store.register(email: email.trimmingCharacters(in: .whitespacesAndNewlines),
+                                             password: password, nick: nick, grant: grant)
+                        if store.phase == .loggedIn { dismiss() }
                     }
-                    .disabled(store.busy || email.isEmpty || pw1.isEmpty || pw1 != pw2 || parent.count < 4)
-                }
-            }
-            .navigationTitle("邮箱注册")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { store.error = nil; dismiss() } } }
-        }
-        #if os(macOS)
-        // Mac 的 sheet 按内容收缩，Form 会被挤成一条；给一个能看全四段的尺寸
-        .frame(minWidth: 440, minHeight: 560)
-        #endif
+                }.disabled(store.busy || grant.isEmpty || !agreed || password.count < 15 || password != confirm)
+            }.navigationTitle("注册账号")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { store.error = nil; dismiss() } } }
+                .sheet(isPresented: $terms) { AccountPolicyView() }
+                .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
+        }.treasurySheetSize(minHeight: 480)
     }
 }

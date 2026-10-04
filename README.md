@@ -8,8 +8,11 @@
 
 ![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018%2B%20·%20iPadOS%20·%20macOS%2015%2B%20·%20watchOS%2011%2B%20·%20visionOS%2026%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-已上架-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
-给孩子做的：11 档市值映射 5 个时代的插画，「住什么房看得见」，整页配色从插画采样派生。家长密码永不落盘——能自己给自己加分的积分系统，第二天就会变成刷分游戏。升档只庆不罚，回落一声不吭。
+由家长操作的家庭积分账本：记录表现、积攒约定奖励，让每一份努力看得见。客户端沿用共享 API 与服务端规则，11 档成长家园和 5 个时代插画保留。
 
+本地源码已按 [PRD 1.3](../PRD.md) 改为五栏目与一键记分，接入邮箱与手机号账号流程。VPS Mailu 邮件已真实收信核验；阿里云短信尚待云端配置与产品真实投递验收。此改版尚未部署后端或提交商店；安装版、以下旧截图和历史性能样本仍对应此前版本。当前验收范围见 [开发交接](handoffs/prd-1.2-20261004.md)。
+
+<p>以下为此前发行版截图；改版实机/模拟器画面见交接中的原始证据。</p>
 <table><tr>
 <td align="center" width="25%"><img src="docs/screenshots/01-sim-064957.png" alt="开屏：挣的每一分都在这本账上——整页配色跟着当前住的房子走"><br><sub>开屏：挣的每一分都在这本账上——整页配色跟着当前住的房子走</sub></td>
 <td align="center" width="25%"><img src="docs/screenshots/02-tab1.png" alt="走势：积分市值像股票一样有曲线，最高最低、今天刷题还能得几分"><br><sub>走势：积分市值像股票一样有曲线，最高最低、今天刷题还能得几分</sub></td>
@@ -24,11 +27,13 @@
 
 ## 它做什么
 
-| 功能 | 说明 |
+| 栏目 | 当前源码功能 |
 |---|---|
-| **努力涨成看得见的房子** | 11 档市值映射 5 个时代的插画，从贫民窟到金碧辉煌。整页配色从当前那张插画采样派生——升档换房，整个 app 跟着换气质。升档只庆不罚，回落一声不吭。 |
-| **像股票盘面一样看自己的账** | 走势、涨跌、最高最低——账本长成孩子看得懂又觉得酷的样子。余额用每条流水自带的快照，端上不自己累加，两边永远对得上。 |
-| **家长密码永不落盘** | 能自己给自己加分的积分系统，第二天就会变成刷分游戏。所以家长密码每次现输、只在内存、切后台就没了——孩子拿到解锁的手机也加不了分。分值一律服务端算，客户端连一个加号都没有。 |
+| 账本 | 当前积分、成长家园、四类流水筛选、详情与撤销；历史数据保留 |
+| 走势 | 近 7 天、30 天、全部；读取服务端余额快照 |
+| 加分 | 加减分卡片、一键固定分、服务端参数预览、临时记录、项目管理 |
+| 兑换 | 奖励管理、一次确认价格与兑换后余额；不透支 |
+| 账户 | 手机和邮箱验证、绑定换绑、设置或修改密码、找回、资料导出、帮助与注销回执 |
 
 ## 一个 App，五个平台
 
@@ -36,9 +41,9 @@
 
 | 平台 | 长什么样 | 现在能不能装 |
 |---|---|---|
-| iPhone | 分页四屏（账本 / 走势 / 兑换 / 账户）+ 锁屏与主屏小组件 | [App Store](https://apps.apple.com/app/id6806799638) 已上架 |
-| iPad | 宽屏：侧栏 + 账本看板（底图、市值、还差几分 ‖ 走势、统计、流水），家长记账放在右侧栏；分屏窄栏退回 iPhone 布局 | 在售的是同一个包，但**这套宽屏布局还没发版**（在售版本在 iPad 上是拉宽的 iPhone 布局） |
-| Mac | 原生 macOS 窗口，同样的侧栏看板；放着不动 10 分钟家长锁自动落下；包里自带 `treasury` 命令行 | **未上架**，只能本机构建 |
+| iPhone | 当前源码为底部五栏：账本 / 走势 / 加分 / 兑换 / 账户；含锁屏和桌面小组件 | [App Store](https://apps.apple.com/app/id6806799638) 在售版本仍为旧布局；新版未发布 |
+| iPad | 同顺序底部五栏；宽屏增加卡片列数，分屏按可用宽度排布 | 在售的是同一个包；新版未发布 |
+| Mac | 原生 macOS 窗口，同顺序五项侧栏；包内自带 `treasury` 命令行 | **未上架**，只能本机构建 |
 | Apple Watch | 抬腕看住在哪一档、余额、还差几分升级与进度，翻一页是最近 10 笔；表盘复杂功能四种。只读，不兑换、不记账；登录态由 iPhone 递过来 | **未上架**（随 iPhone 包嵌入的手表 App 还没进任何发行构建） |
 | Apple Vision Pro | 同一套侧栏看板放在系统玻璃窗口里，时代色只做强调色 | **未上架**，只在模拟器上验过 |
 
@@ -74,7 +79,7 @@
 
 ## 给 Agent 的命令行 · `treasury`
 
-App 给人用，命令行给 Agent 用。`cli/treasury` 是同一个服务端（`edu.tianli.cyou` 的 `/api/*`，App 与网页用的同一套接口）的薄客户端，只用 Python 标准库；分值、档位解锁、透支、家长密码和并发锁全在服务端判，命令行里没有一行算分逻辑。
+App 给人用，命令行给 Agent 用。`cli/treasury` 是同一个服务端（`edu.tianli.cyou` 的 `/api/*`，App 与网页用的同一套接口）的薄客户端，只用 Python 标准库；分值、档位解锁、透支、账号权限和并发锁全在服务端判，命令行里没有一行算分逻辑。
 
 本机构建的 Mac 版 `.app` 自带这个命令：`Contents/Resources/bin/treasury`（`project.yml` 的构建阶段只在 macOS 的 build 里拷进去，随包签名）；iPhone/iPad 包和任何归档（App Store / TestFlight）都不带。
 
@@ -83,16 +88,18 @@ sh cli/install.sh          # 装了 Mac 版：按 bundle id 找到 .app，链到
 sh cli/install.sh --check  # 只核对；--uninstall 只删本产品入口的链接
 ```
 
-凭据只从环境变量或 stdin 取，不落盘、不回显：`EDU_USER`（邮箱或用户名）、`EDU_PASSWORD`（或 `--password-stdin`）；家长操作要 `EDU_PARENT_PW`（或 `--parent-stdin`），同 App 的家长锁每次现取现发；`EDU_API_BASE` 默认 `https://edu.tianli.cyou`。
+凭据只从环境变量或 stdin 取，不落盘、不回显：`EDU_USER`（邮箱或用户名）、`EDU_PASSWORD`（或 `--password-stdin`）；日常记账无需第二套家长密码；仅旧站点管理命令使用独立 `EDU_PARENT_PW`（或 `--parent-stdin`）；`EDU_API_BASE` 默认 `https://edu.tianli.cyou`。
 
 ```bash
 treasury version --json                        # 不登录：命令行版本、所在 App 的版本、服务端连不连得上
 treasury state --json                          # 余额、住哪一档、还差多少升档、电视时间、心愿、今天刷题额度
 treasury entries --limit 10 --json             # 流水（新的在前；服务端下发最近 400 笔）
 treasury preview tr-show --json                # 服务端算分，不记账
-printf '%s\n' "$PARENT" | treasury earn tr-show --parent-stdin --json
+treasury earn tr-show --request-id example-operation-0001 --json
 treasury spend sh-icecream --dry-run --json    # 先看能不能换
-treasury config put shop --file shop.json --parent-stdin < parent.txt
+treasury config get --json
+# revision 使用刚读取并编辑的配置版本
+treasury config put shop --file shop.json --revision "$REVISION" --json
 ```
 
 读命令都支持 `--json`，输出 `{"ok": true, …}`；失败输出 `{"ok": false, "err": …}` 且退出码非 0（1 = 服务端拒绝或网络失败，2 = 用法错或缺凭据）。读命令不改任何状态；会写的命令都走服务端原有的校验、锁与幂等，记账/调账/撤销/兑换可先 `--dry-run`，删号与注销必须 `--yes`。
@@ -100,17 +107,18 @@ treasury config put shop --file shop.json --parent-stdin < parent.txt
 | App 里能做的 | 命令 |
 |---|---|
 | 账本首页 | `treasury state` |
-| 流水 / 走势 | `treasury entries [--since 日期] [--cur pts\|tv\|wish]` / `treasury trend --span 14\|30\|100` |
+| 流水 / 走势 | `treasury entries [--since 日期] [--cur pts\|tv\|wish]` / `treasury trend --span 7\|30\|0`（0 为全部） |
 | 兑换清单 / 兑换 | `treasury shop` / `treasury spend <商品>` |
 | 家园阶梯 | `treasury tiers` |
 | 家长：规则、预览、记账、撤销、调账 | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
 | 管理规则 / 商品 / 档位 | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
-| 资料、账号密码、家长密码、注销 | `treasury profile` / `me` / `account passwd\|parent-password\|delete --yes` |
-| 家长用户管理 | `treasury users list\|reset-password\|delete --yes` |
+| 资料、账号密码、邮箱、注销 | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes` |
+| 手机注册、登录、绑定与找回 | `treasury account phone-send\|phone-verify\|phone-register\|phone-login\|phone-bind\|phone-recover\|password-set`；OTP 与授权从 stdin 读 |
+| 独立站点用户管理 | `treasury users list\|reset-password\|delete --yes` |
 
 管理范围以服务端为准：`config get`、`config put`、`users list` 原样报告响应里的 `scope`（`site` 全站 / `account` 仅本账号）。服务端没返回 `scope` 时报 `unknown`：`users list` 只显示本账号自己这一行，`config put`、`users reset-password`、`users delete` 直接拒绝，不猜写入会落到哪里。
 
-留在 App 的（纯界面）：家长锁倒计时、实时刷新推送、桌面/锁屏小组件、升档庆祝动画、配色与小组件预览。
+留在 App 的（纯界面）：实时刷新推送、桌面/锁屏小组件、升档庆祝动画、配色与小组件预览。
 
 回归：`python3 Tests/cli_treasury_test.py` —— 先核打包规则与 `install.sh`（临时 Applications 目录里的假 .app），再起一个隔离的本地服务端（临时目录 + 空闲端口），不碰线上账号；需要同一工作区的 `edu/web/points/server.py`，或用 `EDU_SERVER_PY` 指过去。
 

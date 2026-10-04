@@ -14,6 +14,7 @@ from __future__ import annotations
 import json
 import os
 import plistlib
+import re
 import shutil
 import socket
 import subprocess
@@ -175,174 +176,75 @@ def check_bundle_packaging() -> None:
 
 def main() -> int:
     check_bundle_packaging()
-    if not SERVER.is_file():
-        print(f"❌ 找不到服务端源码 {SERVER}（设 EDU_SERVER_PY 指向 edu/web/points/server.py）")
-        return 2
-    home = Path(tempfile.mkdtemp(prefix="treasury-cli-"))
-    port = free_port()
-    base = f"http://127.0.0.1:{port}"
-    env = {**os.environ, "EDU_POINTS_HOME": str(home), "EDU_POINTS_PORT": str(port),
-           "EDU_POINTS_STATIC": str(home / "site"), "EDU_KID_PW": KID_PW, "EDU_PARENT_PW": PARENT_PW}
-    (home / "site").mkdir()
-    srv = None
+    sys.path.insert(0, str(SERVER.parent))
+    from test_treasury_prd import TreasuryPRD
+    fixture = TreasuryPRD("runTest")
+    fixture.setUp()
     try:
-        r = subprocess.run([sys.executable, str(SERVER), "init"], env=env, capture_output=True, text=True, timeout=60)
-        if r.returncode:
-            print(r.stdout, r.stderr)
-            return 2
-        srv = subprocess.Popen([sys.executable, str(SERVER), "serve"], env=env,
-                               stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        for _ in range(60):
-            time.sleep(0.1)
-            try:
-                urllib.request.urlopen(base + "/api/health", timeout=2)
-                break
-            except OSError:
-                continue
-        else:
-            print("❌ 隔离服务端没起来")
-            return 2
-
-        clean = {k: v for k, v in os.environ.items() if not k.startswith("EDU_")}
-
-        def run(args, user="jingbao", pw=KID_PW, stdin="", extra=None):
-            e = {**clean, "EDU_API_BASE": base, **({"EDU_USER": user} if user else {}),
-                 **({"EDU_PASSWORD": pw} if pw else {}), **(extra or {})}
-            p = subprocess.run([str(CLI), *args], env=e, input=stdin, capture_output=True, text=True, timeout=60)
-            try:
-                out = json.loads(p.stdout) if "--json" in args else None
-            except ValueError:
-                out = None
-            return p.returncode, out, p.stdout + p.stderr
-
-        print("【帮助与用法】")
-        for sub in ([], ["state"], ["earn"], ["config", "put"], ["users", "delete"], ["account", "passwd"]):
-            code, _, _ = run([*sub, "--help"], user=None, pw=None)
-            ck(f"treasury {' '.join(sub)} --help → 0", code == 0)
-        code, out, _ = run(["state", "--json"], user=None, pw=None)
-        ck("缺凭据 → 2 且 ok:false", code == 2 and out["ok"] is False, str(out))
-        code, out, _ = run(["state", "--json"], pw="wrong-pass")
-        ck("账号密码错 → 1 且带服务端原话", code == 1 and out["ok"] is False and out.get("status") == 401, str(out))
-        code, out, _ = run(["state", "--json"], extra={"EDU_API_BASE": "http://127.0.0.1:9"})
-        ck("连不上服务端 → 1", code == 1 and out["ok"] is False, str(out))
-        code, out, _ = run(["version", "--json"], user=None, pw=None)
-        ck("version 不登录：命令行版本 + 服务端可达", code == 0 and out["ok"] and out["cli"]
-           and out["server"]["reachable"] is True and out["app"] is None, str(out))
-        code, out, _ = run(["version", "--json"], user=None, pw=None, extra={"EDU_API_BASE": "http://127.0.0.1:9"})
-        ck("version 连不上服务端 → 仍 0，reachable:false", code == 0 and out["server"]["reachable"] is False, str(out))
-
-        print("【读】首页 / 流水 / 走势 / 兑换 / 阶梯 / 规则")
-        code, st, _ = run(["state", "--json"])
-        ck("state：开户 1000 分，住第 2 档，下一档还差 200", code == 0 and st["balance"] == 1000
-           and st["house"]["next"]["points_to_go"] == 200, str(st))
-        code, out, text = run(["state"])
-        ck("state 文字版", code == 0 and "余额 1000 分" in text, text)
-        code, sh, _ = run(["shop", "--json"])
-        ck("shop：12 件，sh-icecream 已解锁、sh-trip 锁着要 40000", code == 0 and len(sh["items"]) == 12
-           and next(i for i in sh["items"] if i["id"] == "sh-icecream")["unlocked"]
-           and next(i for i in sh["items"] if i["id"] == "sh-trip")["tier_at"] == 40000, str(sh)[:300])
-        code, tr, _ = run(["tiers", "--json"])
-        ck("tiers：11 档，当前第 2 档（小木屋 600）", code == 0 and len(tr["tiers"]) == 11 and tr["current"] == 2, str(tr)[:200])
-        code, rl, _ = run(["rules", "--json"])
-        ck("rules：带 tr-show 和科目表", code == 0 and any(r["id"] == "tr-show" for r in rl["rules"]) and rl["subjects"])
-
-        print("【预览 / 记账 / 撤销 / 调账 / 兑换】（隔离服务端）")
-        code, pv, _ = run(["preview", "tr-show", "--json"])
-        ck("preview tr-show = +100（服务端算）", code == 0 and pv["pts"] == 100, str(pv))
-        code, pv, _ = run(["preview", "cn-dict-wrong", "--n", "3", "--json"])
-        ck("preview 按个数规则 = -3", code == 0 and pv["pts"] == -3, str(pv))
-        code, pv, _ = run(["preview", "no-such-rule", "--json"])
-        ck("preview 不存在的规则 → 1 且 ok:false", code == 1 and pv["ok"] is False and "没有这条规则" in pv["err"], str(pv))
-        code, out, _ = run(["earn", "tr-show", "--json"])
-        ck("earn 没给家长密码 → 2", code == 2 and out["ok"] is False, str(out))
-        code, out, _ = run(["earn", "tr-show", "--parent-stdin", "--json"], stdin="wrong-parent\n")
-        ck("earn 家长密码错 → 1（403）", code == 1 and out.get("status") == 403, str(out))
-        ck("被拒后余额没变", run(["state", "--json"])[1]["balance"] == 1000)
-        code, out, _ = run(["earn", "tr-show", "--dry-run", "--json"])
-        ck("earn --dry-run 只预览", code == 0 and out["dry_run"] and run(["state", "--json"])[1]["balance"] == 1000)
-        code, ea, _ = run(["earn", "tr-show", "--parent-stdin", "--note", "cli", "--json"], stdin=PARENT_PW + "\n")
-        ck("earn 记一笔 +100 → 1100", code == 0 and ea["entry"]["pts"] == 100 and ea["balance"] == 1100, str(ea))
-        code, es, _ = run(["entries", "--limit", "1", "--json"])
-        ck("entries 最新一笔就是它", code == 0 and es["entries"][0]["id"] == ea["entry"]["id"], str(es)[:200])
-        code, out, _ = run(["undo", ea["entry"]["id"], "--dry-run", "--json"])
-        ck("undo --dry-run 指出要删的那笔", code == 0 and out["entry"]["id"] == ea["entry"]["id"])
-        code, out, _ = run(["undo", ea["entry"]["id"], "--json"], extra={"EDU_PARENT_PW": PARENT_PW})
-        ck("undo（EDU_PARENT_PW）→ 回到 1000", code == 0 and out["balance"] == 1000, str(out))
-        code, out, _ = run(["adjust", "5", "--label", "CLI 调账", "--json"], extra={"EDU_PARENT_PW": PARENT_PW})
-        ck("adjust +5 → 1005", code == 0 and out["balance"] == 1005, str(out))
-        code, out, _ = run(["spend", "sh-trip", "--dry-run", "--json"])
-        ck("spend --dry-run 说清锁着", code == 0 and out["would_succeed"] is False)
-        code, out, _ = run(["spend", "sh-trip", "--json"])
-        ck("spend 未解锁 → 1 且余额不动", code == 1 and "才能换" in out["err"]
-           and run(["state", "--json"])[1]["balance"] == 1005, str(out))
-        code, out, _ = run(["spend", "sh-icecream", "--json"])
-        ck("spend sh-icecream -200 → 805", code == 0 and out["balance"] == 805, str(out))
-        code, out, _ = run(["trend", "--span", "14", "--json"])
-        ck("trend：最后一点 = 当前余额", code == 0 and out["points"][-1]["bal"] == 805, str(out)[:200])
-
-        print("【配置】全站（这一家）与公开账号各改各的")
-        code, cfg, _ = run(["config", "get", "--json"], extra={"EDU_PARENT_PW": PARENT_PW})
-        ck("config get → scope=site", code == 0 and cfg["scope"] == "site" and len(cfg["shop"]) == 12, str(cfg)[:200])
-        bad = home / "bad-shop.json"
-        bad.write_text(json.dumps([x for x in cfg["shop"] if x["id"] != "sh-trip"]), encoding="utf-8")
-        code, out, _ = run(["config", "put", "shop", "--file", str(bad), "--json"], extra={"EDU_PARENT_PW": PARENT_PW})
-        ck("config put 删掉档位引用的商品 → 1（服务端整体校验）", code == 1 and "sh-trip" in out["err"], str(out))
-        ck("被拒后商品数不变", len(run(["shop", "--json"])[1]["items"]) == 12)
-
-        # 公开账号：同 App 注册页（邮箱 + 自己的家长密码）
-        op = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(CookieJar()))
-        req = urllib.request.Request(base + "/api/register", data=json.dumps(
-            {"email": "cli.owner@example.test", "p": "emailpass1", "parent": "ownparent1"}).encode(),
-            headers={"Content-Type": "application/json"})
-        op.open(req, timeout=10).read()
-        em = dict(user="cli.owner@example.test", pw="emailpass1")
-        code, us, _ = run(["users", "list", "--json"], extra={"EDU_PARENT_PW": "ownparent1"}, **em)
-        ck("公开账号 users list 只有自己", code == 0 and us["count"] == 1 and us["scope"] == "account", str(us)[:200])
-        code, out, _ = run(["users", "delete", "jingbao", "--yes", "--json"], extra={"EDU_PARENT_PW": "ownparent1"}, **em)
-        ck("公开账号删这一家的账号 → 1（403）", code == 1 and out.get("status") == 403, str(out))
-        mine = home / "mine.json"
-        mine.write_text(json.dumps([dict(x, pts=9) if x["id"] == "sh-anime" else x for x in cfg["shop"]]), encoding="utf-8")
-        code, out, _ = run(["config", "put", "shop", "--file", str(mine), "--json"], extra={"EDU_PARENT_PW": "ownparent1"}, **em)
-        ck("公开账号改价只进本账号", code == 0 and out["scope"] == "account", str(out))
-        price = lambda **kw: next(i["pts"] for i in run(["shop", "--json"], **kw)[1]["items"] if i["id"] == "sh-anime")
-        ck("本账号看到 9，这一家仍是 150", price(**em) == 9 and price() == 150)
-
-        print("【资料 / 账号 / 用户管理】")
-        code, out, _ = run(["profile", "--nick", "CLI昵称", "--json"], **em)
-        ck("profile --nick", code == 0 and out["nick"] == "CLI昵称", str(out))
-        ck("me 回读昵称", run(["me", "--json"], **em)[1]["nick"] == "CLI昵称")
-        code, out, _ = run(["account", "parent-password", "--json"], **em)
-        ck("parent-password 缺 --new-stdin → 2", code == 2)
-        code, out, _ = run(["account", "parent-password", "--new-stdin", "--json"], stdin="newparent9\n", **em)
-        ck("parent-password 改成功", code == 0)
-        ck("新家长密码生效", run(["users", "list", "--json"], extra={"EDU_PARENT_PW": "newparent9"}, **em)[0] == 0)
-        code, out, _ = run(["users", "reset-password", "cliowner", "--new-stdin", "--parent-stdin", "--json"],
-                           stdin=PARENT_PW + "\nresetpass1\n")
-        ck("这一家重置公开账号的密码（stdin：家长密码、新密码）", code == 0, str(out))
-        ck("新密码能登录", run(["me", "--json"], user="cli.owner@example.test", pw="resetpass1")[0] == 0)
-        code, out, _ = run(["account", "delete", "--json"], user="cli.owner@example.test", pw="resetpass1")
-        ck("account delete 不带 --yes → 2", code == 2)
-        code, out, _ = run(["account", "delete", "--yes", "--json"], user="cli.owner@example.test", pw="resetpass1")
-        ck("account delete --yes（隔离服务端里的一次性账号）", code == 0 and out["deleted"], str(out))
-        ck("注销后登录不进 → 1", run(["me", "--json"], user="cli.owner@example.test", pw="resetpass1")[0] == 1)
-        code, cfg2, _ = run(["config", "get", "--json"], extra={"EDU_PARENT_PW": PARENT_PW})
-        ck("当前服务端：config get 标 server_scoped=true", code == 0 and cfg2.get("server_scoped") is True, str(cfg2)[:120])
-
-        print("【旧服务端】响应不带管理范围时，管理写入不发出去")
-        old_server_gate()
+        env = {k:v for k,v in os.environ.items() if not k.startswith("EDU_")}
+        env.update(EDU_API_BASE=fixture.base, EDU_USER="family", EDU_PASSWORD="old-short")
+        def run(args, stdin="", account=None):
+            custom=dict(env)
+            if account: custom.update(EDU_USER=account[0], EDU_PASSWORD=account[1])
+            r=subprocess.run([str(CLI), *args, "--json"],input=stdin,env=custom,text=True,capture_output=True,timeout=20)
+            return r.returncode,json.loads(r.stdout or "{}")
+        def ok(args, **kw):
+            code,j=run(args,**kw)
+            ck(' '.join(args[:2]),code==0,str(j));return j
+        before=ok(["state"])["balance"]
+        ea=ok(["earn","tr-show","--request-id","cli-stable-request-01"])
+        again=ok(["earn","tr-show","--request-id","cli-stable-request-01"])
+        ck("无家长密码且同标识只记一笔",ea["entry"]["id"]==again["entry"]["id"] and ok(["state"])["balance"]==before+100)
+        ok(["request-result","cli-stable-request-01"])
+        ok(["undo",ea["entry"]["id"]]);ok(["undo",ea["entry"]["id"]])
+        ck("重复撤销恢复余额",ok(["state"])["balance"]==before)
+        cfg=ok(["config","get"]);ck("旧账号家庭覆盖层",cfg["scope"]=="account" and cfg.get("revision"))
+        file=Path(fixture.temp.name)/"shop-edit.json"
+        items=cfg["shop"]+[{"id":"cli-reward","label":"家庭活动","pts":2,"requires_tier":False}]
+        file.write_text(json.dumps(items))
+        ok(["config","put","shop","--file",str(file),"--revision",cfg["revision"]])
+        ck("旧版本配置冲突",run(["config","put","shop","--file",str(file),"--revision",cfg["revision"]])[1].get("status")==409)
+        ok(["spend","cli-reward","--expected-pts","2","--request-id","cli-reward-request-01"])
+        ok(["trend","--span","0"])
+        email="cli-new@example.test"
+        challenge=ok(["account","code-send","--purpose","register","--email",email])["challenge"]
+        code=re.search(r"验证码：(\d{6})",fixture.mail[-1][2]).group(1)
+        grant=ok(["account","code-verify","--challenge",challenge],stdin=code+"\n")["grant"]
+        password="a unique long passphrase"
+        reg=ok(["account","register","--email",email,"--new-stdin"],stdin=password+"\n"+grant+"\n")
+        account=(email,password)
+        ck("验证码注册新户从零起步",ok(["state"],account=account)["balance"]==0)
+        ck("普通户不能重置其他账号",run(["users","reset-password","family","--parent-stdin","--new-stdin"],stdin="site-management-only\nnew long unique phrase\n",account=account)[0]==1)
+        ck("无确认不注销",run(["account","delete"],account=account)[0]==2)
+        ok(["account","delete","--yes"],account=account)
+        ck("注销后不可登录",run(["me"],account=account)[0]==1)
+        # 仅传输为替身；CLI 子进程仍访问正在运行的同一个产品 HTTP 服务。
+        import account_phone
+        from test_phone_account import FakePNVS
+        from unittest.mock import patch
+        from contextlib import closing
+        gateway = FakePNVS()
+        service = account_phone.PhoneChallenges(fixture.server.HOME, fixture.server.load_cfg()["secret"])
+        number = "13800000000"
+        def sms_grant(purpose, login_grant=None):
+            with closing(service.connect()) as db, db:
+                db.execute("DELETE FROM hits WHERE bucket=?", ("sms-resend:" + service.digest(account_phone.phone(number)),))
+            args = (["--phone-grant-stdin"] if login_grant else []) + ["account", "phone-send", "--purpose", purpose, "--phone", number]
+            challenge = ok(args, stdin=(login_grant + "\n") if login_grant else "")["challenge"]
+            return ok(["account", "phone-verify", "--challenge", challenge], stdin="246810\n")["grant"]
+        with patch.object(account_phone, "gateway", return_value=gateway):
+            registered = ok(["account", "phone-register", "--agree"], stdin=sms_grant("register") + "\n")
+            ck("CLI 手机注册未强迫设密码",registered["has_password"] is False)
+            identity = sms_grant("phone_identity", sms_grant("login"))
+            login = sms_grant("login")
+            phone_password = "a separate CLI phone phrase"
+            ok(["--phone-grant-stdin", "account", "password-set", "--identity-grant-stdin", "--new-stdin"], stdin=login+"\n"+identity+"\n"+phone_password+"\n")
+            ck("CLI 手机密码登录仍读原零分账本",ok(["state"],account=(number,phone_password))["balance"]==0)
+            ck("CLI 手机密码设置后沿原ID",ok(["me"],account=(number,phone_password))["user"]==registered["u"])
     finally:
-        if srv:
-            srv.terminate()
-            srv.wait(timeout=10)
-        shutil.rmtree(home, ignore_errors=True)
-
-    print()
-    if FAILS:
-        print(f"❌ treasury 命令行门：{len(FAILS)} 条没过")
-        return 2
-    print("✅ treasury 命令行门全过（随 Mac 版打包与安装 / 帮助 / 退出码 / 读 / 记账撤销调账兑换 / 配置范围 / 账号）")
-    return 0
-
+        fixture.tearDown()
+    print(f"CLI 回归：{len(FAILS)} 项失败")
+    return 2 if FAILS else 0
 
 if __name__ == "__main__":
     raise SystemExit(main())

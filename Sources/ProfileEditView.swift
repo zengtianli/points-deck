@@ -31,17 +31,17 @@ struct ProfileEditView: View {
                         .padding(.top, 12)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("昵称").font(.footnote).foregroundStyle(.white.opacity(0.6))
+                        Text("昵称").font(.footnote).foregroundStyle(.secondary)
                         TextField("", text: $nick)
                             .textInputAutocapitalization(.never)
                             .padding(.horizontal, 14).padding(.vertical, 12)
-                            .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 12))
-                            .foregroundStyle(.white)
-                        Text("1~16 个字").font(.caption2).foregroundStyle(.white.opacity(0.4))
+                            .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 12))
+                            .foregroundStyle(.primary)
+                        Text("1~16 个字").font(.caption2).foregroundStyle(.secondary)
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("头像").font(.footnote).foregroundStyle(.white.opacity(0.6))
+                        Text("头像").font(.footnote).foregroundStyle(.secondary)
                         if (s?.avatarChoices ?? []).isEmpty {
                             Text("服务端没下发头像清单 —— 换个头像这一项暂时用不了")
                                 .font(.caption).foregroundStyle(.orange)
@@ -69,11 +69,11 @@ struct ProfileEditView: View {
                 .padding(.horizontal, 20)
                 .padding(.bottom, 28)
             }
-            .eraBackdrop(era)
+            .background(TreasuryTheme.background)
             .navigationTitle("编辑资料")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("取消") { dismiss() }

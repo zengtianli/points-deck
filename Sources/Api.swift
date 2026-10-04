@@ -1,4 +1,5 @@
 import Foundation
+import Security
 
 /// 账本客户端 —— **只发请求，不算分**。
 ///
@@ -6,6 +7,7 @@ import Foundation
 /// 两边各算各的迟早算出不同的数，而家长看到的是预览、孩子拿到的是记账。
 /// 所以这个文件里不许出现任何一条规则的分值。
 enum Api {
+    static var accountUser: String?
     /// 默认是线上账本。可用 launch 参数指向本地 server 做验证：
     ///   `xcrun simctl launch <udid> cyou.tianli.pointsdeck -api_base http://127.0.0.1:8788`
     /// 走 UserDefaults 而不是 #if DEBUG 的写死地址 —— 写死的那种改一次要重编一次，
@@ -19,6 +21,7 @@ enum Api {
 
     struct Failure: LocalizedError {
         let message: String
+        var status: Int = 0
         var errorDescription: String? { message }
     }
 
@@ -30,9 +33,9 @@ enum Api {
     /// `installSessionCookie`，只在这两处碰值）。转的是同一个会话、不是新造一份：
     /// 服务端的 pwv 机制照样管它 —— 改密码，手表和 iPhone 一起下线；iPhone 退出 / 注销时
     /// 也会发一条不带 cookie 的同步，手表随即删掉。除此之外仍然不读不写 cookie。
-    private static func request(_ path: String, body: [String: Any]? = nil,
+    static func request(_ path: String, body: [String: Any]? = nil,
                                 timeout: TimeInterval = 20) async throws -> [String: Any] {
-        var req = URLRequest(url: Api.base.appendingPathComponent(path))
+        var req = URLRequest(url: URL(string: path, relativeTo: Api.base.appendingPathComponent("/"))!.absoluteURL)
         req.timeoutInterval = timeout
         if let body {
             req.httpMethod = "POST"
@@ -46,7 +49,7 @@ enum Api {
         }
         if obj["ok"] as? Bool != true {
             // 服务端的 err 是给人看的中文，原样透出去比包一层「请求失败」有用
-            throw Failure(message: obj["err"] as? String ?? "账本拒绝了这次请求(HTTP \(code))")
+            throw Failure(message: obj["err"] as? String ?? "账本拒绝了这次请求(HTTP \(code))", status: code)
         }
         return obj
     }
@@ -55,8 +58,11 @@ enum Api {
         _ = try await request("api/login", body: ["u": user, "p": password])
     }
 
-    static func state(timeout: TimeInterval = 20) async throws -> LedgerState {
-        try LedgerState(json: await request("api/state", timeout: timeout))
+    static func state(timeout: TimeInterval = 20, full: Bool = false) async throws -> LedgerState {
+        let json = try await request(full ? "api/state?all=1" : "api/state", timeout: timeout)
+        accountUser = json["u"] as? String
+        LedgerCache.save(json)
+        return try LedgerState(json: json)
     }
 
     /// 预览 —— **和记账走的是服务端同一个 compute()**，这里只发规则和输入。
@@ -68,60 +74,70 @@ enum Api {
                        why: o["why"] as? String ?? "")
     }
 
-    /// 记一笔。admin 是**每次现取现发**的家长密码，不缓存、不落 cookie。
-    static func earn(_ input: RuleInput, admin: String, note: String = "") async throws -> String? {
-        var b = input.body()
-        b["admin"] = admin
-        if !note.isEmpty { b["note"] = note }
-        let o = try await request("api/earn", body: b)
-        if o["skipped"] as? Bool == true { return o["why"] as? String ?? "这次算下来是 0 分，没记账" }
-        return nil
+    /// 请求标识由一次用户操作持有，网络失败后核对原请求，重试不生成新交易。
+    static func transaction(_ path: String, body: [String: Any], requestID: String) async throws -> Transaction {
+        var payload = body
+        let journalID = TransactionJournal.begin(path: path, body: body, proposed: requestID)
+        payload["request_id"] = journalID
+        do {
+            let result = try await request(path, body: payload)
+            TransactionJournal.finish(path: path, body: body)
+            return Transaction(json: result)
+        } catch let error as URLError {
+            let result = try await request("api/request_result", body: ["request_id": journalID])
+            if result["found"] as? Bool == true { TransactionJournal.finish(path: path, body: body); return Transaction(json: result) }
+            throw error
+        } catch let failure as Failure {
+            if failure.status > 0 && failure.status < 500 { TransactionJournal.finish(path: path, body: body) }
+            throw failure
+        }
     }
 
-    static func adjust(pts: Int, label: String, admin: String) async throws {
-        _ = try await request("api/adjust", body: ["pts": pts, "label": label, "admin": admin])
+    static func earn(_ input: RuleInput, admin: String = "", note: String = "") async throws -> String? {
+        var body = input.body()
+        body["note"] = note
+        let receipt = try await transaction("api/earn", body: body, requestID: UUID().uuidString)
+        return receipt.entryID == nil ? receipt.message : nil
     }
 
-    /// 撤销 = 服务端直接删(条目挪进 deleted 区留底 + 其后 bal 快照重算)，不是红冲。
-    static func undo(id: String, admin: String) async throws {
-        _ = try await request("api/undo", body: ["id": id, "admin": admin])
+    static func adjust(pts: Int, label: String, admin: String = "") async throws {
+        _ = try await transaction("api/adjust", body: ["pts": pts, "label": label], requestID: UUID().uuidString)
     }
 
-    /// 兑换 —— **不要家长密码**(服务端如此：花的是孩子自己的分)，但不许透支。
+    static func undo(id: String, admin: String = "") async throws {
+        _ = try await request("api/undo", body: ["id": id])
+    }
+
     static func spend(item: String) async throws {
-        _ = try await request("api/spend", body: ["item": item])
+        _ = try await transaction("api/spend", body: ["item": item], requestID: UUID().uuidString)
     }
 
-    /// 改昵称 / 换预设头像 —— 自己改自己的，**不要家长密码**（服务端如此）。
     static func profile(nick: String? = nil, emoji: String? = nil) async throws {
-        var b: [String: Any] = [:]
-        if let nick { b["nick"] = nick }
-        if let emoji { b["emoji"] = emoji }
-        _ = try await request("api/profile", body: b)
+        var body: [String: Any] = [:]
+        if let nick { body["nick"] = nick }
+        if let emoji { body["emoji"] = emoji }
+        _ = try await request("api/profile", body: body)
     }
 
-    /// 只验家长密码，**不产生任何副作用** —— 专给「解锁」按钮用。
-    ///
-    /// 为什么借 `/api/config` 而不是新开一个 `/api/verify`：它是只读的，
-    /// 且已经要求家长密码；密码不对返回 403、对了返回配置。加一个新端点等于
-    /// 多一处要维护的鉴权入口，而鉴权入口越多越容易有一处写错。
-    ///
-    /// 之前没有这个方法，解锁只能靠「凑一笔账出来记」触发密码框 ——
-    /// 想单纯解锁一下做不到，等于这个入口不存在。
-    static func verifyParent(_ password: String) async throws {
-        _ = try await request("api/config", body: ["admin": password])
+    static func config(_ legacyPassword: String = "") async throws -> Config {
+        Config(json: try await request("api/config", body: [:]))
     }
 
-    /// 读可编辑配置（规则 / 商品 / 档位）。要家长密码。
-    static func config(_ password: String) async throws -> Config {
-        Config(json: try await request("api/config", body: ["admin": password]))
+    @discardableResult
+    static func configPut(_ legacyPassword: String = "", kind: String,
+                          items: [[String: Any]], revision: String) async throws -> String {
+        let result = try await request("api/config_put", body: ["kind": kind, "items": items, "revision": revision])
+        return result["revision"] as? String ?? ""
     }
 
-    /// 整段替换某类配置。服务端会做**跨文件全量校验**，不过就整笔拒绝、一个字不写。
-    static func configPut(_ password: String, kind: String,
-                          items: [[String: Any]]) async throws {
-        _ = try await request("api/config_put",
-                              body: ["admin": password, "kind": kind, "items": items])
+    static func sendCode(email: String, purpose: String, password: String = "", identityGrant: String = "") async throws -> String {
+        let response = try await request("api/email_send", body: ["email": email, "purpose": purpose, "password": password, "identity_grant": identityGrant])
+        return response["challenge"] as? String ?? ""
+    }
+
+    static func verifyCode(challenge: String, code: String) async throws -> String {
+        let response = try await request("api/email_verify", body: ["challenge": challenge, "code": code])
+        return response["grant"] as? String ?? ""
     }
 
     /// 实时推送 —— 一条 SSE 长连接。收到事件只表示「有东西变了」，
@@ -181,15 +197,8 @@ enum Api {
         if let c = HTTPCookie(properties: props) { jar.setCookie(c) }
     }
 
-    /// 邮箱注册：`{email, p, nick}` → 服务端派生内部用户名并直接下发 cookie（注册即登录）。
-    /// 家长密码按账号各自一把（服务端 2026-09-05 起）：注册时一并设，只有家长知道。
-    static func register(email: String, password: String, nick: String, parent: String) async throws {
-        _ = try await request("api/register", body: ["email": email, "p": password, "nick": nick, "parent": parent])
-    }
-
-    /// 设置 / 修改本账号的家长密码：要账号密码。
-    static func setParent(password: String, parent: String) async throws {
-        _ = try await request("api/parent_set", body: ["p": password, "parent": parent])
+    static func register(email: String, password: String, nick: String, grant: String) async throws {
+        _ = try await request("api/register", body: ["email": email, "p": password, "nick": nick, "grant": grant])
     }
 
     /// 自助注销：要当前密码；服务端把账本/存档整体归档后清 cookie。
@@ -200,6 +209,7 @@ enum Api {
 
 /// 可编辑配置的投影 —— 管理面用。
 struct Config {
+    var revision: String
     var subjects: [LedgerState.Subject]
     var rules: [[String: Any]]      // 保持原始字典：规则的字段随 kind 变，
     var shop: [[String: Any]]       // 强类型化会在「服务端加了个字段」时把它吃掉
@@ -207,6 +217,7 @@ struct Config {
     var eras: [String: String]
 
     init(json: [String: Any]) {
+        revision = json["revision"] as? String ?? ""
         subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
             LedgerState.Subject(id: $0["k"] as? String ?? "",
                           name: $0["name"] as? String ?? "",
@@ -223,6 +234,8 @@ struct Config {
 /// 用不上的(rules/subjects/shop/calcs)先不解析：解析了就得维护，而它们要等家长面才用。
 struct LedgerState {
     let user: String
+    let total: Int
+    let revision: String
     let nick: String
     let balance: Int
     let rate: Int          // 多少分 = 1 元
@@ -260,6 +273,8 @@ struct LedgerState {
         /// 服务端记的**余额快照**。撤销时它会被整条重算 —— 所以走势图读它，
         /// 不在端上累加 pts 求余额(累加出来的曲线和服务端的余额迟早对不上)。
         let bal: Int
+        var kind: String = ""
+        var isRedemption: Bool { kind == "spend" }
 
         /// 流水金额的显示：三种币种走同一条时间线(服务端如此)，所以单位要跟着条目走，不能一律写「分」。
         var signed: String {
@@ -287,6 +302,9 @@ struct LedgerState {
         let min: Int?
         let max: Int?
         let calc: String?
+        var icon: String = "star.fill"
+        var color: String = "mint"
+        var archived: Bool = false
     }
 
     struct Calc: Hashable {
@@ -314,6 +332,8 @@ struct LedgerState {
         let icon: String
         let label: String
         let pts: Int
+        var archived: Bool = false
+        var detail: String = ""
     }
 
     init(json: [String: Any]) throws {
@@ -321,6 +341,8 @@ struct LedgerState {
             throw Api.Failure(message: "账本没返回 house —— 服务端版本对不上")
         }
         user = json["u"] as? String ?? ""
+        total = json["total"] as? Int ?? (json["entries"] as? [Any])?.count ?? 0
+        revision = json["config_revision"] as? String ?? ""
         nick = json["nick"] as? String ?? user
         balance = json["balance"] as? Int ?? 0
         rate = json["rate"] as? Int ?? 100
@@ -334,14 +356,14 @@ struct LedgerState {
         nextAt = nxt?["at"] as? Int
         // ⚠ 字段名是照着 server.py 的真实写入(第 498-504 行)对的，不是猜的 ——
         // 第一版猜了 what/t，跑出来整列事由全是「—」而进度条一切正常，界面看着毫无异样。
-        entries = ((json["entries"] as? [[String: Any]]) ?? []).reversed().prefix(30).map { e in
+        entries = ((json["entries"] as? [[String: Any]]) ?? []).reversed().map { e in
             Entry(id: (e["id"] as? String) ?? UUID().uuidString,
                   what: (e["label"] as? String) ?? "—",
                   pts: (e["pts"] as? Int) ?? 0,
                   cur: (e["cur"] as? String) ?? "pts",
                   when: (e["day"] as? String) ?? "",
                   note: (e["note"] as? String) ?? "",
-                  bal: (e["bal"] as? Int) ?? 0)
+                  bal: (e["bal"] as? Int) ?? 0, kind: e["kind"] as? String ?? "")
         }
         subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
             Subject(id: $0["k"] as? String ?? "", name: $0["name"] as? String ?? "",
@@ -356,7 +378,8 @@ struct LedgerState {
                  unit: $0["unit"] as? String ?? "",
                  hint: $0["hint"] as? String ?? "",
                  min: $0["min"] as? Int, max: $0["max"] as? Int,
-                 calc: $0["calc"] as? String)
+                 calc: $0["calc"] as? String, icon: $0["icon"] as? String ?? "star.fill",
+                 color: $0["color"] as? String ?? "mint", archived: $0["archived"] as? Bool ?? false)
         }
         calcs = ((json["calcs"] as? [String: [String: Any]]) ?? [:]).mapValues { c in
             Calc(label: c["label"] as? String ?? "",
@@ -368,7 +391,8 @@ struct LedgerState {
         }
         shop = ((json["shop"] as? [[String: Any]]) ?? []).map {
             ShopItem(id: $0["id"] as? String ?? "", icon: $0["icon"] as? String ?? "",
-                     label: $0["label"] as? String ?? "", pts: $0["pts"] as? Int ?? 0)
+                     label: $0["label"] as? String ?? "", pts: $0["pts"] as? Int ?? 0,
+                     archived: $0["archived"] as? Bool ?? false, detail: $0["description"] as? String ?? "")
         }
         practiceLeft = json["practice_left"] as? Int ?? 0
         ladder = ((json["ladder"] as? [[String: Any]]) ?? []).map {
@@ -449,4 +473,80 @@ struct Preview {
     let label: String
     let cur: String
     let why: String
+}
+
+struct Transaction {
+    let entryID: String?
+    let message: String
+    init(json: [String: Any]) {
+        let entry = json["entry"] as? [String: Any]
+        entryID = entry?["id"] as? String
+        if let entry, let pts = entry["pts"] as? Int {
+            let unit = entry["cur"] as? String == "tv" ? "分钟" : entry["cur"] as? String == "wish" ? "个心愿" : "分"
+            message = "\(entry["label"] as? String ?? "记录") \(pts >= 0 ? "+" : "")\(pts) \(unit)，已记入账本"
+        } else { message = json["why"] as? String ?? "本次未产生流水" }
+    }
+}
+
+/// 最近一次成功回读的账本，保存在本设备钥匙串；退出、注销和 401 同步清除。
+enum LedgerCache {
+    private static var query: [String: Any] {
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "cyou.tianli.pointsdeck.ledger-cache",
+         kSecAttrAccount as String: Api.base.absoluteString]
+    }
+    static func save(_ json: [String: Any]) {
+        guard Api.base.scheme == "https" else { return }
+        guard let data = try? JSONSerialization.data(withJSONObject: json) else { return }
+        var add = query
+        add[kSecValueData as String] = data
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        if SecItemUpdate(query as CFDictionary, [kSecValueData as String: data] as CFDictionary) == errSecItemNotFound {
+            SecItemAdd(add as CFDictionary, nil)
+        }
+    }
+    static func load() -> LedgerState? {
+        guard Api.sessionCookie() != nil else { return nil }
+        var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(q as CFDictionary, &result) == errSecSuccess, let data = result as? Data,
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        Api.accountUser = json["u"] as? String
+        return try? LedgerState(json: json)
+    }
+    static func clear() { SecItemDelete(query as CFDictionary) }
+}
+
+/// 未确认交易保留稳定标识；重启后再次提交同一输入仍查询同一笔。只保存记分输入，无凭据。
+enum TransactionJournal {
+    private static var query: [String: Any]? {
+        guard Api.base.scheme == "https", let user = Api.accountUser else { return nil }
+        return [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "cyou.tianli.pointsdeck.pending",
+                kSecAttrAccount as String: Api.base.absoluteString + ":" + user]
+    }
+    private static func key(_ path: String, _ body: [String: Any]) -> String {
+        let data = (try? JSONSerialization.data(withJSONObject: ["path": path, "body": body], options: .sortedKeys)) ?? Data()
+        return data.base64EncodedString()
+    }
+    private static func load() -> [String: String] {
+        guard var q = query else { return [:] }
+        q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne
+        var result: CFTypeRef?
+        guard SecItemCopyMatching(q as CFDictionary, &result) == errSecSuccess, let data = result as? Data,
+              let values = try? JSONDecoder().decode([String: String].self, from: data) else { return [:] }
+        return values
+    }
+    private static func save(_ values: [String: String]) {
+        guard let q = query, let data = try? JSONEncoder().encode(values) else { return }
+        var add = q; add[kSecValueData as String] = data; add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        if SecItemUpdate(q as CFDictionary, [kSecValueData as String: data] as CFDictionary) == errSecItemNotFound { SecItemAdd(add as CFDictionary, nil) }
+    }
+    static func begin(path: String, body: [String: Any], proposed: String) -> String {
+        var values = load(); let key = key(path, body)
+        if let id = values[key] { return id }
+        values[key] = proposed; save(values); return proposed
+    }
+    static func finish(path: String, body: [String: Any]) {
+        var values = load(); values.removeValue(forKey: key(path, body)); save(values)
+    }
+    static func clear() { if let q = query { SecItemDelete(q as CFDictionary) } }
 }

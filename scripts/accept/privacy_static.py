@@ -46,10 +46,8 @@ for p, text in code.items():
             if h not in allowed_hosts:
                 problems.append(f"{p.relative_to(repo)} 连接第三方主机 {h}")
 
-session = (repo / "Sources/ParentSession.swift").read_text(encoding="utf-8")
-body = "\n".join(l for l in session.splitlines() if not l.strip().startswith("//"))
-if re.search(r"UserDefaults|SecItem|Keychain|\.write\(|FileManager", body):
-    problems.append("ParentSession 把家长密码写入持久存储")
+if (repo / "Sources/ParentSession.swift").exists():
+    problems.append("已退役的第二套家长密码流程仍存在")
 for p, text in code.items():
     if re.search(r"UserDefaults[^\n]*\.set\([^\n]*(password|admin|pw)\b", text, re.I):
         problems.append(f"{p.relative_to(repo)} 把密码写入 UserDefaults")
@@ -72,6 +70,6 @@ for key in re.findall(r"(NS\w+UsageDescription|NSUserTrackingUsageDescription)",
 for p in problems:
     print("FAIL:", p)
 print(f"静态：{len(code)} 个 Swift 源文件无跟踪 SDK，联网主机仅 {sorted(hosts) or ['(无)']}，"
-      f"版本元数据仅逐字节匹配责任源的共享代码，家长密码只在内存，Widget 快照 {len(fields)} 个字段无凭据，权限仅网络+沙盒+共享钥匙串"
+      f"版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 {len(fields)} 个字段无凭据，权限仅网络+沙盒+共享钥匙串"
       if not problems else f"静态：{len(problems)} 处隐私边界问题")
 sys.exit(1 if problems else 0)

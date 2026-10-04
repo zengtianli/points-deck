@@ -11,6 +11,28 @@ final class Store: ObservableObject {
     @Published var error: String?
     @Published var busy = false
 
+    @Published var notice: String?
+    @Published var undoEntryID: String?
+    private var noticeTask: Task<Void, Never>?
+    func showNotice(_ message: String, entryID: String? = nil) {
+        noticeTask?.cancel()
+        notice = message; undoEntryID = entryID
+        noticeTask = Task {
+            try? await Task.sleep(for: .seconds(5))
+            guard !Task.isCancelled else { return }
+            notice = nil; undoEntryID = nil
+        }
+    }
+    @discardableResult
+    func undoEntry(_ id: String) async -> Bool {
+        do {
+            try await Api.undo(id: id)
+            await refresh()
+            showNotice("已撤销，账本和走势已恢复")
+            return true
+        } catch { showNotice("撤销失败：\(error.localizedDescription)"); return false }
+    }
+
     /// 刚刚升档到了哪一档 —— 非 nil 时界面弹「乔迁新居」。
     /// **只庆不罚**：回落一声不吭(~/Apps/edu/web 的规矩，页面本身已经在说话了)。
     @Published var promoted: String?
@@ -23,12 +45,12 @@ final class Store: ObservableObject {
     private var lastTier: Int? {
         get {
             let d = UserDefaults.standard
-            return d.object(forKey: Self.tierKey) as? Int
+            return d.object(forKey: tierKey) as? Int
         }
-        set { UserDefaults.standard.set(newValue, forKey: Self.tierKey) }
+        set { UserDefaults.standard.set(newValue, forKey: tierKey) }
     }
 
-    private static let tierKey = "lastTier"
+    private var tierKey: String = "lastTier"
 
     /// 实时推送的连接任务。**只留一个** —— 每次登录/回前台都新建一条的话，
     /// 连接会越积越多，服务端每条都占一个线程。
@@ -36,6 +58,7 @@ final class Store: ObservableObject {
     /// 推送是否连着 —— 界面上给一个小圆点，断了要能看出来。
     /// 不显示的话，「推送坏了」和「今天没人加分」长得一模一样。
     @Published var live = false
+    @Published var offline = false
 
     /// 开屏先拿一次 state：cookie 还在就直接进，不必再问一次密码。
     /// 拿不到**不等于**密码错了 —— 也可能是没网。所以只在 401 那种「账本拒绝」时才退到登录页，
@@ -55,13 +78,20 @@ final class Store: ObservableObject {
             let fresh = try await Api.state(timeout: 6)
             noteTier(fresh)
             state = fresh
+            offline = false
             phase = .loggedIn
             publishSnapshot()
             startEvents()
             WatchLink.shared.publishSession()
         } catch {
             // 探测失败不等于退出登录（也可能只是没网）—— 所以这里**不**通知手表下线
-            phase = .loggedOut
+            if error is URLError, let cached = LedgerCache.load() {
+                state = cached; phase = .loggedIn; offline = true; startEvents()
+            } else {
+                self.error = error.localizedDescription
+                if (error as? Api.Failure)?.status == 401 { dropSession() }
+                phase = .loggedOut
+            }
         }
     }
 
@@ -73,6 +103,7 @@ final class Store: ObservableObject {
             let fresh = try await Api.state()
             noteTier(fresh)
             state = fresh
+            offline = false
             phase = .loggedIn
             publishSnapshot()
             startEvents()
@@ -85,18 +116,39 @@ final class Store: ObservableObject {
         }
     }
 
+    func loadHistory() async {
+        do { state = try await Api.state(full: true); offline = false }
+        catch { showNotice("读取历史失败：\(error.localizedDescription)") }
+    }
+
+    /// 短信认证已取得原服务 cookie，读真实账本后才进入主界面。
+    func acceptSession() async throws {
+        let fresh = try await Api.state()
+        noteTier(fresh); state = fresh; offline = false; error = nil; phase = .loggedIn
+        publishSnapshot(); startEvents(); WatchLink.shared.publishSession()
+    }
+
     func refresh() async {
         do {
             let fresh = try await Api.state()
             noteTier(fresh)
             state = fresh
+            offline = false
             publishSnapshot()
-        } catch { self.error = error.localizedDescription }
+        } catch {
+            self.error = error.localizedDescription
+            offline = error is URLError
+            if (error as? Api.Failure)?.status == 401 {
+                dropSession()
+                WatchLink.shared.publishSignedOut()
+            }
+        }
     }
 
     /// 比对档位。**装完 app 第一次**拿到状态时只记不庆（没有基准，谈不上「升」了）；
     /// 之后就算 app 被关掉过，升档照样庆祝 —— 基准在盘上。
     private func noteTier(_ fresh: LedgerState) {
+        tierKey = "lastTier." + fresh.user
         defer { lastTier = fresh.tier }
         guard let old = lastTier, fresh.tier > old else { return }
         promoted = fresh.houseName
@@ -160,14 +212,15 @@ final class Store: ObservableObject {
         live = false
     }
 
-    func register(email: String, password: String, nick: String, parent: String) async {
+    func register(email: String, password: String, nick: String, grant: String) async {
         busy = true; error = nil
         defer { busy = false }
         do {
-            try await Api.register(email: email, password: password, nick: nick, parent: parent)
+            try await Api.register(email: email, password: password, nick: nick, grant: grant)
             let fresh = try await Api.state()
             noteTier(fresh)
             state = fresh
+            offline = false
             phase = .loggedIn
             publishSnapshot()
             startEvents()
@@ -183,9 +236,7 @@ final class Store: ObservableObject {
         defer { busy = false }
         do {
             try await Api.deleteAccount(password: password)
-            stopEvents()
-            state = nil
-            phase = .loggedOut
+            dropSession()
             WatchLink.shared.publishSignedOut()
             return true
         } catch {
@@ -197,15 +248,20 @@ final class Store: ObservableObject {
     func logout() async {
         stopEvents()
         await Api.logout()
-        state = nil
-        phase = .loggedOut
+        dropSession()
         WatchLink.shared.publishSignedOut()
     }
 
     /// 会话在别处结束了（手表收到 iPhone 退出 / 注销的同步）：只清本地，不再发 /api/logout。
     func dropSession() {
         stopEvents()
-        state = nil
+        TransactionJournal.clear()
+        Api.accountUser = nil
+        LedgerCache.clear()
+        Api.installSessionCookie(nil, expires: nil)
+        Snapshot.empty.save()
+        WidgetCenter.shared.reloadAllTimelines()
+        state = nil; promoted = nil; offline = false
         phase = .loggedOut
     }
 }

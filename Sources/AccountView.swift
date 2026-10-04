@@ -1,341 +1,190 @@
 import SwiftUI
+import Security
+import UniformTypeIdentifiers
 
-/// 账户页 —— 「就和账户一样」（2026-08-28 用户原话）。
-///
-/// 它回答四个在别处无处可问的问题：**我是谁 / 我到哪一级了 / 我有多少 / 怎么设置**。
-/// 其中「我到哪一级了」是重点：等级卡不是一个数字，是一个能点进去看完整阶梯的入口 ——
-/// 看不见的饼不是饼。
 struct AccountView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
-
-    @State private var showTiers = false
-    @State private var showAdmin = false
-    @State private var askUnlock = false
-    @State private var typedPw = ""
-    @State private var unlockErr: String?
-    @State private var unlocking = false
-    @State private var showProfile = false
+    @EnvironmentObject private var lifecycle: MobileLifecycleModel
+    @State private var emailStatus = ""
+    @State private var phoneStatus = ""
+    @State private var security = false
+    @State private var profile = false
+    @State private var tiers = false
+    @State private var rules = false
+    @State private var rewards = false
+    @State private var updates = false
+    @State private var privacy = false
     @State private var confirmLogout = false
-    @State private var askDelete = false
-    @State private var askParent = false
-    @State private var parentAcct = ""
-    @State private var parentPw = ""
-    @State private var parentMsg: String?
-    @State private var deletePw = ""
-    @State private var deleteErr: String?
-    /// 宽屏把内容收在这个宽度里居中（设置页拉满 1000pt 宽，左边的字和右边的值隔着半个屏）。
+    @State private var deleting = false
+    @State private var exporting = false
+    @State private var document = LedgerDocument()
+    @State private var message: String?
     var maxWidth: CGFloat? = nil
-
-    private var s: LedgerState? { store.state }
-    private var era: Era { s?.era ?? .slum }
-
     var body: some View {
-        ScrollView {
-            VStack(spacing: 18) {
-                header
-                levelCard
-                assets
-                settings
-                about
-            }
-            .padding(.horizontal, 20)
-            .padding(.bottom, 28)
-            .contentWidth(maxWidth)
-        }
-        .refreshable { await store.refresh() }
-        .sheet(isPresented: $showTiers) {
-            TiersView().environmentObject(store)
-        }
-        .sheet(isPresented: $showProfile) {
-            ProfileEditView().environmentObject(store)
-        }
-        .sheet(isPresented: $showAdmin) {
-            AdminView().environmentObject(store).environmentObject(session)
-        }
-        .alert("解锁家长模式", isPresented: $askUnlock) {
-            SecureField("管理密码", text: $typedPw)
-            Button("解锁") { Task { await unlock() } }
-            Button("取消", role: .cancel) { typedPw = "" }
-        } message: {
-            Text("解锁后可以记账、也能改规则和商品。上锁、退出 app、或切后台超过 10 分钟会自动锁回去。")
-        }
-        // App Store 5.1.1(v)：能注册就必须能在 app 内删号。要密码，二次确认，文案说清删什么。
-        // 家长密码按账号各自一把：改它要账号密码（登录态不够）
-        .alert("设置家长密码", isPresented: $askParent) {
-            SecureField("账号密码", text: $parentAcct)
-            SecureField("新的家长密码（至少 4 位）", text: $parentPw)
-            Button("保存") {
-                Task {
-                    do { try await Api.setParent(password: parentAcct, parent: parentPw); parentMsg = "家长密码已更新" }
-                    catch { parentMsg = error.localizedDescription }
-                }
-            }
-            Button("取消", role: .cancel) {}
-        } message: {
-            Text("记账、撤销、改规则都要这把密码；只有家长知道。")
-        }
-        .alert("家长密码", isPresented: Binding(get: { parentMsg != nil }, set: { if !$0 { parentMsg = nil } })) {
-            Button("好", role: .cancel) {}
-        } message: { Text(parentMsg ?? "") }
-        .alert("注销账号？", isPresented: $askDelete) {
-            SecureField("当前密码", text: $deletePw)
-            Button("永久删除", role: .destructive) {
-                Task {
-                    if await store.deleteAccount(password: deletePw) { deleteErr = nil }
-                    else { deleteErr = store.error }
-                }
-            }
-            Button("取消", role: .cancel) {}
-        } message: {
-            Text("账号、积分账本、学习存档、头像会一起删除，不可恢复。输入当前密码确认。")
-        }
-        .alert("没删成", isPresented: Binding(get: { deleteErr != nil }, set: { if !$0 { deleteErr = nil } })) {
-            Button("好", role: .cancel) {}
-        } message: { Text(deleteErr ?? "") }
-        .alert("退出登录？", isPresented: $confirmLogout) {
-            Button("退出", role: .destructive) { Task { await store.logout() } }
-            Button("取消", role: .cancel) {}
-        } message: {
-            Text("账本在服务器上，退出不会丢任何数据。")
-        }
-    }
-
-    // ── 头部：头像 + 昵称 + 当前档位徽章 ──────────────────────────────────────
-    private var header: some View {
-        VStack(spacing: 10) {
-            Text(s?.avatar ?? "🐯")
-                .font(.system(size: 56))
-                .frame(width: 96, height: 96)
-                .background(.white.opacity(0.12), in: Circle())
-                .overlay(Circle().stroke(era.accent.opacity(0.55), lineWidth: 2))
-
-            Text(s?.nick ?? "—")
-                .font(.title2.weight(.bold))
-                .foregroundStyle(.white)
-
-            HStack(spacing: 6) {
-                Image(systemName: "house.fill").font(.caption)
-                Text(s?.houseName ?? "—").font(.subheadline.weight(.semibold))
-            }
-            .foregroundStyle(era.accent)
-            .padding(.horizontal, 14).padding(.vertical, 6)
-            .background(.white.opacity(0.12), in: Capsule())
-
-            Button {
-                showProfile = true
-            } label: {
-                Label("编辑资料", systemImage: "pencil")
-                    .font(.footnote)
-                    .foregroundStyle(.white.opacity(0.8))
-            }
-        }
-        .padding(.top, 8)
-    }
-
-    // ── 等级卡 —— 本页的核心 ─────────────────────────────────────────────────
-    private var levelCard: some View {
-        Button {
-            showTiers = true
-        } label: {
-            VStack(alignment: .leading, spacing: 12) {
+        Form {
+            Section {
                 HStack {
-                    Text("等级")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.white.opacity(0.85))
-                    Spacer()
-                    if let s {
-                        Text("第 \(s.tier + 1) 级 / 共 \(max(s.ladder.count, s.tier + 1)) 级")
-                            .font(.caption).foregroundStyle(.white.opacity(0.6))
+                    Text(store.state?.avatar ?? "🌱").font(.largeTitle)
+                    VStack(alignment: .leading) {
+                        Text(store.state?.nick ?? "").font(.title2.bold())
+                        Text(emailStatus.isEmpty ? "账号 \(store.state?.user ?? "")" : emailStatus).font(.footnote).foregroundStyle(.secondary)
+                        if !phoneStatus.isEmpty { Text(phoneStatus).font(.footnote).foregroundStyle(.secondary).privacySensitive() }
+                    }
+                }.padding(.vertical, 8)
+                Button("修改昵称与头像") { profile = true }
+                Button("账号安全", systemImage: "person.badge.key.fill") { security = true }
+            }
+            Section("成长") {
+                LabeledContent("当前积分", value: "\(store.state?.balance ?? 0)")
+                Button("等级与待遇：\(store.state?.houseName ?? "")") { tiers = true }
+                if let remaining = store.state?.toNext { Text("还差 \(remaining) 分升级到 \(store.state?.nextName ?? "")") }
+            }
+            Section("家庭设置") {
+                Button("记分项目管理", systemImage: "plusminus.circle") { rules = true }
+                Button("兑换奖励管理", systemImage: "gift") { rewards = true }
+                Button("导出账本", systemImage: "square.and.arrow.up") {
+                    Task {
+                        do {
+                            let state = try await Api.request("api/state?all=1")
+                            document = LedgerDocument(data: try JSONSerialization.data(withJSONObject: state, options: [.prettyPrinted, .sortedKeys]))
+                            exporting = true
+                        } catch { message = error.localizedDescription }
                     }
                 }
-
-                if let s {
-                    ProgressView(value: s.progress)
-                        .tint(era.accent)
-                        .scaleEffect(x: 1, y: 1.6, anchor: .center)
-
-                    // 「还差多少」是钩子，必须是这张卡上最显眼的一行字
-                    if let toNext = s.toNext, let next = s.nextName {
-                        HStack(spacing: 4) {
-                            Text("距").foregroundStyle(.white.opacity(0.6))
-                            Text(next).foregroundStyle(era.accent).fontWeight(.semibold)
-                            Text("还差").foregroundStyle(.white.opacity(0.6))
-                            Text("\(toNext)").foregroundStyle(.white).fontWeight(.bold)
-                                .monospacedDigit()
-                            Text("分").foregroundStyle(.white.opacity(0.6))
-                        }
-                        .font(.subheadline)
-
-                        // 下一档给什么 —— 这一行就是饼本身。没有它，进度条只是个进度条。
-                        if let nextTier = s.ladder.first(where: { $0.at == s.nextAt }) {
-                            nextReward(nextTier)
-                        }
-                    } else {
-                        Text("已经是最高一档了 👑")
-                            .font(.subheadline).foregroundStyle(era.accent)
-                    }
-                }
-
-                HStack {
-                    Text("查看全部等级与待遇")
-                    Image(systemName: "chevron.right")
-                }
-                .font(.footnote.weight(.medium))
-                .foregroundStyle(era.accent)
+                Button("配置、检查更新与安装新版", systemImage: "arrow.triangle.2.circlepath") { updates = true }
             }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
-        }
-        .buttonStyle(.plain)
+            Section("帮助") {
+                Button("隐私与数据处理") { privacy = true }
+                Link("反馈／收不到短信邮件／恢复申诉", destination: URL(string: "mailto:hi@tianli.cyou")!)
+                Text("验证码过期可重发；短信仅支持 +86 家长手机号，可改用邮箱。旧账号先登录再绑定；原地址无法访问时联系支持核验所有权。").font(.footnote).foregroundStyle(.secondary)
+                Text("\(AppIdentity.displayName) · \(Bundle.main.shortVersion)").font(.caption)
+            }
+            Section {
+                Button("退出登录", role: .destructive) { confirmLogout = true }
+                Button("注销账号", role: .destructive) { deleting = true }
+            }
+            if let message { Text(message).foregroundStyle(.red) }
+        }.navigationTitle("账户").scrollContentBackground(.hidden).background(TreasuryTheme.background)
+            .task { await updateAccountSummary() }
+            .sheet(isPresented: $security, onDismiss: { Task { await updateAccountSummary() } }) { AccountSecurityView() }
+            .sheet(isPresented: $profile) { ProfileEditView() }
+            .sheet(isPresented: $tiers) { TiersView() }
+            .sheet(isPresented: $rules) { CatalogManager(kind: "rules") }
+            .sheet(isPresented: $rewards) { CatalogManager(kind: "shop") }
+            .sheet(isPresented: $updates) { AppLifecycleMobilePanel(model: lifecycle).onAppear { lifecycle.start() } }
+            .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
+            .sheet(isPresented: $deleting) { AccountDeletionView() }
+            .confirmationDialog("退出当前账号？", isPresented: $confirmLogout) {
+                Button("退出登录", role: .destructive) { Task { await store.logout() } }
+                Button("取消", role: .cancel) {}
+            }
+            .fileExporter(isPresented: $exporting, document: document, contentType: .json, defaultFilename: "Growth-Treasury-ledger") { result in
+                if case let .failure(error) = result { message = error.localizedDescription }
+            }
     }
-
-    @ViewBuilder
-    private func nextReward(_ t: LedgerState.Tier) -> some View {
-        let items = (s?.shop ?? []).filter { t.unlock.contains($0.id) }
-        if t.bonus > 0 || !items.isEmpty {
-            VStack(alignment: .leading, spacing: 4) {
-                Text("升上去能拿到")
-                    .font(.caption2).foregroundStyle(.white.opacity(0.5))
-                if t.bonus > 0 {
-                    Label("贺礼 \(t.bonus) 分", systemImage: "gift.fill")
-                        .font(.caption).foregroundStyle(.white.opacity(0.9))
-                }
-                ForEach(items) { it in
-                    Label("解锁 \(it.icon) \(it.label)", systemImage: "lock.open.fill")
-                        .font(.caption).foregroundStyle(.white.opacity(0.9))
-                }
-            }
-            .padding(.top, 2)
-        }
-    }
-
-    // ── 资产 ────────────────────────────────────────────────────────────────
-    private var assets: some View {
-        card("资产") {
-            row("市值", value: RollingNumber.grouped(s?.balance ?? 0) + " 分")
-            if let s, s.rate > 0 {
-                row("折合", value: String(format: "¥%.2f", Double(s.balance) / Double(s.rate)),
-                    dim: true)
-            }
-            row("电视时间", value: "\(s?.tv ?? 0) 分钟")
-            row("今天还能刷题挣", value: "\(s?.practiceLeft ?? 0) 分")
-            // 推送状态得露出来 —— 不露的话，「推送坏了」和「今天没人加分」长得一模一样
-            HStack {
-                Circle().fill(store.live ? .green : .orange).frame(width: 7, height: 7)
-                Text(store.live ? "实时同步中" : "未连上推送（下拉可手动刷新）")
-                    .font(.caption2).foregroundStyle(.white.opacity(0.5))
-                Spacer()
-            }
-        }
-    }
-
-    // ── 设置 ────────────────────────────────────────────────────────────────
-    private var settings: some View {
-        card("设置") {
-            tapRow("改昵称 / 换头像", icon: "person.text.rectangle") { showProfile = true }
-            // 家长模式 —— **解锁必须是一个能直接点的按钮**。
-            // 原先只有「记这一笔」会顺带弹密码框，等于想解锁得先凑一笔账出来，
-            // 那个入口找不到就是不存在。
-            HStack {
-                Label("家长模式", systemImage: session.isUnlocked ? "lock.open.fill" : "lock.fill")
-                    .foregroundStyle(.white.opacity(0.9))
-                Spacer()
-                if session.isUnlocked {
-                    Text("已解锁 · \(session.count) 笔")
-                        .font(.footnote).foregroundStyle(.white.opacity(0.55))
-                    Button("上锁") { session.lock() }
-                        .font(.footnote).buttonStyle(.borderless)
-                        .foregroundStyle(era.accent)
-                } else {
-                    Button("解锁") { unlockErr = nil; askUnlock = true }
-                        .font(.subheadline.weight(.semibold))
-                        .buttonStyle(.borderless)
-                        .foregroundStyle(era.accent)
-                }
-            }
-            .font(.subheadline)
-            if let unlockErr {
-                Text(unlockErr).font(.caption).foregroundStyle(.orange)
-            }
-            if session.isUnlocked {
-                tapRow("管理规则 / 商品 / 档位", icon: "slider.horizontal.3") { showAdmin = true }
-            }
-            tapRow("退出登录", icon: "rectangle.portrait.and.arrow.right",
-                   tint: .red.opacity(0.9)) { confirmLogout = true }
-            tapRow("家长密码", icon: "key.fill") { parentPw = ""; parentAcct = ""; askParent = true }
-            tapRow("注销账号", icon: "person.crop.circle.badge.xmark",
-                   tint: .red.opacity(0.9)) { deletePw = ""; askDelete = true }
-        }
-    }
-
-    private var about: some View {
-        VStack(spacing: 4) {
-            Text("\(AppIdentity.displayName) · \(Bundle.main.shortVersion)")
-            Text("账本在 edu.tianli.cyou，本机不存账")
-        }
-        .font(.caption2)
-        .foregroundStyle(.white.opacity(0.35))
-        .padding(.top, 6)
-    }
-
-    private func unlock() async {
-        let pw = typedPw; typedPw = ""
-        guard !pw.isEmpty else { return }
-        unlocking = true; defer { unlocking = false }
+    private func updateAccountSummary() async {
         do {
-            try await session.unlock(password: pw)
-            unlockErr = nil
-        } catch {
-            // 服务端的原话（「家长密码不对」）比「解锁失败」有用
-            unlockErr = error.localizedDescription
+            let me = try await Api.request("api/me")
+            let email = me["email"] as? String ?? ""
+            let mask = email.split(separator: "@").last.map { "***@" + $0 } ?? ""
+            emailStatus = email.isEmpty ? "邮箱未绑定" : mask + (me["email_verified"] as? Bool == true ? " · 已验证" : " · 待验证")
+            let phone = me["phone"] as? String ?? ""
+            phoneStatus = phone.isEmpty ? "手机未绑定" : "\(phone.prefix(6))****\(phone.suffix(4)) · 已验证"
+        } catch { message = error.localizedDescription }
+    }
+}
+
+struct LedgerDocument: FileDocument {
+    static let readableContentTypes: [UTType] = [.json]
+    var data: Data = Data()
+    init(data: Data = Data()) { self.data = data }
+    init(configuration: ReadConfiguration) throws { data = configuration.file.regularFileContents ?? Data() }
+    func fileWrapper(configuration: WriteConfiguration) throws -> FileWrapper { FileWrapper(regularFileWithContents: data) }
+}
+
+enum DeletionReceipt {
+    private static var query: [String: Any] {
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "cyou.tianli.pointsdeck.deletion",
+         kSecAttrAccount as String: "receipt"]
+    }
+    static func save(_ value: String) {
+        let attributes = [kSecValueData as String: Data(value.utf8)]
+        if SecItemUpdate(query as CFDictionary, attributes as CFDictionary) == errSecItemNotFound {
+            var insert = query; insert.merge(attributes) { _, new in new }
+            insert[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            SecItemAdd(insert as CFDictionary, nil)
         }
     }
-
-    // ── 小零件 ──────────────────────────────────────────────────────────────
-    private func card<C: View>(_ title: String,
-                               @ViewBuilder content: () -> C) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(.white.opacity(0.85))
-            content()
-        }
-        .padding(16)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(.white.opacity(0.10), in: RoundedRectangle(cornerRadius: 18))
+    static func load() -> String? {
+        var q = query; q[kSecReturnData as String] = true; q[kSecMatchLimit as String] = kSecMatchLimitOne
+        var value: CFTypeRef?
+        guard SecItemCopyMatching(q as CFDictionary, &value) == errSecSuccess, let data = value as? Data else { return nil }
+        return String(data: data, encoding: .utf8)
     }
+}
 
-    private func row(_ title: String, value: String, dim: Bool = false) -> some View {
-        HStack {
-            Text(title).foregroundStyle(.white.opacity(dim ? 0.55 : 0.9))
-            Spacer()
-            Text(value).foregroundStyle(dim ? .white.opacity(0.55) : .white)
-                .fontWeight(dim ? .regular : .semibold)
-                .monospacedDigit()
-        }
-        .font(.subheadline)
+struct AccountDeletionView: View {
+    @EnvironmentObject var store: Store
+    @Environment(\.dismiss) private var dismiss
+    @State private var password = ""
+    @State private var message: String?
+    @State private var busy = false
+    @State private var offerRequest = false
+    @State private var receipt = DeletionReceipt.load()
+    @State private var hasPassword = true
+    @State private var phone = ""
+    @State private var identity = ""
+    var body: some View {
+        NavigationStack {
+            Form {
+                Text("注销会删除当前账号及积分数据。涉及共享学习、扫描档案或旧资料时需协调清理；申请受理不代表已经删除。")
+                if store.phase == .loggedIn {
+                    if hasPassword { PasswordInput(title: "当前登录密码", text: $password) }
+                    else { PhoneVerification(phone: phone, purpose: "phone_identity", grant: $identity) }
+                    Button(offerRequest ? "确认申请注销" : "确认注销", role: .destructive) { Task { await remove() } }
+                        .disabled(busy || (hasPassword ? password.isEmpty : identity.isEmpty))
+                }
+                if let message { Text(message) }
+                if receipt != nil { Button("查询注销处理状态") { Task { await status() } }.disabled(busy) }
+                Link("联系支持", destination: URL(string: "mailto:hi@tianli.cyou")!)
+            }.navigationTitle("注销账号")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+                .task {
+                    if receipt != nil { await status() }
+                    if store.phase == .loggedIn {
+                        do { let me = try await Api.request("api/me"); hasPassword = me["has_password"] as? Bool ?? true; phone = me["phone"] as? String ?? "" }
+                        catch { message = error.localizedDescription }
+                    }
+                }
+        }.treasurySheetSize(minHeight: 360)
     }
-
-    private func tapRow(_ title: String, icon: String, tint: Color = .white.opacity(0.9),
-                        action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            HStack {
-                Label(title, systemImage: icon).foregroundStyle(tint)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.caption).foregroundStyle(.white.opacity(0.35))
+    private func remove() async {
+        busy = true; defer { busy = false }
+        do {
+            if offerRequest {
+                let result = try await Api.request("api/account_delete_request", body: ["password": password, "identity_grant": identity])
+                receipt = result["receipt_id"] as? String
+                if let receipt { DeletionReceipt.save(receipt) }
+                message = "申请已受理，尚未完成删除。预计 \(result["expected_by"] as? String ?? "通常30天内")，可在此查询状态。"
+                password = ""
+            } else {
+                _ = try await Api.request("api/account_del", body: ["p": password, "identity_grant": identity])
+                store.dropSession(); WatchLink.shared.publishSignedOut(); dismiss()
             }
-            .font(.subheadline)
-            .contentShape(Rectangle())
+        } catch {
+            message = error.localizedDescription
+            offerRequest = (error as? Api.Failure)?.status == 409
         }
-        .buttonStyle(.plain)
+    }
+    private func status() async {
+        guard let receipt else { return }
+        do {
+            let result = try await Api.request("api/account_delete_status", body: ["receipt_id": receipt])
+            message = result["status"] as? String == "completed" ? "账号及相关数据清理已完成。" : "注销处理中，尚未完成删除。预计 \(result["expected_by"] as? String ?? "通常30天内")。"
+        } catch { message = error.localizedDescription }
     }
 }
 
 extension Bundle {
-    var shortVersion: String {
-        (infoDictionary?["CFBundleShortVersionString"] as? String) ?? "0"
-    }
+    var shortVersion: String { infoDictionary?["CFBundleShortVersionString"] as? String ?? "0" }
 }

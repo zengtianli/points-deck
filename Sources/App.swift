@@ -9,14 +9,12 @@ struct PointsDeckApp: App {
     @NSApplicationDelegateAdaptor(LaneAppDelegate.self) private var laneDelegate
     #endif
     @StateObject private var store = Store()
-    @StateObject private var session = ParentSession()
 
     var body: some Scene {
         WindowGroup {
             RootView()
-                .appLifecycleMobile(productID: "points-deck", channel: MobileProductLifecycle.channel, configuration: MobileProductLifecycle.configuration)
+                .appLifecycleMobile(productID: "points-deck", channel: MobileProductLifecycle.channel, configuration: MobileProductLifecycle.configuration, placement: .settings)
                 .environmentObject(store)
-                .environmentObject(session)
         }
         #if os(macOS) || os(visionOS)
         // Mac 默认窗口只有 900×450，看板摆不开；Vision Pro 的默认窗口偏扁。给一个看板正好铺开的尺寸。
@@ -27,7 +25,6 @@ struct PointsDeckApp: App {
 
 struct RootView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
     @Environment(\.scenePhase) private var scenePhase
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var hSize
@@ -63,14 +60,10 @@ struct RootView: View {
         // 回到前台就刷一次 —— 分是家长在别处加的，孩子这边不刷就看不到；
         // 升档的庆祝也靠这一下。
         .onChange(of: scenePhase) { _, phase in
-            // 家长会话的自动上锁挂在这 —— 放桌上离开是最现实的泄漏场景
-            session.scenePhaseChanged(to: phase)
             guard phase == .active, store.phase == .loggedIn else { return }
             Task { await store.refresh() }
         }
         #if os(macOS)
-        // Mac 窗口晾着时 scenePhase 可能一直 active：另数「多久没操作」，同样 10 分钟上锁
-        .modifier(MacIdleLock())
         .frame(minWidth: 760, minHeight: 540)
         #endif
     }

@@ -1,55 +1,29 @@
 import Foundation
 
-// 隐私边界：未登录读不到账本；家长权限不能靠登录态或别家密码取得；两个账号的账本互不可见；
-// 家长密码只在会话内存里，上锁/新会话即消失（run.sh 另查客户端 HOME 无密码明文落盘）。
+// 实际 Swift API 对隔离账号验证登录门、跨户读写和站点管理边界。
 @main struct PrivacyAcceptance {
     @MainActor static func main() async throws {
         let A = Accept.self
-
-        let anon = await A.failure { _ = try await Api.state() }
-        A.expect(anon != nil, "未登录读取账本被拒")
-        A.step("未登录读取账本被拒（「\(anon!)」）")
-
+        A.expect(await A.failure { _ = try await Api.state() } != nil, "未登录读取被拒")
+        A.step("未登录读不到账本")
         try await Api.login(user: A.kidUser, password: A.kidPw)
-        let s0 = try await Api.state()
-        guard let rule = A.fixedRule(s0) else { A.expect(false, "有固定加分规则"); return }
-        let noAdminEarn = await A.failure { _ = try await Api.earn(RuleInput(rule: rule), admin: "") }
-        let noAdminAdjust = await A.failure { try await Api.adjust(pts: 100, label: "越权", admin: "") }
-        let noAdminUndo = await A.failure { try await Api.undo(id: s0.entries.first!.id, admin: "") }
-        let noAdminConfig = await A.failure { _ = try await Api.config("") }
-        let after = try await A.balance()
-        A.expect(noAdminEarn != nil && noAdminAdjust != nil && noAdminUndo != nil && noAdminConfig != nil,
-                 "只有登录态（孩子账号）时记账/调分/撤销/读配置全部被拒")
-        A.expect(after == s0.balance, "越权尝试后余额不变")
-        A.step("孩子登录态下无家长密码：记账、调分、撤销、读配置 4 类请求全部被拒，余额不变")
-
-        // 另一户：邮箱注册的新账号，有自己的家长密码。
+        let original = try await Api.state()
+        let cfg = try await Api.config()
+        A.expect(cfg.revision.count > 0, "登录即可取得家庭配置与版本")
         await Api.logout()
-        let otherParent = "other-parent-\(UUID().uuidString.prefix(8))"
-        try await Api.register(email: "accept-\(UUID().uuidString.prefix(8))@example.invalid",
-                               password: "other-\(UUID().uuidString.prefix(8))", nick: "另一户", parent: otherParent)
+        try await Api.login(user: "otherfamily", password: "another long unique phrase")
         let other = try await Api.state()
-        A.expect(other.user != s0.user && other.balance == 0, "新账号从 0 分起步，不是第一户的账本")
-        let seen = Set(s0.entries.map(\.id)).intersection(other.entries.map(\.id))
-        A.expect(seen.isEmpty, "新账号看不到第一户的任何流水")
-        let crossParent = await A.failure { _ = try await Api.earn(RuleInput(rule: rule), admin: A.parentPw) }
-        A.expect(crossParent != nil, "第一户的家长密码不能给另一户记账")
-        let crossUndo = await A.failure { try await Api.undo(id: s0.entries.first!.id, admin: otherParent) }
-        A.expect(crossUndo != nil, "另一户不能撤销第一户的流水")
-        A.step("两户隔离：新账号 0 分、看不到第一户 \(s0.entries.count) 条流水；跨户家长密码与跨户撤销均被拒")
-
+        A.expect(other.balance == 0 && Set(original.entries.map(\.id)).intersection(other.entries.map(\.id)).isEmpty, "两户账本隔离")
+        A.expect(await A.failure { try await Api.undo(id: original.entries.first!.id) } != nil, "不能撤销另一户流水")
+        A.expect(await A.failure { _ = try await Api.request("api/passwd_reset", body: ["user": A.kidUser, "new": "unauthorized", "admin": A.parentPw]) } != nil, "普通账号不能取得站点管理权限")
+        try await Api.adjust(pts: 5, label: "本户记录")
+        A.expect(try await A.balance() == 5, "普通家长直接记本户账")
+        A.step("普通账号可直接记本户账；跨户撤销和站点重置被拒")
         await Api.logout()
         try await Api.login(user: A.kidUser, password: A.kidPw)
         let back = try await Api.state()
-        A.expect(back.balance == s0.balance && back.entries.map(\.id) == s0.entries.map(\.id), "第一户账本未被另一户改动")
-        A.step("第一户账本未被另一户改动")
-
-        let session = ParentSession()
-        try await session.unlock(password: A.parentPw)
-        A.expect(session.isUnlocked, "正确家长密码可解锁")
-        session.lock()
-        A.expect(session.password == nil && !ParentSession().isUnlocked, "上锁后密码清空，新会话默认上锁")
-        A.step("家长密码只在会话内存：上锁即清空，新会话默认上锁")
+        A.expect(back.balance == original.balance && back.entries.map(\.id) == original.entries.map(\.id), "另一户记账不影响本户")
+        A.step("重新登录原账号，余额与流水完整")
         await Api.logout()
         print("PASS privacy")
     }

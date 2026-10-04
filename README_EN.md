@@ -10,8 +10,11 @@
 
 ![Swift](https://img.shields.io/badge/Swift-5-F05138?logo=swift&logoColor=white) ![SwiftUI](https://img.shields.io/badge/SwiftUI-0D84FF?logo=swift&logoColor=white) ![Platform](https://img.shields.io/badge/iOS%2018%2B%20·%20iPadOS%20·%20macOS%2015%2B%20·%20watchOS%2011%2B%20·%20visionOS%2026%2B-000?logo=apple) [![App Store](https://img.shields.io/badge/App%20Store-available-0D84FF?logo=apple)](https://apps.apple.com/app/id6806799638) ![License](https://img.shields.io/badge/License-MIT-green)
 
-Made for children: 11 value tiers map to illustrations across 5 eras, making their “home” visible. The entire page palette is sampled from the illustration. The parent password is never written to disk: a points system that lets children award themselves points becomes a point-farming game by the next day. Moving up a tier is celebrated, never punished; moving down is silent.
+A family points ledger operated by parents: record progress, earn agreed rewards, and see effort accumulate. Shared server rules and APIs provide the ledger, 11 home tiers, and illustrations across 5 eras.
 
+Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. This revision has not been deployed or submitted to the App Store. Installed releases, the older screenshots below, and historical performance samples describe the earlier version. See the [development handoff](handoffs/prd-1.2-20261004.md) for current validation scope.
+
+<p>Earlier release screenshots; current device/simulator evidence is linked from the handoff.</p>
 <table><tr>
 <td align="center" width="25%"><img src="docs/screenshots/01-sim-064957.png" alt="Opening screen: every earned point is in this ledger; the page palette follows the current home"><br><sub>Opening screen: every earned point is in this ledger; the page palette follows the current home</sub></td>
 <td align="center" width="25%"><img src="docs/screenshots/02-tab1.png" alt="Trends: point value follows a stock-like chart, with highs, lows, and how many more points practice can earn today"><br><sub>Trends: point value follows a stock-like chart, with highs, lows, and how many more points practice can earn today</sub></td>
@@ -26,11 +29,13 @@ Made for children: 11 value tiers map to illustrations across 5 eras, making the
 
 ## What it does
 
-| Feature | Description |
+| Section | Current local source |
 |---|---|
-| **Turn effort into a visible home** | 11 value tiers map to illustrations across 5 eras, from a slum to a splendid residence. The page palette is sampled from the current illustration: moving up changes the home and the feel of the entire app. Upgrades are celebrated without punishment; downgrades stay silent. |
-| **Read the ledger like a stock dashboard** | Trends, gains and losses, highs and lows make the ledger understandable and appealing to children. Balances use snapshots carried by each transaction rather than client-side addition, so both ends always agree. |
-| **The parent password is never saved to disk** | A points system that lets children award themselves points soon becomes a farming game. Parents enter the password each time; it stays only in memory and disappears when the app moves to the background. Even an unlocked phone does not let the child add points. All values are calculated on the server; the client does not perform even a single addition. |
+| Ledger | Points, growth home, four transaction filters, details and undo; original history retained |
+| Trends | 7 days, 30 days, all history; server balance snapshots |
+| Scoring | Add/deduct cards, one-tap fixed scores, server previews, manual entries, editable catalog |
+| Rewards | Editable catalog, price and remaining-balance confirmation, no overdraft |
+| Account | Phone and email verification, binding and changes, setting or changing passwords, recovery, export, help and deletion receipts |
 
 ## One app, five platforms
 
@@ -38,9 +43,9 @@ One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the s
 
 | Platform | What it looks like | Can you get it now? |
 |---|---|---|
-| iPhone | Four paged screens (ledger / trend / redeem / account) plus Lock Screen and Home Screen widgets | On the [App Store](https://apps.apple.com/app/id6806799638) |
-| iPad | Wide layout: sidebar + ledger board (era banner, value, points to the next tier ‖ trend, stats, entries), parent booking in a side inspector; narrow Split View falls back to the iPhone layout | Same App Store package, but **this wide layout has not been released yet** (the version on sale shows the stretched iPhone layout on iPad) |
-| Mac | Native macOS window with the same sidebar board; the parent lock closes after 10 idle minutes; ships the `treasury` command line inside the app | **Not on the App Store**; local builds only |
+| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; this update is unreleased |
+| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; this update is unreleased |
+| Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local builds only |
 | Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | **Not on the App Store** (the embedded watch app is not in any released build yet) |
 | Apple Vision Pro | The same sidebar board in a system glass window; the era colour is an accent only | **Not on the App Store**; verified on the simulator only |
 
@@ -76,7 +81,7 @@ The era illustration backgrounds come from the author’s `~/Apps/edu/web` conte
 
 ## Command line for agents · `treasury`
 
-The app is for people; the command line is for agents. `cli/treasury` is a thin client of the same server the app and the website use (the `/api/*` endpoints of `edu.tianli.cyou`), written with the Python standard library only. Points, tier unlocks, overdraft rules, the parent password and concurrency locks are all decided on the server; the command line contains no scoring logic.
+The app is for people; the command line is for agents. `cli/treasury` is a thin client of the same server the app and the website use (the `/api/*` endpoints of `edu.tianli.cyou`), written with the Python standard library only. Points, tier unlocks, overdraft rules, account permissions and concurrency locks are decided on the server; the command line contains no scoring logic.
 
 A locally built Mac edition carries the command inside its `.app` at `Contents/Resources/bin/treasury` (a `project.yml` build phase copies it only in macOS builds, before signing); iPhone/iPad packages and every archive (App Store / TestFlight) leave it out.
 
@@ -85,16 +90,18 @@ sh cli/install.sh          # Mac edition installed: finds the .app by bundle id 
 sh cli/install.sh --check  # verify only; --uninstall removes only this product's link
 ```
 
-Credentials come only from environment variables or stdin and are never stored or echoed: `EDU_USER` (email or username), `EDU_PASSWORD` (or `--password-stdin`); parent actions need `EDU_PARENT_PW` (or `--parent-stdin`), sent per call like the app's parent lock; `EDU_API_BASE` defaults to `https://edu.tianli.cyou`.
+Credentials come only from environment variables or stdin and are never stored or echoed: `EDU_USER` (email or username), `EDU_PASSWORD` (or `--password-stdin`); daily scoring needs no second password; only legacy site administration uses separate `EDU_PARENT_PW` (or `--parent-stdin`); `EDU_API_BASE` defaults to `https://edu.tianli.cyou`.
 
 ```bash
 treasury version --json                        # no sign-in: CLI version, the containing app's version, server reachable or not
 treasury state --json                          # balance, current house tier, points to the next tier, TV time, wishes, today's practice allowance
 treasury entries --limit 10 --json             # ledger entries, newest first (the server returns the latest 400)
 treasury preview tr-show --json                # computed by the server, nothing recorded
-printf '%s\n' "$PARENT" | treasury earn tr-show --parent-stdin --json
+treasury earn tr-show --request-id example-operation-0001 --json
 treasury spend sh-icecream --dry-run --json    # check before redeeming
-treasury config put shop --file shop.json --parent-stdin < parent.txt
+treasury config get --json
+# Use the revision originally read for this edit.
+treasury config put shop --file shop.json --revision "$REVISION" --json
 ```
 
 Every read command supports `--json` and prints `{"ok": true, …}`; failures print `{"ok": false, "err": …}` and exit non-zero (1 = refused by the server or network failure, 2 = usage error or missing credentials). Read commands never change state; write commands go through the server's existing validation, locks and idempotency. Earn/adjust/undo/spend accept `--dry-run`; deleting a user or the account requires `--yes`.
@@ -102,17 +109,18 @@ Every read command supports `--json` and prints `{"ok": true, …}`; failures pr
 | In the app | Command |
 |---|---|
 | Ledger home | `treasury state` |
-| Entries / trend | `treasury entries [--since DATE] [--cur pts\|tv\|wish]` / `treasury trend --span 14\|30\|100` |
+| Entries / trend | `treasury entries [--since DATE] [--cur pts\|tv\|wish]` / `treasury trend --span 7\|30\|0` (0 means all history) |
 | Shop / redeem | `treasury shop` / `treasury spend <item>` |
 | Tier ladder | `treasury tiers` |
 | Parent: rules, preview, record, undo, adjust | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
 | Manage rules / shop / tiers | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
-| Profile, account password, parent password, account deletion | `treasury profile` / `me` / `account passwd\|parent-password\|delete --yes` |
-| Family user admin | `treasury users list\|reset-password\|delete --yes` |
+| Profile, account password, email, account deletion | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes` |
+| Phone registration, login, binding and recovery | `treasury account phone-send\|phone-verify\|phone-register\|phone-login\|phone-bind\|phone-recover\|password-set`; codes and grants come from stdin |
+| Independent site administration | `treasury users list\|reset-password\|delete --yes` |
 
 Admin scope is whatever the server says: `config get`, `config put` and `users list` report the `scope` field of the response (`site` = the whole site, `account` = this account only). When the server returns no `scope`, they report `unknown`: `users list` shows only the caller's own row, and `config put`, `users reset-password` and `users delete` refuse rather than guess where the write would land.
 
-GUI-only (pure interface): the parent-lock countdown, live refresh pushes, home/lock-screen widgets, the tier-up celebration, and the palette and widget previews.
+GUI-only (pure interface): live refresh pushes, home/lock-screen widgets, the tier-up celebration, and the palette and widget previews.
 
 Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule and `install.sh` (a fake .app in a temporary Applications folder), then starts an isolated local server (temporary directory, free port) and never touches live accounts; it needs `edu/web/points/server.py` from the same workspace, or `EDU_SERVER_PY` pointing to it.
 

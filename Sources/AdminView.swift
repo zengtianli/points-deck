@@ -11,7 +11,6 @@ import SwiftUI
 /// ③ **整段替换。** 端上本来就持有整段，逐条 patch 要额外处理新增/顺序，不值得。
 struct AdminView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
     @Environment(\.dismiss) private var dismiss
 
     @State private var cfg: Config?
@@ -31,24 +30,21 @@ struct AdminView: View {
                         Section {
                             NavigationLink {
                                 RuleListView(cfg: cfg).environmentObject(store)
-                                    .environmentObject(session)
                             } label: {
                                 row("积分规则", "checklist", "\(cfg.rules.count) 条")
                             }
                             NavigationLink {
                                 ShopEditView(cfg: cfg).environmentObject(store)
-                                    .environmentObject(session)
                             } label: {
                                 row("兑换商品", "gift", "\(cfg.shop.count) 件")
                             }
                             NavigationLink {
                                 TierEditView(cfg: cfg).environmentObject(store)
-                                    .environmentObject(session)
                             } label: {
                                 row("档位与待遇", "stairs", "\(cfg.tiers.count) 档")
                             }
                         } header: {
-                            Text("改这些会立刻影响所有人")
+                            Text("只修改当前家庭的配置")
                         } footer: {
                             Text("改的是服务器上那份，保存即生效 —— 手机、网页、别的设备下一次刷新都会看到。"
                                  + "本机不存副本，所以不存在「两边不一样」这回事。")
@@ -65,11 +61,11 @@ struct AdminView: View {
                     .padding(30)
                 }
             }
-            .eraBackdrop(era)
+            .background(TreasuryTheme.background)
             .navigationTitle("管理")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("关闭") { dismiss() }
@@ -89,12 +85,8 @@ struct AdminView: View {
 
     private func load() async {
         loading = true; defer { loading = false }
-        guard let pw = session.password else {
-            err = "家长模式没解锁"
-            return
-        }
         do {
-            cfg = try await Api.config(pw)
+            cfg = try await Api.config()
             err = nil
         } catch {
             err = error.localizedDescription
@@ -141,7 +133,6 @@ private struct SaveBar: View {
 // ── 商品 ────────────────────────────────────────────────────────────────────
 struct ShopEditView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
     @State var cfg: Config
     @State private var items: [[String: Any]] = []
     @State private var original: String = ""
@@ -181,10 +172,10 @@ struct ShopEditView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .eraBackdrop(store.state?.era ?? .slum)
+        .background(TreasuryTheme.background)
         .navigationTitle("兑换商品")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .task {
             items = cfg.shop
             original = dump()
@@ -205,14 +196,13 @@ struct ShopEditView: View {
     private func dump() -> String {
         (try? String(data: JSONSerialization.data(withJSONObject: items,
                                                   options: [.sortedKeys]),
-                     encoding: .utf8)) as? String ?? ""
+                     encoding: .utf8)) ?? ""
     }
 
     private func save() async {
-        guard let pw = session.password else { err = "家长模式已上锁"; return }
         busy = true; defer { busy = false }
         do {
-            try await Api.configPut(pw, kind: "shop", items: items)
+            cfg.revision = try await Api.configPut(kind: "shop", items: items, revision: cfg.revision)
             await store.refresh()
             original = dump()
             err = nil
@@ -225,7 +215,6 @@ struct ShopEditView: View {
 // ── 档位 ────────────────────────────────────────────────────────────────────
 struct TierEditView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
     @State var cfg: Config
     @State private var items: [[String: Any]] = []
     @State private var original = ""
@@ -271,10 +260,10 @@ struct TierEditView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .eraBackdrop(store.state?.era ?? .slum)
+        .background(TreasuryTheme.background)
         .navigationTitle("档位与待遇")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .task {
             items = cfg.tiers
             original = dump()
@@ -294,14 +283,13 @@ struct TierEditView: View {
     private func dump() -> String {
         (try? String(data: JSONSerialization.data(withJSONObject: items,
                                                   options: [.sortedKeys]),
-                     encoding: .utf8)) as? String ?? ""
+                     encoding: .utf8)) ?? ""
     }
 
     private func save() async {
-        guard let pw = session.password else { err = "家长模式已上锁"; return }
         busy = true; defer { busy = false }
         do {
-            try await Api.configPut(pw, kind: "tiers", items: items)
+            cfg.revision = try await Api.configPut(kind: "tiers", items: items, revision: cfg.revision)
             await store.refresh()
             original = dump()
             err = nil
@@ -318,7 +306,6 @@ struct TierEditView: View {
 /// 要动那些，去终端改 JSON 然后 `vps_setup.py pull` 拉回来 commit。
 struct RuleListView: View {
     @EnvironmentObject var store: Store
-    @EnvironmentObject var session: ParentSession
     @State var cfg: Config
     @State private var items: [[String: Any]] = []
     @State private var original = ""
@@ -358,10 +345,10 @@ struct RuleListView: View {
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
-        .eraBackdrop(store.state?.era ?? .slum)
+        .background(TreasuryTheme.background)
         .navigationTitle("积分规则")
         .navigationBarTitleDisplayMode(.inline)
-        .preferredColorScheme(.dark)
+        .preferredColorScheme(.light)
         .task {
             items = cfg.rules
             original = dump()
@@ -381,14 +368,13 @@ struct RuleListView: View {
     private func dump() -> String {
         (try? String(data: JSONSerialization.data(withJSONObject: items,
                                                   options: [.sortedKeys]),
-                     encoding: .utf8)) as? String ?? ""
+                     encoding: .utf8)) ?? ""
     }
 
     private func save() async {
-        guard let pw = session.password else { err = "家长模式已上锁"; return }
         busy = true; defer { busy = false }
         do {
-            try await Api.configPut(pw, kind: "rules", items: items)
+            cfg.revision = try await Api.configPut(kind: "rules", items: items, revision: cfg.revision)
             await store.refresh()
             original = dump()
             err = nil

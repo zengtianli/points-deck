@@ -37,11 +37,11 @@ struct TiersView: View {
                     withAnimation { proxy.scrollTo(cur, anchor: .center) }
                 }
             }
-            .eraBackdrop(era)
+            .background(TreasuryTheme.background)
             .navigationTitle("等级与待遇")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
-            .preferredColorScheme(.dark)
+            .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("关闭") { dismiss() }
@@ -54,13 +54,13 @@ struct TiersView: View {
         VStack(spacing: 8) {
             if let s {
                 Text("你在第 \(s.tier + 1) 级 · \(s.houseName)")
-                    .font(.title3.weight(.bold)).foregroundStyle(.white)
+                    .font(.title3.weight(.bold)).foregroundStyle(.primary)
                 Text("共 \(s.ladder.count) 级 · 市值 \(RollingNumber.grouped(s.balance)) 分")
-                    .font(.footnote).foregroundStyle(.white.opacity(0.6))
+                    .font(.footnote).foregroundStyle(.secondary)
                 if let toNext = s.toNext, let next = s.nextName {
                     Text("距「\(next)」还差 \(toNext) 分")
                         .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(era.accent)
+                        .foregroundStyle(TreasuryTheme.accent)
                 }
             }
         }
@@ -107,7 +107,7 @@ struct TiersView: View {
                     Spacer()
                     if passed {
                         Image(systemName: "checkmark.circle.fill")
-                            .foregroundStyle(.white.opacity(0.45))
+                            .foregroundStyle(.secondary)
                     } else if now {
                         Text("现在").font(.caption2.weight(.bold))
                             .foregroundStyle(.black.opacity(0.75))
@@ -117,7 +117,7 @@ struct TiersView: View {
                 }
 
                 Text(t.at == 0 ? "起始档位" : "\(RollingNumber.grouped(t.at)) 分")
-                    .font(.caption).foregroundStyle(.white.opacity(0.55))
+                    .font(.caption).foregroundStyle(.secondary)
                     .monospacedDigit()
 
                 if t.bonus > 0 {
@@ -131,7 +131,7 @@ struct TiersView: View {
                         .foregroundStyle(.white.opacity(passed || now ? 0.9 : 0.6))
                 }
                 if t.bonus == 0 && items.isEmpty {
-                    Text("——").font(.caption).foregroundStyle(.white.opacity(0.35))
+                    Text("——").font(.caption).foregroundStyle(.secondary)
                 }
             }
         }
@@ -146,7 +146,7 @@ struct TiersView: View {
     private var footnote: some View {
         Text("解锁的东西按**当前**市值算 —— 花掉分掉了档，待遇也跟着回去。")
             .font(.caption2)
-            .foregroundStyle(.white.opacity(0.4))
+            .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)
             .padding(.top, 10)
