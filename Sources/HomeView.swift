@@ -30,6 +30,9 @@ struct HomeView: View {
             #endif
         }
         .background(TreasuryTheme.background).tint(TreasuryTheme.accent).preferredColorScheme(.light)
+        #if os(visionOS)
+        .foregroundStyle(Color(hex: 0x25352F))
+        #endif
         .safeAreaInset(edge: .bottom) {
             if store.offline {
                 Text("离线：显示上次账本，恢复网络后刷新；当前无法记账。")
