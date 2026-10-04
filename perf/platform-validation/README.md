@@ -15,8 +15,10 @@
 
 共享功能、恢复、隐私沿原 Chapter 验收全部通过，见 [原件索引](current-shared-acceptance.json)；[注册测试](current-test.json) 的 `ok` 与 `input_stable` 均为 true。另有 [生产存储原件](storage/proof.json)：四个独立 Mac 进程实际验证 Keychain、账本缓存、待确认请求与摘要保存／清理，共 11 条断言；该原件的范围为 Mac Keychain。
 
-额外资源采样独立留证，不再作为本次功能交付的前置：当前输入的 [iPad](ipad/current-resource.json)、[Watch](watch/current-resource.json)、[Mac](mac/current-resource.json) 已通过。分别为 31／23／42 MiB，闲置 CPU 均为 0.0%，五次冷启动中位 897／773／454 ms。Vision 当前资源采样已由原队列开始，尚无完成结果；旧数字不冒充当前结果，不等待该后台采样才交付。Chapter 整体状态原样保留于 `current-chapter-platforms.json`，不等同于本次五项必要验收结论。
+额外资源采样独立留证，不再作为本次功能交付的前置：当前输入的 [iPad](ipad/current-resource.json)、[Watch](watch/current-resource.json)、[Mac](mac/current-resource.json) 已通过。分别为 31／23／42 MiB，闲置 CPU 均为 0.0%，五次冷启动中位 897／773／454 ms。[Vision 原后台采样](vision/current-resource.json) 于 22:53:58 自然完成：49 MiB、0.05%、7477 ms；此结果在 22:45 功能交付结案之后读取，没有重启验收。Chapter 整体状态原样保留于 `current-chapter-platforms.json`，不等同于本次五项必要验收结论。
 
 邮箱生产投递已有真实 Mailu 原件。阿里云短信尚未完成云端配置及真实投递，本报告不将账号完整闭环或全部发布 SOP 标为通过。移动端运行数字只代表模拟器；Mac 资源只统计 App 宿主。TestFlight 分发另由 ASC 回读确认，本报告不代表设备已安装更新或其他平台已上架。
 
 当前 [Mac 本地包证据](mac/current-artifact.json) 已核深签名和可执行文件，测试包位于 `build/accept/mac/Growth Treasury.app`；TestFlight **1.0.2（11）** 已回读 VALID / IN_BETA_TESTING，family 组有 2 位测试成员，主包、Watch、小组件真实归档均为 build 11。原件见 [发行记录](../raw/testflight-1.0.2-11.json)。
+
+用户要求的 [本会话 HTML 汇报](../../docs/reports/points-session-20261004.html) 包含实际改动、真实截图、必要修复、额外耗时与未完成项。网站只同步了账号协议和部分操作，完整视觉未与原生 App 统一；这是明确交付缺项，不计入已完成结论。

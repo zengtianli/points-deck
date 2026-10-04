@@ -1,0 +1,29 @@
+{
+  "scope": "session HTML display only; no platform tests rerun",
+  "html": "docs/reports/points-session-20261004.html",
+  "html_sha256": "7bbc049586ef1d75e004ee95d0fa8c46ade4ba2d6f52975ad84739e58194cf02",
+  "bytes": 2493605,
+  "page_probe": {
+    "widths": [
+      1440,
+      390
+    ],
+    "verdict": "PASS",
+    "sample_height_px": 4000,
+    "shots": [
+      "/tmp/cc-html-shots/points-session-20261004.5b4843ca.w1440.png",
+      "/tmp/cc-html-shots/points-session-20261004.5b4843ca.w390.png"
+    ]
+  },
+  "visual_review": [
+    "Chrome first screen",
+    "390px page capture"
+  ],
+  "actual_interactions": [
+    "navigation to why-time section",
+    "resource details expanded with four current results",
+    "TestFlight proof expanded with original JSON"
+  ],
+  "website_visual_alignment_completed": false,
+  "checked_at": "2026-10-04T23:02:52"
+}

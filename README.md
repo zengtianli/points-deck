@@ -66,7 +66,7 @@
 | iPad | 模拟器 · iPad Pro 13-inch · iPadOS 27.0 | 9.0 MB zip | 31.0 MiB | 0% | 0.90 s | 38.8 / 27.0 / 36.4 | ≤ 120 MiB · ≤ 0.5% · ≤ 25 MB 包 · ≤ 5 s |
 | Mac | 本机原生 · Mac16,12 / Apple M4 · macOS 27.2 | 13.1 MB 安装 | 42.0 MiB | 0% | 0.45 s | 4.7 / 11.0 / 19.2 | ≤ 150 MiB · ≤ 0.5% · ≤ 30 MB 安装 · ≤ 3 s |
 | Apple Watch | 模拟器 · Apple Watch Series 12 · watchOS 27.0 | 3.0 MB zip | 23.0 MiB | 0% | 0.77 s | 9.5 / 17.5 / 23.3 | ≤ 25 MiB · ≤ 0.5% · ≤ 10 MB 包 · ≤ 1.5 s |
-| Apple Vision Pro | 当前版本未测（旧原件保留） | — | — | — | — | — | ≤ 60 MiB · ≤ 0.5% · ≤ 30 MB 包 · ≤ 10 s |
+| Apple Vision Pro | 模拟器 · Apple Vision Pro · visionOS 27.0 | 5.4 MB zip | 49.0 MiB | 0.05% | 7.48 s | 17.0 / 20.8 / 21.3 | ≤ 60 MiB · ≤ 0.5% · ≤ 30 MB 包 · ≤ 10 s |
 
 <sub>**这些数字是在本机重负载下测的**：各线开始计时启动前，宿主（10 核）1 分钟负载 4.7–38.8、5 分钟 11.0–27.0、15 分钟 19.2–36.4（每行的「测量时负载」），部分负载高于核数；测量门要求 1 分钟负载低于核数的 1.5 倍。冷启动最受宿主负载影响，表里的启动时间很可能偏悲观（偏慢），空闲时重测会更低。2026-10-04 实测，数据来自 `perf/platforms/<平台>.json`。iPhone / iPad / Watch / Vision 是 Xcode 模拟器上的 Release 构建，Mac 是本机原生的本地 Release 构建；**移动平台不是实机数值，包体不是 App Store 切片**。本表仅统计 App 宿主，不含 WebKit/XPC 与系统进程合计。内存为 App 进程 phys_footprint（MiB），CPU 为启动静置 45 秒后 60 秒窗口内的 CPU 时间 ÷ 墙钟，冷启动是发出启动到 App 打出「第一屏有数据」日志的中位数（隔离的本地演示账本，5 次，丢弃装机后第一次）。模拟器的启动时间随宿主负载浮动很大：2026-10-02 本机内存吃紧时，同一份代码的 iPhone 线在不同时段测出 1.8–4.1 秒；Vision Pro 的冷启动里模拟器自己的开销（进程拉起后到 App 打出第一行日志、visionOS 场景与 RealityKit 初始化）占大头，宿主忙时会拉长到十几秒，App 自己从取账本到画出第一屏约 2 秒。</sub>
 <!-- platforms:end -->
