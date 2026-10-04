@@ -24,9 +24,11 @@ struct TreasuryChoice<Value: Hashable>: View {
                         .background(selection == value ? TreasuryTheme.accent : Color.white,
                                     in: RoundedRectangle(cornerRadius: 12))
                 }.buttonStyle(.plain)
+                    .accessibilityLabel(label)
+                    .accessibilityHint(title)
                     .accessibilityAddTraits(selection == value ? .isSelected : [])
             }
-        }.accessibilityLabel(title)
+        }
         #else
         Picker(title, selection: $selection) {
             ForEach(options, id: \.1) { label, value in Text(label).tag(value) }

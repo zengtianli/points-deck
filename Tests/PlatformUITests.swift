@@ -89,6 +89,7 @@ final class PlatformUITests: XCTestCase {
         picture("stored-session-reopen")
         revealSignout()
         tap("退出登录"); tap("退出登录")
+        XCTAssertTrue(app.buttons["进入账本"].waitForExistence(timeout: 15), "actual signed-out login page")
         tap("密码登录")
         fill("手机号、邮箱或原用户名", env["POINTS_QA_USER"]!)
         let password = app.secureTextFields["登录密码"].firstMatch
