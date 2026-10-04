@@ -15,9 +15,9 @@ final class PlatformUITests: XCTestCase {
     }
 
     func tap(_ label: String) {
-        let button = app.buttons[label].firstMatch
-        XCTAssertTrue(button.waitForExistence(timeout: 10), "missing button: " + label)
-        button.tap()
+        let buttons = app.buttons.matching(identifier: label)
+        XCTAssertTrue(buttons.firstMatch.waitForExistence(timeout: 10), "missing button: " + label)
+        (buttons.allElementsBoundByIndex.first { $0.isHittable } ?? buttons.firstMatch).tap()
     }
 
     func fill(_ placeholder: String, _ value: String) {
@@ -40,6 +40,9 @@ final class PlatformUITests: XCTestCase {
         #if os(iOS)
         XCUIDevice.shared.orientation = .landscapeLeft
         #endif
+        tap("账本"); picture("ledger-real-data")
+        tap("走势"); picture("trend-real-data")
+        tap("加分")
         tap("新建")
         fill("项目名", "QA-Points-Project")
         fill("正整数分值", "7")
@@ -77,9 +80,7 @@ final class PlatformUITests: XCTestCase {
         let signout = app.buttons["退出登录"].firstMatch
         for _ in 0..<8 where !signout.isHittable { app.swipeUp() }
         tap("退出登录")
-        let confirmation = app.buttons["退出登录"].firstMatch
-        XCTAssertTrue(confirmation.waitForExistence(timeout: 10))
-        confirmation.tap()
+        tap("退出登录")
         XCTAssertTrue(app.buttons["进入账本"].waitForExistence(timeout: 15))
         picture("phone-signed-out")
         Thread.sleep(forTimeInterval: 20)

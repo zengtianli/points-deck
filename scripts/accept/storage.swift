@@ -39,7 +39,7 @@ struct StorageCheck {
             TransactionJournal.clear()
             LedgerCache.clear()
             Snapshot.empty.save()
-            Api.installSessionCookie(nil)
+            Api.installSessionCookie(nil, expires: nil)
         } else if mode == "verify-clear" {
             Api.installSessionCookie("owned-synthetic-session", expires: Date().addingTimeInterval(3600))
             require(LedgerCache.load() == nil, "logout ledger removal persists")
@@ -47,7 +47,7 @@ struct StorageCheck {
             require(TransactionJournal.begin(path: "api/adjust", body: body, proposed: "after-clear-id") == "after-clear-id", "logout pending removal persists")
             require(Snapshot.load().updated == .distantPast, "logout snapshot empty persists")
             TransactionJournal.clear()
-            Api.installSessionCookie(nil)
+            Api.installSessionCookie(nil, expires: nil)
         } else { throw NSError(domain: "invalid storage phase", code: 1) }
     }
 }

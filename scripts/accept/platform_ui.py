@@ -81,7 +81,7 @@ def build_runner(platform, root):
     shutil.copytree(sim_lane.ROTATOR_SRC / "Host", source / "Host", dirs_exist_ok=True)
     shutil.copy2(test, source / "Tests/PlatformUITests.swift")
     native_platform = "iOS" if platform == "ipad" else "visionOS"
-    base = {"GENERATE_INFOPLIST_FILE": "YES", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.host"}
+    base = {"GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.host"}
     if platform == "ipad":
         base.update(TARGETED_DEVICE_FAMILY="1,2", INFOPLIST_KEY_UILaunchScreen_Generation="YES")
     spec = {"name": "PointsUIAcceptance", "options": {"deploymentTarget": {native_platform: "26.0"}}, "targets": {
