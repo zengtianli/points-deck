@@ -2,26 +2,26 @@
  "schema_version": 1,
  "platform": "watch",
  "app_id": "points-deck-ios",
- "version": "1.0.1",
- "build": "1",
- "input_sha256": "a3dd7aca6d6ba87f94028715681898f6733bd512b09c50735f1f8656031ace12",
+ "version": "1.0.2",
+ "build": "9",
+ "input_sha256": "e42190c81ef3e76789b2583aff6fc3a5acc7ee6c6676094023ce6779b5919f21",
  "runtime_measurement": {
   "environment": "simulator",
   "device": "Apple Watch Series 12 (46mm) (Apple-Watch-Series-12-46mm)",
   "os": "watchOS 27.0",
   "xcode": "Xcode 27.0 (27A266a)",
-  "evidence": "perf/platforms/watch/measure-20261002-181431.json",
-  "evidence_sha256": "cbb4e39f212c7f5777c0ea4a27c227f1d48bd104b2d4a4e7dd6535613da6232e"
+  "evidence": "perf/platforms/watch/measure-20261004-201344.json",
+  "evidence_sha256": "43c7829ddfd06999ee50e451f63918a0c79377db11361d80be7b20dd9789a297"
  },
  "size": {
-  "download_bytes": 2960332,
-  "installed_bytes": 4084419,
-  "download_mb": 2.96,
-  "installed_mb": 4.08,
+  "download_bytes": 2976439,
+  "installed_bytes": 4125987,
+  "download_mb": 2.98,
+  "installed_mb": 4.13,
   "kind": "simulator .app (Release), not a store slice"
  },
  "speed": {
-  "cold_launch_ms": 456.0,
+  "cold_launch_ms": 783.0,
   "runs": 5,
   "discarded_runs": 1,
   "ready_signal": "os_log",
@@ -29,11 +29,11 @@
  },
  "idle": {
   "memory_mb": 21.0,
-  "cpu_pct": 0.0,
+  "cpu_pct": 0.02,
   "window_s": 60,
   "settle_s": 45,
   "method": "shared measure.py idle: CPU-time delta / wall window; phys_footprint peak of 3 samples after the window",
   "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions"
  },
- "measured_at": "2026-10-02T18:14:31+08:00"
+ "measured_at": "2026-10-04T20:13:44+08:00"
 }
