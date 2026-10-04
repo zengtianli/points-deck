@@ -1,8 +1,8 @@
 {
   "schema": 1,
-  "captured_at": "2026-10-04T10:32:36.577122+00:00",
+  "captured_at": "2026-10-04T10:46:45.796664+00:00",
   "source_sha256": {
-    "server.py": "bb3a447b59050d7af05c3ee93362aadc4b845d11f9d40a13ee98414562ac7a96",
+    "server.py": "8f64c65bc744df2f0c2052a207bc55969e1139e8a2342232b739bf54b1398de3",
     "account_security.py": "39c24b5c38a9b68e46721ebdeb6d954411de1e79cee599288a23e771dec63035"
   },
   "mail_transport": "real",
@@ -16,28 +16,28 @@
       "smtp_accepted": true,
       "imap_received": true,
       "verified": true,
-      "elapsed_ms": 6242
+      "elapsed_ms": 10697
     },
     {
       "purpose": "email_new",
       "smtp_accepted": true,
       "imap_received": true,
       "verified": true,
-      "elapsed_ms": 5722
+      "elapsed_ms": 6007
     },
     {
       "purpose": "email_old",
       "smtp_accepted": true,
       "imap_received": true,
       "verified": true,
-      "elapsed_ms": 5726
+      "elapsed_ms": 6605
     },
     {
       "purpose": "email_new",
       "smtp_accepted": true,
       "imap_received": true,
       "verified": true,
-      "elapsed_ms": 5750
+      "elapsed_ms": 6018
     },
     {
       "purpose": "security_notification",
@@ -50,7 +50,7 @@
       "smtp_accepted": true,
       "imap_received": true,
       "verified": true,
-      "elapsed_ms": 5640
+      "elapsed_ms": 5741
     },
     {
       "purpose": "security_notification",

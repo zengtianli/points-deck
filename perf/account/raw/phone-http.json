@@ -1,7 +1,7 @@
 {
-  "captured_at": "2026-10-04T10:29:28.149018+00:00",
+  "captured_at": "2026-10-04T10:45:45.712894+00:00",
   "passed": true,
-  "tests_run": 6,
+  "tests_run": 7,
   "failures": 0,
   "errors": 0,
   "scope": "真实产品 HTTP、临时账号和账本；仅 PNVS 发送/核验适配器为测试替身",
@@ -10,9 +10,9 @@
   "native_ui_tested": false,
   "production_accounts_modified": false,
   "source_sha256": {
-    "server.py": "bb3a447b59050d7af05c3ee93362aadc4b845d11f9d40a13ee98414562ac7a96",
+    "server.py": "8f64c65bc744df2f0c2052a207bc55969e1139e8a2342232b739bf54b1398de3",
     "account_phone.py": "ccaeabe087de63ea859f8375afbe8b6e2a2c820a928c984d9aa4be3145cd8ce7",
     "account_security.py": "39c24b5c38a9b68e46721ebdeb6d954411de1e79cee599288a23e771dec63035",
-    "test_phone_account.py": "39063210f8658a6a046ce67e6064dbf6fb41a779d386cb038b9c2f4a431fb343"
+    "test_phone_account.py": "f6fb815e480aeaf0330ca922e7d1218532c43d38e7957b71d1b0467171fd6638"
   }
 }
