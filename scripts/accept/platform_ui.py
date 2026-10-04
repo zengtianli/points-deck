@@ -50,7 +50,7 @@ def ownership(label):
     if os.environ.get("SOP_OWNER_NOW") == "1" or os.environ.get("SIM_LANE_EXTRA_LOCK"):
         raise ValueError("original admission cannot be overridden")
     with (app_sop.STATE_DIR / "lock").open("a+") as global_lock:
-        fcntl.flock(global_lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        fcntl.flock(global_lock, fcntl.LOCK_EX)
         gate = app_sop.steady(False, allow_owner_now=False)
         if not gate[0] or not app_sop.on_ac_power():
             raise sim_lane.Busy(gate[1])
