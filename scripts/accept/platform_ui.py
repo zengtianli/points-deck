@@ -274,7 +274,8 @@ def main():
                                 if row["phone"]["udid"] == phone and row["watch"]["udid"] == watch]
                     if len(pair_ids) != 1:
                         raise ValueError("dedicated native pair absent or ambiguous")
-                    sim_lane.simctl("pair_activate", pair_ids[0])
+                    if not pairs[pair_ids[0]]["state"].startswith("(active,"):
+                        sim_lane.simctl("pair_activate", pair_ids[0])
                     deadline = time.monotonic() + 20
                     while True:
                         active = plistlib.loads((Path.home() / "Library/Developer/CoreSimulator/Devices/device_set.plist").read_bytes())["DevicePairs"]
