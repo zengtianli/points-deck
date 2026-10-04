@@ -130,7 +130,9 @@ def saved_configuration(ledger):
         data=json.dumps({"u": ledger["user"], "p": ledger["pw"]}).encode(),
         headers={"Content-Type": "application/json"})
     client.open(request, timeout=10).read()
-    config = json.loads(client.open(ledger["url"] + "/api/config", timeout=10).read())
+    request = urllib.request.Request(ledger["url"] + "/api/config", data=b"{}",
+        headers={"Content-Type": "application/json"})
+    config = json.loads(client.open(request, timeout=10).read())
     saved = {}
     for key, label, points in (("rules", "QA-Points-Project", 7), ("shop", "QA-Points-Reward", 4)):
         matches = [row for row in config[key] if row.get("label") == label and row.get("pts") == points]
