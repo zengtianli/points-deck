@@ -111,6 +111,11 @@ def main(argv=None) -> int:
                 else:
                     cmd = [PY, str(PLATFORM_MEASURE), "--app", APP_ID, "--platform", step, "--repo", str(REPO),
                            *[f"--launch-arg={x}" for x in base], *[f"--warmup-arg={x}" for x in login]]
+                    if step == "ipad":
+                        # iOS 27's Poster extensions start late on this 16 GiB host.
+                        # Allow setup to settle before counted launches; retain the
+                        # original load limits, five runs, and 45/60 s idle window.
+                        cmd += ["--postboot-load-wait", "600", "--warmup-settle", "300"]
                 print(f"→ {step}", flush=True)
                 env = {**os.environ, "SIM_LANE_LABEL": f"points measure_platforms {step}"}
                 proc = subprocess.run(cmd, cwd=REPO, env=env, stdin=subprocess.DEVNULL)
