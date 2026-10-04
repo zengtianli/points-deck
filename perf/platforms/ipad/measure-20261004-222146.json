@@ -1,0 +1,217 @@
+{
+ "schema_version": 1,
+ "platform": "ipad",
+ "app_id": "points-deck-ios",
+ "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+ "measured_at": "2026-10-04T22:21:46+08:00",
+ "completed_at": "2026-10-04T22:31:05+08:00",
+ "build": {
+  "configuration": "Release",
+  "scheme": "PointsDeck",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "version": "1.0.2",
+  "build": "9",
+  "sdk": "iphonesimulator27.0",
+  "executable_sha256": "4a05a4ea429af98b1af8490b763d71c161bd2b0ff395d0df6232e22d91e2894a",
+  "signing": "unsigned simulator build (CODE_SIGNING_ALLOWED=NO)",
+  "seconds": 29.6,
+  "xcode": {
+   "name": "Xcode.app",
+   "version": "27.0",
+   "build": "27A266a",
+   "developer_dir": "/Applications/Xcode.app/Contents/Developer"
+  },
+  "reuse": {
+   "receipt": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/build.json",
+   "receipt_sha256": "7abb57b3e9f078ac3bc76c839d33c07a2fa2d47eab5f0a482eb966f0b2ec34f6",
+   "source_copy": "/Users/tianli/Library/Caches/sim-lane/platform-measure/sim-lane-build.3e0495c697f8760d13832df9b2b25054a5af8fd15bb24e518a4ef5e9152f8d55/sim-lane-build.9p_ydz4n/src",
+   "input_sha256": "c8c72e0b33de8cff6d5b9a3c48f7c74eb0880bc59ccae60f1507f4dd9cf4c323",
+   "source_file_count": 79
+  }
+ },
+ "measurement": {
+  "environment": "simulator",
+  "device": "iPad Pro 13-inch (M5) (iPad-Pro-13-inch-M5-12GB)",
+  "os": "iPadOS 27.0",
+  "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
+  "install_seconds": 26.8,
+  "samples": [
+   {
+    "run": 0,
+    "pid": 48693,
+    "ready_seconds": 2.089,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 1,
+    "pid": 51014,
+    "ready_seconds": 1.745,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 2,
+    "pid": 51143,
+    "ready_seconds": 0.865,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 3,
+    "pid": 51279,
+    "ready_seconds": 0.641,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 4,
+    "pid": 51401,
+    "ready_seconds": 0.962,
+    "ready_signal": "os_log",
+    "errors": []
+   },
+   {
+    "run": 5,
+    "pid": 51543,
+    "ready_seconds": 0.897,
+    "ready_signal": "os_log",
+    "errors": []
+   }
+  ],
+  "idle": {
+   "process": "51683",
+   "footprint_mb": 31.0,
+   "cpu_pct": 0.0,
+   "window_s": 60
+  },
+  "loads": {
+   "before_launches": [
+    38.8359375,
+    27.0400390625,
+    36.43505859375
+   ],
+   "counted_launches": [
+    {
+     "run": 1,
+     "before": [
+      3.2568359375,
+      13.40966796875,
+      27.31005859375
+     ],
+     "after": [
+      3.2841796875,
+      13.08251953125,
+      27.03125
+     ]
+    },
+    {
+     "run": 2,
+     "before": [
+      3.18115234375,
+      12.8984375,
+      26.88427734375
+     ],
+     "after": [
+      3.08642578125,
+      12.71728515625,
+      26.73828125
+     ]
+    },
+    {
+     "run": 3,
+     "before": [
+      3.2392578125,
+      12.5888671875,
+      26.61083984375
+     ],
+     "after": [
+      3.9384765625,
+      12.435546875,
+      26.392578125
+     ]
+    },
+    {
+     "run": 4,
+     "before": [
+      3.9384765625,
+      12.435546875,
+      26.392578125
+     ],
+     "after": [
+      4.642578125,
+      12.3056640625,
+      26.18310546875
+     ]
+    },
+    {
+     "run": 5,
+     "before": [
+      4.8310546875,
+      12.21728515625,
+      26.0703125
+     ],
+     "after": [
+      4.6962890625,
+      11.94580078125,
+      25.81201171875
+     ]
+    }
+   ],
+   "warmup_setup": {
+    "requested_seconds": 300.0,
+    "before": [
+     31.54931640625,
+     26.0078125,
+     35.90185546875
+    ],
+    "wait_seconds": 300.1752539159497,
+    "after": [
+     3.45361328125,
+     13.61962890625,
+     27.46533203125
+    ]
+   },
+   "after_launches": [
+    4.6962890625,
+    11.94580078125,
+    25.81201171875
+   ],
+   "before_idle": [
+    3.42919921875,
+    10.36279296875,
+    24.35302734375
+   ]
+  },
+  "orientation": null,
+  "rotation": null,
+  "device_selection": {
+   "mode": "configured/default",
+   "udid": "A19C635F-A987-4E08-931A-A5874216E34D",
+   "name": "iPad Pro 13-inch (M5)",
+   "state_before": "Shutdown",
+   "shutdown_verified": false
+  },
+  "with_helpers": false,
+  "scope": "Simulator App host process only; excludes CoreSimulator, system services and inactive extensions",
+  "settle_s": 45
+ },
+ "size": {
+  "download_bytes": 9026244,
+  "installed_bytes": 17708527,
+  "download_mb": 9.03,
+  "installed_mb": 17.71
+ },
+ "speed": {
+  "cold_launch_ms": 897.0,
+  "runs": 5,
+  "discarded_runs": 1,
+  "ready_signal": "os_log",
+  "method": "launch command issued -> App os_log \"lane-ready\" (first data-bearing screen), App terminated 3 s before each run, first run after install discarded, median; only the discarded first launch carried the warm-up arguments (sign-in), timed launches reopen with the stored session"
+ },
+ "tool_sha256": {
+  "platform_measure.py": "cdef5bdba5585bef40c5dc2fbf347966d48c1af52681e799d34b68c7d33ec87b",
+  "measure.py": "9b4f3cb22190a295fade42759bdb19f27da7c5dbd13449e78cb14743472ed94c",
+  "sim_lane.py": "156f4bf813e94618f68dbeb41c17b19eeb5239731ebf12d00332c309ea771c80"
+ }
+}
