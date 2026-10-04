@@ -7,8 +7,7 @@ struct ScoreView: View {
     @State private var busy = Set<String>()
     @State private var retries: [String: String] = [:]
     @State private var picked: LedgerState.Rule?
-    @State private var manager = false
-    @State private var create = false
+    @State private var manager: CatalogPresentation?
     @State private var temporary = false
     private var rules: [LedgerState.Rule] {
         (store.state?.rules ?? []).filter { !$0.archived && (negative ? $0.pts < 0 : $0.pts >= 0) }
@@ -49,11 +48,13 @@ struct ScoreView: View {
         }.background(TreasuryTheme.background).navigationTitle("加分")
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("新建", systemImage: "plus") { create = true; manager = true }
-                    Button("管理", systemImage: "slider.horizontal.3") { create = false; manager = true }
+                    Button("新建", systemImage: "plus") { manager = CatalogPresentation(startNew: true, negative: negative) }
+                    Button("管理", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false, negative: negative) }
                 }
             }
-            .sheet(isPresented: $manager) { CatalogManager(kind: "rules", startNew: create, negative: negative) }
+            .sheet(item: $manager) { request in
+                CatalogManager(kind: "rules", startNew: request.startNew, negative: request.negative)
+            }
             .sheet(item: $picked) { ParameterScoreView(rule: $0) }
             .sheet(isPresented: $temporary) { TemporaryScoreView() }
             .refreshable { await store.refresh() }

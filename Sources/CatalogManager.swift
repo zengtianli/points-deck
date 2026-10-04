@@ -1,5 +1,12 @@
 import SwiftUI
 
+/// The sheet receives the requested mode as one presentation value.
+struct CatalogPresentation: Identifiable {
+    let id = UUID()
+    let startNew: Bool
+    var negative = false
+}
+
 /// 普通项目只编辑名称、分值与外观；原字典其余字段原样保留。
 struct CatalogManager: View {
     let kind: String

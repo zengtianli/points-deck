@@ -7,8 +7,7 @@ struct ShopView: View {
     @State private var confirming: LedgerState.ShopItem?
     @State private var requestID = UUID().uuidString
     @State private var expectedRevision = ""
-    @State private var manager = false
-    @State private var create = false
+    @State private var manager: CatalogPresentation?
     @State private var error: String?
     var wide = false
     var body: some View {
@@ -43,11 +42,11 @@ struct ShopView: View {
         }.background(TreasuryTheme.background).navigationTitle("兑换")
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("新建", systemImage: "plus") { create = true; manager = true }
-                    Button("管理", systemImage: "slider.horizontal.3") { create = false; manager = true }
+                    Button("新建", systemImage: "plus") { manager = CatalogPresentation(startNew: true) }
+                    Button("管理", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false) }
                 }
             }
-            .sheet(isPresented: $manager) { CatalogManager(kind: "shop", startNew: create) }
+            .sheet(item: $manager) { request in CatalogManager(kind: "shop", startNew: request.startNew) }
             .sheet(item: $confirming) { item in
                 NavigationStack {
                     Form {
