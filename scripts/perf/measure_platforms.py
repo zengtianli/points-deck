@@ -64,7 +64,8 @@ def legacy_digest() -> str | None:
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--only", help="comma-separated steps: legacy and/or lane ids")
+    ap.add_argument("--only", default=os.environ.get("SOP_PERF_PLATFORM"),
+                    help="comma-separated steps: legacy and/or lane ids; Chapter single-lane contract via SOP_PERF_PLATFORM")
     ap.add_argument("--force", action="store_true", help="measure even when the evidence binds the current input")
     ap.add_argument("--budget-min", type=float, default=50.0,
                     help="do not start a new step after this many minutes (Chapter kills the command at 60)")

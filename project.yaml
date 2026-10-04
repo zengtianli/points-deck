@@ -100,6 +100,7 @@ sop:
     # 起隔离演示账本 → 旧 iPhone 测量（perf/simulator.json，lightweight.json 引用它）→ 五条平台线
     # （perf/platforms/<线>.json）；输入没变的线跳过，任何一条推迟整体退出 75，下个空档只补没测完的。
     command: ~/Dev/.venv/bin/python scripts/perf/measure_platforms.py
+    platform_env: SOP_PERF_PLATFORM
     outputs: [perf/simulator.json, perf/lightweight.json, perf/raw, perf/platforms]
     in_use: true
   runtime_note: 平台线模式（2026-10-02）：五条线都按模拟器验收（Mac 线本机原生），实体 iPhone 不回读、真机未验证；ASC 回读只核对已上传的 iOS 构建。
