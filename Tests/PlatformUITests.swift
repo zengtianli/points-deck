@@ -29,7 +29,10 @@ final class PlatformUITests: XCTestCase {
             field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: previous.count))
         }
         field.typeText(value)
-        XCTAssertEqual(field.value as? String, value)
+        // visionOS keyboard events finish asynchronously after typeText returns.
+        // Require the exact complete field value before attempting a save.
+        XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", value), object: field)], timeout: 10), .completed)
     }
 
     func picture(_ name: String) {
