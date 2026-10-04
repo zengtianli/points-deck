@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Growth Treasury resource measurement for every platform lane (Chapter sop.measure.command).
 
-    ~/Dev/.venv/bin/python scripts/perf/measure_platforms.py [--only iphone,watch] [--force] [--budget-min 50]
+    ~/Dev/.venv/bin/python scripts/perf/measure_platforms.py --only iphone,watch [--force] [--budget-min 50]
 
 One isolated demo ledger (scripts/demo/ledger.py: real server.py on a random 127.0.0.1 port, scratch data dir,
 synthetic account) serves every run. Every launch gets -api_base; the dev login (-dev_user / -dev_pw) goes only on the
@@ -31,6 +31,8 @@ import time
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(REPO / 'scripts/accept'))
+from bounded import Budget, BudgetExpired, current as run_budget
 APP_ID = "points-deck-ios"
 LANES = ("iphone", "ipad", "watch", "mac", "vision")
 ENGINE = Path.home() / "Apps/chapter/engine/app_sop.py"
@@ -40,8 +42,8 @@ DEFER = 75
 
 
 def lane_digest(lane: str) -> str | None:
-    r = subprocess.run([PY, str(ENGINE), "lane-inputs", "--app", APP_ID, "--platform", lane, "--json"],
-                       capture_output=True, text=True, timeout=300)
+    r = run_budget().run([PY, str(ENGINE), "lane-inputs", "--app", APP_ID, "--platform", lane, "--json"],
+                       capture_output=True, timeout=300)
     try:
         return json.loads(r.stdout).get("input_sha256") if r.returncode == 0 else None
     except ValueError:
@@ -63,16 +65,44 @@ def legacy_digest() -> str | None:
 
 
 def main(argv=None) -> int:
+    started = time.monotonic()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--only", default=os.environ.get("SOP_PERF_PLATFORM"),
                     help="comma-separated steps: legacy and/or lane ids; Chapter single-lane contract via SOP_PERF_PLATFORM")
     ap.add_argument("--force", action="store_true", help="measure even when the evidence binds the current input")
+    ap.add_argument("--all", action="store_true", help="explicitly select legacy plus every platform")
+    ap.add_argument("--postboot-load-wait", type=float, default=180)
+    ap.add_argument("--warmup-settle", type=float, default=0)
     ap.add_argument("--budget-min", type=float, default=50.0,
-                    help="do not start a new step after this many minutes (Chapter kills the command at 60)")
+                    help="total minutes, including input checks, waiting, child work and cleanup")
     a = ap.parse_args(argv)
+    if a.all and a.only:
+        ap.error('choose --all or --only, not both')
+    if not a.all and not a.only:
+        ap.error('select --only PLATFORM (or explicit --all); no default fleet measurement')
+    import math
+    if any(not math.isfinite(v) or v < 0 for v in (a.postboot_load_wait, a.warmup_settle)):
+        ap.error('setup waits must be finite and nonnegative')
+    try:
+        with Budget(a.budget_min * 60, started):
+            result = measure_selected(a)
+            run_budget().timeout(1, cleanup=True)
+            return result
+    except (BudgetExpired, subprocess.TimeoutExpired):
+        print(json.dumps({'ok': False, 'deferred': True, 'reason': 'total time budget exhausted',
+                          'elapsed_seconds': round(time.monotonic() - started, 3)}))
+        return DEFER
+    except ValueError as error:
+        ap.error(str(error))
+
+
+def measure_selected(a):
     steps = ["legacy", *LANES]
     if a.only:
         wanted = [s.strip() for s in a.only.split(",") if s.strip()]
+        if not wanted:
+            print('--only requires at least one platform', file=sys.stderr)
+            return 2
         unknown = [s for s in wanted if s not in steps]
         if unknown:
             print(f"未知步骤 {unknown}（可选 {', '.join(steps)}）", file=sys.stderr)
@@ -89,40 +119,38 @@ def main(argv=None) -> int:
     if not todo:
         print(json.dumps({"ok": True, "measured": [], "skipped": steps}, ensure_ascii=False))
         return 0
-    t0 = time.time()
     results: dict[str, int | str] = {}
     with tempfile.TemporaryDirectory(prefix="points-measure.") as scratch:
-        r = subprocess.run([PY, str(REPO / "scripts/demo/ledger.py"), "start", "--dir", scratch, "--json"],
-                           capture_output=True, text=True, timeout=600)
-        if r.returncode:
-            print(f"演示账本没起来（退出码 {r.returncode}）：{(r.stderr or r.stdout)[-300:]}", file=sys.stderr)
-            return r.returncode if r.returncode in (DEFER, 78) else 1
-        ledger = json.loads(r.stdout)
-        base = ["-api_base", ledger["url"]]
-        login = ["-dev_user", ledger["user"], "-dev_pw", ledger["pw"]]
-        print(f"演示账本 {ledger['url']}（{ledger['nick']}，{ledger['balance']} 分）", flush=True)
         try:
+            r = run_budget().run([PY, str(REPO / "scripts/demo/ledger.py"), "start", "--dir", scratch, "--json"],
+                                 capture_output=True, timeout=600)
+            if r.returncode:
+                return r.returncode if r.returncode in (DEFER, 78) else 1
+            ledger = json.loads(r.stdout)
+            base = ["-api_base", ledger["url"]]
+            login = ["-dev_user", ledger["user"], "-dev_pw", ledger["pw"]]
             for step in todo:
-                if time.time() - t0 > a.budget_min * 60:
-                    results[step] = "deferred: time budget"
-                    continue
+                run_budget().timeout(600)
                 if step == "legacy":
                     cmd = [PY, str(REPO / "scripts/perf/sim_measure.py"), *[f"--launch-arg={x}" for x in base + login]]
                 else:
                     cmd = [PY, str(PLATFORM_MEASURE), "--app", APP_ID, "--platform", step, "--repo", str(REPO),
                            *[f"--launch-arg={x}" for x in base], *[f"--warmup-arg={x}" for x in login]]
                     if step == "ipad":
-                        # iOS 27's Poster extensions start late on this 16 GiB host.
-                        # Allow setup to settle before counted launches; retain the
-                        # original load limits, five runs, and 45/60 s idle window.
-                        cmd += ["--postboot-load-wait", "600", "--warmup-settle", "300"]
+                        cmd += ["--postboot-load-wait", str(a.postboot_load_wait),
+                                "--warmup-settle", str(a.warmup_settle)]
                 print(f"→ {step}", flush=True)
                 env = {**os.environ, "SIM_LANE_LABEL": f"points measure_platforms {step}"}
-                proc = subprocess.run(cmd, cwd=REPO, env=env, stdin=subprocess.DEVNULL)
+                proc = run_budget().run(cmd, cwd=REPO, env=env, stdin=subprocess.DEVNULL,
+                                        timeout=run_budget().remaining())
                 results[step] = proc.returncode
                 print(f"← {step}: 退出码 {proc.returncode}", flush=True)
+                if proc.returncode:
+                    break
         finally:
-            subprocess.run([PY, str(REPO / "scripts/demo/ledger.py"), "stop", "--dir", scratch], capture_output=True)
+            with run_budget().cleanup():
+                run_budget().run([PY, str(REPO / "scripts/demo/ledger.py"), "stop", "--dir", scratch],
+                                 capture_output=True, timeout=10)
     failed = [s for s, c in results.items() if isinstance(c, int) and c not in (0, DEFER)]
     deferred = [s for s, c in results.items() if c == DEFER or isinstance(c, str)]
     print(json.dumps({"ok": not failed and not deferred, "results": results, "failed": failed, "deferred": deferred},

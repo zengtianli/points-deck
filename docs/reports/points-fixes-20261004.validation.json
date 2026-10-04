@@ -1,0 +1,86 @@
+{
+  "checked_at": "2026-10-04T23:39:35+08:00",
+  "scope": "Points owned CLIs and local Web only",
+  "apple_platform_tests_rerun": false,
+  "production_deployed": false,
+  "shared_files_modified": false,
+  "dependency_input_narrowing_completed": false,
+  "bounded_tests": {
+    "passed": 8,
+    "log_sha256": "4095459493a8818032c56977f16a13994441e50392777e562bd5e8ae18b37219",
+    "cases": [
+      "entry preparation included",
+      "original lock waiting bounded; holder survives",
+      "owned child descendants cleanup",
+      "hard cleanup deadline",
+      "explicit selection required",
+      "Chapter lane reuse without fixture",
+      "invalid budgets restore signal context",
+      "detached fixture registered before interrupted setup"
+    ]
+  },
+  "server_checks": {
+    "passed": 318,
+    "log_sha256": "555c96a446a557b942c54d71171b31cbc7f810b81430b51a1140f00511ecc614",
+    "dependency_environment": "uv run --with-requirements points/requirements-subscriptions.txt --with pyyaml"
+  },
+  "chrome_actual": {
+    "url": "http://127.0.0.1:53137/points.html",
+    "synthetic_only": true,
+    "background": "rgb(248, 247, 242)",
+    "accent": "#257f70",
+    "tabs": [
+      "账本",
+      "走势",
+      "加分",
+      "兑换",
+      "账户"
+    ],
+    "phone_width": 390,
+    "horizontal_overflow": false,
+    "transactions": [
+      {
+        "points": 10,
+        "balance": 1143,
+        "label": "听写全对一次"
+      },
+      {
+        "points": -2,
+        "balance": 1141,
+        "label": "约定做法忘记"
+      },
+      {
+        "points": -200,
+        "balance": 941,
+        "label": "🍦 一个冰淇淋"
+      }
+    ],
+    "account_navigation_and_logout": true,
+    "email_register_recover_forms_visible": true,
+    "tablet_width": 1024,
+    "tablet_horizontal_overflow": false,
+    "tablet_score_columns": 3
+  },
+  "sha256": {
+    "scripts/accept/bounded.py": "0b748b0bb3047e3081592fcda6b96479cb3135de8719226fec2552034e62b6a8",
+    "scripts/accept/platform_ui.py": "04333a186872aa16fc2ac7ecb0f7badd3711f94a44108ee8d69d37621487bbee",
+    "scripts/accept/platform_views.py": "175c439159d496ffb1391b4cec355f9f23888c632c0f5bb7ff1a1d797b25c3ef",
+    "scripts/perf/measure_platforms.py": "b56d89c9fb3cc6124b406e34df48460ff81101eb7c3b53720786023af355aa20",
+    "scripts/demo/ledger.py": "3e11e7cf57ac0407b822e03aab470e8a03f4a086ff2783fcc9b0448ef6cd3ae6",
+    "Tests/test_bounded_workflow.py": "0ef7083414b6bf51de59bf20e995bca035a96f3728d5e23b814e5b45e8d3262a"
+  },
+  "web_sha256": {
+    "points.html": "b6de666bb8bc0fca724b0735470369b8a30c919a2f501bb619fd578ce3b3dcc5",
+    "login.html": "866a576d0adafb59d57cd96e4a17d856286e851faf4e53fb528120115e252616",
+    "me.html": "ee5bfce8c233d220672dded4f89a6bf0ec3d27f87d6c33901f49074a963fb99e",
+    "treasury.css": "61929694bd6f8e67c709528b180fa2669993bdc0cf3e640645263fa6918b5a54",
+    "server.py": "afdd817d228be374b3840c3bd6933c00a0824c123d032db324059959a5237a47",
+    "test_server.py": "84ff2b61ae73ec02b9fb3d6fd3aea8668dc89f389ba7812261f7a2829ebad3b6",
+    "../engine/deploy.py": "f19a36aef5642c57d2468177ea5d62c893b07e96669831912f1f0e0c6f3a3433"
+  },
+  "deployment_assembly": {
+    "only_local_function_called": true,
+    "shared_theme_embedded_in_all_three_pages": true,
+    "remote_operations": false
+  }
+}

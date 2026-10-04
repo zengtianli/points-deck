@@ -1,8 +1,8 @@
 {
-  "scope": "session HTML display only; no platform tests rerun",
+  "scope": "session report updated with bounded Points CLIs and local Web repair evidence; no Apple tests rerun",
   "html": "docs/reports/points-session-20261004.html",
-  "html_sha256": "7bbc049586ef1d75e004ee95d0fa8c46ade4ba2d6f52975ad84739e58194cf02",
-  "bytes": 2493605,
+  "html_sha256": "511509efc6d90cf9fbef13234a1c63e4046e2080d14e166d89d99b66229329d4",
+  "bytes": 2498726,
   "page_probe": {
     "widths": [
       1440,
@@ -25,5 +25,7 @@
     "TestFlight proof expanded with original JSON"
   ],
   "website_visual_alignment_completed": false,
-  "checked_at": "2026-10-04T23:02:52"
+  "checked_at": "2026-10-04T23:44:30",
+  "website_local_theme_navigation_completed": true,
+  "production_web_deployed_this_repair": false
 }

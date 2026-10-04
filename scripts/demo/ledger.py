@@ -132,6 +132,10 @@ class Client:
 def serve(py: str, env: dict, log: Path) -> subprocess.Popen:
     proc = subprocess.Popen([py, "test_mail_service.py", "serve"], cwd=SERVER_DIR, env=env, stdout=open(log, "a"),
                             stderr=subprocess.STDOUT, start_new_session=True)
+    # Register our detached server before setup so a timed-out caller can stop it.
+    owner = log.parent / "ledger.json"
+    owner.write_text(json.dumps({"pid": proc.pid, "dir": str(log.parent)}))
+    owner.chmod(0o600)
     for _ in range(100):
         try:
             urllib.request.urlopen(f"http://127.0.0.1:{env['EDU_POINTS_PORT']}/api/health", timeout=1)

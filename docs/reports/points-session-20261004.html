@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Points · 这一轮做了什么</title>
 <meta name="cc-session" content="01a10635-15a4-76a1-93fb-63d403b8852f">
-<meta name="cc-generated" content="2026-10-04T23:02:48+08:00">
+<meta name="cc-generated" content="2026-10-04T23:44:25+08:00">
 <meta name="cc-cwd" content="/Users/tianli/Apps/edu/ios/points/01-源程序">
 <style>
 :root{--bg:#0d1117;--panel:#161b22;--border:#30363d;--fg:#e6edf3;--mute:#8b949e;--link:#58a6ff;--green:#3fb950;--amber:#d29922;--red:#f85149;--purple:#bc8cff;--cyan:#39c5cf}
@@ -95,8 +95,8 @@ figcaption{padding:17px 20px}figcaption span,figcaption small{display:block;colo
 <header class="hero"><div class="eyebrow">POINTS · 成长小金库 / 2026 年 10 月 4 日 · 会话工作汇报</div>
 <h1>这一轮，做了什么？</h1>
 <p class="intro">你要的是按 PRD 改好 App、用好已有底座、尽快测试，并完成其他平台验收。这页展示实际交付、真截图、必要修复和多花时间的环节。</p>
-<div class="pills"><span class="pill">新版 App 可测试</span><span class="pill">其他四端必要功能验收通过</span><span class="pill pending">网页视觉尚未统一</span><span class="pill pending">真实短信投递未验</span></div>
-<div class="callout amber"><strong>你刚才指出的两个问题</strong><p>网站仍沿用了学习库／资产盘面的旧视觉，只改了账号协议及部分操作，没有跟随 iOS／iPad 的暖白、绿色、大卡片与五栏目统一。这是交付缺项。你要 HTML 汇报时，我又打开成了网站；这页是对该误解的纠正。</p></div>
+<div class="pills"><span class="pill">新版 App 可测试</span><span class="pill">其他四端必要功能验收通过</span><span class="pill">网页本地主题与五栏已统一</span><span class="pill pending">网页本轮修复未部署</span><span class="pill pending">真实短信投递未验</span></div>
+<div class="callout"><strong>这次修复的边界</strong><p>只改 Points 自己的执行脚本与教育站积分页面，避开其他 Codex 已声明的 Chapter、HARNESS 和共享 skills。排锁、准备、执行和清理现在共用总时限；不选平台会拒绝执行，功能模式不再重复等性能门。网页三页本地统一暖白、绿色和五栏目，真实隔离账本操作已检查。此前 Apple 平台验收沿用，没有重跑模拟器或性能采样。</p></div>
 </header>
 <nav aria-label="汇报导航"><div class="segments"><a href="#delivery">交付</a><a href="#changes">改动</a><a href="#screens">真截图</a><a href="#time">为什么慢</a><a href="#evidence">未完与证据</a></div></nav>
 
@@ -141,7 +141,7 @@ figcaption{padding:17px 20px}figcaption span,figcaption small{display:block;colo
 </section>
 
 <section id="evidence"><h2>仍未完成的，明确写在这里</h2><div class="grid two">
-<article class="card"><h3 class="pending-text">网站视觉统一</h3><p>原生使用 <code>#F8F7F2</code> 暖白与 <code>#257F70</code> 绿色；积分 Web 仍为 <code>#F5F7FB</code> 灰蓝底、<code>#2563EB</code> 蓝色与资产盘面结构，登录页也仍是学习库品牌。</p><p>这轮只完成 Web 账号协议和部分操作同步，没有完成你要求的跨端视觉体验。这页汇报沿用了原生配色，线上网站尚未因此被重做。</p></article>
+<article class="card"><h3>网站本地修复已完成，线上待同步</h3><p>本地三页已统一原生的 <code>#F8F7F2</code> 暖白与 <code>#257F70</code> 绿色、圆角卡片、账本／走势／加分／兑换／账户五栏。手机账本改为记录卡片，加减分分段，积分入口的登录页显示 Growth Treasury／成长小金库。</p><p>Chrome 实测加分 +10、扣分 −2、兑换 −200，余额从 1,133 到 941，真实服务端记录回读一致；390px 下三页无横向溢出。<a href="http://127.0.0.1:53137/points.html#earn">打开本机隔离预览</a>。这是测试账本，本轮没有部署线上；完整网页项目管理及生产短信投递不由这次主题修复冒充完成。</p><p class="sub">平台输入依赖范围仍需与正在维护 Chapter 的另一个会话对齐；本轮保留原登记和旧原件，不改共享实现、不伪造新摘要。</p></article>
 <article class="card"><h3 class="pending-text">账号与发行的剩余项</h3><ul class="list"><li>短信云端配置与真实投递尚未完成；手机身份业务测试使用 PNVS 替身。</li><li>所有原生账号变更表单的完整邮件／短信端到端覆盖尚未全部验完。</li><li>iPhone 实装版本及物理设备运行资源没有核验。</li><li>Mac／Vision 的商店上架，以及官网和产品卡的全面视觉与素材同步未完成。</li></ul></article>
 </div><div class="callout"><strong>可测试、必要平台功能通过，有明确范围。</strong><p>这不等于整套 PRD、全部账号闭环、网站体验及全发布 SOP 已完成。此前汇报把这些范围说得不够清楚，本页按真实证据标记。</p></div>
 <h3>展开原件，直接核对</h3><p class="sub">以下 JSON 已嵌在文件里；页面与图片可离线查看，不需要登录、CDN 或外部脚本。原文件路径和 SHA256 一并保留。</p><details class="evidence"><summary>TestFlight 11 与商店实际状态</summary><p class="path">perf/asc-release.json</p><p class="path">SHA256 e28173c3e2d9d70656b1aea661ba078550834245e8cdeb20733098c5e7473edf</p><pre>{
@@ -475,11 +475,96 @@ figcaption{padding:17px 20px}figcaption span,figcaption small{display:block;colo
   &quot;processes&quot;: 4,
   &quot;installed_product_entries_changed&quot;: false,
   &quot;limitations&quot;: &quot;Mac Keychain execution; simulator Keychain/Widget groups are separate scopes&quot;
+}</pre></details><details class="evidence"><summary>本次脚本与网页修复的独立验证</summary><p class="path">docs/reports/points-fixes-20261004.validation.json</p><p class="path">SHA256 ebea8be31db76dd03ed67154d926c6d4c21644276fb19b01cb6dc7f7abb61c2b</p><pre>{
+  &quot;checked_at&quot;: &quot;2026-10-04T23:39:35+08:00&quot;,
+  &quot;scope&quot;: &quot;Points owned CLIs and local Web only&quot;,
+  &quot;apple_platform_tests_rerun&quot;: false,
+  &quot;production_deployed&quot;: false,
+  &quot;shared_files_modified&quot;: false,
+  &quot;dependency_input_narrowing_completed&quot;: false,
+  &quot;bounded_tests&quot;: {
+    &quot;passed&quot;: 8,
+    &quot;log_sha256&quot;: &quot;4095459493a8818032c56977f16a13994441e50392777e562bd5e8ae18b37219&quot;,
+    &quot;cases&quot;: [
+      &quot;entry preparation included&quot;,
+      &quot;original lock waiting bounded; holder survives&quot;,
+      &quot;owned child descendants cleanup&quot;,
+      &quot;hard cleanup deadline&quot;,
+      &quot;explicit selection required&quot;,
+      &quot;Chapter lane reuse without fixture&quot;,
+      &quot;invalid budgets restore signal context&quot;,
+      &quot;detached fixture registered before interrupted setup&quot;
+    ]
+  },
+  &quot;server_checks&quot;: {
+    &quot;passed&quot;: 318,
+    &quot;log_sha256&quot;: &quot;555c96a446a557b942c54d71171b31cbc7f810b81430b51a1140f00511ecc614&quot;,
+    &quot;dependency_environment&quot;: &quot;uv run --with-requirements points/requirements-subscriptions.txt --with pyyaml&quot;
+  },
+  &quot;chrome_actual&quot;: {
+    &quot;url&quot;: &quot;http://127.0.0.1:53137/points.html&quot;,
+    &quot;synthetic_only&quot;: true,
+    &quot;background&quot;: &quot;rgb(248, 247, 242)&quot;,
+    &quot;accent&quot;: &quot;#257f70&quot;,
+    &quot;tabs&quot;: [
+      &quot;账本&quot;,
+      &quot;走势&quot;,
+      &quot;加分&quot;,
+      &quot;兑换&quot;,
+      &quot;账户&quot;
+    ],
+    &quot;phone_width&quot;: 390,
+    &quot;horizontal_overflow&quot;: false,
+    &quot;transactions&quot;: [
+      {
+        &quot;points&quot;: 10,
+        &quot;balance&quot;: 1143,
+        &quot;label&quot;: &quot;听写全对一次&quot;
+      },
+      {
+        &quot;points&quot;: -2,
+        &quot;balance&quot;: 1141,
+        &quot;label&quot;: &quot;约定做法忘记&quot;
+      },
+      {
+        &quot;points&quot;: -200,
+        &quot;balance&quot;: 941,
+        &quot;label&quot;: &quot;🍦 一个冰淇淋&quot;
+      }
+    ],
+    &quot;account_navigation_and_logout&quot;: true,
+    &quot;email_register_recover_forms_visible&quot;: true,
+    &quot;tablet_width&quot;: 1024,
+    &quot;tablet_horizontal_overflow&quot;: false,
+    &quot;tablet_score_columns&quot;: 3
+  },
+  &quot;sha256&quot;: {
+    &quot;scripts/accept/bounded.py&quot;: &quot;0b748b0bb3047e3081592fcda6b96479cb3135de8719226fec2552034e62b6a8&quot;,
+    &quot;scripts/accept/platform_ui.py&quot;: &quot;04333a186872aa16fc2ac7ecb0f7badd3711f94a44108ee8d69d37621487bbee&quot;,
+    &quot;scripts/accept/platform_views.py&quot;: &quot;175c439159d496ffb1391b4cec355f9f23888c632c0f5bb7ff1a1d797b25c3ef&quot;,
+    &quot;scripts/perf/measure_platforms.py&quot;: &quot;b56d89c9fb3cc6124b406e34df48460ff81101eb7c3b53720786023af355aa20&quot;,
+    &quot;scripts/demo/ledger.py&quot;: &quot;3e11e7cf57ac0407b822e03aab470e8a03f4a086ff2783fcc9b0448ef6cd3ae6&quot;,
+    &quot;Tests/test_bounded_workflow.py&quot;: &quot;0ef7083414b6bf51de59bf20e995bca035a96f3728d5e23b814e5b45e8d3262a&quot;
+  },
+  &quot;web_sha256&quot;: {
+    &quot;points.html&quot;: &quot;b6de666bb8bc0fca724b0735470369b8a30c919a2f501bb619fd578ce3b3dcc5&quot;,
+    &quot;login.html&quot;: &quot;866a576d0adafb59d57cd96e4a17d856286e851faf4e53fb528120115e252616&quot;,
+    &quot;me.html&quot;: &quot;ee5bfce8c233d220672dded4f89a6bf0ec3d27f87d6c33901f49074a963fb99e&quot;,
+    &quot;treasury.css&quot;: &quot;61929694bd6f8e67c709528b180fa2669993bdc0cf3e640645263fa6918b5a54&quot;,
+    &quot;server.py&quot;: &quot;afdd817d228be374b3840c3bd6933c00a0824c123d032db324059959a5237a47&quot;,
+    &quot;test_server.py&quot;: &quot;84ff2b61ae73ec02b9fb3d6fd3aea8668dc89f389ba7812261f7a2829ebad3b6&quot;,
+    &quot;../engine/deploy.py&quot;: &quot;f19a36aef5642c57d2468177ea5d62c893b07e96669831912f1f0e0c6f3a3433&quot;
+  },
+  &quot;deployment_assembly&quot;: {
+    &quot;only_local_function_called&quot;: true,
+    &quot;shared_theme_embedded_in_all_three_pages&quot;: true,
+    &quot;remote_operations&quot;: false
+  }
 }</pre></details>
 </section><p class="sub">生产核心提交：f8aea7e；最终修复：39ea345；功能交付记录：50fb685。本页是会话事实快照，不是产品网站。</p>
 <div id="cc-session-footer">
   <div class="row"><span class="label">CC session</span><code>01a10635-15a4-76a1-93fb-63d403b8852f</code></div>
-  <div class="row"><span class="label">Generated</span><code>2026-10-04T23:02:48+08:00</code></div>
+  <div class="row"><span class="label">Generated</span><code>2026-10-04T23:44:25+08:00</code></div>
   <div class="row"><span class="label">Script</span><code>scripts/reports/session_20261004.py</code></div>
   <div class="row"><span class="label">CWD</span><code>/Users/tianli/Apps/edu/ios/points/01-源程序</code></div>
   <div class="row"><span class="label">Re-run</span><code class="cmd">python3 scripts/reports/session_20261004.py</code></div>

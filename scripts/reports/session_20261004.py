@@ -93,8 +93,8 @@ body = r'''
 <header class="hero"><div class="eyebrow">POINTS · 成长小金库 / 2026 年 10 月 4 日 · 会话工作汇报</div>
 <h1>这一轮，做了什么？</h1>
 <p class="intro">你要的是按 PRD 改好 App、用好已有底座、尽快测试，并完成其他平台验收。这页展示实际交付、真截图、必要修复和多花时间的环节。</p>
-<div class="pills"><span class="pill">新版 App 可测试</span><span class="pill">其他四端必要功能验收通过</span><span class="pill pending">网页视觉尚未统一</span><span class="pill pending">真实短信投递未验</span></div>
-<div class="callout amber"><strong>你刚才指出的两个问题</strong><p>网站仍沿用了学习库／资产盘面的旧视觉，只改了账号协议及部分操作，没有跟随 iOS／iPad 的暖白、绿色、大卡片与五栏目统一。这是交付缺项。你要 HTML 汇报时，我又打开成了网站；这页是对该误解的纠正。</p></div>
+<div class="pills"><span class="pill">新版 App 可测试</span><span class="pill">其他四端必要功能验收通过</span><span class="pill">网页本地主题与五栏已统一</span><span class="pill pending">网页本轮修复未部署</span><span class="pill pending">真实短信投递未验</span></div>
+<div class="callout"><strong>这次修复的边界</strong><p>只改 Points 自己的执行脚本与教育站积分页面，避开其他 Codex 已声明的 Chapter、HARNESS 和共享 skills。排锁、准备、执行和清理现在共用总时限；不选平台会拒绝执行，功能模式不再重复等性能门。网页三页本地统一暖白、绿色和五栏目，真实隔离账本操作已检查。此前 Apple 平台验收沿用，没有重跑模拟器或性能采样。</p></div>
 </header>
 <nav aria-label="汇报导航"><div class="segments"><a href="#delivery">交付</a><a href="#changes">改动</a><a href="#screens">真截图</a><a href="#time">为什么慢</a><a href="#evidence">未完与证据</a></div></nav>
 
@@ -139,7 +139,7 @@ body = r'''
 </section>
 
 <section id="evidence"><h2>仍未完成的，明确写在这里</h2><div class="grid two">
-<article class="card"><h3 class="pending-text">网站视觉统一</h3><p>原生使用 <code>#F8F7F2</code> 暖白与 <code>#257F70</code> 绿色；积分 Web 仍为 <code>#F5F7FB</code> 灰蓝底、<code>#2563EB</code> 蓝色与资产盘面结构，登录页也仍是学习库品牌。</p><p>这轮只完成 Web 账号协议和部分操作同步，没有完成你要求的跨端视觉体验。这页汇报沿用了原生配色，线上网站尚未因此被重做。</p></article>
+<article class="card"><h3>网站本地修复已完成，线上待同步</h3><p>本地三页已统一原生的 <code>#F8F7F2</code> 暖白与 <code>#257F70</code> 绿色、圆角卡片、账本／走势／加分／兑换／账户五栏。手机账本改为记录卡片，加减分分段，积分入口的登录页显示 Growth Treasury／成长小金库。</p><p>Chrome 实测加分 +10、扣分 −2、兑换 −200，余额从 1,133 到 941，真实服务端记录回读一致；390px 下三页无横向溢出。<a href="http://127.0.0.1:53137/points.html#earn">打开本机隔离预览</a>。这是测试账本，本轮没有部署线上；完整网页项目管理及生产短信投递不由这次主题修复冒充完成。</p><p class="sub">平台输入依赖范围仍需与正在维护 Chapter 的另一个会话对齐；本轮保留原登记和旧原件，不改共享实现、不伪造新摘要。</p></article>
 <article class="card"><h3 class="pending-text">账号与发行的剩余项</h3><ul class="list"><li>短信云端配置与真实投递尚未完成；手机身份业务测试使用 PNVS 替身。</li><li>所有原生账号变更表单的完整邮件／短信端到端覆盖尚未全部验完。</li><li>iPhone 实装版本及物理设备运行资源没有核验。</li><li>Mac／Vision 的商店上架，以及官网和产品卡的全面视觉与素材同步未完成。</li></ul></article>
 </div><div class="callout"><strong>可测试、必要平台功能通过，有明确范围。</strong><p>这不等于整套 PRD、全部账号闭环、网站体验及全发布 SOP 已完成。此前汇报把这些范围说得不够清楚，本页按真实证据标记。</p></div>
 <h3>展开原件，直接核对</h3><p class="sub">以下 JSON 已嵌在文件里；页面与图片可离线查看，不需要登录、CDN 或外部脚本。原文件路径和 SHA256 一并保留。</p>__PROOFS__
@@ -166,6 +166,7 @@ records = [
     ('perf/platform-validation/current-shared-acceptance.json', '共享功能、恢复、隐私'),
     ('perf/platform-validation/current-test.json', '注册测试与输入稳定检查'),
     ('perf/platform-validation/storage/proof.json', '生产存储跨进程保存、恢复与清理'),
+    ('docs/reports/points-fixes-20261004.validation.json', '本次脚本与网页修复的独立验证'),
 ]
 body = body.replace('__PHOTOS__', ''.join(photo(*p) for p in photos))
 body = body.replace('__METRICS__', ''.join(metrics))

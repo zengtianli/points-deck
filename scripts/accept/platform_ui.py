@@ -5,19 +5,18 @@ The tiny test host follows the shared LaneRotator pattern. It never replaces the
 product: XCUIApplication explicitly drives the installed actual Points bundle.
 All SDK/runtime work uses the canonical Chapter and native locks; no Simulator UI.
 """
+import time
+ENTRY_STARTED = time.monotonic()
 from pathlib import Path
 import argparse
 import contextlib
-import fcntl
 import hashlib
 import json
 import os
 import plistlib
 import shutil
-import signal
 import subprocess
 import sys
-import time
 import urllib.request
 from http.cookiejar import CookieJar
 
@@ -27,35 +26,28 @@ sys.path[:0] = [str(Path.home() / "Apps/chapter/engine"),
 import app_sop
 import sim_lane
 import yaml
+from bounded import Budget, BudgetExpired, current as run_budget
 
 
 def command(args, cwd, log, timeout=600, env=None):
     with log.open("w") as stream:
-        proc = subprocess.Popen(["/bin/bash", "-c", 'source "$1"; shift; scrub_env_run "$@"',
+        result = run_budget().run(["/bin/bash", "-c", 'source "$1"; shift; scrub_env_run "$@"',
             "points-platform-ui", str(sim_lane.MACAPP / "scrub_env.sh"), *args], cwd=cwd,
-            env=env or os.environ, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True)
-        try:
-            code = proc.wait(timeout)
-        except BaseException:
-            if proc.poll() is None and os.getpgid(proc.pid) == proc.pid:
-                os.killpg(proc.pid, signal.SIGTERM)
-                try: proc.wait(5)
-                except subprocess.TimeoutExpired:
-                    os.killpg(proc.pid, signal.SIGKILL); proc.wait(5)
-            raise
+            env=env or os.environ, stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
+        code = result.returncode
     if code:
         raise RuntimeError(f"command exited {code}: {log}")
 
 
 @contextlib.contextmanager
-def ownership(label):
+def ownership(label, functional_only=False):
     if os.environ.get("SOP_OWNER_NOW") == "1" or os.environ.get("SIM_LANE_EXTRA_LOCK"):
         raise ValueError("original admission cannot be overridden")
     with (app_sop.STATE_DIR / "lock").open("a+") as global_lock:
-        fcntl.flock(global_lock, fcntl.LOCK_EX)
+        run_budget().lock(global_lock, wait=not functional_only)
         gate = app_sop.steady(False, allow_owner_now=False)
         deadline = time.monotonic() + 600
-        while not gate[0] and time.monotonic() < deadline:
+        while not functional_only and not gate[0] and time.monotonic() < deadline:
             time.sleep(10)
             gate = app_sop.steady(False, allow_owner_now=False)
         if not gate[0] or not app_sop.on_ac_power():
@@ -97,7 +89,7 @@ def build_runner(platform, root):
             "dependencies": [{"target": "PointsQAHost"}], "settings": {"base": {
                 **base, "TEST_TARGET_NAME": "PointsQAHost", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.uitests"}}}}}
     (source / "project.yml").write_text(yaml.safe_dump(spec, allow_unicode=True))
-    subprocess.run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
+    run_budget().run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
     command(["xcodebuild", "-project", "PointsUIAcceptance.xcodeproj", "-scheme", "PointsQAHost",
              "-configuration", "Debug", "-destination", "generic/platform=" + ("iOS Simulator" if platform == "ipad" else "visionOS Simulator"),
@@ -162,7 +154,7 @@ def mac_hosted(receipt, connection, out):
             "GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.machosted",
             }}, "scheme": {"testTargets": [target]}}}}
     (source / "project.yml").write_text(yaml.safe_dump(spec))
-    subprocess.run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
+    run_budget().run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
     command(["xcodebuild", "-project", target + ".xcodeproj", "-scheme", target,
              "-configuration", "Debug", "-destination", "platform=macOS", "-derivedDataPath", str(root / "dd"),
@@ -207,23 +199,41 @@ def mac_hosted(receipt, connection, out):
         (out / "proof.json").write_text(json.dumps(proof, indent=1) + "\n")
         print(json.dumps(proof))
     finally:
-        for pid in sim_lane.pids_of(info["executable"]):
-            sim_lane.mac_terminate(pid, clone)
-        private_run.unlink(missing_ok=True)
+        with run_budget().cleanup():
+            for pid in sim_lane.pids_of(info["executable"]):
+                sim_lane.mac_terminate(pid, clone)
+            private_run.unlink(missing_ok=True)
 
 
-def main():
+def main(argv=None):
+    entered = ENTRY_STARTED
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--phase", choices=("product", "build", "ui", "watch"), required=True)
     ap.add_argument("--platform", choices=("ipad", "vision", "mac"), default="ipad")
     ap.add_argument("--receipt", type=Path)
     ap.add_argument("--connection", type=Path)
     ap.add_argument("--out", type=Path, required=True)
-    a = ap.parse_args()
-    a.out.mkdir(parents=True, exist_ok=True)
-    started = time.time()
+    ap.add_argument("--budget-min", type=float, default=30, help="total time including admission and cleanup")
+    ap.add_argument("--functional-only", action="store_true", help="one admission check; defer immediately if busy, without a performance wait")
+    a = ap.parse_args(argv)
     try:
-        with ownership("Points real native UI / paired WC"):
+        with Budget(a.budget_min * 60, entered):
+            result = run(a)
+            run_budget().timeout(1, cleanup=True)
+            return result
+    except (BudgetExpired, subprocess.TimeoutExpired, BlockingIOError, sim_lane.Busy):
+        print(json.dumps({"ok": False, "deferred": True, "reason": "time budget exhausted or original lane busy",
+                          "elapsed_seconds": round(time.monotonic() - entered, 3)}))
+        return 75
+    except ValueError as error:
+        ap.error(str(error))
+
+
+def run(a):
+    a.out.mkdir(parents=True, exist_ok=True)
+    started = run_budget().started
+    try:
+        with ownership("Points real native UI / paired WC", a.functional_only):
             if a.phase == "product":
                 sys.path.insert(0, str(Path.home() / "Apps/.claude/skills/app-lightweight/scripts"))
                 import platform_measure
@@ -319,12 +329,13 @@ def main():
                 if app_sop.lane_inputs(app, a.platform if a.phase == "ui" else "watch")["input_sha256"] != digest:
                     raise RuntimeError("production input changed during tests")
             finally:
-                for device in (watch, phone):
-                    if device:
-                        sim_lane.shutdown(device)
+                with run_budget().cleanup():
+                    for device in (watch, phone):
+                        if device:
+                            sim_lane.shutdown(device)
             proof = {"ok": True, "phase": a.phase, "platform": a.platform if a.phase == "ui" else "watch",
                      "input_sha256": digest, "receipt_sha256": sim_lane.sha256(a.receipt),
-                     "test_sha256": runner["test_sha256"], "seconds": round(time.time() - started, 1),
+                     "test_sha256": runner["test_sha256"], "seconds": round(time.monotonic() - started, 1),
                      "environment": "simulator", "product_rebuilt": False,
                      "watch_credentials_injected": False if a.phase == "watch" else None,
                      "cleanup": "owned devices shutdown; canonical locks released on exit"}
