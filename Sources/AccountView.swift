@@ -104,7 +104,7 @@ struct LedgerDocument: FileDocument {
 
 enum DeletionReceipt {
     private static var query: [String: Any] {
-        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: "cyou.tianli.pointsdeck.deletion",
+        [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: Snapshot.serviceName("deletion"),
          kSecAttrAccount as String: "receipt"]
     }
     static func save(_ value: String) {

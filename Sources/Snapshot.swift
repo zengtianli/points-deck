@@ -38,7 +38,13 @@ struct Snapshot: Codable {
 //   今天这个账号刚从 8ZUVJNUK29 换到 B9LJH93LA4，正是会漂的证据）。
 //   这条契约由 `check_shared_group.py` 在**构建产物**上对账，两边不一致即红。
 extension Snapshot {
-    private static let service = "cyou.tianli.pointsdeck.snapshot"
+    /// 共享车道的 Mac 副本使用 .lane bundle，测试快照和回执不能写进正式钥匙串条目。
+    static func serviceName(_ suffix: String) -> String {
+        let bundle = Bundle.main.bundleIdentifier ?? "cyou.tianli.pointsdeck"
+        let prefix = bundle.hasSuffix(".lane") ? bundle : "cyou.tianli.pointsdeck"
+        return prefix + "." + suffix
+    }
+    private static var service: String { serviceName("snapshot") }
     private static let account = "current"
 
     private static var baseQuery: [String: Any] {
