@@ -9,6 +9,11 @@ lifecycle: active
 bundle_id: cyou.tianli.pointsdeck
 origin: own
 sop:
+  account:
+    mode: password
+    rationale: 公开注册的家长账号，邮箱用于登录与自助恢复；完整原生入口和邮件验证按 ../PRD.md 补齐
+    inputs:
+    - ../../../web/points/server.py
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
   test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && bash Tests/check-platform-typecheck.sh
   accept:
