@@ -10,7 +10,7 @@
 
 由家长操作的家庭积分账本：记录表现、积攒约定奖励，让每一份努力看得见。客户端沿用共享 API 与服务端规则，11 档成长家园和 5 个时代插画保留。
 
-本地源码已按 [PRD 1.3](../PRD.md) 改为五栏目与一键记分，接入邮箱与手机号账号流程。VPS Mailu 邮件已真实收信核验；阿里云短信尚待云端配置与产品真实投递验收。此改版尚未部署后端或提交商店；安装版、以下旧截图和历史性能样本仍对应此前版本。当前验收范围见 [开发交接](handoffs/prd-1.2-20261004.md)。
+本地源码已按 [PRD 1.3](../PRD.md) 改为五栏目与一键记分，接入邮箱与手机号账号流程。VPS Mailu 邮件已真实收信核验；阿里云短信尚待云端配置与产品真实投递验收。新版后端已上线，TestFlight **1.0.2（10）** 已通过 Apple 处理并进入 family 内测组；未提交商店审核。以下旧截图和历史性能样本仍对应此前版本，手机需在 TestFlight 更新。当前验收范围见 [开发交接](handoffs/prd-1.2-20261004.md)。
 
 <p>以下为此前发行版截图；改版实机/模拟器画面见交接中的原始证据。</p>
 <table><tr>
@@ -41,8 +41,8 @@
 
 | 平台 | 长什么样 | 现在能不能装 |
 |---|---|---|
-| iPhone | 当前源码为底部五栏：账本 / 走势 / 加分 / 兑换 / 账户；含锁屏和桌面小组件 | [App Store](https://apps.apple.com/app/id6806799638) 在售版本仍为旧布局；新版未发布 |
-| iPad | 同顺序底部五栏；宽屏增加卡片列数，分屏按可用宽度排布 | 在售的是同一个包；新版未发布 |
+| iPhone | 当前源码为底部五栏：账本 / 走势 / 加分 / 兑换 / 账户；含锁屏和桌面小组件 | [App Store](https://apps.apple.com/app/id6806799638) 在售版本仍为旧布局；TestFlight 1.0.2（10）可测试新版 |
+| iPad | 同顺序底部五栏；宽屏增加卡片列数，分屏按可用宽度排布 | 在售的是同一个包；TestFlight 1.0.2（10）可测试新版 |
 | Mac | 原生 macOS 窗口，同顺序五项侧栏；包内自带 `treasury` 命令行 | **未上架**，只能本机构建 |
 | Apple Watch | 抬腕看住在哪一档、余额、还差几分升级与进度，翻一页是最近 10 笔；表盘复杂功能四种。只读，不兑换、不记账；登录态由 iPhone 递过来 | **未上架**（随 iPhone 包嵌入的手表 App 还没进任何发行构建） |
 | Apple Vision Pro | 同一套侧栏看板放在系统玻璃窗口里，时代色只做强调色 | **未上架**，只在模拟器上验过 |
@@ -73,7 +73,7 @@
 
 ## 怎么拿到
 
-已支持邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-09-26 官方构建回读为 1.0（2），见[发行记录](perf/asc-release.json)；手机当前装机版本与运行性能仍待真机核验。
+已支持邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-10-04 官方回读确认 TestFlight 1.0.2（10）已进 family 内测组；App Store 在售仍为 1.0（2），见[发行记录](perf/asc-release.json)；手机当前装机版本与运行性能仍待真机核验。
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 
@@ -161,7 +161,7 @@ MIT © 2026 曾田力 (Tianli Zeng)
 
 体积按具体发行构建回读；真机尚未测量，内存、CPU 与启动时间先用 iOS 模拟器实测并标明环境。
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8)（App Store 在售仍为 1.0 (2)）；体积不含用户数据与后续缓存 · 2026-09-30。体积来自 Apple App Store Connect 对应构建的设备切片记录。内存、CPU 与启动时间是 iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator 上本地源码 Release 构建 v1.0.1 (1) 的实测（2026-10-02），只统计 App 进程，不等于真机数值；真机测量尚未完成。内存口径为 phys_footprint；CPU 为 60 秒采样窗内 CPU 时间 ÷ 墙钟；大小按十进制 MB。原始数据见 [perf/lightweight.json](perf/lightweight.json)。</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · 历史 TestFlight 构建 1.0.1 (8)（当前测试版为 1.0.2 (10)，App Store 在售仍为 1.0 (2)）；体积不含用户数据与后续缓存 · 2026-09-30。体积来自 Apple App Store Connect 对应构建的设备切片记录。内存、CPU 与启动时间是 iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator 上本地源码 Release 构建 v1.0.1 (1) 的实测（2026-10-02），只统计 App 进程，不等于真机数值；真机测量尚未完成。内存口径为 phys_footprint；CPU 为 60 秒采样窗内 CPU 时间 ÷ 墙钟；大小按十进制 MB。原始数据见 [perf/lightweight.json](perf/lightweight.json)。</sub>
 <!-- lightweight:end -->
 
 

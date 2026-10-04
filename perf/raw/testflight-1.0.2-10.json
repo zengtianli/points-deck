@@ -1,0 +1,43 @@
+{
+  "queried_at": "2026-10-04T11:21:13.492486+00:00",
+  "app_id": "6806799638",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "build_id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+  "version": "1.0.2",
+  "build": "10",
+  "platform": "IOS",
+  "processing_state": "VALID",
+  "expired": false,
+  "uploaded_at": "2026-10-04T04:19:49-07:00",
+  "groups": [
+    {
+      "id": "93bc09a2-ce0a-415d-89b1-adc04325a244",
+      "name": "family",
+      "internal": true,
+      "build_present": true,
+      "tester_count": 2
+    }
+  ],
+  "source_commit": "c5c2f43d04e88550f0454af0d947367107b5b34e",
+  "builder": "local official push-testflight.sh",
+  "toolchain": {
+    "checked_at": "2026-10-04T11:16:39.492240+00:00",
+    "policy": "Apple Latest Release",
+    "source": "https://api.appstoreconnect.apple.com/v1/ciXcodeVersions",
+    "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+    "xcode_version": "27.0",
+    "xcode_build": "27A266a",
+    "sdk_name": "iphoneos27.0",
+    "sdk_build": "24A430",
+    "archive": {
+      "DTXcodeBuild": "27A266a",
+      "DTSDKName": "iphoneos27.0",
+      "DTSDKBuild": "24A430",
+      "BuildMachineOSBuild": "26B5091g"
+    }
+  },
+  "source_project_sha256": "a821d937dcf4e866f4bb1518ad368eec2b71aa600f080e12163fbdf08e3bb172",
+  "upload_log_sha256": "6cb7dbfe0aa7713d01d69907aee8e230b15ab7e9ae640c25d90c75f172057e32",
+  "device_install_verified": false,
+  "app_store_submission": false
+}

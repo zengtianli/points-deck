@@ -12,7 +12,7 @@
 
 A family points ledger operated by parents: record progress, earn agreed rewards, and see effort accumulate. Shared server rules and APIs provide the ledger, 11 home tiers, and illustrations across 5 eras.
 
-Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. This revision has not been deployed or submitted to the App Store. Installed releases, the older screenshots below, and historical performance samples describe the earlier version. See the [development handoff](handoffs/prd-1.2-20261004.md) for current validation scope.
+Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. The updated backend is live. TestFlight **1.0.2 (10)** is VALID and available to the populated family internal group; no App Store review was submitted. Update through TestFlight on the device. The older screenshots below and historical performance samples describe the earlier version. See the [development handoff](handoffs/prd-1.2-20261004.md) for current validation scope.
 
 <p>Earlier release screenshots; current device/simulator evidence is linked from the handoff.</p>
 <table><tr>
@@ -43,8 +43,8 @@ One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the s
 
 | Platform | What it looks like | Can you get it now? |
 |---|---|---|
-| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; this update is unreleased |
-| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; this update is unreleased |
+| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; TestFlight 1.0.2 (10) is available for this update |
+| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; TestFlight 1.0.2 (10) is available for this update |
 | Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local builds only |
 | Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | **Not on the App Store** (the embedded watch app is not in any released build yet) |
 | Apple Vision Pro | The same sidebar board in a system glass window; the era colour is an accent only | **Not on the App Store**; verified on the simulator only |
@@ -163,7 +163,7 @@ Download size is App Store data; memory, CPU and launch time are iOS Simulator m
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · TestFlight 1.0.1 (8) (App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · historical TestFlight build 1.0.1 (8) (current test build: 1.0.2 (10); App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->
 
 

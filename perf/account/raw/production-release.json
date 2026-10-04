@@ -1,0 +1,28 @@
+{
+  "backup": "/root/edu-points-backups/20261004-191339.tar.gz",
+  "source_commit": "507fe3fa1be5c175aee7834f26cbbdb54fd67e3a",
+  "server_sha256": "8f64c65bc744df2f0c2052a207bc55969e1139e8a2342232b739bf54b1398de3",
+  "ledger_hash_before": "f31da3c7248ddcb3613d8338d967ed9f550d4ad5f60e3f8dc7f4d53004ef836a",
+  "ledger_hash_after": "f31da3c7248ddcb3613d8338d967ed9f550d4ad5f60e3f8dc7f4d53004ef836a",
+  "ledgers_unchanged": true,
+  "mail_configured": true,
+  "real_sms_configured": false,
+  "pages": [
+    "me.html",
+    "login.html",
+    "points.html"
+  ],
+  "captured_at": "2026-10-04T11:14:57.552220+00:00",
+  "live_readback": {
+    "verified_at": 1791112566.019933,
+    "real_https": true,
+    "existing_login": true,
+    "state_read": true,
+    "family_revision_read": true,
+    "account_security_read": true,
+    "logout": true,
+    "ledger_mutations": false
+  },
+  "account_lifecycle_complete": false,
+  "remaining": "真实短信投递及原生账号完整流程验收"
+}
