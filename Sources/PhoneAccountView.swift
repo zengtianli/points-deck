@@ -14,9 +14,11 @@ struct PhoneVerification: View {
     @State private var message: String?
     @State private var cooldown = UUID()
     @State private var signName = "恒创联众"
+    @State private var resendSeconds = AccountHints.resendSeconds()
+    @State private var codeMinutes = AccountHints.codeMinutes()
     var body: some View {
         Group {
-            Button(challenge.isEmpty ? "获取短信验证码" : canResend ? "重新获取短信" : "60 秒后可重新获取") {
+            Button(challenge.isEmpty ? "获取短信验证码" : canResend ? "重新获取短信" : AccountHints.resendWaitLabel(resendSeconds)) {
                 Task {
                     busy = true; defer { busy = false }
                     canResend = false; cooldown = UUID()
@@ -27,6 +29,10 @@ struct PhoneVerification: View {
                         grant = ""; code = ""
                         message = response["message"] as? String
                         signName = response["sign_name"] as? String ?? signName
+                        codeMinutes = AccountHints.codeMinutes(receipt: response["expires_in"])
+                        // 回执里的间隔和正在倒数的不一样（后台改过）才重新倒数；一样时与原先完全相同
+                        let fresh = AccountHints.resendSeconds(receipt: response["resend_after"])
+                        if fresh != resendSeconds { resendSeconds = fresh; cooldown = UUID() }
                     } catch { message = error.localizedDescription }
                 }
             }.frame(minHeight: 48).disabled(busy || !canResend || phone.isEmpty)
@@ -45,7 +51,7 @@ struct PhoneVerification: View {
             }
             if !grant.isEmpty { Label("手机验证完成", systemImage: "checkmark.circle.fill").foregroundStyle(TreasuryTheme.accent) }
             if let message { Text(message).font(.footnote).foregroundStyle(.secondary) }
-            Text("+86 家长手机号；短信签名「\(signName)」，有效5分钟。收不到可等待重发或改用邮箱。").font(.footnote).foregroundStyle(.secondary)
+            Text(AccountHints.phoneFootnote(sign: signName, minutes: codeMinutes)).font(.footnote).foregroundStyle(.secondary)
         }
         .onChange(of: phone) { _, _ in reset() }
         .onChange(of: purpose) { _, _ in reset() }
@@ -53,7 +59,7 @@ struct PhoneVerification: View {
         .onChange(of: identityGrant) { _, _ in reset() }
         .task(id: cooldown) {
             guard !canResend else { return }
-            try? await Task.sleep(for: .seconds(60))
+            try? await Task.sleep(for: .seconds(resendSeconds))
             if !Task.isCancelled { canResend = true; requestID = UUID().uuidString }
         }
     }
@@ -77,7 +83,7 @@ struct PhoneRegisterView: View {
                 Section("家长本人手机号") {
                     TextField("+86 手机号", text: $phone).textContentType(.telephoneNumber).keyboardType(.phonePad).privacySensitive()
                     PhoneVerification(phone: phone, purpose: "register", grant: $grant)
-                    Text("已有旧账号请先登录再绑定手机号，避免新建空账本。注册后从0分起步，昵称、密码和邮箱可稍后设置。").font(.footnote)
+                    Text(T("account.phone.register_note", "已有旧账号请先登录再绑定手机号，避免新建空账本。注册后从0分起步，昵称、密码和邮箱可稍后设置。")).font(.footnote)
                 }
                 Section {
                     Button("阅读用户协议") { terms = true }
@@ -148,7 +154,7 @@ struct PhoneSecurityView: View {
                     }
                 }.frame(minHeight: 48).disabled(busy || newGrant.isEmpty || (!current.isEmpty && oldGrant.isEmpty))
                 if let message { Text(message) }
-                Text("绑定和换绑保留原内部账号、积分和配置。换绑后其他旧会话失效；号码被占用时不会合并账号。").font(.footnote)
+                Text(T("account.phone.bind_note", "绑定和换绑保留原内部账号、积分和配置。换绑后其他旧会话失效；号码被占用时不会合并账号。")).font(.footnote)
                 Link("原手机号无法使用／账号恢复申诉", destination: URL(string: "mailto:hi@tianli.cyou")!)
             }.navigationTitle("手机绑定与换绑")
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
@@ -173,7 +179,7 @@ struct PhonePasswordSetView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Text("确认当前绑定手机后设置独立登录密码。已有密码请使用修改或找回流程。").font(.footnote)
+                Text(T("account.phone.password_set_note", "确认当前绑定手机后设置独立登录密码。已有密码请使用修改或找回流程。")).font(.footnote)
                 PhoneVerification(phone: phone, purpose: "phone_identity", grant: $grant)
                 PasswordInput(title: "新密码（15–128字符）", text: $password, new: true)
                 PasswordInput(title: "确认密码", text: $confirm, new: true)

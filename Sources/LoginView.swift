@@ -71,7 +71,7 @@ struct LoginView: View {
                 Button("忘记密码") { showRecovery = true }.frame(minHeight: 48)
                 if DeletionReceipt.load() != nil { Button("查询注销状态") { showDeletion = true }.frame(minHeight: 48) }
                 Button("隐私政策与使用约定") { privacy = true }.frame(minHeight: 48)
-                Text("原账号和原密码可继续登录。短信暂不可用或其他地区可使用邮箱注册与密码登录。").font(.footnote).foregroundStyle(.secondary)
+                Text(T("account.login.note", "原账号和原密码可继续登录。短信暂不可用或其他地区可使用邮箱注册与密码登录。")).font(.footnote).foregroundStyle(.secondary)
             }.padding(24).frame(maxWidth: 440).frame(maxWidth: .infinity).padding(.vertical, 28)
         }.background(TreasuryTheme.background).tint(TreasuryTheme.accent).preferredColorScheme(.light)
             .sheet(isPresented: $showRegister) { PhoneRegisterView() }

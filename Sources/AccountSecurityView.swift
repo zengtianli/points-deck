@@ -38,7 +38,7 @@ struct EmailVerification: View {
                     do {
                         challenge = try await Api.sendCode(email: email, purpose: purpose, password: password, identityGrant: identityGrant)
                         grant = ""; code = ""; canResend = false
-                        message = purpose == "recover" ? "若该邮箱已绑定验证，将收到找回邮件。请检查垃圾邮件。" : "邮件已提交投递，请检查收件箱和垃圾邮件。"
+                        message = purpose == "recover" ? T("account.email.recover_sent", "若该邮箱已绑定验证，将收到找回邮件。请检查垃圾邮件。") : T("account.email.sent", "邮件已提交投递，请检查收件箱和垃圾邮件。")
                     } catch { message = error.localizedDescription }
                 }
             }.disabled(busy || !canResend || email.isEmpty)
@@ -115,7 +115,7 @@ struct AccountSecurityView: View {
                 if let message { Text(message).foregroundStyle(.secondary) }
                 Section {
                     Link("收不到邮件／旧邮箱无法访问：联系支持", destination: URL(string: "mailto:hi@tianli.cyou")!)
-                    Text("绑定和更换只修改登录与恢复邮箱，原账号、积分、项目和流水继续保留。").font(.footnote)
+                    Text(T("account.email.bind_note", "绑定和更换只修改登录与恢复邮箱，原账号、积分、项目和流水继续保留。")).font(.footnote)
                 }
                 if !events.isEmpty { Section("近期账号安全记录") { ForEach(Array(events.enumerated()), id: \.offset) { _, event in Text(event) } } }
             }.navigationTitle("账号安全")
@@ -162,7 +162,7 @@ struct PasswordChangeView: View {
                 PasswordInput(title: "当前密码", text: $old)
                 PasswordInput(title: "新密码", text: $new, new: true)
                 PasswordInput(title: "确认新密码", text: $confirm, new: true)
-                Text("15–128 个字符，允许空格和中文。可使用系统生成密码或独特短语。").font(.footnote)
+                Text(T("account.password.rule_note", "15–128 个字符，允许空格和中文。可使用系统生成密码或独特短语。")).font(.footnote)
                 if !confirm.isEmpty && new != confirm { Text("两次新密码不一致").foregroundStyle(.red) }
                 if let message { Text(message) }
                 Button(busy ? "保存中" : "保存新密码") {
@@ -200,7 +200,7 @@ struct PasswordRecoveryView: View {
         NavigationStack {
             Form {
                 if complete {
-                    Text("密码已重置，原账本保留。所有旧会话已失效，请重新登录。")
+                    Text(T("account.recover.done_note", "密码已重置，原账本保留。所有旧会话已失效，请重新登录。"))
                     Button("返回登录") { dismiss() }
                 } else {
                     TreasuryChoice(title: "恢复方式", selection: $phoneMode, options: [("手机号", true), ("邮箱", false)])

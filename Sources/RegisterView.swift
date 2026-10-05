@@ -24,7 +24,7 @@ struct RegisterView: View {
                     PasswordInput(title: "确认密码", text: $confirm, new: true)
                     TextField("昵称（可选）", text: $nick)
                     if !confirm.isEmpty && password != confirm { Text("两次密码不一致").foregroundStyle(.red) }
-                    Text("支持系统生成密码、空格与中文。新账号从0分起步。").font(.footnote)
+                    Text(T("account.register.password_note", "支持系统生成密码、空格与中文。新账号从0分起步。")).font(.footnote)
                 }
                 Section {
                     Button("阅读用户协议") { terms = true }

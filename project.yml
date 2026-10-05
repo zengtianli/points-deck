@@ -68,6 +68,7 @@ targets:
       - path: Shared/AppLifecycle.swift
       - path: Shared/AppConfiguration.swift
       - path: Shared/AppLifecycleMobile.swift
+      - path: Shared/RemoteUI.swift
       - path: Sources
       # ⚠ 图标资产必须在这儿列出来。漏了的表现是**编译通过、装机通过、桌面白板**——
       #   ASSETCATALOG_COMPILER_APPICON_NAME 指向一个不在工程里的 catalog，
@@ -158,6 +159,7 @@ targets:
       - path: Sources/AppIdentity.swift
       - path: Sources/WidgetViews.swift
       - path: Shared/LaneSignal.swift
+      - path: Shared/RemoteUI.swift
       - path: Sources/WatchLink.swift
       - path: Watch
         excludes: ["*.plist"]

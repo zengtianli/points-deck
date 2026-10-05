@@ -62,6 +62,7 @@ enum Api {
         let json = try await request(full ? "api/state?all=1" : "api/state", timeout: timeout)
         accountUser = json["u"] as? String
         LedgerCache.save(json)
+        AccountHints.adopt(json)
         return try LedgerState(json: json)
     }
 
@@ -120,7 +121,9 @@ enum Api {
     }
 
     static func config(_ legacyPassword: String = "") async throws -> Config {
-        Config(json: try await request("api/config", body: [:]))
+        let json = try await request("api/config", body: [:])
+        AccountHints.adopt(json)
+        return Config(json: json)
     }
 
     @discardableResult
@@ -549,4 +552,71 @@ enum TransactionJournal {
         var values = load(); values.removeValue(forKey: key(path, body)); save(values)
     }
     static func clear() { if let q = query { SecItemDelete(q as CFDictionary) } }
+}
+
+/// 账号流程里后台说了算的数字和提示。重发间隔、验证码有效期是服务端在执行的规则，随 `api/state`、`api/config`
+/// 下发（后端 `server.py` 的 `client_hints`），发短信的回执里也带；`ui` 是可选的提示文字覆盖项（后端 `points/ui.json`），
+/// 交给 `Remote.ui`，界面用 `T("键", "自带文案")` 取。字段缺失、类型不对或 `ui` 写坏时照常解出、回到自带值，
+/// 数字夹在合理范围内。最近一份存在本机偏好里（只有这几个数和文案，没有账号数据），未登录的注册、登录、找回页也用得上。
+struct AccountHints: Codable {
+    var resend_seconds: Lenient<Double>? = nil
+    var code_ttl_seconds: Lenient<Double>? = nil
+    var ui: Lenient<FeedUI>? = nil
+
+    private static let cacheKey = "account_hints"
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var current = AccountHints()
+
+    /// 取到 `api/state`、`api/config` 时调用；响应不带这几个字段（旧后端）就回到自带值。
+    static func adopt(_ json: [String: Any]) {
+        let part = json.filter { ["resend_seconds", "code_ttl_seconds", "ui"].contains($0.key) }
+        guard let data = try? JSONSerialization.data(withJSONObject: part) else { return }
+        UserDefaults.standard.set(data, forKey: cacheKey)
+        install(data)
+    }
+
+    /// 启动时读上次存的那份。
+    static func restore() {
+        if let data = UserDefaults.standard.data(forKey: cacheKey) { install(data) }
+    }
+
+    private static func install(_ data: Data) {
+        let hints = (try? JSONDecoder().decode(AccountHints.self, from: data)) ?? AccountHints()
+        lock.withLock { current = hints }
+        Remote.ui = hints.ui?.value
+    }
+
+    /// 两次发送短信的最短间隔（秒）：发送回执的 `resend_after` 优先，其次是下发的 `resend_seconds`，都没有用自带的 60。
+    static func resendSeconds(receipt: Any? = nil) -> Int {
+        clamped(number(receipt) ?? lock.withLock { current.resend_seconds?.value }, 60, 10...600)
+    }
+
+    /// 短信验证码有效期（整分钟，向下取整，不多说）：回执的 `expires_in` 优先，其次 `code_ttl_seconds`，都没有用自带的 5 分钟。
+    static func codeMinutes(receipt: Any? = nil) -> Int {
+        clamped(number(receipt) ?? lock.withLock { current.code_ttl_seconds?.value }, 300, 60...3600) / 60
+    }
+
+    static func resendWaitLabel(_ seconds: Int) -> String { "\(seconds) 秒后可重新获取" }
+
+    static func phoneFootnote(sign: String, minutes: Int) -> String {
+        T("account.phone.footnote", "+86 家长手机号；短信签名「{sign}」，有效{minutes}分钟。收不到可等待重发或改用邮箱。")
+            .filling(["sign": sign, "minutes": minutes])
+    }
+
+    private static func number(_ raw: Any?) -> Double? {
+        guard let n = raw as? NSNumber, CFGetTypeID(n) != CFBooleanGetTypeID() else { return nil }
+        return n.doubleValue
+    }
+
+    private static func clamped(_ value: Double?, _ fallback: Int, _ range: ClosedRange<Int>) -> Int {
+        guard let value, value.isFinite else { return fallback }
+        return Int(min(max(value.rounded(), Double(range.lowerBound)), Double(range.upperBound)))
+    }
+}
+
+extension String {
+    /// 把文案模板里的 `{名字}` 换成实际的值；后台覆盖的文案可以挪动或省掉占位符。
+    func filling(_ values: [String: Any]) -> String {
+        values.sorted { $0.key < $1.key }.reduce(self) { $0.replacingOccurrences(of: "{\($1.key)}", with: "\($1.value)") }
+    }
 }
