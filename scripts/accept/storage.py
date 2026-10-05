@@ -46,7 +46,7 @@ def main():
                 identifier = "cyou.tianli.points.storage." + uuid.uuid4().hex + ".lane"
                 (app / "Info.plist").write_bytes(plistlib.dumps({"CFBundleIdentifier": identifier,
                     "CFBundleExecutable": "check", "CFBundlePackageType": "APPL", "LSUIElement": True}))
-                sources = [REPO / name for name in ("Shared/PlatformCompat.swift", "Sources/Skin.swift",
+                sources = [REPO / name for name in ("Shared/PlatformCompat.swift", "Shared/RemoteUI.swift", "Sources/Skin.swift",
                     "Sources/Api.swift", "Sources/Snapshot.swift", "scripts/accept/storage.swift")]
                 fingerprints = {str(p.relative_to(REPO)): sim_lane.sha256(p) for p in sources}
                 executable = app / "MacOS/check"

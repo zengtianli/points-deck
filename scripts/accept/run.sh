@@ -64,7 +64,7 @@ stop_server() { kill "$server_pid" 2>/dev/null; wait "$server_pid" 2>/dev/null |
 start_server
 
 xcrun --sdk macosx swiftc -target "$(uname -m)-apple-macos15.0" -parse-as-library \
-  Shared/PlatformCompat.swift Sources/Skin.swift Sources/Api.swift \
+  Shared/PlatformCompat.swift Shared/RemoteUI.swift Sources/Skin.swift Sources/Api.swift \
   scripts/accept/Common.swift "scripts/accept/$check.swift" -o "$scratch/accept"
 
 # The recovery check stops and restarts the server itself; it reports any new pid through this file.
