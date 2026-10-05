@@ -4,6 +4,7 @@ import Foundation
 //
 // 用法：产品的数据载荷里带一段可选的 `ui`，模型写成 `var ui: Lenient<FeedUI>? = nil`，
 // 取到新载荷和读缓存时都把它交给 `Remote.ui`。界面上会随后台变的文字写成 `T("键", "自带文案")`，
+// 带变量的句子写成 `T("键", "已过期（{days} 天没上线）", ["days": "7"])`，
 // 状态词表用 `Remote.label / icon / tone`，秒数和次数用 `Remote.seconds / count`。
 // 只盖后台写到的键；没下发、离线或写坏时全部用 App 自带的值。改这些东西去改后台，不用发版。
 
@@ -71,6 +72,32 @@ enum Remote {
 func T(_ key: String, _ fallback: String) -> String {
     guard let s = Remote.ui?.copy?[key], !s.isEmpty else { return fallback }
     return s
+}
+
+/// 带变量的说明文字：自带文案和后台模板用同一种 `{名}` 占位符，这里把它们换成值。
+/// 后台模板漏写占位符时那个值不显示，写了不认识的占位符原样留着，都不会崩。
+func T(_ key: String, _ fallback: String, _ values: [String: String]) -> String {
+    Remote.fill(T(key, fallback), values)
+}
+
+extension Remote {
+    /// 把模板里的 `{名}` 换成值。只扫一遍：值里带花括号也不会被再次展开。
+    static func fill(_ template: String, _ values: [String: String]) -> String {
+        var out = ""
+        var rest = Substring(template)
+        while let open = rest.firstIndex(of: "{") {
+            out += rest[..<open]
+            let after = rest[rest.index(after: open)...]
+            if let close = after.firstIndex(of: "}"), let value = values[String(after[..<close])] {
+                out += value
+                rest = after[after.index(after: close)...]
+            } else {
+                out += "{"
+                rest = after
+            }
+        }
+        return out + rest
+    }
 }
 
 /// 解不开就当没有：后台把覆盖项写错了，不能连带把整份数据解坏。

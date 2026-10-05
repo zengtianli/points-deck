@@ -599,8 +599,8 @@ struct AccountHints: Codable {
     static func resendWaitLabel(_ seconds: Int) -> String { "\(seconds) 秒后可重新获取" }
 
     static func phoneFootnote(sign: String, minutes: Int) -> String {
-        T("account.phone.footnote", "+86 家长手机号；短信签名「{sign}」，有效{minutes}分钟。收不到可等待重发或改用邮箱。")
-            .filling(["sign": sign, "minutes": minutes])
+        T("account.phone.footnote", "+86 家长手机号；短信签名「{sign}」，有效{minutes}分钟。收不到可等待重发或改用邮箱。",
+          ["sign": sign, "minutes": String(minutes)])
     }
 
     private static func number(_ raw: Any?) -> Double? {
@@ -611,12 +611,5 @@ struct AccountHints: Codable {
     private static func clamped(_ value: Double?, _ fallback: Int, _ range: ClosedRange<Int>) -> Int {
         guard let value, value.isFinite else { return fallback }
         return Int(min(max(value.rounded(), Double(range.lowerBound)), Double(range.upperBound)))
-    }
-}
-
-extension String {
-    /// 把文案模板里的 `{名字}` 换成实际的值；后台覆盖的文案可以挪动或省掉占位符。
-    func filling(_ values: [String: Any]) -> String {
-        values.sorted { $0.key < $1.key }.reduce(self) { $0.replacingOccurrences(of: "{\($1.key)}", with: "\($1.value)") }
     }
 }
