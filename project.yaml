@@ -113,6 +113,109 @@ sop:
     - treasury
     host: repo
     entry: cli/treasury
+  # 界面功能对照（每项功能都能不点界面完成，2026-10-07）：从 Sources/ 与 Watch/ 的界面源码逐项列。
+  # 手机端没法装命令行，用本机 treasury（同一服务端 /api/* 的薄客户端）对应；读回 treasury version 不登录、只读。
+  # 「配置与更新」面板：本 App 没有可迁移的偏好配置（MobileProductLifecycle.configuration 为空），
+  # 界面不显示 iCloud 开关与导出/导入按钮，所以这里只列检查更新与升级到新版两项。
+  agent_cli:
+    readback: treasury version
+    features:
+    - name: 手机验证码登录
+      command: treasury account phone-login
+    - name: 账号密码登录
+      command: treasury me
+    - name: 手机号注册
+      command: treasury account phone-register
+    - name: 邮箱注册
+      command: treasury account register
+    - name: 忘记密码（手机号或邮箱）
+      command: treasury account recover
+    - name: 阅读用户协议与隐私政策
+      human: 只在窗口里有意义：打开随包的政策正文，同帮助页
+    - name: 账本：市值、当前档位与还差多少升档
+      command: treasury state
+    - name: 账本：流水列表与流水详情（含下拉刷新）
+      command: treasury entries
+    - name: 流水筛选（全部、加分、减分、兑换）
+      command: treasury entries
+    - name: 查看更早流水
+      command: treasury entries
+    - name: 撤销这笔误记
+      command: treasury undo
+    - name: 记账后的撤销提示条
+      command: treasury undo
+    - name: 流水实时刷新
+      human: 只在窗口里有意义：App 开着时的 SSE 长连接；命令每次直读服务端
+    - name: 离线时显示缓存与离线提示
+      human: 只在窗口里有意义：设备本机缓存的展示；命令连不上即退出 1
+    - name: 走势：近 7 天、近 30 天、全部
+      command: treasury trend
+    - name: 加分与减分项目清单
+      command: treasury rules
+    - name: 固定项目一键记分
+      command: treasury earn
+    - name: 参数项目预览分值
+      command: treasury preview
+    - name: 参数项目记入账本
+      command: treasury earn
+    - name: 临时记一笔
+      command: treasury adjust
+    - name: 超时后核对原操作结果
+      command: treasury request-result
+    - name: 兑换清单（价格、解锁与够不够换）
+      command: treasury shop
+    - name: 确认兑换
+      command: treasury spend
+    - name: 记分项目管理（新建、编辑、排序、归档）
+      command: treasury config
+    - name: 兑换奖励管理（新建、编辑、排序、归档）
+      command: treasury config
+    - name: 配置冲突时读取最新并合并
+      command: treasury config
+    - name: 更多设置（高级规则、商品与档位）
+      command: treasury config
+    - name: 账号概况（昵称、头像、邮箱与手机状态）
+      command: treasury me
+    - name: 修改昵称与头像
+      command: treasury profile
+    - name: 等级与待遇
+      command: treasury tiers
+    - name: 导出账本
+      command: treasury export
+    - name: 账号安全：绑定或更换手机号
+      command: treasury account phone-bind
+    - name: 账号安全：修改登录密码
+      command: treasury account passwd
+    - name: 账号安全：设置登录密码（未设过）
+      command: treasury account password-set
+    - name: 账号安全：绑定、验证或更换邮箱
+      command: treasury account email-bind
+    - name: 账号安全：近期账号安全记录
+      command: treasury me
+    - name: 退出登录
+      missing: 命令够不到 App 里那份登录态（App 退出还会清本机缓存与小组件快照并让手表下线）；命令自己不保存登录态
+    - name: 注销账号
+      command: treasury account delete
+    - name: 申请注销（即时注销被拒时）
+      command: treasury account delete-request
+    - name: 查询注销处理状态
+      command: treasury account delete-status
+    - name: 反馈、收不到验证码与恢复申诉的邮件链接
+      human: 只在窗口里有意义：打开邮件撰写
+    - name: 检查更新
+      missing: 共享生命周期模块暂无命令入口
+    - name: 升级到新版
+      missing: 共享生命周期模块暂无命令入口
+    - name: 升档庆祝动画
+      human: 只在窗口里有意义：升档后在屏幕上播放的动画；档位本身读 treasury state
+    - name: 桌面小组件
+      human: 要真人在主屏上摆放；显示的数字同 treasury state
+    - name: Apple Watch 只读摘要与最近流水
+      command: treasury state
+    - name: Apple Watch 表盘复杂功能
+      human: 要真人在表盘上摆放；显示的数字同 treasury state
+    - name: 配色预览与小组件预览
+      human: 只在窗口里有意义：验证用启动参数打开的预览页
   runtime:
     kind: ios
     readback: builtin:asc-device

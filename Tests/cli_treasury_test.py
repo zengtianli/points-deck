@@ -214,6 +214,11 @@ def main() -> int:
             return r.returncode, r.stdout, r.stderr
         code, top, _ = bare(["--help"])
         ck("顶层帮助退出 0", code == 0)
+        tail = top[top.index("暂无命令"):] if "暂无命令" in top else ""
+        window = top[top.index("仅在窗口中"):top.index("暂无命令")] if tail else ""
+        ck("「暂无命令」只列界面上有的：检查更新、升级到新版、退出登录；不把没有的配置同步列成缺口",
+           all(w in tail for w in ("检查更新", "升级到新版", "退出登录")) and "配置的 iCloud 同步" not in tail
+           and "退出登录" not in window, tail)
         for word in ("读命令", "写命令", "--json 输出形状", "退出码", "仅在窗口中", "暂无命令"):
             ck(f"顶层帮助有「{word}」", word in top)
         ck("顶层帮助的退出码表列了 0 / 1 / 2 / 130", all(re.search(rf"(?m)^\s+{n}\s", top) for n in (0, 1, 2, 130)), top[-900:])

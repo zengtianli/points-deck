@@ -123,7 +123,7 @@ Every read command supports `--json` and prints `{"ok": true, …}`; failures pr
 
 Admin scope is whatever the server says: `config get`, `config put` and `users list` report the `scope` field of the response (`site` = the whole site, `account` = this account only). When the server returns no `scope`, they report `unknown`: `users list` shows only the caller's own row, and `config put`, `users reset-password` and `users delete` refuse rather than guess where the write would land.
 
-GUI-only (pure interface): live refresh pushes, the offline-cache notice, placing home/lock-screen widgets and watch complications, the tier-up celebration, the palette and widget previews, signing out, the policy pages and mail links. No command yet: iCloud sync/export/import of settings, checking for updates and upgrading.
+GUI-only (pure interface): live refresh pushes, the offline-cache notice, placing home/lock-screen widgets and watch complications, the tier-up celebration, the palette and widget previews, the policy pages and mail links. No command yet: checking for updates and upgrading, and signing out (the command cannot reach the app's own session). The app has no transferable preferences, so the interface shows no iCloud switch or settings export/import and there is no command for them.
 
 Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule and `install.sh` (a fake .app in a temporary Applications folder), then starts an isolated local server (temporary directory, free port) and never touches live accounts; it needs `edu/web/points/server.py` from the same workspace, or `EDU_SERVER_PY` pointing to it.
 

@@ -121,7 +121,7 @@ treasury config put shop --file shop.json --revision "$REVISION" --json
 
 管理范围以服务端为准：`config get`、`config put`、`users list` 原样报告响应里的 `scope`（`site` 全站 / `account` 仅本账号）。服务端没返回 `scope` 时报 `unknown`：`users list` 只显示本账号自己这一行，`config put`、`users reset-password`、`users delete` 直接拒绝，不猜写入会落到哪里。
 
-留在 App 的（纯界面）：实时刷新推送、离线缓存提示、桌面/锁屏小组件与手表复杂功能的摆放、升档庆祝动画、配色与小组件预览、退出登录、政策阅读页与邮件链接。还没有命令的：配置的 iCloud 同步/导出/导入、检查更新与升级到新版。
+留在 App 的（纯界面）：实时刷新推送、离线缓存提示、桌面/锁屏小组件与手表复杂功能的摆放、升档庆祝动画、配色与小组件预览、政策阅读页与邮件链接。还没有命令的：检查更新与升级到新版、退出登录（命令够不到 App 里那份登录态）。本 App 没有可迁移的偏好配置，界面没有 iCloud 开关与配置导出/导入，也就没有对应命令。
 
 回归：`python3 Tests/cli_treasury_test.py` —— 先核打包规则与 `install.sh`（临时 Applications 目录里的假 .app），再起一个隔离的本地服务端（临时目录 + 空闲端口），不碰线上账号；需要同一工作区的 `edu/web/points/server.py`，或用 `EDU_SERVER_PY` 指过去。
 
