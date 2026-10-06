@@ -206,6 +206,50 @@ def main() -> int:
         ck("旧版本配置冲突",run(["config","put","shop","--file",str(file),"--revision",cfg["revision"]])[1].get("status")==409)
         ok(["spend","cli-reward","--expected-pts","2","--request-id","cli-reward-request-01"])
         ok(["trend","--span","0"])
+        # ── 给 Agent 的约定：顶层帮助四样、version 读回、失败形状、界面对照里新补的读命令 ──
+        def bare(args, creds=False):
+            custom = dict(env)
+            if not creds: custom.pop("EDU_USER"); custom.pop("EDU_PASSWORD")
+            r = subprocess.run([str(CLI), *args], env=custom, text=True, capture_output=True, timeout=20, stdin=subprocess.DEVNULL)
+            return r.returncode, r.stdout, r.stderr
+        code, top, _ = bare(["--help"])
+        ck("顶层帮助退出 0", code == 0)
+        for word in ("读命令", "写命令", "--json 输出形状", "退出码", "仅在窗口中", "暂无命令"):
+            ck(f"顶层帮助有「{word}」", word in top)
+        ck("顶层帮助的退出码表列了 0 / 1 / 2 / 130", all(re.search(rf"(?m)^\s+{n}\s", top) for n in (0, 1, 2, 130)), top[-900:])
+        for name in ("version", "state", "entries", "trend", "export", "shop", "tiers", "rules", "me", "request-result",
+                     "preview", "earn", "adjust", "undo", "spend", "config", "profile", "account", "users"):
+            ck(f"顶层帮助把 {name} 列为命令", re.search(rf"(?m)^\s+(?:treasury\s+)?{name}(?![\w-])", top) is not None)
+        code, out, _ = bare(["version", "--json"])
+        ver = json.loads(out)
+        ck("version 不登录 → 0，报版本、服务端可达、凭据未给", code == 0 and ver["ok"] is True and ver["cli"]
+           and ver["server"]["reachable"] is True and ver["credentials"] == {"user": False, "password": False}, out)
+        ck("version 给了凭据只报「已给」", ok(["version"])["credentials"] == {"user": True, "password": True})
+        code, j = run(["entries", "--no-such-flag"])
+        ck("参数写错带 --json → 2，ok:false 与 error.code=usage", code == 2 and j.get("ok") is False and j["error"]["code"] == "usage", str(j))
+        code, _, err = bare(["entries", "--no-such-flag"], creds=True)
+        ck("参数写错不带 --json → 2，照 argparse 原样写 stderr", code == 2 and "unrecognized arguments" in err, err[-200:])
+        code, j = run(["spend", "no-such-reward"])
+        ck("服务端拒绝 → 1，error.code=rejected，原有 err / status 不变",
+           code == 1 and j["error"] == {"code": "rejected", "message": j["err"]} and j.get("status"), str(j))
+        redeem = ok(["entries", "--filter", "redeem", "--limit", "0"])["entries"]
+        ck("entries --filter redeem 只有兑换", len(redeem) >= 1 and all(e["kind"] == "spend" for e in redeem), str(redeem)[:200])
+        earned = ok(["entries", "--filter", "earn", "--limit", "0"])["entries"]
+        ck("entries --filter earn 只有加分", all(e["pts"] > 0 for e in earned), str(earned)[:200])
+        deducted = ok(["entries", "--filter", "deduct", "--limit", "0"])["entries"]
+        ck("entries --filter deduct 只有非兑换的减分", all(e["pts"] < 0 and e["kind"] != "spend" for e in deducted), str(deducted)[:200])
+        recent, full = ok(["entries", "--limit", "0"]), ok(["entries", "--all", "--limit", "0"])
+        ck("entries --all 取到全部流水（不少于默认窗口）", full["window"] >= recent["window"] and full["window"] == full["total"], f"{recent['window']} {full['window']} {full['total']}")
+        ledger = Path(fixture.temp.name) / "ledger-export.json"
+        exported = ok(["export", "--out", str(ledger)])
+        dumped = json.loads(ledger.read_text(encoding="utf-8"))
+        ck("export 写出整本账（同 App 导出账本）", exported["out"] == str(ledger.resolve()) and exported["bytes"] == ledger.stat().st_size
+           and len(dumped["entries"]) == exported["entries"] == full["window"] and dumped["balance"] == ok(["state"])["balance"], str(exported))
+        ck("export 不覆盖已有文件 → 2", run(["export", "--out", str(ledger)])[0] == 2)
+        ok(["export", "--out", str(ledger), "--force"])
+        me = ok(["me"])
+        ck("me 带账号安全页的邮箱、手机与近期安全记录", isinstance(me.get("security_events"), list) and "email" in me and "phone" in me, str(me))
+        ck("当前账号没有在办的注销申请", ok(["account", "delete-status"]).get("receipt_id") is None)
         email="cli-new@example.test"
         challenge=ok(["account","code-send","--purpose","register","--email",email])["challenge"]
         code=re.search(r"验证码：(\d{6})",fixture.mail[-1][2]).group(1)
@@ -218,6 +262,24 @@ def main() -> int:
         ck("无确认不注销",run(["account","delete"],account=account)[0]==2)
         ok(["account","delete","--yes"],account=account)
         ck("注销后不可登录",run(["me"],account=account)[0]==1)
+        # 注销申请与进度（同 App 注销页：即时注销 409 时改递申请，凭回执不登录也能查）
+        email2 = "cli-request@example.test"
+        challenge = ok(["account", "code-send", "--purpose", "register", "--email", email2])["challenge"]
+        code = re.search(r"验证码：(\d{6})", fixture.mail[-1][2]).group(1)
+        grant = ok(["account", "code-verify", "--challenge", challenge], stdin=code + "\n")["grant"]
+        ok(["account", "register", "--email", email2, "--new-stdin"], stdin=password + "\n" + grant + "\n")
+        second = (email2, password)
+        ck("无确认不递注销申请", run(["account", "delete-request"], account=second)[0] == 2)
+        ck("无确认时没有产生申请", ok(["account", "delete-status"], account=second).get("receipt_id") is None)
+        asked = ok(["account", "delete-request", "--yes"], account=second)
+        ck("注销申请受理并给回执", bool(asked.get("receipt_id")) and asked.get("status") not in (None, "completed"), str(asked))
+        ck("登录后读到同一份申请", ok(["account", "delete-status"], account=second).get("receipt_id") == asked["receipt_id"])
+        code, out, _ = bare(["account", "delete-status", "--receipt", asked["receipt_id"], "--json"])
+        ck("凭回执不登录也能查进度", code == 0 and json.loads(out).get("status") == asked["status"], out)
+        code, out, _ = bare(["account", "delete-status", "--receipt", "no-such-receipt", "--json"])
+        ck("回执不存在 → 1 且 404", code == 1 and json.loads(out).get("status") == 404, out)
+        code, j = run(["account", "delete", "--yes"], account=second)
+        ck("申请在办时即时注销被拒（409）", code == 1 and j.get("status") == 409, str(j))
         # 仅传输为替身；CLI 子进程仍访问正在运行的同一个产品 HTTP 服务。
         import account_phone
         from test_phone_account import FakePNVS

@@ -94,6 +94,8 @@ sh cli/install.sh --check  # 只核对；--uninstall 只删本产品入口的链
 treasury version --json                        # 不登录：命令行版本、所在 App 的版本、服务端连不连得上
 treasury state --json                          # 余额、住哪一档、还差多少升档、电视时间、心愿、今天刷题额度
 treasury entries --limit 10 --json             # 流水（新的在前；服务端下发最近 400 笔）
+treasury entries --all --filter redeem --limit 0 --json   # 全部兑换记录（--all 取 400 笔之前的）
+treasury export --out ledger.json --json       # 导出整本账（同 App「导出账本」）
 treasury preview tr-show --json                # 服务端算分，不记账
 treasury earn tr-show --request-id example-operation-0001 --json
 treasury spend sh-icecream --dry-run --json    # 先看能不能换
@@ -102,23 +104,24 @@ treasury config get --json
 treasury config put shop --file shop.json --revision "$REVISION" --json
 ```
 
-读命令都支持 `--json`，输出 `{"ok": true, …}`；失败输出 `{"ok": false, "err": …}` 且退出码非 0（1 = 服务端拒绝或网络失败，2 = 用法错或缺凭据）。读命令不改任何状态；会写的命令都走服务端原有的校验、锁与幂等，记账/调账/撤销/兑换可先 `--dry-run`，删号与注销必须 `--yes`。
+读命令都支持 `--json`，输出 `{"ok": true, …}`；失败输出 `{"ok": false, "err": …}` 且退出码非 0（1 = 服务端拒绝或网络失败，2 = 用法错或缺凭据）；失败输出另带 `error: {code, message}`（`usage` / `rejected` / `failed`），参数写错时带 `--json` 也按这个形状输出。读、写命令的完整清单、退出码表和仅在窗口中的项见 `treasury --help`。读命令不改任何状态；会写的命令都走服务端原有的校验、锁与幂等，记账/调账/撤销/兑换可先 `--dry-run`，删号与注销必须 `--yes`。
 
 | App 里能做的 | 命令 |
 |---|---|
 | 账本首页 | `treasury state` |
-| 流水 / 走势 | `treasury entries [--since 日期] [--cur pts\|tv\|wish]` / `treasury trend --span 7\|30\|0`（0 为全部） |
+| 流水 / 走势 | `treasury entries [--since 日期] [--cur pts\|tv\|wish] [--filter all\|earn\|deduct\|redeem] [--all]` / `treasury trend --span 7\|30\|0`（0 为全部） |
 | 兑换清单 / 兑换 | `treasury shop` / `treasury spend <商品>` |
 | 家园阶梯 | `treasury tiers` |
+| 导出账本 | `treasury export --out 文件` |
 | 家长：规则、预览、记账、撤销、调账 | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
 | 管理规则 / 商品 / 档位 | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
-| 资料、账号密码、邮箱、注销 | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes` |
+| 资料、账号密码、邮箱、注销 | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes\|delete-request --yes\|delete-status [--receipt 回执]` |
 | 手机注册、登录、绑定与找回 | `treasury account phone-send\|phone-verify\|phone-register\|phone-login\|phone-bind\|phone-recover\|password-set`；OTP 与授权从 stdin 读 |
 | 独立站点用户管理 | `treasury users list\|reset-password\|delete --yes` |
 
 管理范围以服务端为准：`config get`、`config put`、`users list` 原样报告响应里的 `scope`（`site` 全站 / `account` 仅本账号）。服务端没返回 `scope` 时报 `unknown`：`users list` 只显示本账号自己这一行，`config put`、`users reset-password`、`users delete` 直接拒绝，不猜写入会落到哪里。
 
-留在 App 的（纯界面）：实时刷新推送、桌面/锁屏小组件、升档庆祝动画、配色与小组件预览。
+留在 App 的（纯界面）：实时刷新推送、离线缓存提示、桌面/锁屏小组件与手表复杂功能的摆放、升档庆祝动画、配色与小组件预览、退出登录、政策阅读页与邮件链接。还没有命令的：配置的 iCloud 同步/导出/导入、检查更新与升级到新版。
 
 回归：`python3 Tests/cli_treasury_test.py` —— 先核打包规则与 `install.sh`（临时 Applications 目录里的假 .app），再起一个隔离的本地服务端（临时目录 + 空闲端口），不碰线上账号；需要同一工作区的 `edu/web/points/server.py`，或用 `EDU_SERVER_PY` 指过去。
 

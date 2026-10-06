@@ -96,6 +96,8 @@ Credentials come only from environment variables or stdin and are never stored o
 treasury version --json                        # no sign-in: CLI version, the containing app's version, server reachable or not
 treasury state --json                          # balance, current house tier, points to the next tier, TV time, wishes, today's practice allowance
 treasury entries --limit 10 --json             # ledger entries, newest first (the server returns the latest 400)
+treasury entries --all --filter redeem --limit 0 --json   # every redemption (--all reaches past the latest 400)
+treasury export --out ledger.json --json       # export the whole ledger (the app's "Export ledger")
 treasury preview tr-show --json                # computed by the server, nothing recorded
 treasury earn tr-show --request-id example-operation-0001 --json
 treasury spend sh-icecream --dry-run --json    # check before redeeming
@@ -104,23 +106,24 @@ treasury config get --json
 treasury config put shop --file shop.json --revision "$REVISION" --json
 ```
 
-Every read command supports `--json` and prints `{"ok": true, …}`; failures print `{"ok": false, "err": …}` and exit non-zero (1 = refused by the server or network failure, 2 = usage error or missing credentials). Read commands never change state; write commands go through the server's existing validation, locks and idempotency. Earn/adjust/undo/spend accept `--dry-run`; deleting a user or the account requires `--yes`.
+Every read command supports `--json` and prints `{"ok": true, …}`; failures print `{"ok": false, "err": …}` and exit non-zero (1 = refused by the server or network failure, 2 = usage error or missing credentials); failures also carry `error: {code, message}` (`usage` / `rejected` / `failed`), and a mistyped argument with `--json` prints the same shape. `treasury --help` lists every read and write command, the exit-code table and the window-only items. Read commands never change state; write commands go through the server's existing validation, locks and idempotency. Earn/adjust/undo/spend accept `--dry-run`; deleting a user or the account requires `--yes`.
 
 | In the app | Command |
 |---|---|
 | Ledger home | `treasury state` |
-| Entries / trend | `treasury entries [--since DATE] [--cur pts\|tv\|wish]` / `treasury trend --span 7\|30\|0` (0 means all history) |
+| Entries / trend | `treasury entries [--since DATE] [--cur pts\|tv\|wish] [--filter all\|earn\|deduct\|redeem] [--all]` / `treasury trend --span 7\|30\|0` (0 means all history) |
 | Shop / redeem | `treasury shop` / `treasury spend <item>` |
 | Tier ladder | `treasury tiers` |
 | Parent: rules, preview, record, undo, adjust | `treasury rules` / `preview` / `earn` / `undo` / `adjust` |
 | Manage rules / shop / tiers | `treasury config get` / `treasury config put rules\|shop\|tiers --file items.json` |
-| Profile, account password, email, account deletion | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes` |
+| Profile, account password, email, account deletion | `treasury profile` / `me` / `account passwd\|code-send\|code-verify\|email-bind\|recover\|delete --yes\|delete-request --yes\|delete-status [--receipt ID]` |
+| Export ledger | `treasury export --out FILE` |
 | Phone registration, login, binding and recovery | `treasury account phone-send\|phone-verify\|phone-register\|phone-login\|phone-bind\|phone-recover\|password-set`; codes and grants come from stdin |
 | Independent site administration | `treasury users list\|reset-password\|delete --yes` |
 
 Admin scope is whatever the server says: `config get`, `config put` and `users list` report the `scope` field of the response (`site` = the whole site, `account` = this account only). When the server returns no `scope`, they report `unknown`: `users list` shows only the caller's own row, and `config put`, `users reset-password` and `users delete` refuse rather than guess where the write would land.
 
-GUI-only (pure interface): live refresh pushes, home/lock-screen widgets, the tier-up celebration, and the palette and widget previews.
+GUI-only (pure interface): live refresh pushes, the offline-cache notice, placing home/lock-screen widgets and watch complications, the tier-up celebration, the palette and widget previews, signing out, the policy pages and mail links. No command yet: iCloud sync/export/import of settings, checking for updates and upgrading.
 
 Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule and `install.sh` (a fake .app in a temporary Applications folder), then starts an isolated local server (temporary directory, free port) and never touches live accounts; it needs `edu/web/points/server.py` from the same workspace, or `EDU_SERVER_PY` pointing to it.
 
