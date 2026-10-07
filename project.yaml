@@ -147,7 +147,7 @@ sop:
     - name: 流水实时刷新
       human: 只在窗口里有意义：App 开着时的 SSE 长连接；命令每次直读服务端
     - name: 离线时显示缓存与离线提示
-      human: 只在窗口里有意义：设备本机缓存的展示；命令连不上即退出 1
+      device: 上次账本的缓存存在那台设备的钥匙串里，离线标记只在 App 运行时的内存里，设备不上报；命令与后端读不到设备里那份，命令自己连不上即退出 1
     - name: 走势：近 7 天、近 30 天、全部
       command: treasury trend
     - name: 加分与减分项目清单
@@ -193,7 +193,7 @@ sop:
     - name: 账号安全：近期账号安全记录
       command: treasury me
     - name: 退出登录
-      missing: 命令够不到 App 里那份登录态（App 退出还会清本机缓存与小组件快照并让手表下线）；命令自己不保存登录态
+      device: 登录态就是这台设备上那枚会话 Cookie 加本机缓存。退出时服务端只回一个清 Cookie 的响应，不留会话记录，App 再清本机账本缓存与小组件快照并让手表下线；命令自己不保存登录态，命令与后端够不到设备里那份
     - name: 注销账号
       command: treasury account delete
     - name: 申请注销（即时注销被拒时）
@@ -202,10 +202,13 @@ sop:
       command: treasury account delete-status
     - name: 反馈、收不到验证码与恢复申诉的邮件链接
       human: 只在窗口里有意义：打开邮件撰写
+    # 「配置与更新」面板：手机、平板、Vision 上的那份只在设备本机，记 device。
+    # 范围：Mac 版是本组件登记的平台线，但本机现在没装（见上面 cli 的说明），没有装着的 Mac 版就没有可核对的状态，按约定不加 Mac 行；
+    # 装上 Mac 版后，同一面板的状态在那台 Mac 上，届时另列两行并让 treasury 加 update check / update install（转调 Mac 版 App 里的共用更新命令）。
     - name: 检查更新
-      missing: 共享生命周期模块暂无命令入口
+      device: 手机、平板、Vision 上拿本机已装版本去比 App Store 上的版本，结论只显示在那台设备上，不留存也不上报；命令与后端读不到。范围是手机、平板、Vision；Mac 版本机没装，不在本行内
     - name: 升级到新版
-      missing: 共享生命周期模块暂无命令入口
+      device: 手机、平板、Vision 上是「前往 App Store」，由系统在那台设备上安装；命令与后端替它装不了。范围是手机、平板、Vision；Mac 版本机没装，不在本行内
     - name: 升档庆祝动画
       human: 只在窗口里有意义：升档后在屏幕上播放的动画；档位本身读 treasury state
     - name: 桌面小组件
