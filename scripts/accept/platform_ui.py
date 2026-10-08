@@ -64,7 +64,7 @@ def ownership(label, functional_only=False):
 def build_runner(platform, root):
     test = REPO / "Tests/PlatformUITests.swift"
     account_test = REPO / "Tests/AccountUITests.swift"
-    sdk = "iphonesimulator" if platform == "ipad" else "xrsimulator"
+    sdk = "iphonesimulator" if platform in ("ipad", "iphone") else "xrsimulator"
     test_bytes = test.read_bytes() + (account_test.read_bytes() if account_test.exists() else b"")
     key = hashlib.sha256(test_bytes + sim_lane.developer_dir(sdk).encode() + platform.encode()).hexdigest()[:16]
     out = root / (platform + "-ui-" + key)
@@ -82,9 +82,9 @@ def build_runner(platform, root):
     shutil.copy2(test, source / "Tests/PlatformUITests.swift")
     if account_test.exists():
         shutil.copy2(account_test, source / "Tests/AccountUITests.swift")
-    native_platform = "iOS" if platform == "ipad" else "visionOS"
+    native_platform = "iOS" if platform in ("ipad", "iphone") else "visionOS"
     base = {"GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.host"}
-    if platform == "ipad":
+    if platform in ("ipad", "iphone"):
         base.update(TARGETED_DEVICE_FAMILY="1,2", INFOPLIST_KEY_UILaunchScreen_Generation="YES")
     spec = {"name": "PointsUIAcceptance", "options": {"deploymentTarget": {native_platform: "26.0"}}, "targets": {
         "PointsQAHost": {"type": "application", "platform": native_platform, "sources": ["Host"],
@@ -96,7 +96,7 @@ def build_runner(platform, root):
     run_budget().run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
     command(["xcodebuild", "-project", "PointsUIAcceptance.xcodeproj", "-scheme", "PointsQAHost",
-             "-configuration", "Debug", "-destination", "generic/platform=" + ("iOS Simulator" if platform == "ipad" else "visionOS Simulator"),
+             "-configuration", "Debug", "-destination", "generic/platform=" + ("iOS Simulator" if platform in ("ipad", "iphone") else "visionOS Simulator"),
              "-derivedDataPath", str(out / "dd"), "CODE_SIGNING_ALLOWED=NO", "build-for-testing"],
              source, out / "build.log", env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir(sdk)})
     runs = list((out / "dd/Build/Products").glob("*.xctestrun"))
@@ -215,7 +215,7 @@ def main(argv=None):
     entered = ENTRY_STARTED
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--phase", choices=("product", "build", "ui", "watch"), required=True)
-    ap.add_argument("--platform", choices=("ipad", "vision", "mac"), default="ipad")
+    ap.add_argument("--platform", choices=("ipad", "iphone", "vision", "mac"), default="ipad")
     ap.add_argument("--receipt", type=Path)
     ap.add_argument("--connection", type=Path)
     ap.add_argument("--out", type=Path, required=True)
