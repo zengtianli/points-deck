@@ -76,6 +76,16 @@
       "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
     }
   },
-  "candidate_binding_status": "第三轮修改 Api 后，第二轮输入绑定保留为旧原件绑定；未改 hash 凑绿，完整原生证据需重新验收绑定。",
-  "summary": "第三轮仍仅 email_delivery 有完整原件，1/17；其余 16 项 pending。Cookie 根因及两平台回归通过不替代完整账号流程；当前候选输入绑定未齐，原门应退出 75。"
+  "candidate_binding_status": "第四轮只读重算当前候选输入为 25ae0ff081be4a8382b267e43b7742b795fc9fa7f88ab113611243691eb6b60f；修好的 XCTest 车道仍生成 tap/typeText/swipe，本轮明确禁止界面合成输入，当前 Computer Use 清单没有接入原生目标或文档化无窗口 iOS 操作接口。未执行完整原生流程，第二轮证据的 account_input_sha256 保持原值，不改 hash 凑绿。",
+  "latest_native_attempt": {
+    "round": 4,
+    "status": "blocked_before_native_execution",
+    "evidence": "perf/account/raw/round4-20261008/entry-blocked.json",
+    "evidence_sha256": "032f48bc92150e45cf86a05b2eb714726a3a130e29e544de4bdf05d21f7fe795",
+    "native_lane_runs": 0,
+    "native_cases_completed": 0,
+    "new_sms": 0,
+    "new_mail": 0
+  },
+  "summary": "第四轮仍 1/17，仅 email_delivery 的第二轮原件 passed；16 项 pending。三条修好车道因显式禁止界面合成输入且当前原生操作目标未接入而未运行，普通触控是否有产品缺陷未定性。当前候选完整原生输入绑定未齐，原门保持真实缺口。"
 }

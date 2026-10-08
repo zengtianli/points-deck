@@ -1,0 +1,67 @@
+{
+  "task_id": "points-account-release-20261008",
+  "round": 4,
+  "observed_at": "2026-10-08T19:04:46.573794+08:00",
+  "status": "blocked_before_native_execution",
+  "client_version": "1.0.2 (9)",
+  "input_head": "da5e74214b1bb77acfadcb858ecc4047de77e46b",
+  "expected_account_input_sha256": "25ae0ff081be4a8382b267e43b7742b795fc9fa7f88ab113611243691eb6b60f",
+  "current_input_flow_binding_completed": false,
+  "source_sha256": {
+    "Tests/AccountUITests.swift": "72390d589826e86acbc3559e27c45537267fbcdb56091e6113559f5fa2692db3",
+    "scripts/accept/platform_ui.py": "e9a6d86ee3b0a1171b584bde1b26ee713057776a9ea9b710ce47df4c2d6408f3",
+    "Sources/Api.swift": "0c6674f0a188264bd9a54b237a4e467799e370e2fe3aa44410b299edeb880301"
+  },
+  "native_lanes": {
+    "phone_send": {
+      "status": "not_run",
+      "assertion_attempts": 0,
+      "reason": "Existing XCTest helper generates tap/typeText/swipe; this round explicitly prohibits synthetic UI input."
+    },
+    "email_verification": {
+      "status": "not_run",
+      "assertion_attempts": 0,
+      "reason": "Existing XCTest helper generates tap/typeText/swipe; this round explicitly prohibits synthetic UI input."
+    },
+    "policy_navigation": {
+      "status": "not_run",
+      "assertion_attempts": 0,
+      "reason": "Existing XCTest helper generates tap/typeText/swipe; this round explicitly prohibits synthetic UI input."
+    }
+  },
+  "computer_use_observation": {
+    "tool": "mcp__cua_repl.js",
+    "computer_target": "mac",
+    "relevant_apps": [],
+    "native_app_count": 28,
+    "browser_count": 1,
+    "documented_headless_ios_device_api": false,
+    "scope": "Current exposed surface inventory only; no claim that Simulator cannot be installed or that Computer Use is bound to the Mini filesystem."
+  },
+  "product_diagnosis": {
+    "ordinary_touch_keyboard_first_tap": "not_observed; cannot determine real-user defect or justify product change",
+    "product_source_changed": false
+  },
+  "native_account_cases_completed": [],
+  "transport_new": {
+    "sms": 0,
+    "mail": 0
+  },
+  "transport_cumulative": {
+    "sms": 0,
+    "mail": 3
+  },
+  "transport_limits": {
+    "sms": 20,
+    "mail": 20
+  },
+  "budget_shortfall_cases": [],
+  "phone_change": "skipped; second authorized owner number unavailable",
+  "publication_actions": {
+    "push": false,
+    "version_bump": false,
+    "archive": false,
+    "upload": false,
+    "submit": false
+  }
+}
