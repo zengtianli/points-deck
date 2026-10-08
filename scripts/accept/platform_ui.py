@@ -63,13 +63,15 @@ def ownership(label, functional_only=False):
 
 def build_runner(platform, root):
     test = REPO / "Tests/PlatformUITests.swift"
+    account_test = REPO / "Tests/AccountUITests.swift"
     sdk = "iphonesimulator" if platform == "ipad" else "xrsimulator"
-    key = hashlib.sha256(test.read_bytes() + sim_lane.developer_dir(sdk).encode() + platform.encode()).hexdigest()[:16]
+    test_bytes = test.read_bytes() + (account_test.read_bytes() if account_test.exists() else b"")
+    key = hashlib.sha256(test_bytes + sim_lane.developer_dir(sdk).encode() + platform.encode()).hexdigest()[:16]
     out = root / (platform + "-ui-" + key)
     ready = out / "runner.json"
     if ready.exists():
         doc = json.loads(ready.read_text())
-        if sim_lane.sha256(test) != doc["test_sha256"] or not Path(doc["xctestrun"]).is_file():
+        if hashlib.sha256(test_bytes).hexdigest() != doc["test_sha256"] or not Path(doc["xctestrun"]).is_file():
             raise ValueError("test-only runner changed")
         return doc
     out.mkdir(parents=True, exist_ok=True)
@@ -78,6 +80,8 @@ def build_runner(platform, root):
     (source / "Tests").mkdir(exist_ok=True)
     shutil.copytree(sim_lane.ROTATOR_SRC / "Host", source / "Host", dirs_exist_ok=True)
     shutil.copy2(test, source / "Tests/PlatformUITests.swift")
+    if account_test.exists():
+        shutil.copy2(account_test, source / "Tests/AccountUITests.swift")
     native_platform = "iOS" if platform == "ipad" else "visionOS"
     base = {"GENERATE_INFOPLIST_FILE": "YES", "SWIFT_VERSION": "5.0", "PRODUCT_BUNDLE_IDENTIFIER": "cyou.tianli.points.qa.host"}
     if platform == "ipad":
@@ -98,7 +102,7 @@ def build_runner(platform, root):
     runs = list((out / "dd/Build/Products").glob("*.xctestrun"))
     if len(runs) != 1:
         raise ValueError("test-only build did not produce one xctestrun")
-    doc = {"test_sha256": sim_lane.sha256(test), "xctestrun": str(runs[0]), "source": str(source),
+    doc = {"test_sha256": hashlib.sha256(test_bytes).hexdigest(), "xctestrun": str(runs[0]), "source": str(source),
            "platform": platform, "product_rebuilt": False, "sdk": sdk}
     ready.write_text(json.dumps(doc, indent=1))
     return doc
@@ -108,9 +112,11 @@ def run_tests(runner, device, ledger, out, case):
     env = {**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir(runner["sdk"]),
            **{"TEST_RUNNER_POINTS_QA_" + key: ledger[value] for key, value in
               (("BASE", "url"), ("USER", "user"), ("PASSWORD", "pw"))}}
+    env.update({"TEST_RUNNER_POINTS_QA_" + key: str(value) for key, value in ledger.get("qa", {}).items()})
+    test_class = "AccountUITests" if case.startswith("testAccount") else "PlatformUITests"
     command(["xcodebuild", "test-without-building", "-xctestrun", runner["xctestrun"],
         "-destination", "id=" + device, "-destination-timeout", "120", "-parallel-testing-enabled", "NO",
-        "-collect-test-diagnostics", "never", "-only-testing:PointsQAUITests/PlatformUITests/" + case,
+        "-collect-test-diagnostics", "never", "-only-testing:PointsQAUITests/" + test_class + "/" + case,
         "-resultBundlePath", str(out / "ui.xcresult")], Path(runner["source"]), out / "ui.log", env=env)
     if "TEST EXECUTE SUCCEEDED" not in (out / "ui.log").read_text(errors="replace"):
         raise RuntimeError("real UI tests did not report success")
@@ -215,6 +221,7 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--budget-min", type=float, default=30, help="total time including admission and cleanup")
     ap.add_argument("--functional-only", action="store_true", help="one admission check; defer immediately if busy, without a performance wait")
+    ap.add_argument("--case", choices=("testCoreEditingAndReopen", "testAccountPasswordLogin", "testAccountEmailLifecycle", "testAccountEmailTransport", "testAccountPhoneLifecycle", "testAccountPhoneBinding", "testAccountPasswordlessDeletion"), default="testCoreEditingAndReopen")
     a = ap.parse_args(argv)
     try:
         with Budget(a.budget_min * 60, entered):
@@ -266,8 +273,9 @@ def run(a):
                     phone = sim_lane.ensure_device(a.platform, cfg["device_type"])["udid"]
                     sim_lane.boot(phone, 420)
                     sim_lane.simctl("install", phone, built["app_path"])
-                    run_tests(runner, phone, ledger, a.out, "testCoreEditingAndReopen")
-                    (a.out / "saved-config.json").write_text(json.dumps(saved_configuration(ledger), indent=1))
+                    run_tests(runner, phone, ledger, a.out, a.case)
+                    if a.case == "testCoreEditingAndReopen":
+                        (a.out / "saved-config.json").write_text(json.dumps(saved_configuration(ledger), indent=1))
                 else:
                     phone = sim_lane.ensure_device("iphone", "iPhone-17-Pro", "Points Pair Phone")["udid"]
                     watch = sim_lane.ensure_device("watch", "Apple-Watch-Series-12-46mm", "Points Pair Watch")["udid"]
@@ -324,6 +332,13 @@ def run(a):
                     finally:
                         stream.close()
                         waiter.join(5)
+                        # Keep native WC diagnostics on failures as well as success. Only
+                        # framework state/errors are selected; application payloads are not.
+                        for device, label in ((phone, "phone"), (watch, "watch")):
+                            diagnostic = sim_lane.simctl("spawn", device, "log", "show", "--last", "5m",
+                                "--style", "compact", "--predicate",
+                                'subsystem == "com.apple.WatchConnectivity"', check=False)
+                            (a.out / (label + "-wc.log")).write_text(diagnostic.stdout)
                 if sim_lane.simulator_app_pids() - before:
                     raise RuntimeError("UI tests unexpectedly opened Simulator.app")
                 if app_sop.lane_inputs(app, a.platform if a.phase == "ui" else "watch")["input_sha256"] != digest:

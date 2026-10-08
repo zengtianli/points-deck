@@ -20,11 +20,14 @@ struct PasswordInput: View {
 }
 
 struct EmailVerification: View {
+    @EnvironmentObject private var store: Store
     let email: String
     let purpose: String
     var password = ""
     var identityGrant = ""
     @Binding var grant: String
+    @State private var epoch = UUID()
+    private var context: [String] { [email, purpose, password, identityGrant] }
     @State private var challenge = ""
     @State private var code = ""
     @State private var busy = false
@@ -34,36 +37,45 @@ struct EmailVerification: View {
         Group {
             Button(challenge.isEmpty ? "发送验证码" : canResend ? "重新发送" : "60 秒后可重新发送") {
                 Task {
+                    let generation = epoch; let target = context
                     busy = true; defer { busy = false }
                     do {
-                        challenge = try await Api.sendCode(email: email, purpose: purpose, password: password, identityGrant: identityGrant)
+                        let fresh = try await Api.sendCode(email: email, purpose: purpose, password: password, identityGrant: identityGrant)
+                        guard generation == epoch && target == context else { return }
+                        challenge = fresh
                         grant = ""; code = ""; canResend = false
                         message = purpose == "recover" ? T("account.email.recover_sent", "若该邮箱已绑定验证，将收到找回邮件。请检查垃圾邮件。") : T("account.email.sent", "邮件已提交投递，请检查收件箱和垃圾邮件。")
-                    } catch { message = error.localizedDescription }
+                    } catch { if generation == epoch && target == context { await store.confirmSessionFailure(error); message = error.localizedDescription } }
                 }
             }.disabled(busy || !canResend || email.isEmpty)
             if !challenge.isEmpty && grant.isEmpty {
                 TextField("6 位验证码", text: $code).keyboardType(.numberPad).textContentType(.oneTimeCode).privacySensitive()
                 Button("验证邮箱") {
                     Task {
+                        let generation = epoch; let target = context; let checked = challenge
                         busy = true; defer { busy = false }
-                        do { grant = try await Api.verifyCode(challenge: challenge, code: code); message = "邮箱已验证" }
-                        catch { message = error.localizedDescription }
+                        do {
+                            let fresh = try await Api.verifyCode(challenge: challenge, code: code)
+                            guard generation == epoch && target == context && checked == challenge else { return }
+                            grant = fresh; message = "邮箱已验证"
+                        } catch { if generation == epoch && target == context { await store.confirmSessionFailure(error); message = error.localizedDescription } }
                     }
                 }.disabled(busy || code.count != 6)
             }
             if !grant.isEmpty { Label("验证完成", systemImage: "checkmark.circle.fill").foregroundStyle(TreasuryTheme.accent) }
             if let message { Text(message).font(.footnote).foregroundStyle(.secondary) }
         }
-        .onChange(of: email) { _, _ in challenge = ""; grant = ""; code = ""; message = nil; canResend = true }
-        .onChange(of: password) { _, _ in grant = ""; challenge = ""; code = ""; canResend = true }
-        .onChange(of: identityGrant) { _, _ in grant = ""; challenge = ""; code = ""; canResend = true }
+        .onChange(of: email) { _, _ in reset() }
+        .onChange(of: purpose) { _, _ in reset() }
+        .onChange(of: password) { _, _ in reset() }
+        .onChange(of: identityGrant) { _, _ in reset() }
         .task(id: challenge) {
             guard !challenge.isEmpty else { return }
             try? await Task.sleep(for: .seconds(60))
             if !Task.isCancelled { canResend = true }
         }
     }
+    private func reset() { epoch = UUID(); challenge = ""; grant = ""; code = ""; message = nil; canResend = true }
 }
 
 struct AccountSecurityView: View {
@@ -136,7 +148,7 @@ struct AccountSecurityView: View {
                 let date = Date(timeIntervalSince1970: ($0["at"] as? NSNumber)?.doubleValue ?? 0)
                 return "\(date.formatted(date: .abbreviated, time: .shortened)) · \($0["action"] as? String ?? "账号变更")"
             }
-        } catch { message = error.localizedDescription }
+        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
     private func bind() async {
         busy = true; defer { busy = false }
@@ -144,7 +156,7 @@ struct AccountSecurityView: View {
             let response = try await Api.request("api/email_bind", body: ["email": email, "password": password, "identity_grant": identity, "grant": newGrant, "old_grant": oldGrant])
             message = response["notification_sent"] as? Bool == false ? "邮箱已更新；通知投递失败，请联系支持。" : "邮箱已验证并保存，原账本保持完整。"
             newGrant = ""; oldGrant = ""; password = ""; identity = ""; await load()
-        } catch { message = error.localizedDescription }
+        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }
 
@@ -174,7 +186,7 @@ struct PasswordChangeView: View {
                             await store.refresh()
                             message = response["notification_sent"] as? Bool == false ? "密码已修改，其他旧会话已失效；邮件通知投递失败。" : "密码已修改，其他设备的旧会话已失效。"
                             old = ""; new = ""; confirm = ""
-                        } catch { message = error.localizedDescription }
+                        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }.disabled(busy || old.isEmpty || new.count < 15 || new != confirm)
             }.navigationTitle("修改登录密码")

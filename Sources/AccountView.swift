@@ -48,7 +48,7 @@ struct AccountView: View {
                             let state = try await Api.request("api/state?all=1")
                             document = LedgerDocument(data: try JSONSerialization.data(withJSONObject: state, options: [.prettyPrinted, .sortedKeys]))
                             exporting = true
-                        } catch { message = error.localizedDescription }
+                        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }
                 Button("配置、检查更新与安装新版", systemImage: "arrow.triangle.2.circlepath") { updates = true }
@@ -90,7 +90,7 @@ struct AccountView: View {
             emailStatus = email.isEmpty ? "邮箱未绑定" : mask + (me["email_verified"] as? Bool == true ? " · 已验证" : " · 待验证")
             let phone = me["phone"] as? String ?? ""
             phoneStatus = phone.isEmpty ? "手机未绑定" : "\(phone.prefix(6))****\(phone.suffix(4)) · 已验证"
-        } catch { message = error.localizedDescription }
+        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }
 
@@ -153,7 +153,7 @@ struct AccountDeletionView: View {
                     if receipt != nil { await status() }
                     if store.phase == .loggedIn {
                         do { let me = try await Api.request("api/me"); hasPassword = me["has_password"] as? Bool ?? true; phone = me["phone"] as? String ?? "" }
-                        catch { message = error.localizedDescription }
+                        catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }
         }.treasurySheetSize(minHeight: 360)
@@ -172,6 +172,7 @@ struct AccountDeletionView: View {
                 store.dropSession(); WatchLink.shared.publishSignedOut(); dismiss()
             }
         } catch {
+            await store.confirmSessionFailure(error)
             message = error.localizedDescription
             offerRequest = (error as? Api.Failure)?.status == 409
         }
@@ -181,7 +182,7 @@ struct AccountDeletionView: View {
         do {
             let result = try await Api.request("api/account_delete_status", body: ["receipt_id": receipt])
             message = result["status"] as? String == "completed" ? "账号及相关数据清理已完成。" : "注销处理中，尚未完成删除。预计 \(result["expected_by"] as? String ?? "通常30天内")。"
-        } catch { message = error.localizedDescription }
+        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }
 

@@ -90,7 +90,7 @@ final class Store: ObservableObject {
                 state = cached; phase = .loggedIn; offline = true; startEvents()
             } else {
                 self.error = error.localizedDescription
-                if (error as? Api.Failure)?.status == 401 { dropSession() }
+                if (error as? Api.Failure)?.status == 401 { dropSession(); WatchLink.shared.publishSignedOut() }
                 phase = .loggedOut
             }
         }
@@ -119,7 +119,11 @@ final class Store: ObservableObject {
 
     func loadHistory() async {
         do { state = try await Api.state(full: true); offline = false }
-        catch { showNotice("读取历史失败：\(error.localizedDescription)") }
+        catch {
+            if (error as? Api.Failure)?.status == 401 {
+                dropSession(); WatchLink.shared.publishSignedOut()
+            } else { showNotice("读取历史失败：\(error.localizedDescription)") }
+        }
     }
 
     /// 短信认证已取得原服务 cookie，读真实账本后才进入主界面。
@@ -144,6 +148,12 @@ final class Store: ObservableObject {
                 WatchLink.shared.publishSignedOut()
             }
         }
+    }
+
+    /// 账号接口的业务错误与会话失效分开；只在 state 身份闸再次确认 401 后清会话。
+    func confirmSessionFailure(_ failure: Error) async {
+        guard (failure as? Api.Failure)?.status == 401 else { return }
+        await refresh()
     }
 
     /// 比对档位。**装完 app 第一次**拿到状态时只记不庆（没有基准，谈不上「升」了）；

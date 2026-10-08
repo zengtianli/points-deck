@@ -1,0 +1,81 @@
+{
+  "client_environment": "1.0.2 (9) actual Release iPad simulator App, original XCTest lane",
+  "service_environment": "Isolated current production account service with real authorized Mailu transport; production users untouched",
+  "mail_transport": "real",
+  "sms_transport": "not_tested",
+  "account_input_sha256": "6828717745552e3ad694f55a530fb53bd0c76644b47eb9add102d1c0b5e1239c",
+  "account_cases": {
+    "registration": {
+      "status": "pending",
+      "reason": "邮箱与手机号实际注册均未到完成态。"
+    },
+    "login": {
+      "status": "pending",
+      "reason": "第三轮已确认系统 Cookie 异步落盘竞态；收到 Set-Cookie 后等待 URLSession.flush。Mac 与 iPadOS 27 的生产 Api 独立进程立即退出/恢复/登出回归通过；完整原生密码与手机登录流程未重验，不标完整通过。"
+    },
+    "password_change": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "password_recovery": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "logout": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "account_deletion": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "abuse_protection": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "data_preservation": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "phone_verification": {
+      "status": "pending",
+      "reason": "第三轮旧录像与事件确认：键盘收起时 iPad 弹窗移动 201.5 点，首个点击未产生 phone_send。测试先收键盘、等稳定的修复只做类型检查，未执行合成输入；仍缺真实发码、收码和核验。"
+    },
+    "phone_binding": {
+      "status": "pending",
+      "reason": "第三轮定位同一键盘/弹窗点击时序问题；未新增真实短信。仍缺修复后的原生绑定、原ID/账本回读与其他设备状态。"
+    },
+    "phone_change": {
+      "status": "pending",
+      "reason": "只有一个已登记的本人号码，现行门没有豁免；不得猜第二号码。"
+    },
+    "sms_delivery": {
+      "status": "pending",
+      "reason": "本轮实际短信发送数为 0，未验证投递。"
+    },
+    "email_verification": {
+      "status": "pending",
+      "reason": "第三轮定位键盘收起使验证按钮下移 201.5 点，点击只收键盘、没有 email_verify；政策段存在背景表单/不可点击目标。测试定位与就绪检查已修，未执行合成输入，仍缺真实原生核验。"
+    },
+    "email_binding": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "email_change": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    },
+    "email_delivery": {
+      "status": "passed",
+      "evidence": "perf/account/raw/round2-20261008/email-delivery.json",
+      "evidence_sha256": "052d4302d98d0ef3517d6e99f18ce6984107fb9a9b12cfa0f876dbf25fce25f0",
+      "scope": "原生发送邮箱码、真实 SMTP 接受和 Mailu IMAP 收件；不包含邮箱核验或注册"
+    },
+    "phone_login": {
+      "status": "pending",
+      "reason": "现有局部回归/原生结果不足以证明完整谓词；仍需逐项实际流程原件。"
+    }
+  },
+  "candidate_binding_status": "第三轮修改 Api 后，第二轮输入绑定保留为旧原件绑定；未改 hash 凑绿，完整原生证据需重新验收绑定。",
+  "summary": "第三轮仍仅 email_delivery 有完整原件，1/17；其余 16 项 pending。Cookie 根因及两平台回归通过不替代完整账号流程；当前候选输入绑定未齐，原门应退出 75。"
+}

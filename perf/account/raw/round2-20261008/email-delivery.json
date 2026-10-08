@@ -1,0 +1,52 @@
+{
+  "case": "email_delivery",
+  "scope": "Actual installed Release iPad App issued email_send; real SMTP accepted and authorized Mailu IMAP received the fresh code email. Verification/registration were not completed.",
+  "native_test_exit_code": 1,
+  "source_record": "/Users/tianli/mac-pair/tasks/points-account-release-20261008/output/round2/account-EmailTransport-1791450333/evidence.json",
+  "source_record_sha256": "184c2e70fedc6bf0d07cb383e886cc462a8412eae5a3423d4e44b8bcea51676a",
+  "source_sha256": {
+    "server.py": "9fdb6314b9c31e03e60020540806384bb99b376f82f6354a30ffa077868699ce",
+    "account_security.py": "39c24b5c38a9b68e46721ebdeb6d954411de1e79cee599288a23e771dec63035",
+    "account_phone.py": "800e16dab79eda7539ef450c44c1e9fc3350dec9c30a56c96103f4db77734d8f",
+    "AccountUITests.swift": "b45495036a1bf76ede58bfc9fbb5761b1d7fd8d2746782f269a04dfb552b9203"
+  },
+  "client_environment": "1.0.2 (9) actual Release iPad simulator App through original XCTest lane",
+  "service_environment": "isolated current production server.py/account_security.py/account_phone.py; no production users",
+  "mail_transport": "real",
+  "sms_transport": "not_tested",
+  "messages_sent": {
+    "sms": 0,
+    "mail": 1
+  },
+  "events": [
+    {
+      "path": "/api/state",
+      "status": 401,
+      "ok": false,
+      "provider_accepted": null,
+      "notification_sent": null
+    },
+    {
+      "transport": "real-mail",
+      "smtp_accepted": true,
+      "kind": "code",
+      "recipient_sha256": "70ad25b68e95ff9a629415a24d9a03e4f88704a53d6dc88e520189c2d518ded0"
+    },
+    {
+      "path": "/api/email_send",
+      "status": 200,
+      "ok": true,
+      "provider_accepted": null,
+      "notification_sent": null
+    },
+    {
+      "transport": "real-mail",
+      "imap_received": true,
+      "authorized_recipient_sha256": "70ad25b68e95ff9a629415a24d9a03e4f88704a53d6dc88e520189c2d518ded0"
+    }
+  ],
+  "limitations": [
+    "The parent email lifecycle test failed at subsequent verification; this is only mail delivery evidence.",
+    "No email account was registered or changed; no SMS was sent."
+  ]
+}

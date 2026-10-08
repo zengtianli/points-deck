@@ -1,11 +1,14 @@
 import SwiftUI
 
 struct PhoneVerification: View {
+    @EnvironmentObject private var store: Store
     let phone: String
     let purpose: String
     var password = ""
     var identityGrant = ""
     @Binding var grant: String
+    @State private var epoch = UUID()
+    private var context: [String] { [phone, purpose, password, identityGrant] }
     @State private var challenge = ""
     @State private var code = ""
     @State private var requestID = UUID().uuidString
@@ -20,11 +23,14 @@ struct PhoneVerification: View {
         Group {
             Button(challenge.isEmpty ? "获取短信验证码" : canResend ? "重新获取短信" : AccountHints.resendWaitLabel(resendSeconds)) {
                 Task {
+                    let generation = epoch; let target = context
                     busy = true; defer { busy = false }
                     canResend = false; cooldown = UUID()
                     do {
                         let response = try await Api.request("api/phone_send", body: ["phone": phone, "purpose": purpose,
                             "password": password, "identity_grant": identityGrant, "request_id": requestID])
+                        guard generation == epoch && target == context else { return }
+                        requestID = UUID().uuidString // 下一次明确重发才使用新标识；失败保留原标识
                         challenge = response["challenge"] as? String ?? ""
                         grant = ""; code = ""
                         message = response["message"] as? String
@@ -33,7 +39,7 @@ struct PhoneVerification: View {
                         // 回执里的间隔和正在倒数的不一样（后台改过）才重新倒数；一样时与原先完全相同
                         let fresh = AccountHints.resendSeconds(receipt: response["resend_after"])
                         if fresh != resendSeconds { resendSeconds = fresh; cooldown = UUID() }
-                    } catch { message = error.localizedDescription }
+                    } catch { if generation == epoch && target == context { await store.confirmSessionFailure(error); message = error.localizedDescription } }
                 }
             }.frame(minHeight: 48).disabled(busy || !canResend || phone.isEmpty)
             if !challenge.isEmpty && grant.isEmpty {
@@ -41,11 +47,13 @@ struct PhoneVerification: View {
                     .textContentType(.oneTimeCode).privacySensitive().frame(minHeight: 48)
                 Button("验证手机号") {
                     Task {
+                        let generation = epoch; let target = context; let checked = challenge
                         busy = true; defer { busy = false }
                         do {
                             let response = try await Api.request("api/phone_verify", body: ["challenge": challenge, "code": code])
+                            guard generation == epoch && target == context && checked == challenge else { return }
                             grant = response["grant"] as? String ?? ""; code = ""; message = "手机验证完成"
-                        } catch { message = error.localizedDescription }
+                        } catch { if generation == epoch && target == context { await store.confirmSessionFailure(error); message = error.localizedDescription } }
                     }
                 }.frame(minHeight: 48).disabled(busy || code.count != 6)
             }
@@ -60,10 +68,10 @@ struct PhoneVerification: View {
         .task(id: cooldown) {
             guard !canResend else { return }
             try? await Task.sleep(for: .seconds(resendSeconds))
-            if !Task.isCancelled { canResend = true; requestID = UUID().uuidString }
+            if !Task.isCancelled { canResend = true }
         }
     }
-    private func reset() { challenge = ""; code = ""; grant = ""; requestID = UUID().uuidString; message = nil; canResend = true }
+    private func reset() { epoch = UUID(); cooldown = UUID(); challenge = ""; code = ""; grant = ""; requestID = UUID().uuidString; message = nil; canResend = true }
 }
 
 struct PhoneRegisterView: View {
@@ -150,7 +158,7 @@ struct PhoneSecurityView: View {
                             message = response["message"] as? String
                             password = ""; identity = ""; newGrant = ""; oldGrant = ""; await load()
                             WatchLink.shared.publishSession(); await store.refresh()
-                        } catch { message = error.localizedDescription }
+                        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }.frame(minHeight: 48).disabled(busy || newGrant.isEmpty || (!current.isEmpty && oldGrant.isEmpty))
                 if let message { Text(message) }
@@ -163,7 +171,7 @@ struct PhoneSecurityView: View {
     }
     private func load() async {
         do { let me = try await Api.request("api/me"); current = me["phone"] as? String ?? ""; hasPassword = me["has_password"] as? Bool ?? true }
-        catch { message = error.localizedDescription }
+        catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }
 
@@ -189,13 +197,13 @@ struct PhonePasswordSetView: View {
                         do {
                             _ = try await Api.request("api/password_set", body: ["identity_grant": grant, "new": password])
                             WatchLink.shared.publishSession(); await store.refresh(); dismiss()
-                        } catch { message = error.localizedDescription }
+                        } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }.frame(minHeight: 48).disabled(busy || grant.isEmpty || password.count < 15 || password != confirm)
                 if let message { Text(message).foregroundStyle(.red) }
             }.navigationTitle("设置登录密码")
                 .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
-                .task { do { phone = try await Api.request("api/me")["phone"] as? String ?? "" } catch { message = error.localizedDescription } }
+                .task { do { phone = try await Api.request("api/me")["phone"] as? String ?? "" } catch { await store.confirmSessionFailure(error); message = error.localizedDescription } }
         }
     }
 }

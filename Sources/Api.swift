@@ -25,7 +25,8 @@ enum Api {
         var errorDescription: String? { message }
     }
 
-    /// 服务端发的是 HttpOnly cookie，URLSession 的共享 cookie 存储会自己带上并持久化。
+    /// 服务端发的是 HttpOnly cookie，URLSession 的共享 cookie 存储会自己带上。
+    /// 收到 Set-Cookie 后等待系统落盘，再返回成功；只靠后台持久化，登录后立刻杀进程会丢会话。
     /// 我们**不碰** cookie 的值 —— 碰了就等于在 app 里复制一份会话状态。
     ///
     /// ⚠ 唯一的例外（2026-10-02 放宽）：Apple Watch。手表上没有输入框可登录，
@@ -43,9 +44,14 @@ enum Api {
             req.httpBody = try JSONSerialization.data(withJSONObject: body)
         }
         let (data, resp) = try await URLSession.shared.data(for: req)
+        if (resp as? HTTPURLResponse)?.value(forHTTPHeaderField: "Set-Cookie") != nil {
+            // 同时覆盖登录/注册、改密/换绑的续会话，以及退出/注销的清 cookie。
+            // 不读取或复制 cookie 值，也不靠延时猜系统何时写完。
+            await URLSession.shared.flush()
+        }
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
         guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            throw Failure(message: code == 200 ? "服务端返回的不是 JSON" : "连不上账本(HTTP \(code))")
+            throw Failure(message: code == 200 ? "服务端返回的不是 JSON" : "连不上账本(HTTP \(code))", status: code)
         }
         if obj["ok"] as? Bool != true {
             // 服务端的 err 是给人看的中文，原样透出去比包一层「请求失败」有用
