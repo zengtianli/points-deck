@@ -1,0 +1,16 @@
+{
+  "queried_at": "2026-10-09T17:25:27.388789+08:00",
+  "source_url": "https://itunes.apple.com/lookup?id=6806799638&country=cn",
+  "public_store": {
+    "trackId": 6806799638,
+    "trackName": "成长小金库",
+    "version": "1.0.2",
+    "price": 0.0,
+    "currency": "CNY",
+    "formattedPrice": "免费",
+    "minimumOsVersion": "18.0",
+    "trackViewUrl": "https://apps.apple.com/cn/app/%E6%88%90%E9%95%BF%E5%B0%8F%E9%87%91%E5%BA%93/id6806799638?uo=4",
+    "currentVersionReleaseDate": "2026-10-08T18:49:39Z"
+  },
+  "scope": "Anonymous official Apple lookup; verifies public marketing version and price, not build number, installed version, package size or physical-device performance."
+}
