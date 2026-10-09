@@ -43,7 +43,7 @@ One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the s
 
 | Platform | What it looks like | Can you get it now? |
 |---|---|---|
-| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | The [App Store](https://apps.apple.com/app/id6806799638) release still uses the previous layout; TestFlight 1.0.2 (11) is available for this update |
+| iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | Apple China lookup on 2026-10-09 confirms [App Store](https://apps.apple.com/app/id6806799638) 1.0.2 is free; the installed device build number remains unverified |
 | iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; TestFlight 1.0.2 (11) is available for this update |
 | Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local test app at `build/accept/mac/Growth Treasury.app` |
 | Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | Embedded in the iPhone TestFlight 1.0.2 (11) package; no separate Watch App Store release |
@@ -75,7 +75,7 @@ The account “小满” and its 30 days of entries in these screenshots are dem
 
 ## Availability
 
-Email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. The official readback on 2026-10-04 confirms TestFlight 1.0.2 (11) in the populated family internal group; the live App Store version remains 1.0 (2); see the [release record](perf/asc-release.json). The phone's current installed version and runtime performance still need physical-device verification.
+Phone-code login, email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. Apple China lookup on 2026-10-09 confirms the public version is 1.0.2, free, requiring iOS 18 or later; see the [public release readback](perf/raw/promo-apple-public-20261009.json). The top level of the [release record](perf/asc-release.json) still describes historical TestFlight 1.0.2 (11) and was not modified in this run. The live build number, installed phone version and physical-device performance remain unverified; historical resource figures do not represent the current public package.
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 
@@ -166,7 +166,7 @@ Download size is App Store data; memory, CPU and launch time are iOS Simulator m
 
 Sizes are read back for this exact distribution build. The physical device is not yet measured, so memory, CPU and launch time come from the iOS Simulator and are labelled as such.
 
-<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · historical TestFlight build 1.0.1 (8) (current test build: 1.0.2 (11); App Store still sells 1.0 (2)); package sizes exclude user data and caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
+<sub>v1.0.1 (8) · iPhone 17（iPhone18,3）；体积为 Apple 设备切片记录，运行性能尚未真机实测 · Historical measurement: sizes are from TestFlight 1.0.1 (8); runtime figures are from a separate local acceptance build 1.0.1 (1) in the simulator. These measurements do not represent the current published package. Current public release: App Store 1.0.2, free, iOS 18+ (Apple China lookup on 2026-10-09); the live build number was not verified in this run. The historical simulator launch sample began at a 1-minute host load of 14.17 on 10 cores, which affects timing. Sizes exclude user data and later caches · measured 2026-09-30. Sizes come from Apple App Store Connect device slices for this build. Memory, CPU and launch time were measured on iPhone 17 Pro (iPhone-17-Pro) / iOS 27.0 Simulator with a local Release build v1.0.1 (1) (2026-10-02), App process only; these are not physical-device figures, which are still unmeasured. Memory uses phys_footprint; CPU is CPU time ÷ wall time over a 60-second sampling window; sizes in decimal MB. Raw data: [perf/lightweight.json](perf/lightweight.json).</sub>
 <!-- lightweight:end -->
 
 
