@@ -10,9 +10,22 @@ struct PointsDeckApp: App {
     #endif
     @StateObject private var store = Store()
 
+    init() {
+        #if os(iOS)
+        if ProductBasicsSelfTest.requested { ProductBasicsSelfTest.prepareIsolation() }
+        #endif
+    }
+
     var body: some Scene {
         WindowGroup {
-            RootView()
+            Group {
+                #if os(iOS)
+                if ProductBasicsSelfTest.requested { ProductBasicsSelfTestView() }
+                else { RootView() }
+                #else
+                RootView()
+                #endif
+            }
                 .appLifecycleMobile(productID: "points-deck", channel: MobileProductLifecycle.channel, configuration: MobileProductLifecycle.configuration, placement: .settings)
                 .environmentObject(store)
         }
@@ -26,6 +39,9 @@ struct PointsDeckApp: App {
 struct RootView: View {
     @EnvironmentObject var store: Store
     @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject private var lifecycle: MobileLifecycleModel
+    @ObservedObject private var preferences = TreasuryPreferences.shared
+    @State private var settings = false
     #if os(iOS)
     @Environment(\.horizontalSizeClass) private var hSize
     /// 只认 iPad 的 regular：iPhone Pro Max 横屏时尺寸类也是 regular，但那块屏摆不下侧栏 + 看板，
@@ -50,6 +66,16 @@ struct RootView: View {
             }
         }
         .environment(\.wideLayout, wide)
+        .safeAreaInset(edge: .top) {
+            HStack {
+                Spacer()
+                Button { settings = true } label: { Label("设置", systemImage: "gearshape") }
+                Button { refreshFromShortcut() } label: { Label("刷新", systemImage: "arrow.clockwise") }
+                    .disabled(store.phase != .loggedIn)
+                    .keyboardShortcut(preferences.refreshBinding)
+            }.padding(.horizontal)
+        }
+        .sheet(isPresented: $settings) { TreasurySettingsView(preferences: preferences, lifecycle: lifecycle) }
         .animation(.easeInOut(duration: 0.35), value: store.phase)
         .task {
             LaneSignal.applyOrientation()
@@ -66,6 +92,10 @@ struct RootView: View {
         #if os(macOS)
         .frame(minWidth: 760, minHeight: 540)
         #endif
+    }
+    private func refreshFromShortcut() {
+        // The keyboard and ordinary refresh button share the actual Store refresh path.
+        Task { await TreasuryActions.refresh(store) }
     }
 }
 

@@ -123,7 +123,7 @@ Every read command supports `--json` and prints `{"ok": true, …}`; failures pr
 
 Admin scope is whatever the server says: `config get`, `config put` and `users list` report the `scope` field of the response (`site` = the whole site, `account` = this account only). When the server returns no `scope`, they report `unknown`: `users list` shows only the caller's own row, and `config put`, `users reset-password` and `users delete` refuse rather than guess where the write would land.
 
-GUI-only (pure interface): live refresh pushes, the offline-cache notice, placing home/lock-screen widgets and watch complications, the tier-up celebration, the palette and widget previews, the policy pages and mail links. No command yet: checking for updates and upgrading, and signing out (the command cannot reach the app's own session). The app has no transferable preferences, so the interface shows no iCloud switch or settings export/import and there is no command for them.
+GUI-only: live refresh pushes, offline-cache notices, widget placement, celebrations, palette previews and policy pages. Device preferences, sign-out and system store updates use the device's own entry points; the backend treasury CLI does not read its sessions or preferences. The fixed product-basics acceptor runs the real app and reads saved settings in a new process.
 
 Regression: `python3 Tests/cli_treasury_test.py` first checks the packaging rule and `install.sh` (a fake .app in a temporary Applications folder), then starts an isolated local server (temporary directory, free port) and never touches live accounts; it needs `edu/web/points/server.py` from the same workspace, or `EDU_SERVER_PY` pointing to it.
 
@@ -172,9 +172,9 @@ Sizes are read back for this exact distribution build. The physical device is no
 
 ## Configuration and app updates
 
-New builds include a “Configuration and Updates” button below the main interface. The installed version and build come from the app bundle.
+New builds include Settings at the top of the login screen and in Account. The version and build come from the actual app bundle.
 
-This app has no independent portable preference settings. Credentials, permissions, device identifiers and user content continue to use their existing entry points.
+Settings are discoverable before login and from Account. The starting section, tier-up celebration and app-local ⌘R refresh shortcut are persisted. iCloud is off by default and only transfers these three preferences through the shared lifecycle/KVS adapter. Export/import is available; invalid data preserves settings, and disabling sync preserves both copies. Accounts, sessions, ledger data, permissions and caches are excluded. On iPhone/iPad the shortcut requires an attached keyboard; touch refresh remains available.
 
 The iPhone and iPad update check reads the App Store release and opens this app's system store page. Network failures remain visible. App-version checking is separate from refreshing study materials or backend data.
 

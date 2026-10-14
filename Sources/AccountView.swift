@@ -51,7 +51,7 @@ struct AccountView: View {
                         } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }
-                Button("配置、检查更新与安装新版", systemImage: "arrow.triangle.2.circlepath") { updates = true }
+                Button("设置、iCloud 与检查更新", systemImage: "gearshape") { updates = true }
             }
             Section("帮助") {
                 Button("隐私与数据处理") { privacy = true }
@@ -71,7 +71,7 @@ struct AccountView: View {
             .sheet(isPresented: $tiers) { TiersView() }
             .sheet(isPresented: $rules) { CatalogManager(kind: "rules") }
             .sheet(isPresented: $rewards) { CatalogManager(kind: "shop") }
-            .sheet(isPresented: $updates) { AppLifecycleMobilePanel(model: lifecycle).onAppear { lifecycle.start() } }
+            .sheet(isPresented: $updates) { TreasurySettingsView(preferences: .shared, lifecycle: lifecycle) }
             .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
             .sheet(isPresented: $deleting) { AccountDeletionView() }
             .confirmationDialog("退出当前账号？", isPresented: $confirmLogout) {

@@ -5,10 +5,14 @@ import Foundation
 enum MobileProductLifecycle {
     static var channel: MobileUpdateChannel {
         #if os(macOS)
+        #if APP_LIFECYCLE_KVS
+        return .sandboxCloud(channel: "private")
+        #else
         return .privateCloud(channel: "private")
+        #endif
         #else
         return .appStore(id: "6806799638")
         #endif
     }
-    static let configuration: AppConfiguration? = nil
+    static let configuration: AppConfiguration? = TreasuryPreferences.shared.configuration
 }

@@ -121,7 +121,7 @@ treasury config put shop --file shop.json --revision "$REVISION" --json
 
 管理范围以服务端为准：`config get`、`config put`、`users list` 原样报告响应里的 `scope`（`site` 全站 / `account` 仅本账号）。服务端没返回 `scope` 时报 `unknown`：`users list` 只显示本账号自己这一行，`config put`、`users reset-password`、`users delete` 直接拒绝，不猜写入会落到哪里。
 
-留在 App 的（纯界面）：实时刷新推送、离线缓存提示、桌面/锁屏小组件与手表复杂功能的摆放、升档庆祝动画、配色与小组件预览、政策阅读页与邮件链接。还没有命令的：检查更新与升级到新版、退出登录（命令够不到 App 里那份登录态）。本 App 没有可迁移的偏好配置，界面没有 iCloud 开关与配置导出/导入，也就没有对应命令。
+留在 App 的（纯界面）：实时刷新推送、离线缓存提示、桌面/锁屏小组件与手表复杂功能的摆放、升档庆祝动画、配色与小组件预览、政策阅读页与邮件链接。退出登录、设备偏好和系统商店更新使用设备自身入口，后端 treasury 不读取设备里的会话或偏好。基本功能的 CLI 验收与新进程读回见下文。
 
 回归：`python3 Tests/cli_treasury_test.py` —— 先核打包规则与 `install.sh`（临时 Applications 目录里的假 .app），再起一个隔离的本地服务端（临时目录 + 空闲端口），不碰线上账号；需要同一工作区的 `edu/web/points/server.py`，或用 `EDU_SERVER_PY` 指过去。
 
@@ -170,12 +170,14 @@ MIT © 2026 曾田力 (Tianli Zeng)
 
 ## 配置与 App 更新
 
-新构建在主界面下方提供「配置与更新」，显示当前安装包的真实版本和构建号。
+新构建在登录页顶部及账户页提供「设置」，显示当前包的真实版本和构建号，并可选择启动栏目、升档庆祝、应用内刷新快捷键。连接键盘时 ⌘R 刷新，开关关闭后触屏刷新仍可用；不注册全局快捷键。
 
-当前没有独立可迁移的偏好配置，界面不提供空的 iCloud 开关。账号、访问凭据、业务内容、本机权限与缓存继续使用各自原有入口。
+「同步、备份与更新」复用总部生命周期。iCloud 默认关闭，开启后仅同步这三项偏好，iOS 使用系统 KVS；支持 JSON 导出、导入及坏文件保留原配置。关闭不删除本机或云端配置。账号、访问凭据、账本、本机权限与缓存不在同步白名单。
 
 「检查更新」读取本 App 的 App Store 发行版本；可前往系统商店页面升级，网络失败会显示原因。 此入口检查 App 版本，资料或后台数据刷新仍在原入口。
 
 同工程的 Mac 构建通过 iCloud 私有发行包检查更新；只有实际发布到该渠道的安装包才会出现下载入口。
 
 版本号更新属于本轮新构建；手机上的新版本需通过签名安装或原商店/TestFlight 渠道取得，发行状态以现有发布记录为准。
+
+固定验收：`chapter sop accept --app points-deck-ios --check product_basics --json`。`scripts/accept/product_basics.py --app <候选.app> --receipt <sim_lane构建回执.json>` 明确验当前候选，默认无候选参数时验 `--udid` 上已装的模拟器包及其回执。验收使用全新无窗口模拟器、App 进程内真实设置控件与离屏截图、隔离账本、隔离配置往返和 App Store 更新源测试；`--basics-readback` 新进程读取保存值。14 项原件由 Chapter 核 SHA，iCloud 隔离链路不表示 Apple 跨设备传输已验证。本轮不装手机或 Mac、不发布。

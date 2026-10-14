@@ -9,6 +9,21 @@ lifecycle: active
 bundle_id: cyou.tianli.pointsdeck
 origin: own
 sop:
+  product_basics:
+    schema_version: 1
+    features:
+      settings: {entry: '登录页顶部设置；账户→设置；显示偏好与配置导入导出', readback: '~/Dev/.venv/bin/python scripts/accept/product_basics.py --app <候选.app> --receipt <sim_lane回执.json>；原生新进程 --basics-readback'}
+      shortcuts: {entry: '设置→启用刷新快捷键；本应用内⌘R，iOS需外接键盘', readback: '原生 --ui-self-test 检查真实刷新与开关；--basics-readback 读回'}
+      icloud: {entry: '设置→同步、备份与更新→使用iCloud记住配置；仅显示操作偏好，默认关闭', readback: '原生 --basics-readback 输出 sync_enabled/sync_status；固定验收跑隔离同步'}
+      updates: {entry: '设置→同步、备份与更新→检查更新／App Store获取，应用ID6806799638', readback: '原生 --ui-self-test 的 App Store检查、错误恢复与获取入口原件'}
+    inputs:
+    - scripts/accept/product_basics.py
+    - scripts/demo/ledger.py
+    - Sources/TreasurySettings.swift
+    - Sources/MobileProductLifecycle.swift
+    - Sources/ProductBasicsSelfTest.swift
+    - App.entitlements
+    - perf/product-basics-build.json
   account:
     mode: password
     rationale: 公开家长账号优先手机号验证码，保留邮箱与密码；注册、换绑和找回按 ../PRD.md 实施，短信通道待真实投递验收
@@ -24,6 +39,7 @@ sop:
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
   test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && python3 ../../../web/points/test_phone_account.py && bash Tests/check-platform-typecheck.sh
   accept:
+    product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --receipt perf/product-basics-build.json
     functionality: bash scripts/accept/run.sh functionality
     recovery: bash scripts/accept/run.sh recovery
     privacy: bash scripts/accept/run.sh privacy
@@ -115,8 +131,8 @@ sop:
     entry: cli/treasury
   # 界面功能对照（每项功能都能不点界面完成，2026-10-07）：从 Sources/ 与 Watch/ 的界面源码逐项列。
   # 手机端没法装命令行，用本机 treasury（同一服务端 /api/* 的薄客户端）对应；读回 treasury version 不登录、只读。
-  # 「配置与更新」面板：本 App 没有可迁移的偏好配置（MobileProductLifecycle.configuration 为空），
-  # 界面不显示 iCloud 开关与导出/导入按钮，所以这里只列检查更新与升级到新版两项。
+  # 设备偏好与原生配置由 product_basics 的隔离 App 验收及新进程读回；
+  # 后端 treasury 不读取本机会话或设备偏好。
   agent_cli:
     readback: treasury version
     features:

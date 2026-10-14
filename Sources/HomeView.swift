@@ -39,7 +39,8 @@ struct TreasuryChoice<Value: Hashable>: View {
 
 struct HomeView: View {
     @EnvironmentObject var store: Store
-    @State private var tab = UserDefaults.standard.integer(forKey: "tab")
+    @ObservedObject private var preferences = TreasuryPreferences.shared
+    @State private var tab = UserDefaults.standard.object(forKey: "tab") != nil ? UserDefaults.standard.integer(forKey: "tab") : TreasuryPreferences.shared.startTab
     var body: some View {
         Group {
             #if os(iOS)
@@ -81,7 +82,7 @@ struct HomeView: View {
             }
         }
         .overlay {
-            if let name = store.promoted { CelebrationView(houseName: name, era: store.state?.era ?? .slum) { store.promoted = nil } }
+            if preferences.celebrations, let name = store.promoted { CelebrationView(houseName: name, era: store.state?.era ?? .slum) { store.promoted = nil } }
         }
         .onAppear { LaneSignal.ready("treasury") }
     }
