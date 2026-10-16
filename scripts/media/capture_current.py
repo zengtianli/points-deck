@@ -59,19 +59,22 @@ def stamp(seconds):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--receipt", type=Path)
+    parser.add_argument("--device-type", choices=("iPhone-17-Pro", "iPhone-17-Pro-Max"), default="iPhone-17-Pro-Max",
+                        help="capture the product's registered APP_IPHONE_67 store size with the same verified SDK candidate")
     args = parser.parse_args()
     app = app_sop.load_apps("points-deck-ios")[0]
     source = app_sop.app_source_snapshot(app, app["sop"]["ui"])["sha256"]
     inputs = {str(path.relative_to(ROOT)): sha(path) for path in
               (Path(__file__), ROOT / "Tests/PlatformUITests.swift", ROOT / "scripts/accept/platform_ui.py")}
-    key = source[:16] + "-" + hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()[:12]
+    key = source[:16] + "-" + hashlib.sha256(json.dumps([inputs, args.device_type], sort_keys=True).encode()).hexdigest()[:12]
     base = ROOT / "perf/media/current"
     out = base / key
     out.mkdir(parents=True, exist_ok=True)
     meta = base / "provenance.json"
     if meta.exists():
         previous = json.loads(meta.read_text())
-        if previous.get("ui_source_sha256") == source and previous.get("producer_inputs") == inputs:
+        if (previous.get("ui_source_sha256") == source and previous.get("producer_inputs") == inputs
+                and previous.get("device_type") == args.device_type):
             for relative, digest in previous["artifacts"].items():
                 if sha(ROOT / relative) != digest:
                     raise ValueError("Existing actual capture artifact changed; not re-recording blindly")
@@ -120,6 +123,7 @@ def main():
         write(connection, ledger)
         connection.chmod(0o600)
         code = lane(["--phase", "ui", "--platform", "iphone", "--case", "testCurrentProductTour", "--record-video",
+                     "--device-type", args.device_type,
                      "--receipt", str(receipt), "--connection", str(connection), "--out", str(out / "native")], out / "lane.log")
         if code:
             print("当前素材原生车道推迟或失败：" + str(out / "lane.log"))
@@ -147,6 +151,13 @@ def main():
     start = max(0, checkpoints[0]["epoch"] - origin - 1)
     duration = checkpoints[-1]["epoch"] - origin - start + .3
     source_video = native / "continuous.mp4"
+    sys.path.insert(0, str(Path.home() / "Dev/tools/dev/lib/tools/macapp/ios"))
+    import store_shots
+    probe = json.loads(run(["ffprobe", "-v", "error", "-show_streams", "-of", "json", str(source_video)],
+                           capture_output=True, text=True).stdout)
+    stream = next(item for item in probe["streams"] if item["codec_type"] == "video")
+    if (stream["width"], stream["height"]) not in store_shots.TYPE_SIZES["APP_IPHONE_67"]:
+        raise ValueError("Actual capture does not match the registered APP_IPHONE_67 store dimensions")
     video = out / "tour.mp4"
     run(["ffmpeg", "-v", "error", "-nostdin", "-y", "-ss", str(start), "-i", str(source_video),
          "-t", str(duration), "-an", "-c:v", "libx264", "-threads", "2", "-crf", "20", "-pix_fmt", "yuv420p",
@@ -173,6 +184,7 @@ def main():
     artifacts[str((out / "checkpoints.json").relative_to(ROOT))] = sha(out / "checkpoints.json")
     write(meta, {"schema_version": 1, "recorded_at": dt.datetime.fromtimestamp(checkpoints[-1]["epoch"], dt.timezone(dt.timedelta(hours=8))).isoformat(),
                  "ui_source_sha256": source, "producer_inputs": inputs, "capture_kind": "continuous",
+                 "device_type": args.device_type, "store_display_type": "APP_IPHONE_67",
                  "environment": "headless iPhone simulator, actual production Release App and original XCTest lane",
                  "receipt_sha256": sha(receipt), "actions": actions, "artifacts": artifacts,
                  "video": str(video.relative_to(ROOT)), "captions": str((out / "tour.vtt").relative_to(ROOT)),

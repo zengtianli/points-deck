@@ -251,9 +251,13 @@ def main(argv=None):
     ap.add_argument("--functional-only", action="store_true", help="one admission check; defer immediately if busy, without a performance wait")
     ap.add_argument("--case", choices=("testCoreEditingAndReopen", "testCurrentProductTour", "testAccountPasswordLogin", "testAccountEmailLifecycle", "testAccountEmailTransport", "testAccountPhoneLifecycle", "testAccountPhoneBinding", "testAccountPasswordlessDeletion"), default="testCoreEditingAndReopen")
     ap.add_argument("--record-video", action="store_true", help="record actual headless iPhone tour; never record the Mac desktop")
+    ap.add_argument("--device-type", choices=("iPhone-17-Pro", "iPhone-17-Pro-Max"),
+                    help="explicit iPhone UI capture size; does not change the SDK candidate or performance lane")
     a = ap.parse_args(argv)
     if a.record_video and (a.phase != "ui" or a.platform != "iphone" or a.case != "testCurrentProductTour"):
         ap.error("--record-video is limited to the real headless iPhone product tour")
+    if a.device_type and (a.phase != "ui" or a.platform != "iphone"):
+        ap.error("--device-type applies only to the iPhone UI phase")
     try:
         with Budget(a.budget_min * 60, entered):
             result = run(a)
@@ -294,14 +298,15 @@ def run(a):
             ledger = json.loads(a.connection.read_text())
             if not ledger["url"].startswith("http://127.0.0.1:"):
                 raise ValueError("only isolated server allowed")
-            phone = None; watch = None
+            phone = None; watch = None; actual_device = None
             before = sim_lane.simulator_app_pids()
             app = app_sop.load_apps("points-deck-ios")[0]
             digest = app_sop.lane_inputs(app, a.platform if a.phase == "ui" else "watch")["input_sha256"]
             try:
                 if a.phase == "ui":
                     cfg = app["sop"]["platforms"][a.platform]["simulator"]
-                    phone = sim_lane.ensure_device(a.platform, cfg["device_type"])["udid"]
+                    actual_device = sim_lane.ensure_device(a.platform, a.device_type or cfg["device_type"])
+                    phone = actual_device["udid"]
                     sim_lane.boot(phone, 420)
                     sim_lane.simctl("install", phone, built["app_path"])
                     run_tests(runner, phone, ledger, a.out, a.case, a.record_video)
@@ -380,6 +385,7 @@ def run(a):
                         if device:
                             sim_lane.shutdown(device)
             proof = {"ok": True, "phase": a.phase, "platform": a.platform if a.phase == "ui" else "watch",
+                     "device": actual_device,
                      "input_sha256": digest, "receipt_sha256": sim_lane.sha256(a.receipt),
                      "test_sha256": runner["test_sha256"], "seconds": round(time.monotonic() - started, 1),
                      "environment": "simulator", "product_rebuilt": False,
