@@ -10,7 +10,7 @@
 
 由家长操作的家庭积分账本：记录表现、积攒约定奖励，让每一份努力看得见。客户端沿用共享 API 与服务端规则，11 档成长家园和 5 个时代插画保留。
 
-本地源码已按 [PRD 1.3](../PRD.md) 改为五栏目与一键记分，接入邮箱与手机号账号流程。VPS Mailu 邮件已真实收信核验；阿里云短信尚待云端配置与产品真实投递验收。新版后端已上线，TestFlight **1.0.2（11）** 已通过 Apple 处理并进入 family 内测组；未提交商店审核。开头手机截图保留此前版本，下面四平台图片为本轮真实采集；资源表只显示绑定当前输入的实测。平台行为与环境见 [验收记录](perf/platform-validation/README.md)，开发状态见 [交接](handoffs/prd-1.2-20261004.md)。
+本地源码按 [PRD 1.3](../PRD.md) 提供五栏目与一键记分，接入邮箱与手机号账号流程。既有 Mailu 邮件与阿里云短信通道曾完成真实投递核验；当前原生完整账号流程另走固定验收，不以通道配置代替通过。2026-10-16 官方 API 回读在售 **1.0.2（12）**，本地正在准备 **1.0.3（13）** 候选，尚未送审；进度与实际原件见 [本次发行交接](handoffs/appstore-release-20261016.md)。当前页保留的历史截图和资源数字不代表新候选已经完成素材或性能验收。平台行为与环境见 [验收记录](perf/platform-validation/README.md)。
 
 <p>以下为此前发行版截图；改版实机/模拟器画面见交接中的原始证据。</p>
 <table><tr>
@@ -73,7 +73,7 @@
 
 ## 怎么拿到
 
-已支持手机验证码、邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-10-09 Apple 中国区公开接口回读在售 1.0.2、免费下载、iOS 18 起，见[公开版本回读](perf/raw/promo-apple-public-20261009.json)。[发行记录](perf/asc-release.json) 顶层仍是历史 TestFlight 1.0.2（11），本轮未修改；在售构建号、手机当前实装版本与真机性能未核验，历史资源数字不代表当前公开包。
+已支持手机验证码、邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-10-16 ASC 官方回读在售 1.0.2（12）；2026-10-09 中国区公开接口确认免费下载、iOS 18 起，见[公开版本回读](perf/raw/promo-apple-public-20261009.json)。[发行记录](perf/asc-release.json) 顶层仍是历史 TestFlight 1.0.2（11）；实际新构建、送审和装机分别回读，历史资源数字不代表当前公开包。
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 
@@ -180,4 +180,4 @@ MIT © 2026 曾田力 (Tianli Zeng)
 
 版本号更新属于本轮新构建；手机上的新版本需通过签名安装或原商店/TestFlight 渠道取得，发行状态以现有发布记录为准。
 
-固定验收：`chapter sop accept --app points-deck-ios --check product_basics --json`。`scripts/accept/product_basics.py --app <候选.app> --receipt <sim_lane构建回执.json>` 明确验当前候选，默认无候选参数时验 `--udid` 上已装的模拟器包及其回执。验收使用全新无窗口模拟器、App 进程内真实设置控件与离屏截图、隔离账本、隔离配置往返和 App Store 更新源测试；`--basics-readback` 新进程读取保存值。14 项原件由 Chapter 核 SHA，iCloud 隔离链路不表示 Apple 跨设备传输已验证。本轮不装手机或 Mac、不发布。
+固定验收：`chapter sop accept --app points-deck-ios --check product_basics --json`。登记入口先从原共享构建槽准备当前Release候选，再验真实App；也可用 `scripts/accept/product_basics.py --app <候选.app> --receipt <sim_lane构建回执.json> --configuration Release` 指定候选。默认无候选参数时验 `--udid` 上已装的模拟器包及其回执，候选不等于手机实装。验收使用全新无窗口模拟器、App进程内真实设置控件与离屏截图、隔离账本、隔离配置往返和App Store更新源测试；`--basics-readback` 新进程读取保存值。14项原件由Chapter核SHA，iCloud隔离链路不表示Apple跨设备传输已验证。新版本沿原发行入口，实际送审和实装状态以独立回读为准。
