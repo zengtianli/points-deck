@@ -21,6 +21,7 @@ import base64
 import json
 import os
 import plistlib
+import re
 import sys
 import time
 import datetime
@@ -655,11 +656,31 @@ EXAMPLES = """读命令（不改账本；export 只写 --out 指定的那一个�
   用户协议/隐私政策的阅读页、反馈与申诉的邮件链接。
 暂无命令：检查更新与升级到新版（共享生命周期模块暂无命令入口）、
   退出登录（命令够不到 App 里那份登录态；命令自己不保存登录态）。
-  本 App 没有可迁移的偏好配置，界面没有 iCloud 开关与配置导出/导入，所以也没有对应命令。"""
+  启动栏目、庆祝与刷新快捷键的偏好迁移和 iCloud 同步在 App 设置中；
+  本 CLI 不读写 iPhone 的 App 沙盒与系统 iCloud 偏好。"""
 
 
 class Parser(argparse.ArgumentParser):
     """参数写错时，带 --json 也输出 {"ok": false, …}（退出码仍是 2）；不带 --json 照 argparse 原样。"""
+
+    def parse_args(self, args=None, namespace=None):
+        values = list(sys.argv[1:] if args is None else args)
+        normalized = []
+        index = 0
+        while index < len(values):
+            value = values[index]
+            # URL-safe server challenge IDs may start with '-' or '--'. Keep
+            # their bytes intact by using argparse's unambiguous option=value
+            # form. Short real options such as --help/--json remain options.
+            if (value == "--challenge" and index + 1 < len(values)
+                    and values[index + 1].startswith("-")
+                    and re.fullmatch(r"[A-Za-z0-9_-]{16,256}", values[index + 1])):
+                normalized.append(value + "=" + values[index + 1])
+                index += 2
+            else:
+                normalized.append(value)
+                index += 1
+        return super().parse_args(normalized, namespace)
 
     def error(self, message):
         if "--json" in sys.argv[1:]:
@@ -778,7 +799,7 @@ def build() -> argparse.ArgumentParser:
         p.set_defaults(fn=cmd_account_security, login=name == "email-bind")
         if name in ("code-send", "register", "email-bind"): p.add_argument("--email", required=True)
         if name == "code-send": p.add_argument("--purpose", required=True, choices=("register", "recover", "email_new", "email_old"))
-        if name == "code-verify": p.add_argument("--challenge", required=True)
+        if name == "code-verify": p.add_argument("--challenge", required=True, help="不透明挑战标识；推荐 --challenge=VALUE，保留开头连字符")
         if name == "register": p.add_argument("--nick")
         if name in ("register", "recover"): p.add_argument("--new-stdin", action="store_true", required=True)
         if name == "email-bind": p.add_argument("--old-grant-stdin", action="store_true")
@@ -804,7 +825,7 @@ def build() -> argparse.ArgumentParser:
         if name == "phone-send":
             p.add_argument("--purpose", required=True, choices=("register", "login", "phone_new", "phone_change_new", "phone_old", "phone_identity", "phone_recover"))
             p.add_argument("--request-id")
-        if name == "phone-verify": p.add_argument("--challenge", required=True)
+        if name == "phone-verify": p.add_argument("--challenge", required=True, help="不透明挑战标识；推荐 --challenge=VALUE，保留开头连字符")
         if name == "phone-register": p.add_argument("--agree", action="store_true", required=True)
         if name in ("phone-bind", "phone-send", "password-set"): p.add_argument("--identity-grant-stdin", action="store_true")
         if name == "phone-bind": p.add_argument("--old-grant-stdin", action="store_true")

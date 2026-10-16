@@ -26,6 +26,7 @@ import urllib.request
 from http.cookiejar import CookieJar
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from unittest.mock import patch
 
 REPO = Path(__file__).resolve().parents[1]
 CLI = REPO / "cli" / "treasury"
@@ -216,9 +217,9 @@ def main() -> int:
         ck("顶层帮助退出 0", code == 0)
         tail = top[top.index("暂无命令"):] if "暂无命令" in top else ""
         window = top[top.index("仅在窗口中"):top.index("暂无命令")] if tail else ""
-        ck("「暂无命令」只列界面上有的：检查更新、升级到新版、退出登录；不把没有的配置同步列成缺口",
+        ck("帮助区分 App 设置与 CLI 沙盒边界，不把现有偏好迁移说成没有",
            all(w in tail for w in ("检查更新", "升级到新版", "退出登录")) and "配置的 iCloud 同步" not in tail
-           and "退出登录" not in window, tail)
+           and "退出登录" not in window and "偏好迁移" in tail and "本 App 没有可迁移" not in tail, tail)
         for word in ("读命令", "写命令", "--json 输出形状", "退出码", "仅在窗口中", "暂无命令"):
             ck(f"顶层帮助有「{word}」", word in top)
         ck("顶层帮助的退出码表列了 0 / 1 / 2 / 130", all(re.search(rf"(?m)^\s+{n}\s", top) for n in (0, 1, 2, 130)), top[-900:])
@@ -256,7 +257,14 @@ def main() -> int:
         ck("me 带账号安全页的邮箱、手机与近期安全记录", isinstance(me.get("security_events"), list) and "email" in me and "phone" in me, str(me))
         ck("当前账号没有在办的注销申请", ok(["account", "delete-status"]).get("receipt_id") is None)
         email="cli-new@example.test"
-        challenge=ok(["account","code-send","--purpose","register","--email",email])["challenge"]
+        # Deterministic valid edge: change only the random identifier, not the
+        # production challenge verification or registration implementation.
+        import account_security
+        token_urlsafe = account_security.secrets.token_urlsafe
+        with patch.object(account_security.secrets, "token_urlsafe",
+                          side_effect=lambda n=32: "-" + token_urlsafe(n)[1:] if n == 24 else token_urlsafe(n)):
+            challenge=ok(["account","code-send","--purpose","register","--email",email])["challenge"]
+        ck("实际服务生成以连字符开头的有效挑战", challenge.startswith("-") and len(challenge) == 32)
         code=re.search(r"验证码：(\d{6})",fixture.mail[-1][2]).group(1)
         grant=ok(["account","code-verify","--challenge",challenge],stdin=code+"\n")["grant"]
         password="a unique long passphrase"
@@ -271,7 +279,7 @@ def main() -> int:
         email2 = "cli-request@example.test"
         challenge = ok(["account", "code-send", "--purpose", "register", "--email", email2])["challenge"]
         code = re.search(r"验证码：(\d{6})", fixture.mail[-1][2]).group(1)
-        grant = ok(["account", "code-verify", "--challenge", challenge], stdin=code + "\n")["grant"]
+        grant = ok(["account", "code-verify", "--challenge=" + challenge], stdin=code + "\n")["grant"]
         ok(["account", "register", "--email", email2, "--new-stdin"], stdin=password + "\n" + grant + "\n")
         second = (email2, password)
         ck("无确认不递注销申请", run(["account", "delete-request"], account=second)[0] == 2)
@@ -288,7 +296,6 @@ def main() -> int:
         # 仅传输为替身；CLI 子进程仍访问正在运行的同一个产品 HTTP 服务。
         import account_phone
         from test_phone_account import FakePNVS
-        from unittest.mock import patch
         from contextlib import closing
         gateway = FakePNVS()
         service = account_phone.PhoneChallenges(fixture.server.HOME, fixture.server.load_cfg()["secret"])

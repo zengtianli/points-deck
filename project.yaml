@@ -37,7 +37,7 @@ sop:
     - ../../../web/points/vps_setup.py
     - ../../../../../Dev/tools/dev/lib/tools/cloud/aliyun_sms.py
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
-  test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && python3 Tests/account_acceptor_test.py && python3 ../../../web/points/test_phone_account.py && bash Tests/check-platform-typecheck.sh
+  test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && ~/Dev/.venv/bin/python -m pytest -n auto Tests/cli_parser_test.py Tests/account_acceptor_test.py Tests/platform_ui_admission_test.py ../../../web/points/test_phone_account.py -q && bash Tests/check-platform-typecheck.sh
   accept:
     product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --prepare-candidate
     account_lifecycle: python3 scripts/accept/account_lifecycle.py --run-full
