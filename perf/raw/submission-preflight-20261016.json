@@ -1,0 +1,181 @@
+{
+  "at": "2026-10-16T23:43:45.241946+08:00",
+  "version": "1.0.3",
+  "build": "13",
+  "demo": {
+    "client": "original treasury Client",
+    "credentials_source": "ASC protected review fields",
+    "business_writes": false,
+    "login_passed": true,
+    "state_passed": true,
+    "has_entries": true,
+    "session_logged_out": true
+  },
+  "public_page_previous_attempts": [
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/privacy.html",
+      "anonymous": true,
+      "error_class": "TimeoutError",
+      "reason": "The read operation timed out",
+      "status": null
+    },
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/support.html",
+      "anonymous": true,
+      "error_class": "TimeoutError",
+      "reason": "The read operation timed out",
+      "status": null
+    }
+  ],
+  "public_pages": [
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/privacy.html",
+      "anonymous": true,
+      "transport": "curl with certificate verification",
+      "exit_code": 0,
+      "result": "200 https://app-ios-points-deck.tianli.cyou/privacy.html",
+      "error": "",
+      "bytes": 40891,
+      "sha256": "c72e485e304a3926d314f2022468e24a934c81c5e32001ac56fcd274cf1160e9",
+      "product_named": true,
+      "title": "Growth Treasury · 成长小金库 隐私政策"
+    },
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/support.html",
+      "anonymous": true,
+      "transport": "curl with certificate verification",
+      "exit_code": 0,
+      "result": "200 https://app-ios-points-deck.tianli.cyou/support.html",
+      "error": "",
+      "bytes": 40295,
+      "sha256": "6ab3cccd4c37064c86065e3d9f4c25a53ab62c1ccf22c3a73804eba87a343cd5",
+      "product_named": true,
+      "title": "Growth Treasury · 成长小金库 支持"
+    }
+  ],
+  "public_pages_checked_at": "2026-10-16T23:45:23.450445+08:00",
+  "app_id": "6806799638",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+  "source_commit": "b2f4aff3b11d88a270212f74711b6b598bc12e67",
+  "version_state": "PREPARE_FOR_SUBMISSION",
+  "associated_build": null,
+  "notes": {
+    "sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b",
+    "exact_readback": true
+  },
+  "existing_screenshot_sets": [
+    {
+      "locale": "zh-Hans",
+      "id": "09854750-bc69-43bb-94b4-09bae2fca7a4",
+      "display_type": "APP_WATCH_SERIES_10",
+      "count": 1,
+      "states": [
+        "COMPLETE"
+      ]
+    },
+    {
+      "locale": "zh-Hans",
+      "id": "c93b3c54-33d0-4047-b1c3-14e3cb375b4c",
+      "display_type": "APP_IPAD_PRO_3GEN_129",
+      "count": 1,
+      "states": [
+        "COMPLETE"
+      ]
+    },
+    {
+      "locale": "zh-Hans",
+      "id": "75db23dc-3bc8-408e-8fde-831179d4f000",
+      "display_type": "APP_IPHONE_67",
+      "count": 6,
+      "states": [
+        "COMPLETE",
+        "COMPLETE",
+        "COMPLETE",
+        "COMPLETE",
+        "COMPLETE",
+        "COMPLETE"
+      ]
+    }
+  ],
+  "workflows": [
+    {
+      "id": "FD33A0EF-5400-4E17-86F9-3BFEFE083AA2",
+      "automatic_disabled": true,
+      "manual_branch": {
+        "source": {
+          "isAllMatch": false,
+          "patterns": [
+            {
+              "pattern": "main",
+              "isPrefix": false
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "1df380ea-1ad5-46b1-97b7-a1be943cad6a",
+      "automatic_disabled": true,
+      "manual_branch": {
+        "source": {
+          "isAllMatch": true,
+          "patterns": []
+        }
+      }
+    }
+  ],
+  "product_basics": {
+    "sop_record": "perf/acceptance/run-g7nffo20/product_basics.json",
+    "sop_record_sha256": "c500b7783d5d88f5d8eb2872863823a9beb98afeafcfa2b0b9d8af0240064620",
+    "status": "passed",
+    "input_sha256": "f16a4b075743eb2746e03e48d168490ecaf1b48b894ced3c9bcb46621b924db2",
+    "original": "perf/acceptance/product-basics-ec2e1294139d4c31bfcc2205d07a47c8/raw.json",
+    "original_sha256": "4716bf96aaf6260814b10d71f098e438360b8ae6dd554a459011b3c5d757cbae",
+    "version": "1.0.3",
+    "build": "13"
+  },
+  "upload_toolchain_preflight": {
+    "scheme": "PointsDeck",
+    "bundle_id": "cyou.tianli.pointsdeck",
+    "marketing_version": "1.0.3",
+    "next_build_number": 13,
+    "latest_approved_version": "1.0.2",
+    "version_builds": [
+      {
+        "version": "1.0.3",
+        "state": "PREPARE_FOR_SUBMISSION",
+        "build": null
+      },
+      {
+        "version": "1.0.2",
+        "state": "READY_FOR_SALE",
+        "build": {
+          "type": "builds",
+          "id": "1ad39cd1-8ac8-441e-858a-326a531712b9"
+        }
+      },
+      {
+        "version": "1.0",
+        "state": "READY_FOR_SALE",
+        "build": {
+          "type": "builds",
+          "id": "39708603-ce63-4169-a649-790e865a6c2e"
+        }
+      }
+    ],
+    "app_id": "6806799638",
+    "platform": "IOS",
+    "toolchain": {
+      "checked_at": "2026-10-16T15:43:03.776489+00:00",
+      "policy": "Apple Latest Release",
+      "source": "https://api.appstoreconnect.apple.com/v1/ciXcodeVersions",
+      "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+      "xcode_version": "27.0",
+      "xcode_build": "27A266a",
+      "sdk_name": "iphoneos27.0",
+      "sdk_build": "24A430"
+    }
+  },
+  "asc_read_at": "2026-10-16T23:46:44.153559+08:00"
+}
