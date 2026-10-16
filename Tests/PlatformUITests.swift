@@ -40,6 +40,46 @@ final class PlatformUITests: XCTestCase {
         attachment.name = name; attachment.lifetime = .keepAlways; add(attachment)
     }
 
+    func tourEvent(_ event: String) throws {
+        var request = URLRequest(url: URL(string: env["POINTS_QA_COORDINATOR"]! + "/" + event)!)
+        request.setValue(env["POINTS_QA_COORDINATOR_TOKEN"]!, forHTTPHeaderField: "X-Points-QA")
+        let ready = expectation(description: "actual video checkpoint " + event)
+        var accepted = false
+        URLSession.shared.dataTask(with: request) { data, response, error in
+            accepted = error == nil && (response as? HTTPURLResponse)?.statusCode == 200
+            ready.fulfill()
+        }.resume()
+        wait(for: [ready], timeout: 10)
+        XCTAssertTrue(accepted)
+    }
+
+    func testCurrentProductTour() throws {
+        #if os(iOS)
+        XCUIDevice.shared.orientation = .portrait
+        #endif
+        for (name, label) in [("ledger", "账本"), ("trend", "走势"), ("score", "加分"), ("shop", "兑换"), ("account", "账户")] {
+            try tourEvent(name + "/start")
+            tap(label)
+            #if os(iOS)
+            let selected = app.tabBars.buttons.matching(identifier: label).firstMatch
+            XCTAssertEqual(XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "selected == true"), object: selected)], timeout: 10), .completed)
+            #endif
+            Thread.sleep(forTimeInterval: 3)
+            try tourEvent(name + "/still")
+            picture("current-" + name)
+            try tourEvent(name + "/end")
+        }
+        try tourEvent("settings/start")
+        tap("设置")
+        XCTAssertTrue(app.staticTexts["启动栏目"].waitForExistence(timeout: 10))
+        Thread.sleep(forTimeInterval: 3)
+        try tourEvent("settings/still")
+        picture("current-settings")
+        tap("完成")
+        XCTAssertTrue(app.buttons["账号安全"].waitForExistence(timeout: 10))
+        try tourEvent("settings/end")
+    }
+
     func revealSignout() {
         let signout = app.buttons["退出登录"].firstMatch
         #if os(visionOS)

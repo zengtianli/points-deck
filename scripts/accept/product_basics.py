@@ -76,6 +76,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--app", type=Path)
     parser.add_argument("--receipt", type=Path)
+    parser.add_argument("--configuration", choices=("Debug", "Release"), default="Debug")
+    parser.add_argument("--prepare-candidate", action="store_true", help="use the original admitted Release SDK cache, then test that candidate")
     parser.add_argument("--udid")
     parser.add_argument("--native-ui", action="store_true")
     args = parser.parse_args()
@@ -83,10 +85,28 @@ def main():
     assert spec["app_id"] == os.environ["SOP_APP_ID"] == "points-deck-ios"
     out = Path(os.environ["SOP_OUT_DIR"]).resolve()
     assert out.is_relative_to(ROOT / "perf/acceptance")
+    if args.prepare_candidate:
+        if args.app or args.receipt or args.udid:
+            parser.error("--prepare-candidate cannot be combined with --app, --receipt or --udid")
+        # The original platform entry owns admission and all build locks. Its
+        # persistent, source-verified SDK cache is shared with other checks.
+        log = out / "product-basics-prepare.log"
+        with log.open("w") as stream:
+            prepared = subprocess.run([sys.executable, str(ROOT / "scripts/accept/platform_ui.py"),
+                "--phase", "product", "--platform", "iphone", "--out", str(out / "product-basics-build"),
+                "--functional-only", "--budget-min", "4"], cwd=ROOT,
+                stdout=stream, stderr=subprocess.STDOUT, timeout=245)
+        if prepared.returncode:
+            print("候选准备推迟或失败，尚未执行功能检查：" + log.read_text()[-1600:], file=sys.stderr)
+            return prepared.returncode
+        records = [json.loads(line) for line in log.read_text().splitlines()
+                   if line.startswith("{") and '"receipt"' in line]
+        args.receipt = Path(records[-1]["receipt"])
+        args.configuration = "Release"
     run = out / ("product-basics-" + uuid.uuid4().hex)
     run.mkdir(parents=True)
     checks, error, binding = {}, None, {}
-    udid, fixture = None, None
+    udid, fixture, receipt_lease = None, None, None
     scratch = Path(tempfile.mkdtemp(prefix="points-basics-ledger-"))
     result = {}
     try:
@@ -94,7 +114,11 @@ def main():
             if not args.receipt:
                 raise ValueError("Candidate requires --receipt from sim_lane build")
             receipt_path = args.receipt.resolve()
-            built = lane.reuse_build(receipt_path, "points-deck-ios", ROOT, "iphone", scheme="PointsDeck", configuration="Debug")
+            if (not receipt_path.is_file() or
+                    not Path(json.loads(receipt_path.read_text()).get("app_path", "")).is_dir()):
+                raise lane.Busy("候选原件已过期；使用 --prepare-candidate 沿原车道准备当前候选后再验收")
+            receipt_lease = receipt_path.open("rb")  # protect the cache from its existing lsof-aware pruning
+            built = lane.reuse_build(receipt_path, "points-deck-ios", ROOT, "iphone", scheme="PointsDeck", configuration=args.configuration)
             app = args.app.resolve() if args.app else Path(built["app_path"])
             if app != Path(built["app_path"]).resolve():
                 raise ValueError("--app does not match receipt")
@@ -189,6 +213,8 @@ def main():
         shutil.rmtree(scratch)
         if udid:
             lane.simctl("delete", udid, check=False)
+        if receipt_lease:
+            receipt_lease.close()
     # Checks are produced by the app and fresh process, then bound to current policy and immutable originals.
     raw = {"schema_version": 1, "app_id": "points-deck-ios", "spec_digest": spec["digest"], "checks": checks,
            "binding": binding, "app_result": result, "error": error,

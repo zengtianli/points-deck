@@ -7,6 +7,7 @@ UserDefaults/Keychain/files; the Widget snapshot carries credentials; entitlemen
 network client + sandbox + the shared keychain group; or a permission usage string (camera, location...) appears.
 """
 import re
+import plistlib
 import sys
 from pathlib import Path
 
@@ -57,11 +58,26 @@ fields = re.findall(r"^\s*var (\w+):", snap, re.M)
 if any(re.search(r"pass|pw|token|cookie|user|email|admin", f, re.I) for f in fields):
     problems.append(f"Widget 快照含凭据字段 {fields}")
 
-allowed = {"com.apple.security.app-sandbox", "com.apple.security.network.client", "keychain-access-groups"}
+# Exact capabilities and values, per target. KVS carries only the portable preference allowlist;
+# file access is limited to explicit user selections and app-scoped bookmarks on the Mac app.
+base_values = {"com.apple.security.app-sandbox": True, "com.apple.security.network.client": True,
+               "keychain-access-groups": ["$(AppIdentifierPrefix)cyou.tianli.pointsdeck.shared"]}
+product_values = {
+    "App.entitlements": {"com.apple.developer.ubiquity-kvstore-identifier": "$(TeamIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)"},
+    "Mac.entitlements": {"com.apple.developer.ubiquity-kvstore-identifier": "$(TeamIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)",
+                         "com.apple.security.files.user-selected.read-write": True,
+                         "com.apple.security.files.bookmarks.app-scope": True},
+}
 for ent in repo.glob("*.entitlements"):
-    for key in re.findall(r"<key>([^<]+)</key>", ent.read_text(encoding="utf-8")):
-        if key not in allowed:
+    declared = plistlib.loads(ent.read_bytes())
+    expected = {**base_values, **product_values.get(ent.name, {})}
+    for key, value in declared.items():
+        if key not in expected:
             problems.append(f"{ent.name} 申请了额外权限 {key}")
+        elif type(value) is not type(expected[key]) or value != expected[key]:
+            problems.append(f"{ent.name} 权限值不符合本目标隐私边界 {key}")
+    if set(declared) & set(product_values.get(ent.name, {})) and len(verified_lifecycle) != 3:
+        problems.append(f"{ent.name} 的配置/文件能力没有逐字节核验的共享生命周期实现")
 
 spec = (repo / "project.yml").read_text(encoding="utf-8")
 for key in re.findall(r"(NS\w+UsageDescription|NSUserTrackingUsageDescription)", spec):
@@ -70,6 +86,6 @@ for key in re.findall(r"(NS\w+UsageDescription|NSUserTrackingUsageDescription)",
 for p in problems:
     print("FAIL:", p)
 print(f"静态：{len(code)} 个 Swift 源文件无跟踪 SDK，联网主机仅 {sorted(hosts) or ['(无)']}，"
-      f"版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 {len(fields)} 个字段无凭据，权限仅网络+沙盒+共享钥匙串"
+      f"版本元数据仅逐字节匹配责任源的共享代码，账号密码及验证码不写入偏好设置，Widget 快照 {len(fields)} 个字段无凭据，逐目标权限键和值符合网络/沙盒/共享钥匙串及可选配置同步、用户选定文件边界"
       if not problems else f"静态：{len(problems)} 处隐私边界问题")
 sys.exit(1 if problems else 0)

@@ -15,6 +15,7 @@ import json
 import os
 import plistlib
 import shutil
+import signal
 import subprocess
 import sys
 import urllib.request
@@ -108,16 +109,43 @@ def build_runner(platform, root):
     return doc
 
 
-def run_tests(runner, device, ledger, out, case):
+def run_tests(runner, device, ledger, out, case, record_video=False):
     env = {**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir(runner["sdk"]),
            **{"TEST_RUNNER_POINTS_QA_" + key: ledger[value] for key, value in
               (("BASE", "url"), ("USER", "user"), ("PASSWORD", "pw"))}}
     env.update({"TEST_RUNNER_POINTS_QA_" + key: str(value) for key, value in ledger.get("qa", {}).items()})
     test_class = "AccountUITests" if case.startswith("testAccount") else "PlatformUITests"
-    command(["xcodebuild", "test-without-building", "-xctestrun", runner["xctestrun"],
-        "-destination", "id=" + device, "-destination-timeout", "120", "-parallel-testing-enabled", "NO",
-        "-collect-test-diagnostics", "never", "-only-testing:PointsQAUITests/" + test_class + "/" + case,
-        "-resultBundlePath", str(out / "ui.xcresult")], Path(runner["source"]), out / "ui.log", env=env)
+    recorder = recording_stream = None
+    if record_video:
+        recording_stream = (out / "recording.log").open("w")
+        requested = time.time()
+        recorder = subprocess.Popen(["xcrun", "simctl", "io", device, "recordVideo", "--codec=h264", "--force",
+                                     str(out / "continuous.mp4")], env=env, stdout=recording_stream, stderr=subprocess.STDOUT)
+        deadline = time.monotonic() + 10
+        while "Recording started" not in (out / "recording.log").read_text():
+            if recorder.poll() is not None or time.monotonic() >= deadline:
+                recorder.terminate(); recorder.wait(timeout=10); recording_stream.close()
+                raise RuntimeError("actual simulator video recording did not start")
+            time.sleep(.1)
+        (out / "recording.json").write_text(json.dumps({"requested_at_epoch": requested,
+            "ready_observed_at_epoch": time.time(), "method": "continuous simctl io recordVideo of the actual product UI test"}))
+    try:
+        command(["xcodebuild", "test-without-building", "-xctestrun", runner["xctestrun"],
+            "-destination", "id=" + device, "-destination-timeout", "120", "-parallel-testing-enabled", "NO",
+            "-collect-test-diagnostics", "never", "-only-testing:PointsQAUITests/" + test_class + "/" + case,
+            "-resultBundlePath", str(out / "ui.xcresult")], Path(runner["source"]), out / "ui.log", env=env)
+    finally:
+        if recorder:
+            if recorder.poll() is None:
+                recorder.send_signal(signal.SIGINT)
+            try:
+                recorder.wait(timeout=30)
+            except subprocess.TimeoutExpired:
+                recorder.kill()
+                recorder.wait(timeout=10)
+                raise
+            finally:
+                recording_stream.close()
     if "TEST EXECUTE SUCCEEDED" not in (out / "ui.log").read_text(errors="replace"):
         raise RuntimeError("real UI tests did not report success")
 
@@ -221,8 +249,11 @@ def main(argv=None):
     ap.add_argument("--out", type=Path, required=True)
     ap.add_argument("--budget-min", type=float, default=30, help="total time including admission and cleanup")
     ap.add_argument("--functional-only", action="store_true", help="one admission check; defer immediately if busy, without a performance wait")
-    ap.add_argument("--case", choices=("testCoreEditingAndReopen", "testAccountPasswordLogin", "testAccountEmailLifecycle", "testAccountEmailTransport", "testAccountPhoneLifecycle", "testAccountPhoneBinding", "testAccountPasswordlessDeletion"), default="testCoreEditingAndReopen")
+    ap.add_argument("--case", choices=("testCoreEditingAndReopen", "testCurrentProductTour", "testAccountPasswordLogin", "testAccountEmailLifecycle", "testAccountEmailTransport", "testAccountPhoneLifecycle", "testAccountPhoneBinding", "testAccountPasswordlessDeletion"), default="testCoreEditingAndReopen")
+    ap.add_argument("--record-video", action="store_true", help="record actual headless iPhone tour; never record the Mac desktop")
     a = ap.parse_args(argv)
+    if a.record_video and (a.phase != "ui" or a.platform != "iphone" or a.case != "testCurrentProductTour"):
+        ap.error("--record-video is limited to the real headless iPhone product tour")
     try:
         with Budget(a.budget_min * 60, entered):
             result = run(a)
@@ -273,7 +304,7 @@ def run(a):
                     phone = sim_lane.ensure_device(a.platform, cfg["device_type"])["udid"]
                     sim_lane.boot(phone, 420)
                     sim_lane.simctl("install", phone, built["app_path"])
-                    run_tests(runner, phone, ledger, a.out, a.case)
+                    run_tests(runner, phone, ledger, a.out, a.case, a.record_video)
                     if a.case == "testCoreEditingAndReopen":
                         (a.out / "saved-config.json").write_text(json.dumps(saved_configuration(ledger), indent=1))
                 else:

@@ -23,7 +23,7 @@ sop:
     - Sources/MobileProductLifecycle.swift
     - Sources/ProductBasicsSelfTest.swift
     - App.entitlements
-    - perf/product-basics-build.json
+    - scripts/accept/platform_ui.py
   account:
     mode: password
     rationale: 公开家长账号优先手机号验证码，保留邮箱与密码；注册、换绑和找回按 ../PRD.md 实施，短信通道待真实投递验收
@@ -39,7 +39,8 @@ sop:
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
   test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && python3 ../../../web/points/test_phone_account.py && bash Tests/check-platform-typecheck.sh
   accept:
-    product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --receipt perf/product-basics-build.json
+    product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --prepare-candidate
+    account_lifecycle: python3 scripts/accept/account_lifecycle.py --run-local
     functionality: bash scripts/accept/run.sh functionality
     recovery: bash scripts/accept/run.sh recovery
     privacy: bash scripts/accept/run.sh privacy
@@ -76,6 +77,7 @@ sop:
   media:
   - shots
   - ../02-审核/当前版本/02-视频/成片/public-preview
+  - perf/media/current
   media_meta: ../02-审核/当前版本/02-视频/成片/public-preview/provenance.json
   release: perf/asc-release.json
   # 一个 App 五条平台线（用户 2026-10-02：同名、同图标、同数据；「我都有，但你用模拟器好了」）。
@@ -87,6 +89,11 @@ sop:
       input_normalization: {proof: perf/input-normalizations/finder-iphone.json, sha256: 16c9dc0f1f29beca648a7762c171e7de5e384b29ce518f74809df534bb3695ae}
       simulator: {device_type: iPhone-17-Pro}
       store_shots: shots/appstore/iphone/*.png
+      capture:
+        command: ~/Dev/.venv/bin/python scripts/media/capture_current.py
+        inputs: [Sources/**, Shared/**, Tests/PlatformUITests.swift, scripts/accept/platform_ui.py, scripts/demo/ledger.py, scripts/media/capture_current.py]
+        outputs: [shots/current-iphone, perf/media/current]
+        in_use: true
       distribution: app_store
     ipad:
       input_normalization: {proof: perf/input-normalizations/finder-ipad.json, sha256: 417206fd5c0ab717084d80ea9d0f46f120bf4483a2bd482845012e5165ece8b5}
