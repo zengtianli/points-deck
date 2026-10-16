@@ -42,6 +42,44 @@ class EvidenceBoundary(unittest.TestCase):
             with self.assertRaises(ValueError):
                 ACCEPTOR.verified_local(target, "current")
 
+    def test_full_consumer_rejects_partial_mock_stale_and_changed_native_original(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            root = Path(scratch)
+            native = root / "native/proof.json"
+            native.parent.mkdir()
+            native.write_text('{"ok":true,"receipt_sha256":"candidate"}')
+            service = Path.home() / "Apps/edu/web/points"
+            inputs = [service / p for p in ("server.py", "account_security.py", "account_phone.py")]
+            inputs += [ACCEPTOR.ROOT / "Tests/AccountUITests.swift"]
+            inputs += [ACCEPTOR.ROOT / "scripts/accept" / p for p in ("platform_ui.py", "account_peer.py")]
+            good = {"case": "EmailBinding", "exit_code": 0, "offline_diagnostic_only": False,
+                    "account_input_sha256": "current", "producer_sha256": ACCEPTOR.sha(ACCEPTOR.ROOT / "scripts/accept/account_native.py"),
+                    "source_sha256": {p.name: ACCEPTOR.sha(p) for p in inputs}, "receipt_sha256": "candidate",
+                    "native_proof_sha256": ACCEPTOR.sha(native),
+                    "steps": [{"step": step, "checks": {"native_observation": True}} for step in ACCEPTOR.FULL_STEPS["EmailBinding"]],
+                    "events": [{"transport": "real-mail", "imap_received": True}],
+                    "mail_transport": "real", "messages_sent": {"mail": 1, "sms": 0}}
+            target = root / "evidence.json"
+            target.write_text(json.dumps(good))
+            ACCEPTOR.verified_full(target, "current")
+            mutations = [lambda p: p.update(offline_diagnostic_only=True),
+                         lambda p: p.update(account_input_sha256="stale"),
+                         lambda p: p["steps"].pop(), lambda p: p["source_sha256"].clear(),
+                         lambda p: p["steps"][0]["checks"].update(native_observation="true"),
+                         lambda p: p["events"][0].update(transport="mock-mail"),
+                         lambda p: p["events"][0].update(imap_received=False),
+                         lambda p: p.update(native_proof_sha256="changed")]
+            for mutate in mutations:
+                value = copy.deepcopy(good)
+                mutate(value)
+                target.write_text(json.dumps(value))
+                with self.assertRaises(ValueError):
+                    ACCEPTOR.verified_full(target, "current")
+            target.write_text(json.dumps(good))
+            native.write_text('{"ok":false,"receipt_sha256":"candidate"}')
+            with self.assertRaises(ValueError):
+                ACCEPTOR.verified_full(target, "current")
+
 
 if __name__ == "__main__":
     unittest.main()

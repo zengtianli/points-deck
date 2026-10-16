@@ -152,7 +152,12 @@ def main():
             raise RuntimeError("Isolated demo ledger failed: " + demo.stderr[-1200:])
         ledger = json.loads(demo.stdout)
         fixture, cert, requests = update_server(scratch)
-        with lane.Session("iphone", udid, label="points-deck-ios:product_basics", lock_wait=30, load_wait=30) as session:
+        admission = lane._chapter_sim_admission()
+        if admission is None:
+            raise lane.Busy("缺少原 Chapter 模拟器归属保护，不开机")
+        write(run / "admission.json", admission.admit(lane, reuse=False, label="points-deck-ios:product_basics"))
+        with admission.hooked(lane, run_record=run / "simulator-run.json", label="points-deck-ios:product_basics"), \
+                lane.Session("iphone", udid, label="points-deck-ios:product_basics", lock_wait=30, load_wait=30) as session:
             session.install(app)
             installed = Path(lane.simctl("get_app_container", udid, "cyou.tianli.pointsdeck", "app").stdout.strip())
             installed_files = package_files(installed)

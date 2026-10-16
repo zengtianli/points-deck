@@ -411,18 +411,18 @@ final class AccountUITests: XCTestCase {
 
     func registerPhone(wrongFirst: Bool = true) throws {
         tap("没有账号？注册账号"); fill("+86 手机号", env["POINTS_QA_PHONE"]!)
-        try verifyPhone(wrongFirst: wrongFirst); consent(); tap("注册并登录")
+        try verifyPhone(wrongFirst: wrongFirst)
+        if wrongFirst { try mark("phone-wrong-code-then-correct") }
+        consent(); tap("注册并登录")
         XCTAssertTrue(app.buttons["账户"].waitForExistence(timeout: 20))
         try mark("phone-registration")
     }
     func testAccountPhoneLifecycle() throws {
-        // The real-provider negative attempt is retained separately. Positive
-        // registration evidence never clears abuse_protection on its own.
         if env["POINTS_QA_MODE"] == "PhoneResume" {
             fill("+86 家长手机号", env["POINTS_QA_PHONE"]!); try verifyPhone()
             tap("进入账本"); XCTAssertTrue(app.buttons["账户"].waitForExistence(timeout: 20))
             try mark("phone-resume-login")
-        } else { try registerPhone(wrongFirst: false) }
+        } else { try registerPhone(wrongFirst: true) }
         tap("加分"); tap(env["POINTS_QA_EARN_LABEL"]!)
         try mark("business-use")
         tap("账户"); tap("账号安全"); tap("设置登录密码")

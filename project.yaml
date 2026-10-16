@@ -40,7 +40,7 @@ sop:
   test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && python3 Tests/account_acceptor_test.py && python3 ../../../web/points/test_phone_account.py && bash Tests/check-platform-typecheck.sh
   accept:
     product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --prepare-candidate
-    account_lifecycle: python3 scripts/accept/account_lifecycle.py --run-local
+    account_lifecycle: python3 scripts/accept/account_lifecycle.py --run-full
     functionality: bash scripts/accept/run.sh functionality
     recovery: bash scripts/accept/run.sh recovery
     privacy: bash scripts/accept/run.sh privacy

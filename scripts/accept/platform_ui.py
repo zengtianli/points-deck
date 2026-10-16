@@ -41,20 +41,20 @@ def command(args, cwd, log, timeout=600, env=None):
 
 
 @contextlib.contextmanager
-def ownership(label, functional_only=False):
+def ownership(label, device, functional_only=False):
     if os.environ.get("SOP_OWNER_NOW") == "1" or os.environ.get("SIM_LANE_EXTRA_LOCK"):
         raise ValueError("original admission cannot be overridden")
-    with (app_sop.STATE_DIR / "lock").open("a+") as global_lock:
-        run_budget().lock(global_lock, wait=not functional_only)
-        gate = app_sop.steady(False, allow_owner_now=False)
-        deadline = time.monotonic() + 600
-        while not functional_only and not gate[0] and time.monotonic() < deadline:
-            time.sleep(10)
-            gate = app_sop.steady(False, allow_owner_now=False)
-        if not gate[0] or not app_sop.on_ac_power():
-            raise sim_lane.Busy(gate[1])
+    # Only the simulator phase needs this lease. Canonical acquire protects
+    # other devices and checks real CPU idle / free memory before booting.
+    # Builds have already finished in their own BuildSlot, without these locks.
+    admission = sim_lane._chapter_sim_admission()
+    if admission:
+        admission.admit(sim_lane, reuse=False, label=label)
+    hook = admission.hooked(sim_lane, label=label) if admission else contextlib.nullcontext()
+    with hook:
         locks = sim_lane.lock_chain(label)
-        sim_lane.acquire(locks, None, 0, 0, sim_lane.max_load_default())
+        wait = 0 if functional_only else 600
+        sim_lane.acquire(locks, device, wait, wait, sim_lane.max_load_default())
         try:
             yield
         finally:
@@ -96,10 +96,11 @@ def build_runner(platform, root):
     (source / "project.yml").write_text(yaml.safe_dump(spec, allow_unicode=True))
     run_budget().run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
-    command(["xcodebuild", "-project", "PointsUIAcceptance.xcodeproj", "-scheme", "PointsQAHost",
-             "-configuration", "Debug", "-destination", "generic/platform=" + ("iOS Simulator" if platform in ("ipad", "iphone") else "visionOS Simulator"),
-             "-derivedDataPath", str(out / "dd"), "CODE_SIGNING_ALLOWED=NO", "build-for-testing"],
-             source, out / "build.log", env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir(sdk)})
+    with sim_lane.BuildSlot("points-deck-ios XCTest runner", wait=run_budget().timeout(600)):
+        command(["xcodebuild", "-project", "PointsUIAcceptance.xcodeproj", "-scheme", "PointsQAHost",
+                 "-configuration", "Debug", "-destination", "generic/platform=" + ("iOS Simulator" if platform in ("ipad", "iphone") else "visionOS Simulator"),
+                 "-derivedDataPath", str(out / "dd"), "CODE_SIGNING_ALLOWED=NO", "build-for-testing"],
+                 source, out / "build.log", env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir(sdk)})
     runs = list((out / "dd/Build/Products").glob("*.xctestrun"))
     if len(runs) != 1:
         raise ValueError("test-only build did not produce one xctestrun")
@@ -190,10 +191,11 @@ def mac_hosted(receipt, connection, out):
     (source / "project.yml").write_text(yaml.safe_dump(spec))
     run_budget().run(["/opt/homebrew/bin/xcodegen", "generate", "--spec", "project.yml"], cwd=source,
                    check=True, stdout=subprocess.DEVNULL)
-    command(["xcodebuild", "-project", target + ".xcodeproj", "-scheme", target,
-             "-configuration", "Debug", "-destination", "platform=macOS", "-derivedDataPath", str(root / "dd"),
-             "CODE_SIGNING_ALLOWED=NO", "build-for-testing"], source, out / "build.log",
-             env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir("macosx")})
+    with sim_lane.BuildSlot("points-deck-ios Mac hosted XCTest", wait=run_budget().timeout(600)):
+        command(["xcodebuild", "-project", target + ".xcodeproj", "-scheme", target,
+                 "-configuration", "Debug", "-destination", "platform=macOS", "-derivedDataPath", str(root / "dd"),
+                 "CODE_SIGNING_ALLOWED=NO", "build-for-testing"], source, out / "build.log",
+                 env={**os.environ, "DEVELOPER_DIR": sim_lane.developer_dir("macosx")})
     runs = list((root / "dd/Build/Products").glob("*.xctestrun"))
     if len(runs) != 1: raise ValueError("Mac test-only build lacks one actual xctestrun")
     document = plistlib.loads(runs[0].read_bytes())
@@ -275,37 +277,42 @@ def run(a):
     a.out.mkdir(parents=True, exist_ok=True)
     started = run_budget().started
     try:
-        with ownership("Points real native UI / paired WC", a.functional_only):
-            if a.phase == "product":
-                sys.path.insert(0, str(Path.home() / "Apps/.claude/skills/app-lightweight/scripts"))
-                import platform_measure
-                with contextlib.ExitStack() as leases:
-                    built = platform_measure.cached_build("points-deck-ios", REPO, a.platform,
-                                                         "PointsDeck", False, leases)
-                    receipt = Path(built["work_dir"]) / "build.json"
-                    sim_lane.reuse_build(receipt, "points-deck-ios", REPO, a.platform, "PointsDeck", "Release", False)
-                    print(json.dumps({"ok": True, "receipt": str(receipt), "receipt_sha256": sim_lane.sha256(receipt)}))
-                return 0
-            if a.platform == "mac":
-                if a.phase != "ui": raise ValueError("Mac hosted acceptance uses ui phase with the actual Release receipt")
-                mac_hosted(a.receipt, a.connection, a.out)
-                return 0
-            runner = build_runner(a.platform, a.out / "runners")
-            if a.phase == "build":
-                print(json.dumps({"ok": True, "runner": runner}))
-                return 0
+        if a.phase == "product":
+            sys.path.insert(0, str(Path.home() / "Apps/.claude/skills/app-lightweight/scripts"))
+            import platform_measure
+            with contextlib.ExitStack() as leases:
+                built = platform_measure.cached_build("points-deck-ios", REPO, a.platform,
+                                                     "PointsDeck", False, leases)
+                receipt = Path(built["work_dir"]) / "build.json"
+                sim_lane.reuse_build(receipt, "points-deck-ios", REPO, a.platform, "PointsDeck", "Release", False)
+                print(json.dumps({"ok": True, "receipt": str(receipt), "receipt_sha256": sim_lane.sha256(receipt)}))
+            return 0
+        if a.platform == "mac":
+            if a.phase != "ui": raise ValueError("Mac hosted acceptance uses ui phase with the actual Release receipt")
+            mac_hosted(a.receipt, a.connection, a.out)
+            return 0
+        # The same source-keyed test-only runner serves account, media and UI
+        # checks; separate output folders must not rebuild identical tests.
+        runner = build_runner(a.platform, Path.home() / "Library/Caches/points-account-native/runners")
+        if a.phase == "build":
+            print(json.dumps({"ok": True, "runner": runner}))
+            return 0
+        app = app_sop.load_apps("points-deck-ios")[0]
+        if a.phase == "ui":
+            cfg = app["sop"]["platforms"][a.platform]["simulator"]
+            actual_device = sim_lane.ensure_device(a.platform, a.device_type or cfg["device_type"])
+        else:
+            actual_device = sim_lane.ensure_device("iphone", "iPhone-17-Pro", "Points Pair Phone")
+        with ownership("Points real native UI / paired WC", actual_device["udid"], a.functional_only):
             built = sim_lane.reuse_build(a.receipt, "points-deck-ios", REPO, a.platform if a.phase == "ui" else "iphone", "PointsDeck", "Release", False)
             ledger = json.loads(a.connection.read_text())
             if not ledger["url"].startswith("http://127.0.0.1:"):
                 raise ValueError("only isolated server allowed")
-            phone = None; watch = None; actual_device = None
+            phone = None; watch = None
             before = sim_lane.simulator_app_pids()
-            app = app_sop.load_apps("points-deck-ios")[0]
             digest = app_sop.lane_inputs(app, a.platform if a.phase == "ui" else "watch")["input_sha256"]
             try:
                 if a.phase == "ui":
-                    cfg = app["sop"]["platforms"][a.platform]["simulator"]
-                    actual_device = sim_lane.ensure_device(a.platform, a.device_type or cfg["device_type"])
                     phone = actual_device["udid"]
                     sim_lane.boot(phone, 420)
                     sim_lane.simctl("install", phone, built["app_path"])

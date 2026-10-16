@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import time
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.dont_write_bytecode = True
@@ -184,7 +185,7 @@ def local(app, receipt, directory, binding):
         proof = {"account_input_sha256": binding, "client_environment": "actual Release iPhone simulator App through original XCTest lane",
                  "service_environment": "isolated current production server; synthetic original ledger only",
                  "native_proof": str(native.relative_to(ROOT)), "native_proof_sha256": sha(native),
-                 "receipt_sha256": sha(receipt), "steps": steps,
+                 "receipt": str(receipt), "receipt_sha256": sha(receipt), "steps": steps,
                  "checks": {"wrong_password_refused_then_native_login": True, "native_session_survives_relaunch": True,
                             "native_logout_survives_relaunch": True, "original_ledger_preserved": True},
                  "messages_sent": {"sms": 0, "mail": 0}, "mail_transport": "not_tested", "sms_transport": "not_tested",
@@ -204,9 +205,153 @@ def local(app, receipt, directory, binding):
         shutil.rmtree(scratch)
 
 
+FULL_STEPS = {
+    "EmailLifecycle": {"native-policies-read-and-closed", "email-registration", "business-use", "email-change",
+                       "password-change", "logout", "email-recovery-and-data", "email-account-deletion"},
+    "EmailBinding": {"email-wrong-code-then-correct", "email-binding-preserved", "email-binding-login"},
+    "PhoneLifecycle": {"phone-wrong-code-then-correct", "phone-registration", "business-use", "phone-password-set", "phone-login",
+                       "phone-recovery-and-data", "phone-account-deletion"},
+    "PhoneBinding": {"phone-binding-peer-start", "phone-binding-preserved", "phone-change-peer-start", "phone-change-preserved"},
+    "PasswordlessDeletion": {"phone-registration", "passwordless-account-deletion"},
+}
+FULL_CASES = {
+    "EmailLifecycle": ("registration", "password_change", "password_recovery", "account_deletion", "data_preservation",
+                       "email_verification", "email_change", "email_delivery"),
+    "EmailBinding": ("email_binding",),
+    "PhoneLifecycle": ("phone_verification", "phone_login", "sms_delivery"),
+    "PhoneBinding": ("phone_binding", "phone_change"),
+    "PasswordlessDeletion": (),
+}
+
+
+def verified_full(path, binding):
+    """Validate current original UI, service and native peer proofs, not a result label."""
+    proof = json.loads(path.read_text())
+    case = proof["case"]
+    if (case not in FULL_STEPS or proof.get("exit_code") != 0 or proof.get("offline_diagnostic_only") is not False
+            or proof.get("account_input_sha256") != binding
+            or proof.get("producer_sha256") != sha(ROOT / "scripts/accept/account_native.py")):
+        raise ValueError("Current real native account proof missing or changed")
+    if {s["step"] for s in proof["steps"]} != FULL_STEPS[case]:
+        raise ValueError("A required actual native checkpoint is absent")
+    if set(proof["source_sha256"]) != {"server.py", "account_security.py", "account_phone.py",
+                                      "AccountUITests.swift", "platform_ui.py", "account_peer.py"}:
+        raise ValueError("The complete observed service/test input map is required")
+    for name, digest in proof["source_sha256"].items():
+        candidate = (Path.home() / "Apps/edu/web/points" / name if name in
+                     ("server.py", "account_security.py", "account_phone.py") else
+                     ROOT / ("Tests" if name.endswith("Tests.swift") else "scripts/accept") / name)
+        if sha(candidate) != digest:
+            raise ValueError("Observed service or native test changed: " + name)
+    native_path = path.parent / "native/proof.json"
+    native = json.loads(native_path.read_text())
+    if (sha(native_path) != proof.get("native_proof_sha256") or native.get("ok") is not True
+            or native.get("receipt_sha256") != proof["receipt_sha256"]):
+        raise ValueError("Native product receipt differs from observed account proof")
+    checks = [value for step in proof["steps"] for value in step["checks"].values()]
+    if (any(not step["checks"] for step in proof["steps"]) or not checks
+            or any(type(value) not in (bool, int) or value < 1 for value in checks)):
+        raise ValueError("An actual account assertion was false")
+    for event in proof["events"]:
+        if event.get("coordinator_failure") or str(event.get("transport", "")).startswith("mock"):
+            raise ValueError("An actual checkpoint failed or used a mock")
+        if event.get("native_peer"):
+            peer_path = path.parent.parent / event["proof"]
+            peer = json.loads(peer_path.read_text())
+            if (sha(peer_path) != event.get("proof_sha256") or peer.get("ok") is not True or peer.get("cookie_injected") is not False
+                    or peer.get("receipt_sha256") != proof["receipt_sha256"]):
+                raise ValueError("Independent native session proof missing")
+    channel = "mail" if case.startswith("Email") else "sms"
+    if (proof.get(channel + "_transport") != "real" or type(proof["messages_sent"][channel]) is not int
+            or proof["messages_sent"][channel] < 1):
+        raise ValueError("Real delivery is required")
+    received_key = "imap_received" if channel == "mail" else "actual_device_forward_received"
+    if not any(event.get(received_key) is True for event in proof["events"]):
+        raise ValueError("Provider acceptance alone is not actual receipt")
+    return proof
+
+
+def full(app, local_path, detail, binding):
+    """One bounded pass of the original real-transport coordinator; never retry failed inputs."""
+    producers = [ROOT / "scripts/accept" / name for name in
+                 ("account_native.py", "account_peer.py", "platform_ui.py")]
+    key = hashlib.sha256((binding + "".join(sha(p) for p in producers)
+                          + sha(ROOT / "Tests/AccountUITests.swift")).encode()).hexdigest()[:20]
+    directory = ROOT / "perf/account/native-current" / key
+    directory.mkdir(parents=True, exist_ok=True)
+    directory.chmod(0o700)
+    contract = directory / "contract.json"
+    if not contract.exists():
+        verified_local(local_path, binding)
+        write(contract, {"execution_state": "authorized_20261016_continuation", "allow_real_transports": True,
+                         "authorization": "Chapter 2026-10-16 complete native account acceptance and release",
+                         "resumption_deadline_epoch": time.time() + 3600,
+                         "limits": {"sms": 12, "mail": 20}, "historical_contracts_unchanged": True})
+    receipt = Path(json.loads(local_path.read_text())["receipt"])
+    product_log = directory / "product.jsonl"
+    product_log.write_text(json.dumps({"receipt": str(receipt)}) + "\n")
+    pending = []
+    completed = {}
+    executed = False
+    for case in FULL_STEPS:
+        records = sorted(directory.glob("account-" + case + "-*/evidence.json"))
+        successful = next((p for p in records if json.loads(p.read_text()).get("exit_code") == 0), None)
+        if not successful:
+            attempt = directory / (case + "-attempt.json")
+            if attempt.exists() and json.loads(attempt.read_text()).get("exit_code") != 75:
+                pending.append(case + "已有当前输入的失败，先回读原件，不重复发信：" + str(attempt))
+                break
+            if any(json.loads(p.read_text()).get("exit_code") != 75 for p in records):
+                pending.append(case + "已有当前输入的原生失败，先修原件，不重复发信：" + str(records[-1]))
+                break
+            if executed:
+                pending.append("已保存一个完整原生流程，剩余流程交原队列有界接续")
+                break
+            log = directory / (case + ".log")
+            with log.open("w") as stream:
+                result = subprocess.run(["/opt/homebrew/bin/uv", "run", "--script", str(producers[0]), case,
+                    "--platform", "iphone", "--product-log", str(product_log)], cwd=ROOT,
+                    env={**os.environ, "POINTS_ACCOUNT_RUN_ROOT": str(directory), "POINTS_ACCOUNT_INPUT_SHA256": binding},
+                    stdout=stream, stderr=subprocess.STDOUT, timeout=1980)
+            write(attempt, {"case": case, "exit_code": result.returncode, "account_input_sha256": binding})
+            executed = True
+            records = sorted(directory.glob("account-" + case + "-*/evidence.json"))
+            if result.returncode:
+                pending.append(case + "原车道推迟或原生失败：" + str(log))
+                break
+            successful = records[-1] if records else None
+        if not successful:
+            raise ValueError("Real coordinator did not retain an original")
+        observed = verified_full(successful, binding)
+        completed[case] = (successful, observed)
+        detail.update(client_environment="source-verified actual Release iPhone simulator; original XCTest UI",
+                      service_environment="isolated current production server; actual Mailu/Aliyun transports; no production accounts")
+        detail["mail_transport" if case.startswith("Email") else "sms_transport"] = "real"
+        for name in FULL_CASES[case]:
+            detail.setdefault("account_cases", {})[name] = {"status": "passed", "evidence": str(successful.relative_to(ROOT)),
+                                                           "evidence_sha256": sha(successful)}
+    if "EmailBinding" in completed and "PhoneLifecycle" in completed:
+        guard = next((e for e in completed["PhoneLifecycle"][1]["events"] if e.get("actual_http_abuse_guards")), {})
+        checks = {"email_wrong_code_refused_before_same_challenge_success": True,
+                  "phone_wrong_code_refused_before_same_challenge_success": True,
+                  "same_sms_request_does_not_send_twice": guard.get("same_request_replayed_without_send") is True,
+                  "new_sms_request_inside_resend_window_refused": guard.get("resend_refused_status") == 429,
+                  "resend_limit_preserves_provider_send_count": guard.get("provider_send_count_unchanged") is True}
+        if all(checks.values()):
+            raw = directory / "abuse-protection.json"
+            write(raw, {"account_input_sha256": binding, "checks": checks,
+                        "native_originals": [{"path": str(p.relative_to(ROOT)), "sha256": sha(p)}
+                                             for p, _ in completed.values()],
+                        "scope": "actual native wrong-code recovery in both channels plus original HTTP SMS idempotency and resend throttle"})
+            detail.setdefault("account_cases", {})["abuse_protection"] = {"status": "passed", "evidence": str(raw.relative_to(ROOT)),
+                                                                         "evidence_sha256": sha(raw)}
+    return pending
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-local", action="store_true", help="produce actual native no-message login/logout evidence if absent")
+    parser.add_argument("--run-full", action="store_true", help="after local native pass, continue bounded real authorized mail/phone flows")
     parser.add_argument("--receipt", type=Path, help="existing source-verified sim_lane Release iPhone candidate")
     args = parser.parse_args()
     app = app_sop.load_apps("points-deck-ios")[0]
@@ -217,10 +362,11 @@ def main():
         detail["historical_account_cases"] = detail.pop("account_cases", {})
         detail["account_cases"] = {}
     pending = None
-    if args.run_local:
+    if args.run_local or args.run_full:
         key = hashlib.sha256((binding + sha(__file__) + sha(ROOT / "Tests/AccountUITests.swift")
                               + sha(ROOT / "scripts/accept/platform_ui.py")).encode()).hexdigest()[:20]
         directory = ROOT / "perf/account/native-local" / key
+        local_was_ready = (directory / "native-password.json").exists()
         try:
             proof, pending = local(app, args.receipt, directory, binding)
         except Exception as error:
@@ -232,6 +378,14 @@ def main():
             for case in ("login", "logout", "data_preservation"):
                 detail.setdefault("account_cases", {})[case] = {"status": "passed", "evidence": str(proof.relative_to(ROOT)),
                                                                "evidence_sha256": sha(proof)}
+            if args.run_full:
+                if not local_was_ready:
+                    pending = "无发信原生流程已保存，真实通道流程交原队列下一步接续"
+                else:
+                    try:
+                        pending = "；".join(full(app, proof, detail, binding)) or None
+                    except Exception as error:
+                        pending = type(error).__name__ + ": " + str(error)
     detail["account_input_sha256"] = binding
     issues = app_sop.account_evidence_issues(app, detail)
     if pending:
