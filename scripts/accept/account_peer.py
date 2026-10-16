@@ -27,7 +27,10 @@ def main():
     cfg = app["sop"]["platforms"][platform]["simulator"]
     before = lane.sim_lane.simulator_app_pids()
     device = None
-    with Budget(200):
+    admission = lane.sim_lane._chapter_sim_admission()
+    if admission is None:
+        raise lane.sim_lane.Busy("original simulator ownership protection unavailable")
+    with Budget(200), admission.hooked(lane.sim_lane, label="points-deck-ios native account peer"):
         try:
             built = lane.sim_lane.reuse_build(Path(receipt), "points-deck-ios", ROOT, platform, "PointsDeck", "Release", False)
             # The coordinator's primary native device is intentionally running
@@ -36,6 +39,14 @@ def main():
             reason = lane.sim_lane.machine_busy(lane.sim_lane.max_load_default()) or lane.sim_lane.memory_tight()
             if reason:
                 raise lane.sim_lane.Busy(reason)
+            holder = lane.sim_lane.Lock(lane.sim_lane.LOCK_DIR, "points-account-peer-probe").record() or {}
+            ledger = admission.read_ledger()
+            primary = lane.sim_lane.booted_udids()
+            if (len(primary) != 1 or not holder.get("pid") or any(
+                    ledger.get(udid, {}).get("pid") != holder["pid"]
+                    or not admission.holder_alive(lane.sim_lane, ledger[udid])
+                    or not admission.same_boot(lane.sim_lane, udid, ledger[udid]) for udid in primary)):
+                raise lane.sim_lane.Busy("the coordinator's sole live primary simulator cannot be verified; leave all devices untouched")
             device = lane.sim_lane.ensure_device(platform, cfg["device_type"], "Points Account Peer")["udid"]
             lane.sim_lane.boot(device, 120)
             lane.sim_lane.simctl("install", device, built["app_path"])

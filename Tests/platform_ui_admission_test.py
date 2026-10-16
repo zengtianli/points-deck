@@ -61,3 +61,29 @@ def test_runner_compile_holds_build_slot_without_simulator(monkeypatch, tmp_path
         runner = lane.build_runner("iphone", tmp_path)
     assert Path(runner["xctestrun"]).is_file()
     assert not active
+
+
+def test_account_peer_leaves_unowned_primary_untouched(monkeypatch, tmp_path):
+    import account_peer as peer
+    import json
+    import pytest
+    connection = tmp_path / "connection.json"
+    connection.write_text(json.dumps({"qa": {}}))
+    runner = tmp_path / "runner.json"
+    runner.write_text(json.dumps({"platform": "iphone"}))
+    monkeypatch.setattr(sys, "argv", ["peer", "PeerStart", str(connection), "receipt", str(tmp_path / "out"), str(runner)])
+    monkeypatch.setattr(peer.lane.app_sop, "load_apps", lambda *args: [{"sop": {"platforms": {"iphone": {"simulator": {}}}}}])
+    monkeypatch.setattr(peer.lane.sim_lane, "simulator_app_pids", lambda: set())
+    monkeypatch.setattr(peer.lane.sim_lane, "reuse_build", lambda *args: {})
+    monkeypatch.setattr(peer.lane.sim_lane, "machine_busy", lambda *args: "")
+    monkeypatch.setattr(peer.lane.sim_lane, "memory_tight", lambda: "")
+    monkeypatch.setattr(peer.lane.sim_lane, "booted_udids", lambda: {"foreign-device"})
+    monkeypatch.setattr(peer.lane.sim_lane, "Lock", lambda *args: SimpleNamespace(record=lambda: {"pid": 123}))
+    admission = SimpleNamespace(hooked=lambda *args, **kwargs: contextlib.nullcontext(), read_ledger=lambda: {})
+    monkeypatch.setattr(peer.lane.sim_lane, "_chapter_sim_admission", lambda: admission)
+    touched = []
+    for action in ("boot", "shutdown", "simctl"):
+        monkeypatch.setattr(peer.lane.sim_lane, action, lambda *args, _action=action, **kwargs: touched.append(_action))
+    with pytest.raises(peer.lane.sim_lane.Busy):
+        peer.main()
+    assert touched == []
