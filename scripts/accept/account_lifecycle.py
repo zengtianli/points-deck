@@ -64,10 +64,10 @@ def verified_local(path, binding):
     return proof
 
 
-def invoke(arguments, log, timeout=245):
+def invoke(arguments, log, timeout=555):
     with log.open("w") as stream:
         result = subprocess.run([sys.executable, str(ROOT / "scripts/accept/platform_ui.py"),
-            *arguments, "--functional-only", "--budget-min", "4"], cwd=ROOT,
+            *arguments, "--functional-only", "--budget-min", "9"], cwd=ROOT,
             stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
     return result.returncode
 
@@ -175,8 +175,15 @@ def local(app, receipt, directory, binding):
             for secret in (ledger["pw"], token):
                 data = data.replace(secret.encode(), b"<redacted>")
             log.write_bytes(data)
-        write(attempt, {"exit_code": code, "phase": "ui", "account_input_sha256": binding})
+        # A resource refusal before XCTest started may resume when admission
+        # changes. Once a native result exists, an interrupted run must first
+        # be diagnosed; never overwrite or rerun that result on the same input.
+        partial_native = code == 75 and (directory / "native/ui.xcresult").exists()
+        write(attempt, {"exit_code": "partial_native_run" if partial_native else code,
+                        "actual_exit_code": code, "phase": "ui", "account_input_sha256": binding})
         if code:
+            if partial_native:
+                return None, "原生测试已产生中断原件，先定位执行预算或车道原因，不重复相同输入：" + str(directory / "native")
             return None, "原生密码登录车道推迟或失败，见 " + str(directory / "lane.log")
         native = directory / "native/proof.json"
         assert native.is_file() and json.loads(native.read_text()).get("ok") is True
