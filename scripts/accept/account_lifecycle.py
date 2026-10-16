@@ -278,6 +278,15 @@ def verified_full(path, binding):
     return proof
 
 
+def interrupted_native_original(path):
+    """A 75 after native execution or message dispatch is not a clean admission refusal."""
+    record = json.loads(path.read_text())
+    return record.get("exit_code") == 75 and bool(
+        record.get("steps") or (path.parent / "native/ui.log").exists()
+        or any(record.get("messages_attempted", {}).values())
+        or any(record.get("messages_sent", {}).values()))
+
+
 def full(app, local_path, detail, binding):
     """One bounded pass of the original real-transport coordinator; never retry failed inputs."""
     producers = [ROOT / "scripts/accept" / name for name in
@@ -308,8 +317,8 @@ def full(app, local_path, detail, binding):
             if attempt.exists() and json.loads(attempt.read_text()).get("exit_code") != 75:
                 pending.append(case + "已有当前输入的失败，先回读原件，不重复发信：" + str(attempt))
                 break
-            if any(json.loads(p.read_text()).get("exit_code") != 75 for p in records):
-                pending.append(case + "已有当前输入的原生失败，先修原件，不重复发信：" + str(records[-1]))
+            if any(json.loads(p.read_text()).get("exit_code") != 75 or interrupted_native_original(p) for p in records):
+                pending.append(case + "已有当前输入的原生失败或中断原件，先定位，不重复发信：" + str(records[-1]))
                 break
             if executed:
                 pending.append("已保存一个完整原生流程，剩余流程交原队列有界接续")

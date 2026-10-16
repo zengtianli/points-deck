@@ -13,6 +13,26 @@ SPEC.loader.exec_module(ACCEPTOR)
 
 
 class EvidenceBoundary(unittest.TestCase):
+    def test_interrupted_native_or_message_dispatch_is_not_retried_as_admission(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            path = Path(scratch) / "evidence.json"
+            refused = {"exit_code": 75, "steps": [], "messages_attempted": {"sms": 0, "mail": 0},
+                       "messages_sent": {"sms": 0, "mail": 0}}
+            path.write_text(json.dumps(refused))
+            self.assertFalse(ACCEPTOR.interrupted_native_original(path))
+            for field, channel in (("messages_attempted", "sms"), ("messages_attempted", "mail"),
+                                   ("messages_sent", "sms"), ("messages_sent", "mail")):
+                interrupted = copy.deepcopy(refused)
+                interrupted[field][channel] = 1
+                path.write_text(json.dumps(interrupted))
+                self.assertTrue(ACCEPTOR.interrupted_native_original(path))
+            path.write_text(json.dumps({**refused, "steps": [{"step": "email-registration"}]}))
+            self.assertTrue(ACCEPTOR.interrupted_native_original(path))
+            path.write_text(json.dumps(refused))
+            (path.parent / "native").mkdir()
+            (path.parent / "native/ui.log").write_text("** BUILD INTERRUPTED **")
+            self.assertTrue(ACCEPTOR.interrupted_native_original(path))
+
     def test_stale_missing_false_and_changed_raw_never_count_as_native_pass(self):
         with tempfile.TemporaryDirectory() as scratch, patch.object(ACCEPTOR, "ROOT", Path(scratch)):
             root = Path(scratch)
