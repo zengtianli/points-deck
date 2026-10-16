@@ -1,0 +1,16 @@
+{
+  "app_id": "6806799638",
+  "version": "1.0.3",
+  "version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+  "state": "PREPARE_FOR_SUBMISSION",
+  "review_detail_id": "3a3ea26e-d57c-447c-9684-0c86cdfe6152",
+  "read_at": "2026-10-16T19:51:23.192752+08:00",
+  "notes": "Growth Treasury is our independently maintained family-incentive ledger. Parents record children's daily efforts, review balances and trends, and redeem rewards agreed within the family. Points cannot be purchased, transferred or withdrawn as money. The product-specific contribution is the native family ledger, parent recording and configuration flow, reward redemption and illustrated growth presentation backed by our own ledger service.\n\nThis is one product across Apple device clients. Related learning apps address different tasks, such as collecting and reviewing mistakes; they do not provide this family reward workflow. Shared modules handle configuration, update checks and platform lifecycle. The iOS runtime uses Apple frameworks and declares no third-party advertising or tracking SDK. We maintain and submit this App ourselves, rather than submitting a commercial template on behalf of a client.\n\nInternal validation uses synthetic isolated ledgers and the actual native App, with original service responses and authorized mail/SMS channels. These internal checks are not external beta feedback; no external beta user count or feedback is claimed.\n\nThe new settings screen includes a preferred launch tab, optional celebration effects and an optional Command-R refresh shortcut for external keyboards. Configuration import/export, preference sync and an App Store update check are available in Settings. iCloud sync is opt-in and disabled by default; it covers only three display/interaction preferences. Account credentials and family ledger data remain with our existing service and are not part of this preference sync. Local isolated sync tests do not claim to verify Apple's cross-device delivery.\n\nUse the protected demo credentials in App Review Information, then inspect Ledger, Trend, Add Points, Redeem and Account. Settings can be opened from the page toolbar or Account, including before login. There is no separate parent password. Families provide their own rewards; this is not an in-app purchase. Ordinary points-only accounts can be deleted from Account; accounts with learning-service scans can require coordinated deletion with a receipt and status. Review credentials stay only in ASC's protected fields.\n",
+  "notes_sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b",
+  "nine_question_sha256": "27a272ed608a9a99ee3cd58f4434fddbb30a5a4545642a5c3bb1adb7bf9f3e5f",
+  "exact_readback": true,
+  "demo_credentials_configured": true,
+  "review_write_cli_exit": 1,
+  "cli_report_not_ready": true,
+  "uploaded_or_submitted_by_this_step": false
+}
