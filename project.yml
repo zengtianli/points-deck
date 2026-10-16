@@ -9,7 +9,7 @@ options:
 settings:
   base:
     APP_DISPLAY_NAME: 成长小金库
-    MARKETING_VERSION: "1.0.2"
+    MARKETING_VERSION: "1.0.3"
     CODE_SIGN_STYLE: Automatic
     # 2026-08-29 起已开通付费 Developer Program(团队 B9LJH93LA4),不再留空走免费 Personal Team。
     DEVELOPMENT_TEAM: B9LJH93LA4
@@ -100,7 +100,7 @@ targets:
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         GENERATE_INFOPLIST_FILE: YES
         CODE_SIGN_ENTITLEMENTS: App.entitlements
-        CURRENT_PROJECT_VERSION: "9"
+        CURRENT_PROJECT_VERSION: "13"
     scheme:
       testTargets: []
       configVariants: []
@@ -141,7 +141,7 @@ targets:
         "CODE_SIGN_ENTITLEMENTS[sdk=macosx*]": Mac.PointsWidget.entitlements
         "ENABLE_HARDENED_RUNTIME[sdk=macosx*]": YES
         CODE_SIGN_ENTITLEMENTS: Widget.entitlements
-        CURRENT_PROJECT_VERSION: "9"
+        CURRENT_PROJECT_VERSION: "13"
 
   # ── Apple Watch ───────────────────────────────────────────────────────────
   # 孩子抬腕看的只读一面：余额、档位配色、还差 N 分升 X、最近 10 笔；登录态由 iPhone 经
@@ -182,7 +182,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.watchkitapp
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         CODE_SIGN_ENTITLEMENTS: Watch.entitlements
-        CURRENT_PROJECT_VERSION: "9"
+        CURRENT_PROJECT_VERSION: "13"
     scheme: {}
   # 表盘复杂功能：同一份 Widget/PointsWidget.swift，watchOS 分支声明 accessory 四种尺寸。
   PointsWatchWidget:
@@ -208,4 +208,4 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: cyou.tianli.pointsdeck.watchkitapp.widget
         CODE_SIGN_ENTITLEMENTS: WatchWidget.entitlements
-        CURRENT_PROJECT_VERSION: "9"
+        CURRENT_PROJECT_VERSION: "13"
