@@ -64,8 +64,27 @@ def verified_local(path, binding):
     return proof
 
 
+@contextlib.contextmanager
+def progress(label):
+    """Keep the original queue informed without exposing native typed input."""
+    stopped = threading.Event()
+    started = time.monotonic()
+
+    def report():
+        while not stopped.wait(30):
+            print(f"账号原生阶段 {label} 仍在运行，已用 {int(time.monotonic() - started)} 秒", flush=True)
+
+    worker = threading.Thread(target=report, daemon=True)
+    worker.start()
+    try:
+        yield
+    finally:
+        stopped.set()
+        worker.join(1)
+
+
 def invoke(arguments, log, timeout=555):
-    with log.open("w") as stream:
+    with log.open("w") as stream, progress(log.stem):
         result = subprocess.run([sys.executable, str(ROOT / "scripts/accept/platform_ui.py"),
             *arguments, "--functional-only", "--budget-min", "9"], cwd=ROOT,
             stdout=stream, stderr=subprocess.STDOUT, timeout=timeout)
@@ -79,6 +98,8 @@ def local(app, receipt, directory, binding):
     if target.exists():
         verified_local(target, binding)
         return target, None
+    if not attempt.exists() and (directory / "native/ui.xcresult").exists():
+        return None, "原生测试已有中断原件且父进程未保存终态，先诊断，不覆盖或重跑：" + str(directory / "native")
     if attempt.exists() and json.loads(attempt.read_text()).get("exit_code") not in (None, 75):
         return None, "相同客户端、测试和执行脚本已有原生失败；先修原件所示原因，不重复执行"
     directory.mkdir(parents=True, exist_ok=True)
@@ -313,6 +334,9 @@ def full(app, local_path, detail, binding):
         records = sorted(directory.glob("account-" + case + "-*/evidence.json"))
         successful = next((p for p in records if json.loads(p.read_text()).get("exit_code") == 0), None)
         if not successful:
+            if case.startswith("Phone") or case == "PasswordlessDeletion":
+                pending.append(case + "需要真实短信，本轮禁止向本人手机发码，保留未验状态")
+                continue
             attempt = directory / (case + "-attempt.json")
             if attempt.exists() and json.loads(attempt.read_text()).get("exit_code") != 75:
                 pending.append(case + "已有当前输入的失败，先回读原件，不重复发信：" + str(attempt))
@@ -324,7 +348,7 @@ def full(app, local_path, detail, binding):
                 pending.append("已保存一个完整原生流程，剩余流程交原队列有界接续")
                 break
             log = directory / (case + ".log")
-            with log.open("w") as stream:
+            with log.open("w") as stream, progress(case):
                 result = subprocess.run(["/opt/homebrew/bin/uv", "run", "--script", str(producers[0]), case,
                     "--platform", "iphone", "--product-log", str(product_log)], cwd=ROOT,
                     env={**os.environ, "POINTS_ACCOUNT_RUN_ROOT": str(directory), "POINTS_ACCOUNT_INPUT_SHA256": binding},

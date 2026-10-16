@@ -2,7 +2,9 @@
 import copy
 import importlib.util
 import json
+import os
 from pathlib import Path
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -13,6 +15,29 @@ SPEC.loader.exec_module(ACCEPTOR)
 
 
 class EvidenceBoundary(unittest.TestCase):
+    def test_phone_cases_stop_before_configuration_or_message_dispatch(self):
+        path = ACCEPTOR.ROOT / "scripts/accept/account_native.py"
+        spec = importlib.util.spec_from_file_location("native_sms_guard", path)
+        native = importlib.util.module_from_spec(spec)
+        with patch.dict(os.environ, POINTS_ACCOUNT_RUN_ROOT=str(ACCEPTOR.ROOT / "perf/account/native-current/guard-test")):
+            spec.loader.exec_module(native)
+        with patch.object(native, "ensure_task_active"), patch.object(native, "remote_configuration") as configure:
+            for case in ("PhoneLifecycle", "PhoneBinding", "PasswordlessDeletion"):
+                with patch.object(sys, "argv", [str(path), case]):
+                    with self.assertRaisesRegex(RuntimeError, "prohibits real SMS"):
+                        native.main()
+            configure.assert_not_called()
+
+    def test_missing_parent_attempt_does_not_replay_existing_xcresult(self):
+        with tempfile.TemporaryDirectory() as scratch:
+            directory = Path(scratch)
+            (directory / "native/ui.xcresult").mkdir(parents=True)
+            with patch.object(ACCEPTOR, "invoke") as invoke:
+                proof, pending = ACCEPTOR.local(None, None, directory, "current")
+            self.assertIsNone(proof)
+            self.assertIn("中断原件", pending)
+            invoke.assert_not_called()
+
     def test_interrupted_native_or_message_dispatch_is_not_retried_as_admission(self):
         with tempfile.TemporaryDirectory() as scratch:
             path = Path(scratch) / "evidence.json"

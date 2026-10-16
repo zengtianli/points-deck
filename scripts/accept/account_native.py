@@ -67,6 +67,8 @@ def main():
     case = sys.argv[1]
     no_transport = case == 'PasswordLogin'
     offline = '--offline' in sys.argv[2:] or no_transport
+    if not offline and (case.startswith('Phone') or case == 'PasswordlessDeletion'):
+        raise RuntimeError('Current release prohibits real SMS to the owner; phone acceptance remains pending')
     platform = sys.argv[sys.argv.index('--platform')+1] if '--platform' in sys.argv else 'ipad'
     if platform not in ('ipad','iphone'): raise ValueError('platform')
     if case not in ('PasswordLogin','EmailLifecycle','EmailTransport','EmailBinding','PhoneLifecycle','PhoneBinding','PasswordlessDeletion'): raise ValueError('case')
@@ -127,10 +129,10 @@ def main():
         for line in (Path.home()/'.personal_env').read_text().splitlines():
             hit=re.match(r'\s*(?:export\s+)?(PERSONAL_PHONE_CN|USER_PHONE)=(.*)',line)
             if hit and hit.group(2).strip():return shlex.split(hit.group(2))[0]
-    phone='13800000000' if offline else os.environ.get('PERSONAL_PHONE_CN') or os.environ.get('USER_PHONE') or owner_phone()
+    phone='13800000000' if offline or case.startswith('Email') else os.environ.get('PERSONAL_PHONE_CN') or os.environ.get('USER_PHONE') or owner_phone()
     if not phone: raise RuntimeError('no registered owner phone')
     phone=account_phone.phone(phone)
-    phone_new=account_phone.phone('13900000000') if offline else account_phone.phone(re.search(r'第二个本人授权号码：[\s*]*(1[3-9]\d{9})',(LEGACY.parent.parent/'round6.md').read_text()).group(1))
+    phone_new=account_phone.phone('13900000000') if offline or case.startswith('Email') else account_phone.phone(re.search(r'第二个本人授权号码：[\s*]*(1[3-9]\d{9})',(LEGACY.parent.parent/'round6.md').read_text()).group(1))
     # Both recipients were authorized in the original private task material.
     # A current missing receipt is a failed/deferred flow, never a waiver.
     bind_only='--bind-only' in sys.argv
@@ -187,6 +189,8 @@ def main():
         config=real_gateway.config
         def send(self,number,purpose,out_id):
             nonlocal last_sms,baseline
+            if not offline:
+                raise account_security.Fault('Current release prohibits real SMS; native phone evidence remains pending',503)
             ensure_task_active(real_transport=not offline)
             if number not in allowed_phones or attempted['sms']+prior['sms']>=12:raise account_security.Fault('test recipient/budget guard',503)
             if not offline:

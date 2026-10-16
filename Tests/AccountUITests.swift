@@ -43,8 +43,12 @@ final class AccountUITests: XCTestCase {
     var keyboardVisible: Bool {
         let keyboard = app.keyboards.firstMatch
         // XCTest typing is a hardware keyboard to iOS: the software keys
-        // minimise but AX can keep the object. Only hittable keys are on screen.
-        return keyboard.exists && keyboard.keys.allElementsBoundByIndex.contains(where: { $0.isHittable })
+        // minimise but AX can keep the object below the screen. Reject that
+        // geometry before asking AX about every key (which can take minutes).
+        guard keyboard.exists else { return false }
+        let visible = keyboard.frame.intersection(app.windows.firstMatch.frame)
+        guard !visible.isNull && visible.height > 1 && visible.width > 1 else { return false }
+        return keyboard.keys.allElementsBoundByIndex.contains(where: { $0.isHittable })
     }
     func topScroll() -> XCUIElement {
         let scrolls = app.collectionViews.count > 0 ? app.collectionViews : app.scrollViews
