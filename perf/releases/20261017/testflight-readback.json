@@ -1,0 +1,311 @@
+{
+  "schema_version": 1,
+  "task_id": "cb6be80567ab4f01b50d9be6bd73f319",
+  "scope": "TestFlight only: reuse an existing VALID build when current build inputs match its frozen uploaded source",
+  "checked_at": "2026-10-17T13:57:39.436574+00:00",
+  "app_id": "points-deck-ios",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "chapter_store_status": {
+    "ok": true,
+    "stage": "store",
+    "checked_at": "2026-10-17T21:56:39+08:00",
+    "source_sha256": "6e3cd087a223e977d8785a829caa363b1a0d179376557acf7ee702c26c818fd0",
+    "target": {
+      "app_id": "points-deck-ios",
+      "name": "Growth Treasury · 成长小金库",
+      "apple_id": "6806799638",
+      "platform": "IOS",
+      "version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+      "version": "1.0.3",
+      "build": "13",
+      "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "submission_id": null,
+      "registry_file": "/Users/tianli/Apps/edu/ios/points/01-源程序/project.yaml"
+    },
+    "version_state": "PREPARE_FOR_SUBMISSION",
+    "submission_state": null,
+    "build_state": "VALID",
+    "build_expired": false,
+    "associated_build": "13",
+    "items": [],
+    "message_check": {
+      "actor": "agent",
+      "status": "body_not_read",
+      "url": "https://appstoreconnect.apple.com/apps/6806799638/distribution/reviewsubmissions/details/",
+      "next": "chapter store reply --app points-deck-ios --platform ios --dry-run --json"
+    }
+  },
+  "asc_readback": {
+    "checked_at": "2026-10-17T13:57:39.436574+00:00",
+    "method": "official ASC GET through existing asc.py",
+    "build_list_pages": [
+      {
+        "data": [
+          {
+            "type": "builds",
+            "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+            "attributes": {
+              "version": "13",
+              "uploadedDate": "2026-10-17T04:06:18-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "1ad39cd1-8ac8-441e-858a-326a531712b9",
+            "attributes": {
+              "version": "12",
+              "uploadedDate": "2026-10-08T10:30:10-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/1ad39cd1-8ac8-441e-858a-326a531712b9"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "dc0ec998-a536-42c0-9722-311950e3b00f",
+            "attributes": {
+              "version": "11",
+              "uploadedDate": "2026-10-04T07:09:49-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/dc0ec998-a536-42c0-9722-311950e3b00f"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+            "attributes": {
+              "version": "10",
+              "uploadedDate": "2026-10-04T04:19:49-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/97f7f6d5-7fe0-4ab5-9035-535b16681099"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "f5bbc237-7bf9-47d9-ae04-16c1a90b25a5",
+            "attributes": {
+              "version": "9",
+              "uploadedDate": "2026-10-03T12:06:39-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/f5bbc237-7bf9-47d9-ae04-16c1a90b25a5"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+            "attributes": {
+              "version": "8",
+              "uploadedDate": "2026-09-28T14:08:01-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/8a19aa18-5887-4644-b89f-1436b8a3660e"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "d44971d8-c66a-47cb-ae34-5a02685c25be",
+            "attributes": {
+              "version": "4",
+              "uploadedDate": "2026-09-09T02:06:43-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/d44971d8-c66a-47cb-ae34-5a02685c25be"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "f9e5b73b-e288-4a68-afe8-5defd6419bf0",
+            "attributes": {
+              "version": "3",
+              "uploadedDate": "2026-09-09T01:18:05-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/f9e5b73b-e288-4a68-afe8-5defd6419bf0"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "0f8f67cd-92ec-45d7-80ac-2b74ea5f0ca8",
+            "attributes": {
+              "version": "3",
+              "uploadedDate": "2026-09-05T03:22:35-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/0f8f67cd-92ec-45d7-80ac-2b74ea5f0ca8"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "39708603-ce63-4169-a649-790e865a6c2e",
+            "attributes": {
+              "version": "2",
+              "uploadedDate": "2026-09-06T00:13:53-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/39708603-ce63-4169-a649-790e865a6c2e"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "539f3271-5f69-44d2-ba01-3dede2f01333",
+            "attributes": {
+              "version": "2",
+              "uploadedDate": "2026-09-01T23:04:34-07:00",
+              "expired": false,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/539f3271-5f69-44d2-ba01-3dede2f01333"
+            }
+          },
+          {
+            "type": "builds",
+            "id": "bc64e532-dcd1-4007-abc2-1875bed8ea4c",
+            "attributes": {
+              "version": "1",
+              "uploadedDate": "2026-08-30T18:14:39-07:00",
+              "expired": true,
+              "processingState": "VALID"
+            },
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/builds/bc64e532-dcd1-4007-abc2-1875bed8ea4c"
+            }
+          }
+        ],
+        "links": {
+          "self": "https://api.appstoreconnect.apple.com/v1/builds?fields%5Bbuilds%5D=processingState%2Cexpired%2CuploadedDate%2Cversion&filter%5BpreReleaseVersion.platform%5D=IOS&filter%5Bapp%5D=6806799638&sort=-version&limit=200"
+        },
+        "meta": {
+          "paging": {
+            "total": 12,
+            "limit": 200
+          }
+        }
+      }
+    ],
+    "selected_build": {
+      "type": "builds",
+      "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "attributes": {
+        "version": "13",
+        "uploadedDate": "2026-10-17T04:06:18-07:00",
+        "expired": false,
+        "processingState": "VALID"
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/builds/8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+      }
+    },
+    "pre_release_version": {
+      "data": {
+        "type": "preReleaseVersions",
+        "id": "d0cc04b4-839c-410a-9e5b-7e0876abec1f",
+        "attributes": {
+          "version": "1.0.3",
+          "platform": "IOS"
+        },
+        "relationships": {
+          "builds": {
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/preReleaseVersions/d0cc04b4-839c-410a-9e5b-7e0876abec1f/relationships/builds",
+              "related": "https://api.appstoreconnect.apple.com/v1/preReleaseVersions/d0cc04b4-839c-410a-9e5b-7e0876abec1f/builds"
+            }
+          },
+          "app": {
+            "links": {
+              "self": "https://api.appstoreconnect.apple.com/v1/preReleaseVersions/d0cc04b4-839c-410a-9e5b-7e0876abec1f/relationships/app",
+              "related": "https://api.appstoreconnect.apple.com/v1/preReleaseVersions/d0cc04b4-839c-410a-9e5b-7e0876abec1f/app"
+            }
+          }
+        },
+        "links": {
+          "self": "https://api.appstoreconnect.apple.com/v1/preReleaseVersions/d0cc04b4-839c-410a-9e5b-7e0876abec1f"
+        }
+      },
+      "links": {
+        "self": "https://api.appstoreconnect.apple.com/v1/builds/8ce9e986-bd65-450f-b2fc-62ddba43ea28/preReleaseVersion"
+      }
+    }
+  },
+  "source_comparison": {
+    "checked_at": "2026-10-17T13:57:36.971416+00:00",
+    "uploaded_source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
+    "current_head": "c4cff9016e85a7dc913d199ef8df6b27f6e43754",
+    "version": "1.0.3",
+    "build": "13",
+    "manifest": "perf/releases/20261017/source.json",
+    "manifest_sha256": "202318024031e54f4b47e77447e47aef8b75ce89006d5f745558e214c97f4bdb",
+    "scope": "tracked Swift sources, shared sources, embedded Watch and Widget sources, resources, project.yml, entitlements, export options, skin synchronization and pinned CI skin inputs; Resources/Skins generated from unchanged committed ci_scripts/skins.lock in the uploaded CI=TRUE build",
+    "checked_file_count": 78,
+    "expected_inputs_sha256": "8fc812c16e01988ead767ef8c17c06db24746e6be53306bc74595acfaaf50fc6",
+    "current_inputs_sha256": "8fc812c16e01988ead767ef8c17c06db24746e6be53306bc74595acfaaf50fc6",
+    "mismatches": [],
+    "extra_tracked_inputs": [],
+    "untracked_inputs": [],
+    "committed_changes_since_upload": [
+      "README.md",
+      "README_EN.md",
+      "perf/asc-release.json",
+      "perf/releases/20261017/archive-command.json",
+      "perf/releases/20261017/archive-preflight.json",
+      "perf/releases/20261017/archive.json",
+      "perf/releases/20261017/asc-final.json",
+      "perf/releases/20261017/asc-processing.json",
+      "perf/releases/20261017/asc-upload.json",
+      "perf/releases/20261017/attach-command.json",
+      "perf/releases/20261017/source.json",
+      "perf/releases/20261017/store-accept.json",
+      "perf/releases/20261017/store-continuation/asc-status.json",
+      "perf/releases/20261017/store-continuation/https-diagnostic.json",
+      "perf/releases/20261017/store-continuation/package-and-devices.json",
+      "perf/releases/20261017/store-continuation/prepare.json",
+      "perf/releases/20261017/store-prepare.json",
+      "perf/releases/20261017/upload-command.json",
+      "project.yaml",
+      "store/4.3-4.2.6-九问.md",
+      "store/changes.json"
+    ],
+    "build_input_committed_changes": [],
+    "same_current_build_inputs": true
+  },
+  "result": {
+    "complete": true,
+    "version": "1.0.3",
+    "build": "13",
+    "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+    "processing_state": "VALID",
+    "expired": false,
+    "reused_existing_build": true,
+    "new_archive": false,
+    "new_upload": false,
+    "device_install": false,
+    "app_store_submission": false
+  },
+  "evidence_boundary": "Release-channel and current build-input verification only; no new runtime, device, performance, store-material, or acceptance checks were executed."
+}
