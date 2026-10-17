@@ -1,0 +1,27 @@
+{
+  "app_id": "points-deck-ios",
+  "date": "2026-10-17",
+  "method": "Independent curl HTTPS GET with certificate verification enabled and a 20 second bound",
+  "scope": "Normalized transport diagnostics only; does not override the failed Store prepare check.",
+  "responses": [
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/support.html",
+      "exit_code": 28,
+      "http_code": 200,
+      "ssl_verify_result": 0,
+      "size_download": 14606,
+      "time_total": 20.099088,
+      "error": "Operation timed out after 20098 milliseconds with 14606 bytes received"
+    },
+    {
+      "url": "https://app-ios-points-deck.tianli.cyou/privacy.html",
+      "exit_code": 0,
+      "http_code": 200,
+      "ssl_verify_result": 0,
+      "size_download": 40891,
+      "time_total": 6.661265,
+      "error": null
+    }
+  ],
+  "conclusion": "The independent privacy GET completed; the support GET received HTTP 200 and partial content but timed out. The canonical urllib prepare had a TLS handshake timeout. No server defect or fixed Store acceptance is inferred from these different observations."
+}

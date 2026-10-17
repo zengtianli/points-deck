@@ -1,0 +1,32 @@
+{
+  "checked_at": "2026-10-17T13:34:13.142665+00:00",
+  "app_id": "points-deck-ios",
+  "task_id": "9c11165ac3ac479d8fb0fce493f7cea8",
+  "distribution": "app_store",
+  "platform": "IOS",
+  "version": "1.0.3",
+  "build": "13",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "app_path": "/private/tmp/ios-testflight/PointsDeck-ios.xcarchive/Products/Applications/PointsDeck.app",
+  "executable_sha256": "905100984e370f47749214b25a730d7f6995705a2418e2a41cf82dc96480b3c9",
+  "supported_platforms": ["iPhoneOS"],
+  "codesign_verify_exit_code": 0,
+  "device_query": {
+    "command": ["xcrun", "devicectl", "list", "devices", "--json-output", "<temporary JSON>", "--timeout", "20"],
+    "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+    "exit_code": 0,
+    "outcome": "success",
+    "total": 35,
+    "physical_devices": 0,
+    "simulated_devices": 35,
+    "unknown_reality": 0,
+    "provider": "com.apple.CoreSimulator.SimulatorCoreDevicePlugin",
+    "normalization": "Counts and provider from all 35 device rows; device names and identifiers omitted."
+  },
+  "runtime_checks_executed": false,
+  "verification_written": false,
+  "submit_executed": false,
+  "state": "waiting_prerequisite",
+  "resource": "ios_store_runtime_device",
+  "scope": "Package identity, code signature and connected device inventory only; not Store runtime acceptance."
+}

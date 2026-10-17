@@ -1,0 +1,56 @@
+{
+  "command": "chapter store prepare --app points-deck-ios --platform ios --version-id 604a9480-62ed-4102-80b5-b5f3666a6210 --json",
+  "exit_code": 1,
+  "output": {
+    "ok": false,
+    "stage": "store",
+    "checked_at": "2026-10-17T21:34:28+08:00",
+    "source_sha256": "428c8401144d2c82d9aa70cf8986cccb115c6276e86282fe4b7b82ce867dcf28",
+    "target": {
+      "app_id": "points-deck-ios",
+      "name": "Growth Treasury · 成长小金库",
+      "apple_id": "6806799638",
+      "platform": "IOS",
+      "version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+      "version": "1.0.3",
+      "build": "13",
+      "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "submission_id": null,
+      "registry_file": "/Users/tianli/Apps/edu/ios/points/01-源程序/project.yaml"
+    },
+    "version_state": "PREPARE_FOR_SUBMISSION",
+    "submission_state": null,
+    "build_state": "VALID",
+    "build_expired": false,
+    "associated_build": "13",
+    "items": [],
+    "message_check": {
+      "actor": "agent",
+      "status": "body_not_read",
+      "url": "https://appstoreconnect.apple.com/apps/6806799638/distribution/reviewsubmissions/details/",
+      "next": "chapter store reply --app points-deck-ios --platform ios --dry-run --json"
+    },
+    "review_notes_readback": {
+      "actual_sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b",
+      "expected_sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b",
+      "exact_match": true
+    },
+    "state": "blocked",
+    "checks": [
+      {"id": "questionnaire", "passed": true, "evidence": {"path": "/Users/tianli/Apps/edu/ios/points/01-源程序/store/4.3-4.2.6-九问.md", "sha256": "ec133ddabc811c71854b719928fdb5f8c2d57e5ea5b818ddda544b81e60af81f", "answers": 9}},
+      {"id": "store_variant", "passed": false, "detail": "[Errno 2] No such file or directory: '/Users/tianli/Apps/edu/ios/points/01-源程序/store/verification.json'"},
+      {"id": "visible_changes", "passed": true, "evidence": {"path": "/Users/tianli/Apps/edu/ios/points/01-源程序/store/changes.json", "sha256": "14e4dd8d9d18d98b9c0d16a4db9d07b8fd91280fe1f0dab4db2873d3fbb92814", "changes": ["新增集中设置，可选择启动栏目、升档庆祝和外接键盘刷新开关；显示与操作偏好可导入导出、按需启用 iCloud 同步，并检查 App Store 更新。"]}},
+      {"id": "review_notes", "passed": true, "evidence": {"sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b", "bytes": 2241, "points": ["1", "3", "5", "6", "7", "8"]}},
+      {"id": "screenshots", "passed": true, "evidence": [
+        {"locale": "zh-Hans", "type": "APP_WATCH_SERIES_10", "states": ["COMPLETE"]},
+        {"locale": "zh-Hans", "type": "APP_IPAD_PRO_3GEN_129", "states": ["COMPLETE"]},
+        {"locale": "zh-Hans", "type": "APP_IPHONE_67", "states": ["COMPLETE", "COMPLETE", "COMPLETE", "COMPLETE", "COMPLETE", "COMPLETE"]}
+      ]},
+      {"id": "listing_and_https", "passed": false, "detail": "<urlopen error _ssl.c:993: The handshake operation timed out>"},
+      {"id": "valid_build", "passed": true, "evidence": {"build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28", "state": "VALID"}}
+    ],
+    "method_source": "/Users/tianli/Dev/tools/cc-home/skills/app/references/app-store-review.md",
+    "method_sha256": "7fb4b180bef846338b29a065af13b55f8728c1cfc518ae26feb4975f629be8a6"
+  },
+  "scope": "Read-only Store prepare command receipt; not delivery-evidence and not Store acceptance."
+}
