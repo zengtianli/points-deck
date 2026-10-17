@@ -1,0 +1,19 @@
+{
+  "command": "~/Dev/.venv/bin/python ~/Apps/chapter/engine/app_sop.py accept --app points-deck-ios --check store --json",
+  "exit_code": 75,
+  "output": {
+    "ok": false,
+    "app_id": "points-deck-ios",
+    "results": {
+      "store": {
+        "status": "deferred",
+        "method": "real_product",
+        "evidence": "perf/acceptance/store.json",
+        "detail": "商店只读检查等待资源，交回原队列",
+        "exit_code": 75,
+        "input_stable": true
+      }
+    }
+  },
+  "scope": "Command receipt only. Deferred is not a passed acceptance and this file does not replace delivery-evidence."
+}

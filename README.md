@@ -10,7 +10,7 @@
 
 由家长操作的家庭积分账本：记录表现、积攒约定奖励，让每一份努力看得见。客户端沿用共享 API 与服务端规则，11 档成长家园和 5 个时代插画保留。
 
-本地源码按 [PRD 1.3](../PRD.md) 提供五栏目与一键记分，接入邮箱与手机号账号流程。既有 Mailu 邮件与阿里云短信通道曾完成真实投递核验；当前原生完整账号流程另走固定验收，不以通道配置代替通过。2026-10-16 官方 API 回读在售 **1.0.2（12）**，本地正在准备 **1.0.3（13）** 候选，尚未送审；进度与实际原件见 [本次发行交接](handoffs/appstore-release-20261016.md)。当前页保留的历史截图和资源数字不代表新候选已经完成素材或性能验收。平台行为与环境见 [验收记录](perf/platform-validation/README.md)。
+本地源码按 [PRD 1.3](../PRD.md) 提供五栏目与一键记分，接入邮箱与手机号账号流程。既有 Mailu 邮件与阿里云短信通道曾完成真实投递核验；当前原生完整账号流程另走固定验收。2026-10-17 官方 API 回读在售 **1.0.2（12）**；已提交源码出包的 **1.0.3（13）** 已上传、VALID，并关联原草稿和既有 TestFlight 内测组。商店固定验收返回75，尚未送审，真机装机未核实；进度与原件见 [本次发行交接](handoffs/release-20261017.md)及[ASC回读](perf/releases/20261017/asc-final.json)。本页历史截图和资源数字保留其原测量范围。平台行为与环境见 [验收记录](perf/platform-validation/README.md)。
 
 <p>以下为此前发行版截图；改版实机/模拟器画面见交接中的原始证据。</p>
 <table><tr>
@@ -42,9 +42,9 @@
 | 平台 | 长什么样 | 现在能不能装 |
 |---|---|---|
 | iPhone | 当前源码为底部五栏：账本 / 走势 / 加分 / 兑换 / 账户；含锁屏和桌面小组件 | [App Store](https://apps.apple.com/app/id6806799638) 中国区在售 1.0.2、免费，2026-10-09 Apple 公开接口回读；设备实装构建号未核 |
-| iPad | 同顺序底部五栏；宽屏增加卡片列数，分屏按可用宽度排布 | 在售的是同一个包；TestFlight 1.0.2（11）可测试新版 |
+| iPad | 同顺序底部五栏；宽屏增加卡片列数，分屏按可用宽度排布 | 与 iPhone 使用同一发行包；当前 TestFlight 构建见[发行记录](perf/asc-release.json) |
 | Mac | 原生 macOS 窗口，同顺序五项侧栏；包内自带 `treasury` 命令行 | **未上架**；本地测试包在 `build/accept/mac/Growth Treasury.app` |
-| Apple Watch | 抬腕看住在哪一档、余额、还差几分升级与进度，翻一页是最近 10 笔；表盘复杂功能四种。只读，不兑换、不记账；登录态由 iPhone 递过来 | 随 TestFlight 1.0.2（11）嵌入 iPhone 包；独立 Watch 商店上架未完成 |
+| Apple Watch | 抬腕看住在哪一档、余额、还差几分升级与进度，翻一页是最近 10 笔；表盘复杂功能四种。只读，不兑换、不记账；登录态由 iPhone 递过来 | 嵌入 iPhone 发行包；独立 Watch 商店上架未完成 |
 | Apple Vision Pro | 同一套侧栏看板放在系统玻璃窗口里，时代色只做强调色 | **未上架**，只在模拟器上验过 |
 
 <table><tr>
@@ -73,7 +73,7 @@
 
 ## 怎么拿到
 
-已支持手机验证码、邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-10-16 ASC 官方回读在售 1.0.2（12）；2026-10-09 中国区公开接口确认免费下载、iOS 18 起，见[公开版本回读](perf/raw/promo-apple-public-20261009.json)。[发行记录](perf/asc-release.json) 顶层仍是历史 TestFlight 1.0.2（11）；实际新构建、送审和装机分别回读，历史资源数字不代表当前公开包。
+已支持手机验证码、邮箱注册与独立家庭账本；iPhone / iPad 版已在 [App Store](https://apps.apple.com/app/id6806799638) 发布，Mac、Apple Watch、Apple Vision Pro 版还没上架。2026-10-17 ASC 官方回读在售 1.0.2（12），TestFlight 为 1.0.3（13）；新版本草稿仍为 PREPARE_FOR_SUBMISSION。2026-10-09 中国区公开接口确认免费下载、iOS 18 起，见[公开版本回读](perf/raw/promo-apple-public-20261009.json)。[发行记录](perf/asc-release.json)保存当前包来源和历史记录，实际装机版本另行核验。
 
 时代插画底图来自作者的 `~/Apps/edu/web` 内容库（构建时同步进包），账本后端 `edu.tianli.cyou`。没有那份内容库，构建会停在 preBuildScripts。
 

@@ -1,0 +1,12 @@
+{
+  "ok": false,
+  "stage": "store",
+  "state": "blocked",
+  "error": {
+    "code": "store_timeout",
+    "message": "商店步骤已达本轮时限，原回执保留；先只读核原单，不重放对外动作"
+  },
+  "command": "chapter store prepare --app points-deck-ios --platform ios --json",
+  "exit_code": 1,
+  "scope": "Initial read-only check before adding the exact release target registration; no upload or submission was performed by this command."
+}

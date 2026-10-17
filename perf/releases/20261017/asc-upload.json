@@ -1,0 +1,49 @@
+{
+  "queried_at": "2026-10-17T11:05:37.883504+00:00",
+  "source": "Official ASC API, complete pagination",
+  "app_id": "6806799638",
+  "builds": [],
+  "versions": [
+    {
+      "id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+      "version": "1.0.3",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "build": null
+    },
+    {
+      "id": "464b746f-5cc6-4c06-b70c-de87b5967d9f",
+      "version": "1.0.2",
+      "state": "READY_FOR_SALE",
+      "build": {
+        "type": "builds",
+        "id": "1ad39cd1-8ac8-441e-858a-326a531712b9"
+      }
+    },
+    {
+      "id": "194740cb-10ea-4a47-a6d5-215ef5b0e3f9",
+      "version": "1.0",
+      "state": "READY_FOR_SALE",
+      "build": {
+        "type": "builds",
+        "id": "39708603-ce63-4169-a649-790e865a6c2e"
+      }
+    }
+  ],
+  "submissions": [
+    {
+      "id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
+      "state": "COMPLETE",
+      "submitted_at": "2026-10-08T17:36:19.589Z"
+    },
+    {
+      "id": "3f15a3e1-446f-434e-8ce3-9177bdaba202",
+      "state": "COMPLETE",
+      "submitted_at": "2026-09-28T21:10:56.796Z"
+    },
+    {
+      "id": "21d699f6-f3e2-44b1-a3b0-87a3eba4fd7c",
+      "state": "COMPLETE",
+      "submitted_at": "2026-09-07T16:06:53.83Z"
+    }
+  ]
+}

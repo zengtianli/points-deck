@@ -1,74 +1,108 @@
 {
-  "version": "1.0.2",
-  "build": "11",
+  "version": "1.0.3",
+  "build": "13",
   "source_kind": "app_store_connect",
-  "distribution": "TestFlight（内测组 family）",
-  "queried_at": "2026-10-04T14:13:10.082910+00:00",
+  "distribution": "TestFlight（已进入既有内测组）",
+  "queried_at": "2026-10-17T11:09:08.666403+00:00",
   "app_id": "6806799638",
   "bundle_id": "cyou.tianli.pointsdeck",
-  "build_id": "dc0ec998-a536-42c0-9722-311950e3b00f",
+  "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
   "processing_state": "VALID",
   "device_install_verified": false,
-  "source_commit": "39ea3453d17d2b2aabe847d7f6399178a38af21b",
+  "source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
   "source_kind_detail": {
-    "builder": "local official push-testflight.sh --testflight-only",
-    "evidence": "perf/raw/testflight-1.0.2-11.json"
+    "builder": "local official push-testflight.sh --upload-prepared; immutable git archive",
+    "evidence": "perf/releases/20261017/asc-final.json",
+    "archive_evidence": "perf/releases/20261017/archive.json"
   },
   "app_store": {
-    "live_version": "1.0",
-    "live_build": "2",
-    "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+    "live_version": "1.0.2",
+    "live_build": "12",
+    "live_build_id": "1ad39cd1-8ac8-441e-858a-326a531712b9",
     "live_state": "READY_FOR_SALE",
-    "pending_version": "1.0.2",
-    "pending_state": "WAITING_FOR_REVIEW",
-    "pending_build": "12",
-    "pending_build_id": "1ad39cd1-8ac8-441e-858a-326a531712b9",
-    "submission_id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
-    "submission_state": "WAITING_FOR_REVIEW",
-    "submitted_at": "2026-10-08T17:36:19.589Z",
-    "queried_at": "2026-10-09T02:02:10.275520+08:00",
-    "evidence": "perf/raw/sweep-asc-readback-20261009.json",
-    "previous": {
-      "live_version": "1.0",
-      "live_build": "2",
-      "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
-      "live_state": "READY_FOR_SALE",
-      "pending_version": "1.0.1",
-      "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
-    }
+    "pending_version": "1.0.3",
+    "pending_version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+    "pending_state": "PREPARE_FOR_SUBMISSION",
+    "pending_build": "13",
+    "pending_build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+    "submission_id": null,
+    "submission_state": null,
+    "queried_at": "2026-10-17T11:09:08.666403+00:00",
+    "evidence": "perf/releases/20261017/asc-final.json"
   },
   "previous": {
     "version": "1.0.2",
-    "build": "10",
+    "build": "11",
     "source_kind": "app_store_connect",
     "distribution": "TestFlight（内测组 family）",
-    "queried_at": "2026-10-04T11:21:13.492486+00:00",
+    "queried_at": "2026-10-04T14:13:10.082910+00:00",
     "app_id": "6806799638",
     "bundle_id": "cyou.tianli.pointsdeck",
-    "build_id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+    "build_id": "dc0ec998-a536-42c0-9722-311950e3b00f",
     "processing_state": "VALID",
     "device_install_verified": false,
-    "source_commit": "c5c2f43d04e88550f0454af0d947367107b5b34e",
+    "source_commit": "39ea3453d17d2b2aabe847d7f6399178a38af21b",
     "source_kind_detail": {
       "builder": "local official push-testflight.sh --testflight-only",
-      "evidence": "perf/raw/testflight-1.0.2-10.json"
+      "evidence": "perf/raw/testflight-1.0.2-11.json"
     },
     "app_store": {
       "live_version": "1.0",
       "live_build": "2",
       "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
       "live_state": "READY_FOR_SALE",
-      "pending_version": "1.0.1",
-      "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
+      "pending_version": "1.0.2",
+      "pending_state": "WAITING_FOR_REVIEW",
+      "pending_build": "12",
+      "pending_build_id": "1ad39cd1-8ac8-441e-858a-326a531712b9",
+      "submission_id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
+      "submission_state": "WAITING_FOR_REVIEW",
+      "submitted_at": "2026-10-08T17:36:19.589Z",
+      "queried_at": "2026-10-09T02:02:10.275520+08:00",
+      "evidence": "perf/raw/sweep-asc-readback-20261009.json",
+      "previous": {
+        "live_version": "1.0",
+        "live_build": "2",
+        "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+        "live_state": "READY_FOR_SALE",
+        "pending_version": "1.0.1",
+        "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
+      }
     },
     "previous": {
-      "version": "1.0.1",
-      "build": "8",
-      "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
-      "source_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea"
+      "version": "1.0.2",
+      "build": "10",
+      "source_kind": "app_store_connect",
+      "distribution": "TestFlight（内测组 family）",
+      "queried_at": "2026-10-04T11:21:13.492486+00:00",
+      "app_id": "6806799638",
+      "bundle_id": "cyou.tianli.pointsdeck",
+      "build_id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+      "processing_state": "VALID",
+      "device_install_verified": false,
+      "source_commit": "c5c2f43d04e88550f0454af0d947367107b5b34e",
+      "source_kind_detail": {
+        "builder": "local official push-testflight.sh --testflight-only",
+        "evidence": "perf/raw/testflight-1.0.2-10.json"
+      },
+      "app_store": {
+        "live_version": "1.0",
+        "live_build": "2",
+        "live_build_id": "39708603-ce63-4169-a649-790e865a6c2e",
+        "live_state": "READY_FOR_SALE",
+        "pending_version": "1.0.1",
+        "pending_state": "DEVELOPER_REJECTED（已撤出审核，仍挂 build 8）"
+      },
+      "previous": {
+        "version": "1.0.1",
+        "build": "8",
+        "build_id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+        "source_commit": "5de32a2bafb361183c7a32f5e43e42388e9a4dea"
+      },
+      "source_note": "新版五栏与 PRD 1.3 已进有测试成员的 family 内测组；未提交商店审核，手机须由用户在 TestFlight 更新，未冒充已安装。"
     },
-    "source_note": "新版五栏与 PRD 1.3 已进有测试成员的 family 内测组；未提交商店审核，手机须由用户在 TestFlight 更新，未冒充已安装。"
+    "source_note": "顶层 version/build/source_commit 保留 2026-10-04 TestFlight 1.0.2 (11) 的历史证据。1.0.2 (12) 已提交商店审核，当前 WAITING_FOR_REVIEW，在售仍为 1.0 (2)；官方回读见 app_store 及 perf/raw/sweep-asc-readback-20261009.json。build12 的冻结源码 SHA 尚未绑定，不用当前 HEAD 冒认发行来源；未追加账号或设备验收，未核实设备更新。",
+    "internal_build_state": "IN_BETA_TESTING"
   },
-  "source_note": "顶层 version/build/source_commit 保留 2026-10-04 TestFlight 1.0.2 (11) 的历史证据。1.0.2 (12) 已提交商店审核，当前 WAITING_FOR_REVIEW，在售仍为 1.0 (2)；官方回读见 app_store 及 perf/raw/sweep-asc-readback-20261009.json。build12 的冻结源码 SHA 尚未绑定，不用当前 HEAD 冒认发行来源；未追加账号或设备验收，未核实设备更新。",
-  "internal_build_state": "IN_BETA_TESTING"
+  "source_note": "已提交源码生成的1.0.3(13)正式包已上传、VALID、关联原草稿与既有内测组；商店固定验收75/deferred，当前PREPARE_FOR_SUBMISSION，尚未提交审核。物理iPhone未出现在设备列表，实际装机版本未知。"
 }

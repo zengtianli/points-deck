@@ -1,0 +1,10 @@
+{
+  "started_at": "2026-10-17T10:58:42.475406+00:00",
+  "finished_at": "2026-10-17T11:05:23.721080+00:00",
+  "exit_code": 0,
+  "upload_succeeded_in_log": true,
+  "reused_prepared_archive": true,
+  "source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
+  "version": "1.0.3",
+  "build": "13"
+}

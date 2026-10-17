@@ -1,0 +1,12 @@
+{
+  "version": "1.0.3",
+  "build": "13",
+  "source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
+  "changes": [
+    {
+      "description": "新增集中设置，可选择启动栏目、升档庆祝和外接键盘刷新开关；显示与操作偏好可导入导出、按需启用 iCloud 同步，并检查 App Store 更新。",
+      "evidence_file": "Sources/TreasurySettings.swift",
+      "evidence_sha256": "00e6500894d77711c3b1524bf066de9df033b8867651b4a55a08b57a7405cc15"
+    }
+  ]
+}

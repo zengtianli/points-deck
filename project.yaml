@@ -9,6 +9,21 @@ lifecycle: active
 bundle_id: cyou.tianli.pointsdeck
 origin: own
 sop:
+  store:
+    platform: ios
+    product_id: points-deck-ios
+    source_project: project.yml
+    version_id: 604a9480-62ed-4102-80b5-b5f3666a6210
+    build: '13'
+    questionnaire: store/4.3-4.2.6-九问.md
+    changes_file: store/changes.json
+    notes_points:
+      '1': "Parents record children's daily efforts, review balances and trends, and redeem rewards agreed within the family."
+      '3': "The product-specific contribution is the native family ledger, parent recording and configuration flow, reward redemption and illustrated growth presentation backed by our own ledger service."
+      '5': "This is one product across Apple device clients."
+      '6': "Related learning apps address different tasks, such as collecting and reviewing mistakes; they do not provide this family reward workflow."
+      '7': "Shared modules handle configuration, update checks and platform lifecycle."
+      '8': "The iOS runtime uses Apple frameworks and declares no third-party advertising or tracking SDK."
   product_basics:
     schema_version: 1
     features:
@@ -39,6 +54,7 @@ sop:
   # 第三段是手表 / Vision 的便宜编译车道（按 project.yml 各 target 源码清单 swiftc -typecheck，不起模拟器）
   test: bash Tests/check-parent-session.sh && python3 Tests/cli_treasury_test.py && ~/Dev/.venv/bin/python -m pytest -n auto Tests/cli_parser_test.py Tests/account_acceptor_test.py Tests/platform_ui_admission_test.py ../../../web/points/test_phone_account.py -q && bash Tests/check-platform-typecheck.sh
   accept:
+    store: builtin:store
     product_basics: ~/Dev/.venv/bin/python scripts/accept/product_basics.py --prepare-candidate
     account_lifecycle: python3 scripts/accept/account_lifecycle.py --run-full
     functionality: bash scripts/accept/run.sh functionality

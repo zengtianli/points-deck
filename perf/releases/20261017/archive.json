@@ -1,0 +1,48 @@
+{
+  "source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
+  "archive": "<tmp>/ios-testflight/PointsDeck-ios.xcarchive",
+  "archive_succeeded": true,
+  "wrapper_exit_code": 1,
+  "wrapper_error": "Bash variable boundary in prepare-only completion message: unbraced AR followed by a full-width parenthesis",
+  "codesign_verify_exit_code": 0,
+  "codesign_verify_stderr": "",
+  "bundles": [
+    {
+      "bundle_id": "cyou.tianli.pointsdeck",
+      "version": "1.0.3",
+      "build": "13",
+      "executable_sha256": "905100984e370f47749214b25a730d7f6995705a2418e2a41cf82dc96480b3c9",
+      "skins_jpg": 5,
+      "sdk": "iphoneos27.1",
+      "xcode_build": "27A9275"
+    },
+    {
+      "bundle_id": "cyou.tianli.pointsdeck.watchkitapp",
+      "version": "1.0.3",
+      "build": "13",
+      "executable_sha256": "7cd9a3a6d9e9419c1608c92a2228dc818f5a5a762fac017f441c352d19b894a7",
+      "skins_jpg": 5,
+      "sdk": "watchos27.0",
+      "xcode_build": "27A9275"
+    },
+    {
+      "bundle_id": "cyou.tianli.pointsdeck.widget",
+      "version": "1.0.3",
+      "build": "13",
+      "executable_sha256": "27536b2868ea5b3dce3be80a664aaf192fd36c9b34561a01b94639f91d56b13f",
+      "skins_jpg": 5,
+      "sdk": "iphoneos27.1",
+      "xcode_build": "27A9275"
+    },
+    {
+      "bundle_id": "cyou.tianli.pointsdeck.watchkitapp.widget",
+      "version": "1.0.3",
+      "build": "13",
+      "executable_sha256": "f9e9b6e0a21e43ce79513ad6114c963d5a757fc72b5a1cf617cb186cf52b3271",
+      "skins_jpg": 5,
+      "sdk": "watchos27.0",
+      "xcode_build": "27A9275"
+    }
+  ],
+  "scope": "Actual archived package identity, signatures and resources; no claim of device runtime or Store acceptance."
+}

@@ -12,7 +12,7 @@
 
 A family points ledger operated by parents: record progress, earn agreed rewards, and see effort accumulate. Shared server rules and APIs provide the ledger, 11 home tiers, and illustrations across 5 eras.
 
-Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. Mailu delivery and mailbox receipt have been verified; Alibaba SMS still needs server configuration and actual product delivery acceptance. The updated backend is live. TestFlight **1.0.2 (11)** is VALID and available to the populated family internal group; no App Store review was submitted. The opening phone screenshots show the earlier release; the four-platform gallery contains actual captures from this work. The resource table only shows measurements bound to current inputs. See the [platform validation record](perf/platform-validation/README.md) for behavior and environments, and the [development handoff](handoffs/prd-1.2-20261004.md) for ongoing work.
+Local source follows [PRD 1.3](../PRD.md): five sections, one-tap scoring, and email and phone account flows. The existing Mailu and Alibaba SMS channels have historical real-delivery evidence; the full native account flow has separate acceptance. Official ASC readback on 2026-10-17 shows **1.0.2 (12)** on sale. **1.0.3 (13)** was built from committed source, uploaded, marked VALID, and attached to the existing draft and TestFlight internal group. Store acceptance returned exit 75, review has not been submitted, and physical installation remains unverified. See the [release handoff](handoffs/release-20261017.md), [ASC readback](perf/releases/20261017/asc-final.json), and [platform validation record](perf/platform-validation/README.md). Historical screenshots and resource measurements retain their original scope.
 
 <p>Earlier release screenshots; current device/simulator evidence is linked from the handoff.</p>
 <table><tr>
@@ -44,9 +44,9 @@ One name, one icon, one ledger: iPhone, iPad, Mac and Apple Vision Pro are the s
 | Platform | What it looks like | Can you get it now? |
 |---|---|---|
 | iPhone | Current source has five bottom tabs: ledger / trend / scoring / rewards / account, with Lock Screen and Home Screen widgets | Apple China lookup on 2026-10-09 confirms [App Store](https://apps.apple.com/app/id6806799638) 1.0.2 is free; the installed device build number remains unverified |
-| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same App Store package; TestFlight 1.0.2 (11) is available for this update |
+| iPad | The same five bottom tabs; cards adapt to the available width, including Split View | Same distribution package as iPhone; see the [release record](perf/asc-release.json) for the current TestFlight build |
 | Mac | Native macOS window with the same five destinations in a sidebar; includes the `treasury` command line | **Not on the App Store**; local test app at `build/accept/mac/Growth Treasury.app` |
-| Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | Embedded in the iPhone TestFlight 1.0.2 (11) package; no separate Watch App Store release |
+| Apple Watch | A glance at the current tier, balance, points to the next tier with progress, and the last 10 entries on the next page; four complications. Read-only: no redeeming or booking; the sign-in is handed over from the iPhone | Embedded in the iPhone distribution package; no separate Watch App Store release |
 | Apple Vision Pro | The same sidebar board in a system glass window; the era colour is an accent only | **Not on the App Store**; verified on the simulator only |
 
 <table><tr>
@@ -75,7 +75,7 @@ The account “小满” and its 30 days of entries in these screenshots are dem
 
 ## Availability
 
-Phone-code login, email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. Apple China lookup on 2026-10-09 confirms the public version is 1.0.2, free, requiring iOS 18 or later; see the [public release readback](perf/raw/promo-apple-public-20261009.json). The top level of the [release record](perf/asc-release.json) still describes historical TestFlight 1.0.2 (11) and was not modified in this run. The live build number, installed phone version and physical-device performance remain unverified; historical resource figures do not represent the current public package.
+Phone-code login, email registration and separate family ledgers are supported. The iPhone / iPad edition is available on the [App Store](https://apps.apple.com/app/id6806799638); the Mac, Apple Watch and Apple Vision Pro editions are not on the App Store yet. Official ASC readback on 2026-10-17 shows live version 1.0.2 (12), TestFlight 1.0.3 (13), and the new draft in PREPARE_FOR_SUBMISSION. Apple China lookup on 2026-10-09 confirmed free download and iOS 18 or later; see the [public release readback](perf/raw/promo-apple-public-20261009.json). The [release record](perf/asc-release.json) preserves current package provenance and earlier records. Physical installation and runtime performance have separate verification.
 
 The era illustration backgrounds come from the author’s `~/Apps/edu/web` content library and are synced into the package during builds. The ledger backend is `edu.tianli.cyou`. Without that content library, the build stops at preBuildScripts.
 

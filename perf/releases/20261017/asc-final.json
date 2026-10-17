@@ -1,0 +1,34 @@
+{
+  "queried_at": "2026-10-17T11:09:08.666403+00:00",
+  "source": "Official ASC API, complete pagination",
+  "app_id": "6806799638",
+  "version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+  "version": "1.0.3",
+  "version_state": "PREPARE_FOR_SUBMISSION",
+  "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+  "build": "13",
+  "processing_state": "VALID",
+  "expired": false,
+  "audience": "APP_STORE_ELIGIBLE",
+  "submissions": [
+    {
+      "id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
+      "state": "COMPLETE",
+      "submitted_at": "2026-10-08T17:36:19.589Z"
+    },
+    {
+      "id": "3f15a3e1-446f-434e-8ce3-9177bdaba202",
+      "state": "COMPLETE",
+      "submitted_at": "2026-09-28T21:10:56.796Z"
+    },
+    {
+      "id": "21d699f6-f3e2-44b1-a3b0-87a3eba4fd7c",
+      "state": "COMPLETE",
+      "submitted_at": "2026-09-07T16:06:53.83Z"
+    }
+  ],
+  "review_notes_sha256": "25ec920f58b81c02310313b8c6a3a26bd521d8ede4dfb9885e205ce6e15a985b",
+  "review_notes_exact_match": true,
+  "source_commit": "6a7f2e39b852d431d7d54d4702bc75a31bf04b1c",
+  "device_install_verified": false
+}

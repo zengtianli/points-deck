@@ -1,0 +1,49 @@
+{
+  "scheme": "PointsDeck",
+  "bundle_id": "cyou.tianli.pointsdeck",
+  "marketing_version": "1.0.3",
+  "next_build_number": 13,
+  "latest_approved_version": "1.0.2",
+  "version_builds": [
+    {
+      "version": "1.0.3",
+      "state": "PREPARE_FOR_SUBMISSION",
+      "build": null
+    },
+    {
+      "version": "1.0.2",
+      "state": "READY_FOR_SALE",
+      "build": {
+        "type": "builds",
+        "id": "1ad39cd1-8ac8-441e-858a-326a531712b9"
+      }
+    },
+    {
+      "version": "1.0",
+      "state": "READY_FOR_SALE",
+      "build": {
+        "type": "builds",
+        "id": "39708603-ce63-4169-a649-790e865a6c2e"
+      }
+    }
+  ],
+  "app_id": "6806799638",
+  "platform": "IOS",
+  "toolchain": {
+    "checked_at": "2026-10-17T10:57:32.595978+00:00",
+    "policy": "Apple Latest Public Release",
+    "source": "https://developer.apple.com/news/releases/rss/releases.rss",
+    "release_url": "https://developer.apple.com/news/releases/?id=10152026a",
+    "developer_dir": "/Applications/Xcode.app/Contents/Developer",
+    "xcode_version": "27.1",
+    "xcode_build": "27A9275",
+    "sdk_name": "iphoneos27.1",
+    "sdk_build": "24A94232",
+    "archive": {
+      "DTXcodeBuild": "27A9275",
+      "DTSDKName": "iphoneos27.1",
+      "DTSDKBuild": "24A94232",
+      "BuildMachineOSBuild": "26B5101f"
+    }
+  }
+}
