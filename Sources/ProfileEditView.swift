@@ -31,19 +31,19 @@ struct ProfileEditView: View {
                         .padding(.top, 12)
 
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("昵称").font(.footnote).foregroundStyle(.secondary)
+                        Text(String(localized: "Nickname")).font(.footnote).foregroundStyle(.secondary)
                         TextField("", text: $nick)
                             .textInputAutocapitalization(.never)
                             .padding(.horizontal, 14).padding(.vertical, 12)
                             .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 12))
                             .foregroundStyle(.primary)
-                        Text("1~16 个字").font(.caption2).foregroundStyle(.secondary)
+                        Text(String(localized: "1–16 Characters")).font(.caption2).foregroundStyle(.secondary)
                     }
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("头像").font(.footnote).foregroundStyle(.secondary)
+                        Text(String(localized: "Avatar")).font(.footnote).foregroundStyle(.secondary)
                         if (s?.avatarChoices ?? []).isEmpty {
-                            Text("服务端没下发头像清单 —— 换个头像这一项暂时用不了")
+                            Text(String(localized: "Avatar choices are temporarily unavailable. Please try again later."))
                                 .font(.caption).foregroundStyle(.orange)
                         }
                         LazyVGrid(columns: cols, spacing: 12) {
@@ -70,19 +70,19 @@ struct ProfileEditView: View {
                 .padding(.bottom, 28)
             }
             .background(TreasuryTheme.background)
-            .navigationTitle("编辑资料")
+            .navigationTitle(String(localized: "Edit Profile"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button(String(localized: "Cancel")) { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         Task { await save() }
                     } label: {
-                        if busy { ProgressView() } else { Text("保存") }
+                        if busy { ProgressView() } else { Text(String(localized: "Save")) }
                     }
                     .disabled(busy || !changed)
                 }

@@ -31,12 +31,12 @@ final class TreasuryPreferences: ObservableObject {
             }
     }
     nonisolated static func validate(_ key: String, _ value: Any) throws {
-        guard let number = value as? NSNumber else { throw AppUpdateError("偏好值类型无效，原设置已保留。") }
+        guard let number = value as? NSNumber else { throw AppUpdateError(String(localized: "Invalid preference type. Your settings have been kept.")) }
         if key == tabKey {
             guard CFGetTypeID(number) != CFBooleanGetTypeID(), (0...4).contains(number.intValue),
-                  number.doubleValue == Double(number.intValue) else { throw AppUpdateError("启动栏目须为账本、走势、加分、兑换或账户。") }
+                  number.doubleValue == Double(number.intValue) else { throw AppUpdateError(String(localized: "Choose Ledger, Trends, Add Points, Rewards, or Account as the start tab.")) }
         } else {
-            guard CFGetTypeID(number) == CFBooleanGetTypeID() else { throw AppUpdateError("开关须为布尔值，原设置已保留。") }
+            guard CFGetTypeID(number) == CFBooleanGetTypeID() else { throw AppUpdateError(String(localized: "Switch values must be true or false. Your settings have been kept.")) }
         }
     }
     func reload() {
@@ -74,29 +74,29 @@ struct TreasurySettingsView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("显示与操作") {
+                Section("Display & Controls") {
                     #if os(iOS)
                     TreasuryNativePreferences(preferences: preferences).frame(height: 188)
                     #else
-                    Picker("启动栏目", selection: Binding(get: { preferences.startTab }, set: preferences.setTab)) {
-                        ForEach(Array(["账本", "走势", "加分", "兑换", "账户"].enumerated()), id: \.offset) { index, title in Text(title).tag(index) }
+                    Picker("Start Tab", selection: Binding(get: { preferences.startTab }, set: preferences.setTab)) {
+                        ForEach(Array([String(localized: "Ledger"), String(localized: "Trends"), String(localized: "Add Points"), String(localized: "Rewards"), String(localized: "Account")].enumerated()), id: \.offset) { index, title in Text(title).tag(index) }
                     }
-                    Toggle("升档庆祝", isOn: Binding(get: { preferences.celebrations }, set: preferences.setCelebrations))
-                    Toggle("启用刷新快捷键 ⌘R", isOn: Binding(get: { preferences.shortcutEnabled }, set: preferences.setShortcut))
+                    Toggle("Celebrate Tier Upgrades", isOn: Binding(get: { preferences.celebrations }, set: preferences.setCelebrations))
+                    Toggle("Refresh Shortcut ⌘R", isOn: Binding(get: { preferences.shortcutEnabled }, set: preferences.setShortcut))
                     #endif
-                    Text("⌘R 只在本应用内刷新账本；iPhone、iPad 需连接键盘。关闭后保留设置，触屏刷新仍可用。系统编辑快捷键保持原样。")
+                    Text("⌘R refreshes this app's ledger. A keyboard is required on iPhone and iPad. Turning this off keeps your preferences and touch controls available. System editing shortcuts are unchanged.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-                Section("同步与版本") {
-                    LabeledContent("iCloud", value: lifecycle.cloudEnabled ? "已开启" : "已关闭")
+                Section("Sync & Version") {
+                    LabeledContent("iCloud", value: lifecycle.cloudEnabled ? String(localized: "On") : String(localized: "Off"))
                     Text(lifecycle.configurationStatus).font(.footnote).foregroundStyle(.secondary)
-                    LabeledContent("当前版本", value: "\(lifecycle.version) (\(lifecycle.build))")
-                    Button("同步、备份与更新", systemImage: "arrow.triangle.2.circlepath") { transfer = true }
-                    Text("仅同步启动栏目、庆祝与刷新快捷键偏好；账号和账本继续由服务端保存。iOS 新版由 App Store 安装。")
+                    LabeledContent("Current Version", value: "\(lifecycle.version) (\(lifecycle.build))")
+                    Button("Sync, Backup & Updates", systemImage: "arrow.triangle.2.circlepath") { transfer = true }
+                    Text("Only start tab, celebration, and refresh shortcut preferences are synced. Your account and ledger stay on the server. Install iOS updates from the App Store.")
                         .font(.footnote).foregroundStyle(.secondary)
                 }
-            }.navigationTitle("设置")
-                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("完成") { dismiss() } } }
+            }.navigationTitle("Settings")
+                .toolbar { ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } } }
         }.tint(TreasuryTheme.accent)
             .sheet(isPresented: $transfer) { AppLifecycleMobilePanel(model: lifecycle) }
             .onAppear { lifecycle.start(); lifecycle.refreshConfiguration() }
@@ -114,17 +114,18 @@ struct TreasuryNativePreferences: UIViewRepresentable {
 @MainActor
 final class TreasuryPreferenceControls: UIStackView {
     let preferences: TreasuryPreferences
-    let tabs = UISegmentedControl(items: ["账本", "走势", "加分", "兑换", "账户"])
+    let tabs = UISegmentedControl(items: [String(localized: "Ledger"), String(localized: "Trends"), String(localized: "Add"), String(localized: "Rewards"), String(localized: "Account")])
     let celebrations = UISwitch()
     let shortcut = UISwitch()
     init(preferences: TreasuryPreferences) {
         self.preferences = preferences
         super.init(frame: .zero)
         axis = .vertical; spacing = 14; distribution = .fill
-        let title = UILabel(); title.text = "启动栏目"; addArrangedSubview(title); addArrangedSubview(tabs)
-        for (text, control) in [("升档庆祝", celebrations), ("启用刷新快捷键 ⌘R", shortcut)] {
+        tabs.apportionsSegmentWidthsByContent = true
+        let title = UILabel(); title.text = String(localized: "Start Tab"); addArrangedSubview(title); addArrangedSubview(tabs)
+        for (text, control) in [(String(localized: "Celebrate Tier Upgrades"), celebrations), (String(localized: "Refresh Shortcut ⌘R"), shortcut)] {
             let row = UIStackView(); row.axis = .horizontal
-            let label = UILabel(); label.text = text; row.addArrangedSubview(label); row.addArrangedSubview(control)
+            let label = UILabel(); label.text = text; label.numberOfLines = 0; row.addArrangedSubview(label); row.addArrangedSubview(control)
             addArrangedSubview(row)
         }
         tabs.accessibilityIdentifier = "settings.startTab"

@@ -8,7 +8,7 @@ struct PalettePreview: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 10) {
-                Text("五个时代的派生配色")
+                Text("Color palettes for all five eras")
                     .font(.headline).foregroundStyle(.white)
                 ForEach(Era.allCases, id: \.self) { era in
                     VStack(spacing: 0) {
@@ -21,7 +21,7 @@ struct PalettePreview: View {
                             HStack(spacing: 10) {
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(name(era)).font(.headline).foregroundStyle(.white)
-                                    Text("2,500 分").font(.subheadline.weight(.bold))
+                                    Text("2,500 points").font(.subheadline.weight(.bold))
                                         .monospacedDigit().foregroundStyle(era.accent)
                                 }
                                 Spacer()
@@ -42,11 +42,11 @@ struct PalettePreview: View {
     /// 时代中文名 —— 与 skins.json 的 eras[].name 一致
     private func name(_ e: Era) -> String {
         switch e {
-        case .slum: return "贫民窟"
-        case .cottage: return "普通人家"
-        case .garden: return "小康之家"
-        case .manor: return "豪宅"
-        case .golden: return "金碧辉煌"
+        case .slum: return String(localized: "Humble Beginnings")
+        case .cottage: return String(localized: "A Cozy Home")
+        case .garden: return String(localized: "A Comfortable Life")
+        case .manor: return String(localized: "A Grand Estate")
+        case .golden: return String(localized: "Golden Splendor")
         }
     }
 }

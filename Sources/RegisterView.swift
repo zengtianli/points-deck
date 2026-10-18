@@ -14,33 +14,33 @@ struct RegisterView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("验证邮箱") {
-                    TextField("邮箱", text: $email).textContentType(.emailAddress).keyboardType(.emailAddress)
+                Section(String(localized: "Verify Email")) {
+                    TextField(String(localized: "Email"), text: $email).textContentType(.emailAddress).keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never).autocorrectionDisabled()
                     EmailVerification(email: email, purpose: "register", grant: $grant)
                 }
-                Section("设置账号") {
-                    PasswordInput(title: "密码（15–128 字符）", text: $password, new: true)
-                    PasswordInput(title: "确认密码", text: $confirm, new: true)
-                    TextField("昵称（可选）", text: $nick)
-                    if !confirm.isEmpty && password != confirm { Text("两次密码不一致").foregroundStyle(.red) }
-                    Text(T("account.register.password_note", "支持系统生成密码、空格与中文。新账号从0分起步。")).font(.footnote)
+                Section(String(localized: "Set Up Your Account")) {
+                    PasswordInput(title: String(localized: "Password (15–128 Characters)"), text: $password, new: true)
+                    PasswordInput(title: String(localized: "Confirm Password"), text: $confirm, new: true)
+                    TextField(String(localized: "Nickname (Optional)"), text: $nick)
+                    if !confirm.isEmpty && password != confirm { Text(String(localized: "Passwords don’t match")).foregroundStyle(.red) }
+                    Text(T("account.register.password_note", String(localized: "System-generated passwords, spaces, and Chinese characters are supported. New accounts start with 0 points."))).font(.footnote)
                 }
                 Section {
-                    Button("阅读用户协议") { terms = true }
-                    Button("阅读隐私政策") { privacy = true }
-                    Toggle("我已阅读并同意用户协议与隐私政策", isOn: $agreed)
+                    Button(String(localized: "Read Terms of Use")) { terms = true }
+                    Button(String(localized: "Read Privacy Policy")) { privacy = true }
+                    Toggle(String(localized: "I have read and agree to the Terms of Use and Privacy Policy"), isOn: $agreed)
                 }
                 if let error = store.error { Text(error).foregroundStyle(.red) }
-                Button(store.busy ? "注册中" : "注册并登录") {
+                Button(store.busy ? String(localized: "Creating Account…") : String(localized: "Create Account and Sign In")) {
                     Task {
                         await store.register(email: email.trimmingCharacters(in: .whitespacesAndNewlines),
                                              password: password, nick: nick, grant: grant)
                         if store.phase == .loggedIn { dismiss() }
                     }
                 }.disabled(store.busy || grant.isEmpty || !agreed || password.count < 15 || password != confirm)
-            }.navigationTitle("注册账号")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { store.error = nil; dismiss() } } }
+            }.navigationTitle(String(localized: "Create Account"))
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Cancel")) { store.error = nil; dismiss() } } }
                 .sheet(isPresented: $terms) { AccountPolicyView() }
                 .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
         }.treasurySheetSize(minHeight: 480)

@@ -2,7 +2,10 @@ import SwiftUI
 
 struct RegularHomeView: View {
     @Binding var tab: Int
-    private let titles = ["账本", "走势", "加分", "兑换", "账户"]
+    private var titles: [String] {
+        [String(localized: "Ledger"), String(localized: "Trends"), String(localized: "Add Points"),
+         String(localized: "Rewards"), String(localized: "Account")]
+    }
     private let icons = ["list.bullet.rectangle", "chart.line.uptrend.xyaxis", "plusminus.circle.fill", "gift.fill", "person.crop.circle"]
     var body: some View {
         NavigationSplitView {

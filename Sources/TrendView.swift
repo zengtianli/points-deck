@@ -37,7 +37,7 @@ struct TrendView: View {
                 Button {
                     withAnimation(.easeInOut(duration: 0.25)) { span = n }
                 } label: {
-                    Text(n == 0 ? "全部" : "近 \(n) 天")
+                    Text(n == 0 ? String(localized: "All") : String(localized: "Last \(n) days"))
                         .font(.caption.weight(.medium))
                         .padding(.horizontal, 14).frame(minHeight: 48)
                         .background(span == n ? TreasuryTheme.accent.opacity(0.15) : TreasuryTheme.card,
@@ -82,7 +82,7 @@ struct TrendChart: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if points.isEmpty {
-                Text("还没有流水，去「加分」记第一笔。").font(.subheadline)
+                Text("No entries yet. Record your first entry in Add Points.").font(.subheadline)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, minHeight: height)
             } else {
@@ -144,14 +144,14 @@ struct TrendStats: View {
         let vals = points.map { $0.bal }
         let delta = (vals.last ?? 0) - (vals.first ?? 0)
         return VStack(spacing: 0) {
-            row("这段涨跌", (delta >= 0 ? "+" : "") + "\(delta) 分",
+            row(String(localized: "Change"), String(localized: "\(delta >= 0 ? "+" : "")\(delta) points"),
                 color: delta >= 0 ? era.accent : Color(hex: 0xB44740))
             Divider().overlay(.white.opacity(0.12))
-            row("最高", "\(vals.max() ?? 0) 分")
+            row(String(localized: "Highest"), String(localized: "\(vals.max() ?? 0) points"))
             Divider().overlay(.white.opacity(0.12))
-            row("最低", "\(vals.min() ?? 0) 分")
+            row(String(localized: "Lowest"), String(localized: "\(vals.min() ?? 0) points"))
             Divider().overlay(.white.opacity(0.12))
-            row("今天刷题还能得", "\(practiceLeft) 分")
+            row(String(localized: "Practice points left today"), String(localized: "\(practiceLeft) points"))
         }
         .padding(.horizontal, 18).padding(.vertical, 6)
         .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 18))

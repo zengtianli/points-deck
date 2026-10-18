@@ -21,7 +21,7 @@ struct PhoneVerification: View {
     @State private var codeMinutes = AccountHints.codeMinutes()
     var body: some View {
         Group {
-            Button(challenge.isEmpty ? "获取短信验证码" : canResend ? "重新获取短信" : AccountHints.resendWaitLabel(resendSeconds)) {
+            Button(challenge.isEmpty ? String(localized: "Send SMS Code") : canResend ? String(localized: "Resend SMS Code") : AccountHints.resendWaitLabel(resendSeconds)) {
                 Task {
                     let generation = epoch; let target = context
                     busy = true; defer { busy = false }
@@ -33,8 +33,8 @@ struct PhoneVerification: View {
                         requestID = UUID().uuidString // 下一次明确重发才使用新标识；失败保留原标识
                         challenge = response["challenge"] as? String ?? ""
                         grant = ""; code = ""
-                        message = response["message"] as? String
-                        signName = response["sign_name"] as? String ?? signName
+                        message = Api.localizedText(response, "message")
+                        signName = Api.localizedText(response, "sign_name") ?? signName
                         codeMinutes = AccountHints.codeMinutes(receipt: response["expires_in"])
                         // 回执里的间隔和正在倒数的不一样（后台改过）才重新倒数；一样时与原先完全相同
                         let fresh = AccountHints.resendSeconds(receipt: response["resend_after"])
@@ -43,21 +43,21 @@ struct PhoneVerification: View {
                 }
             }.frame(minHeight: 48).disabled(busy || !canResend || phone.isEmpty)
             if !challenge.isEmpty && grant.isEmpty {
-                TextField("6 位短信验证码", text: $code).keyboardType(.numberPad)
+                TextField(String(localized: "6-Digit SMS Code"), text: $code).keyboardType(.numberPad)
                     .textContentType(.oneTimeCode).privacySensitive().frame(minHeight: 48)
-                Button("验证手机号") {
+                Button(String(localized: "Verify Phone Number")) {
                     Task {
                         let generation = epoch; let target = context; let checked = challenge
                         busy = true; defer { busy = false }
                         do {
                             let response = try await Api.request("api/phone_verify", body: ["challenge": challenge, "code": code])
                             guard generation == epoch && target == context && checked == challenge else { return }
-                            grant = response["grant"] as? String ?? ""; code = ""; message = "手机验证完成"
+                            grant = response["grant"] as? String ?? ""; code = ""; message = String(localized: "Phone Verified")
                         } catch { if generation == epoch && target == context { await store.confirmSessionFailure(error); message = error.localizedDescription } }
                     }
                 }.frame(minHeight: 48).disabled(busy || code.count != 6)
             }
-            if !grant.isEmpty { Label("手机验证完成", systemImage: "checkmark.circle.fill").foregroundStyle(TreasuryTheme.accent) }
+            if !grant.isEmpty { Label(String(localized: "Phone Verified"), systemImage: "checkmark.circle.fill").foregroundStyle(TreasuryTheme.accent) }
             if let message { Text(message).font(.footnote).foregroundStyle(.secondary) }
             Text(AccountHints.phoneFootnote(sign: signName, minutes: codeMinutes)).font(.footnote).foregroundStyle(.secondary)
         }
@@ -88,17 +88,17 @@ struct PhoneRegisterView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("家长本人手机号") {
-                    TextField("+86 手机号", text: $phone).textContentType(.telephoneNumber).keyboardType(.phonePad).privacySensitive()
+                Section(String(localized: "Parent’s Phone Number")) {
+                    TextField(String(localized: "+86 Phone Number"), text: $phone).textContentType(.telephoneNumber).keyboardType(.phonePad).privacySensitive()
                     PhoneVerification(phone: phone, purpose: "register", grant: $grant)
-                    Text(T("account.phone.register_note", "已有旧账号请先登录再绑定手机号，避免新建空账本。注册后从0分起步，昵称、密码和邮箱可稍后设置。")).font(.footnote)
+                    Text(T("account.phone.register_note", String(localized: "If you already have an account, sign in before linking your phone number to keep your ledger. New accounts start with 0 points. You can add a nickname, password, and email later."))).font(.footnote)
                 }
                 Section {
-                    Button("阅读用户协议") { terms = true }
-                    Button("阅读隐私政策") { privacy = true }
-                    Toggle("我已阅读并同意用户协议与隐私政策", isOn: $agreed)
+                    Button(String(localized: "Read Terms of Use")) { terms = true }
+                    Button(String(localized: "Read Privacy Policy")) { privacy = true }
+                    Toggle(String(localized: "I have read and agree to the Terms of Use and Privacy Policy"), isOn: $agreed)
                 }
-                Button(busy ? "注册中" : "注册并登录") {
+                Button(busy ? String(localized: "Creating Account…") : String(localized: "Create Account and Sign In")) {
                     Task {
                         busy = true; defer { busy = false }
                         do {
@@ -108,10 +108,10 @@ struct PhoneRegisterView: View {
                         } catch { message = error.localizedDescription }
                     }
                 }.frame(minHeight: 48).disabled(busy || grant.isEmpty || !agreed)
-                Button("其他地区／使用邮箱注册") { email = true }.frame(minHeight: 48)
+                Button(String(localized: "Outside Mainland China? Register with Email")) { email = true }.frame(minHeight: 48)
                 if let message { Text(message).foregroundStyle(.red) }
-            }.navigationTitle("手机号注册")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+            }.navigationTitle(String(localized: "Register with Phone"))
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } } }
                 .sheet(isPresented: $terms) { AccountPolicyView() }
                 .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
                 .sheet(isPresented: $email) { RegisterView() }
@@ -134,38 +134,38 @@ struct PhoneSecurityView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section("当前手机号") { Text(current.isEmpty ? "未绑定" : current).privacySensitive() }
-                Section("重新确认身份") {
-                    if hasPassword { PasswordInput(title: "当前登录密码", text: $password) }
+                Section(String(localized: "Current Phone Number")) { Text(current.isEmpty ? String(localized: "Not Linked") : current).privacySensitive() }
+                Section(String(localized: "Verify Your Identity")) {
+                    if hasPassword { PasswordInput(title: String(localized: "Current Sign-In Password"), text: $password) }
                     else { PhoneVerification(phone: current, purpose: "phone_identity", grant: $identity) }
                 }
-                Section(current.isEmpty ? "绑定手机号" : "验证新手机号") {
-                    TextField("+86 家长手机号", text: $phone).textContentType(.telephoneNumber).keyboardType(.phonePad).privacySensitive()
+                Section(current.isEmpty ? String(localized: "Link Phone Number") : String(localized: "Verify New Phone Number")) {
+                    TextField(String(localized: "Parent’s +86 Phone Number"), text: $phone).textContentType(.telephoneNumber).keyboardType(.phonePad).privacySensitive()
                     PhoneVerification(phone: phone, purpose: current.isEmpty ? "phone_new" : "phone_change_new",
                         password: password, identityGrant: identity, grant: $newGrant)
                 }
                 if !current.isEmpty {
-                    Section("确认原手机号") {
+                    Section(String(localized: "Verify Current Phone Number")) {
                         PhoneVerification(phone: current, purpose: "phone_old", password: password, identityGrant: identity, grant: $oldGrant)
                     }
                 }
-                Button(busy ? "保存中" : "确认保存手机号") {
+                Button(busy ? String(localized: "Saving…") : String(localized: "Save Phone Number")) {
                     Task {
                         busy = true; defer { busy = false }
                         do {
                             let response = try await Api.request("api/phone_bind", body: ["phone": phone, "password": password,
                                 "identity_grant": identity, "grant": newGrant, "old_grant": oldGrant])
-                            message = response["message"] as? String
+                            message = Api.localizedText(response, "message")
                             password = ""; identity = ""; newGrant = ""; oldGrant = ""; await load()
                             WatchLink.shared.publishSession(); await store.refresh()
                         } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }.frame(minHeight: 48).disabled(busy || newGrant.isEmpty || (!current.isEmpty && oldGrant.isEmpty))
                 if let message { Text(message) }
-                Text(T("account.phone.bind_note", "绑定和换绑保留原内部账号、积分和配置。换绑后其他旧会话失效；号码被占用时不会合并账号。")).font(.footnote)
-                Link("原手机号无法使用／账号恢复申诉", destination: URL(string: "mailto:hi@tianli.cyou")!)
-            }.navigationTitle("手机绑定与换绑")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+                Text(T("account.phone.bind_note", String(localized: "Linking or changing your phone number keeps your account, points, and settings. Changing it signs out other sessions. If the number is already in use, the accounts will not be merged."))).font(.footnote)
+                Link(String(localized: "Old Number Unavailable? Contact Account Recovery"), destination: URL(string: "mailto:hi@tianli.cyou")!)
+            }.navigationTitle(String(localized: "Manage Phone Number"))
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } } }
                 .task { await load() }
         }
     }
@@ -187,11 +187,11 @@ struct PhonePasswordSetView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Text(T("account.phone.password_set_note", "确认当前绑定手机后设置独立登录密码。已有密码请使用修改或找回流程。")).font(.footnote)
+                Text(T("account.phone.password_set_note", String(localized: "Verify your linked phone number to set a sign-in password. If you already have a password, use Change Password or Forgot Password."))).font(.footnote)
                 PhoneVerification(phone: phone, purpose: "phone_identity", grant: $grant)
-                PasswordInput(title: "新密码（15–128字符）", text: $password, new: true)
-                PasswordInput(title: "确认密码", text: $confirm, new: true)
-                Button(busy ? "保存中" : "设置登录密码") {
+                PasswordInput(title: String(localized: "New Password (15–128 Characters)"), text: $password, new: true)
+                PasswordInput(title: String(localized: "Confirm Password"), text: $confirm, new: true)
+                Button(busy ? String(localized: "Saving…") : String(localized: "Set Sign-In Password")) {
                     Task {
                         busy = true; defer { busy = false }
                         do {
@@ -201,8 +201,8 @@ struct PhonePasswordSetView: View {
                     }
                 }.frame(minHeight: 48).disabled(busy || grant.isEmpty || password.count < 15 || password != confirm)
                 if let message { Text(message).foregroundStyle(.red) }
-            }.navigationTitle("设置登录密码")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+            }.navigationTitle(String(localized: "Set Sign-In Password"))
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } } }
                 .task { do { phone = try await Api.request("api/me")["phone"] as? String ?? "" } catch { await store.confirmSessionFailure(error); message = error.localizedDescription } }
         }
     }

@@ -27,22 +27,22 @@ struct AccountView: View {
                     Text(store.state?.avatar ?? "🌱").font(.largeTitle)
                     VStack(alignment: .leading) {
                         Text(store.state?.nick ?? "").font(.title2.bold())
-                        Text(emailStatus.isEmpty ? "账号 \(store.state?.user ?? "")" : emailStatus).font(.footnote).foregroundStyle(.secondary)
+                        Text(emailStatus.isEmpty ? String(localized: "Account \(store.state?.user ?? "")") : emailStatus).font(.footnote).foregroundStyle(.secondary)
                         if !phoneStatus.isEmpty { Text(phoneStatus).font(.footnote).foregroundStyle(.secondary).privacySensitive() }
                     }
                 }.padding(.vertical, 8)
-                Button("修改昵称与头像") { profile = true }
-                Button("账号安全", systemImage: "person.badge.key.fill") { security = true }
+                Button(String(localized: "Edit Name and Avatar")) { profile = true }
+                Button(String(localized: "Account Security"), systemImage: "person.badge.key.fill") { security = true }
             }
-            Section("成长") {
-                LabeledContent("当前积分", value: "\(store.state?.balance ?? 0)")
-                Button("等级与待遇：\(store.state?.houseName ?? "")") { tiers = true }
-                if let remaining = store.state?.toNext { Text("还差 \(remaining) 分升级到 \(store.state?.nextName ?? "")") }
+            Section(String(localized: "Growth")) {
+                LabeledContent(String(localized: "Current Points"), value: "\(store.state?.balance ?? 0)")
+                Button(String(localized: "Tiers and Benefits: \(store.state?.houseName ?? "")")) { tiers = true }
+                if let remaining = store.state?.toNext { Text(String(localized: "\(remaining) points to \(store.state?.nextName ?? "")")) }
             }
-            Section("家庭设置") {
-                Button("记分项目管理", systemImage: "plusminus.circle") { rules = true }
-                Button("兑换奖励管理", systemImage: "gift") { rewards = true }
-                Button("导出账本", systemImage: "square.and.arrow.up") {
+            Section(String(localized: "Family Settings")) {
+                Button(String(localized: "Manage Point Rules"), systemImage: "plusminus.circle") { rules = true }
+                Button(String(localized: "Manage Rewards"), systemImage: "gift") { rewards = true }
+                Button(String(localized: "Export Ledger"), systemImage: "square.and.arrow.up") {
                     Task {
                         do {
                             let state = try await Api.request("api/state?all=1")
@@ -51,20 +51,20 @@ struct AccountView: View {
                         } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
                     }
                 }
-                Button("设置、iCloud 与检查更新", systemImage: "gearshape") { updates = true }
+                Button(String(localized: "Settings, iCloud, and Updates"), systemImage: "gearshape") { updates = true }
             }
-            Section("帮助") {
-                Button("隐私与数据处理") { privacy = true }
-                Link("反馈／收不到短信邮件／恢复申诉", destination: URL(string: "mailto:hi@tianli.cyou")!)
-                Text("验证码过期可重发；短信仅支持 +86 家长手机号，可改用邮箱。旧账号先登录再绑定；原地址无法访问时联系支持核验所有权。").font(.footnote).foregroundStyle(.secondary)
+            Section(String(localized: "Help")) {
+                Button(String(localized: "Privacy and Data")) { privacy = true }
+                Link(String(localized: "Feedback, Delivery Issues, and Account Recovery"), destination: URL(string: "mailto:hi@tianli.cyou")!)
+                Text(String(localized: "Request a new code if yours expires. SMS supports parents’ +86 numbers; you can also use email. Sign in to an existing account before linking a number or email. Contact support to verify ownership if you can no longer access your old contact details.")).font(.footnote).foregroundStyle(.secondary)
                 Text("\(AppIdentity.displayName) · \(Bundle.main.shortVersion)").font(.caption)
             }
             Section {
-                Button("退出登录", role: .destructive) { confirmLogout = true }
-                Button("注销账号", role: .destructive) { deleting = true }
+                Button(String(localized: "Sign Out"), role: .destructive) { confirmLogout = true }
+                Button(String(localized: "Delete Account"), role: .destructive) { deleting = true }
             }
             if let message { Text(message).foregroundStyle(.red) }
-        }.navigationTitle("账户").scrollContentBackground(.hidden).background(TreasuryTheme.background)
+        }.navigationTitle(String(localized: "Account")).scrollContentBackground(.hidden).background(TreasuryTheme.background)
             .task { await updateAccountSummary() }
             .sheet(isPresented: $security, onDismiss: { Task { await updateAccountSummary() } }) { AccountSecurityView() }
             .sheet(isPresented: $profile) { ProfileEditView() }
@@ -74,9 +74,9 @@ struct AccountView: View {
             .sheet(isPresented: $updates) { TreasurySettingsView(preferences: .shared, lifecycle: lifecycle) }
             .sheet(isPresented: $privacy) { AccountPolicyView(privacy: true) }
             .sheet(isPresented: $deleting) { AccountDeletionView() }
-            .confirmationDialog("退出当前账号？", isPresented: $confirmLogout) {
-                Button("退出登录", role: .destructive) { Task { await store.logout() } }
-                Button("取消", role: .cancel) {}
+            .confirmationDialog(String(localized: "Sign out of this account?"), isPresented: $confirmLogout) {
+                Button(String(localized: "Sign Out"), role: .destructive) { Task { await store.logout() } }
+                Button(String(localized: "Cancel"), role: .cancel) {}
             }
             .fileExporter(isPresented: $exporting, document: document, contentType: .json, defaultFilename: "Growth-Treasury-ledger") { result in
                 if case let .failure(error) = result { message = error.localizedDescription }
@@ -87,9 +87,9 @@ struct AccountView: View {
             let me = try await Api.request("api/me")
             let email = me["email"] as? String ?? ""
             let mask = email.split(separator: "@").last.map { "***@" + $0 } ?? ""
-            emailStatus = email.isEmpty ? "邮箱未绑定" : mask + (me["email_verified"] as? Bool == true ? " · 已验证" : " · 待验证")
+            emailStatus = email.isEmpty ? String(localized: "No Email Linked") : mask + (me["email_verified"] as? Bool == true ? String(localized: " · Verified") : String(localized: " · Verification Pending"))
             let phone = me["phone"] as? String ?? ""
-            phoneStatus = phone.isEmpty ? "手机未绑定" : "\(phone.prefix(6))****\(phone.suffix(4)) · 已验证"
+            phoneStatus = phone.isEmpty ? String(localized: "No Phone Linked") : String(localized: "\(String(phone.prefix(6)))****\(String(phone.suffix(4))) · Verified")
         } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }
@@ -137,18 +137,18 @@ struct AccountDeletionView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Text("注销会删除当前账号及积分数据。涉及共享学习、扫描档案或旧资料时需协调清理；申请受理不代表已经删除。")
+                Text(String(localized: "Deleting your account removes the account and its points data. Shared learning records, scanned files, or older data may require coordinated cleanup. An accepted request does not mean deletion is complete."))
                 if store.phase == .loggedIn {
-                    if hasPassword { PasswordInput(title: "当前登录密码", text: $password) }
+                    if hasPassword { PasswordInput(title: String(localized: "Current Sign-In Password"), text: $password) }
                     else { PhoneVerification(phone: phone, purpose: "phone_identity", grant: $identity) }
-                    Button(offerRequest ? "确认申请注销" : "确认注销", role: .destructive) { Task { await remove() } }
+                    Button(offerRequest ? String(localized: "Request Account Deletion") : String(localized: "Confirm Account Deletion"), role: .destructive) { Task { await remove() } }
                         .disabled(busy || (hasPassword ? password.isEmpty : identity.isEmpty))
                 }
                 if let message { Text(message) }
-                if receipt != nil { Button("查询注销处理状态") { Task { await status() } }.disabled(busy) }
-                Link("联系支持", destination: URL(string: "mailto:hi@tianli.cyou")!)
-            }.navigationTitle("注销账号")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+                if receipt != nil { Button(String(localized: "Check Deletion Status")) { Task { await status() } }.disabled(busy) }
+                Link(String(localized: "Contact Support"), destination: URL(string: "mailto:hi@tianli.cyou")!)
+            }.navigationTitle(String(localized: "Delete Account"))
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } } }
                 .task {
                     if receipt != nil { await status() }
                     if store.phase == .loggedIn {
@@ -165,7 +165,8 @@ struct AccountDeletionView: View {
                 let result = try await Api.request("api/account_delete_request", body: ["password": password, "identity_grant": identity])
                 receipt = result["receipt_id"] as? String
                 if let receipt { DeletionReceipt.save(receipt) }
-                message = "申请已受理，尚未完成删除。预计 \(result["expected_by"] as? String ?? "通常30天内")，可在此查询状态。"
+                let expected = Api.localizedText(result, "expected_by") ?? String(localized: "usually within 30 days")
+                message = String(localized: "Your request was accepted. Deletion is not complete. Expected: \(expected). Check its status here.")
                 password = ""
             } else {
                 _ = try await Api.request("api/account_del", body: ["p": password, "identity_grant": identity])
@@ -181,7 +182,8 @@ struct AccountDeletionView: View {
         guard let receipt else { return }
         do {
             let result = try await Api.request("api/account_delete_status", body: ["receipt_id": receipt])
-            message = result["status"] as? String == "completed" ? "账号及相关数据清理已完成。" : "注销处理中，尚未完成删除。预计 \(result["expected_by"] as? String ?? "通常30天内")。"
+            let expected = Api.localizedText(result, "expected_by") ?? String(localized: "usually within 30 days")
+            message = result["status"] as? String == "completed" ? String(localized: "Your account and related data have been deleted.") : String(localized: "Deletion is in progress. Your data has not been fully deleted. Expected: \(expected).")
         } catch { await store.confirmSessionFailure(error); message = error.localizedDescription }
     }
 }

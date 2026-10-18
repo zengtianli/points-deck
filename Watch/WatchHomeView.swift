@@ -45,7 +45,7 @@ struct WatchHomeView: View {
                 .font(.caption2).foregroundStyle(.white.opacity(0.7))
             Spacer(minLength: 6)
             if let s, let need = s.toNext, let name = s.nextName {
-                Text("还差 \(RollingNumber.grouped(need)) 分升「\(name)」")
+                Text("Next tier: \(name) · \(RollingNumber.grouped(need)) to go")
                     .font(.caption2.weight(.medium))
                     .foregroundStyle(.white)
                     .lineLimit(2)
@@ -59,7 +59,7 @@ struct WatchHomeView: View {
                 }
                 .frame(height: 7)
             } else {
-                Text("已经住到顶了 —— 云端天堂")
+                Text("You've reached the highest tier!")
                     .font(.caption2.weight(.medium)).foregroundStyle(.white)
             }
         }
@@ -93,7 +93,7 @@ struct WatchHomeView: View {
         List {
             let es = Array((s?.entries ?? []).prefix(10))
             if es.isEmpty {
-                Text("还没有流水").font(.footnote).foregroundStyle(.secondary)
+                Text("No entries yet").font(.footnote).foregroundStyle(.secondary)
             }
             ForEach(es) { e in
                 VStack(alignment: .leading, spacing: 1) {
@@ -109,6 +109,6 @@ struct WatchHomeView: View {
                 .listRowBackground(RoundedRectangle(cornerRadius: 12).fill(.white.opacity(0.10)))
             }
         }
-        .navigationTitle("最近流水")
+        .navigationTitle("Recent Entries")
     }
 }

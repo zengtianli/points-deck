@@ -8,6 +8,33 @@ import Security
 /// 所以这个文件里不许出现任何一条规则的分值。
 enum Api {
     static var accountUser: String?
+    /// Select display text at the API boundary. Legacy Chinese payloads remain usable.
+    static var usesEnglish: Bool { Bundle.main.preferredLocalizations.first?.hasPrefix("en") ?? true }
+    static func localizedText(_ object: [String: Any], _ key: String) -> String? {
+        func nonempty(_ value: Any?) -> String? {
+            guard let text = value as? String, !text.isEmpty else { return nil }
+            return text
+        }
+        let raw = object[key]
+        if let languages = raw as? [String: Any] {
+            let order = usesEnglish ? ["en", "zh-Hans", "zh", "zh-CN"] : ["zh-Hans", "zh", "zh-CN", "en"]
+            return order.compactMap { nonempty(languages[$0]) }.first
+        }
+        if usesEnglish { return nonempty(object[key + "_en"]) ?? nonempty(raw) }
+        return nonempty(raw) ?? nonempty(object[key + "_en"])
+    }
+
+    /// Editing display text must keep the other language and all unrelated fields.
+    static func setLocalizedText(_ object: inout [String: Any], _ key: String, _ text: String) {
+        if var languages = object[key] as? [String: Any] {
+            languages[usesEnglish ? "en" : "zh-Hans"] = text
+            object[key] = languages
+        } else if usesEnglish, object[key + "_en"] != nil || !(object[key] as? String ?? "").isEmpty {
+            object[key + "_en"] = text
+        } else {
+            object[key] = text
+        }
+    }
     /// 默认是线上账本。可用 launch 参数指向本地 server 做验证：
     ///   `xcrun simctl launch <udid> cyou.tianli.pointsdeck -api_base http://127.0.0.1:8788`
     /// 走 UserDefaults 而不是 #if DEBUG 的写死地址 —— 写死的那种改一次要重编一次，
@@ -38,6 +65,7 @@ enum Api {
                                 timeout: TimeInterval = 20) async throws -> [String: Any] {
         var req = URLRequest(url: URL(string: path, relativeTo: Api.base.appendingPathComponent("/"))!.absoluteURL)
         req.timeoutInterval = timeout
+        req.setValue(usesEnglish ? "en, zh-Hans;q=0.9" : "zh-Hans, en;q=0.9", forHTTPHeaderField: "Accept-Language")
         if let body {
             req.httpMethod = "POST"
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -51,11 +79,11 @@ enum Api {
         }
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
         guard let obj = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] else {
-            throw Failure(message: code == 200 ? "服务端返回的不是 JSON" : "连不上账本(HTTP \(code))", status: code)
+            throw Failure(message: code == 200 ? String(localized: "The server returned an unreadable response.") : String(localized: "Could not connect to the ledger (HTTP \(code))."), status: code)
         }
         if obj["ok"] as? Bool != true {
             // 服务端的 err 是给人看的中文，原样透出去比包一层「请求失败」有用
-            throw Failure(message: obj["err"] as? String ?? "账本拒绝了这次请求(HTTP \(code))", status: code)
+            throw Failure(message: localizedText(obj, "err") ?? String(localized: "The ledger could not complete this request (HTTP \(code))."), status: code)
         }
         return obj
     }
@@ -76,9 +104,9 @@ enum Api {
     static func preview(_ input: RuleInput) async throws -> Preview {
         let o = try await request("api/preview", body: input.body())
         return Preview(pts: o["pts"] as? Int ?? 0,
-                       label: o["label"] as? String ?? "",
+                       label: localizedText(o, "label") ?? "",
                        cur: o["cur"] as? String ?? "pts",
-                       why: o["why"] as? String ?? "")
+                       why: localizedText(o, "why") ?? "")
     }
 
     /// 请求标识由一次用户操作持有，网络失败后核对原请求，重试不生成新交易。
@@ -161,7 +189,7 @@ enum Api {
         req.setValue("text/event-stream", forHTTPHeaderField: "Accept")
         let (bytes, resp) = try await URLSession.shared.bytes(for: req)
         let code = (resp as? HTTPURLResponse)?.statusCode ?? 0
-        guard code == 200 else { throw Failure(message: "推送连不上(HTTP \(code))") }
+        guard code == 200 else { throw Failure(message: String(localized: "Live updates could not connect (HTTP \(code)).")) }
         return AsyncThrowingStream { continuation in
             let task = Task {
                 do {
@@ -229,7 +257,7 @@ struct Config {
         revision = json["revision"] as? String ?? ""
         subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
             LedgerState.Subject(id: $0["k"] as? String ?? "",
-                          name: $0["name"] as? String ?? "",
+                          name: Api.localizedText($0, "name") ?? "",
                           icon: $0["icon"] as? String ?? "")
         }
         rules = (json["rules"] as? [[String: Any]]) ?? []
@@ -287,7 +315,7 @@ struct LedgerState {
 
         /// 流水金额的显示：三种币种走同一条时间线(服务端如此)，所以单位要跟着条目走，不能一律写「分」。
         var signed: String {
-            let unit = cur == "tv" ? " 分钟" : (cur == "wish" ? " 次" : "")
+            let unit = cur == "tv" ? String(localized: " min") : (cur == "wish" ? String(localized: " wishes") : "")
             return (pts >= 0 ? "+" : "") + "\(pts)" + unit
         }
     }
@@ -347,7 +375,7 @@ struct LedgerState {
 
     init(json: [String: Any]) throws {
         guard let house = json["house"] as? [String: Any] else {
-            throw Api.Failure(message: "账本没返回 house —— 服务端版本对不上")
+            throw Api.Failure(message: String(localized: "The ledger response is missing home details. Update the server and try again."))
         }
         user = json["u"] as? String ?? ""
         total = json["total"] as? Int ?? (json["entries"] as? [Any])?.count ?? 0
@@ -356,12 +384,12 @@ struct LedgerState {
         balance = json["balance"] as? Int ?? 0
         rate = json["rate"] as? Int ?? 100
         tv = json["tv"] as? Int ?? 0
-        houseName = house["name"] as? String ?? "—"
+        houseName = Api.localizedText(house, "name") ?? "—"
         houseAt = house["at"] as? Int ?? 0
         tier = house["tier"] as? Int ?? 0
         era = Era(key: house["era"] as? String ?? "")
         let nxt = house["next"] as? [String: Any]
-        nextName = nxt?["name"] as? String
+        nextName = nxt.flatMap { Api.localizedText($0, "name") }
         nextAt = nxt?["at"] as? Int
         // ⚠ 字段名是照着 server.py 的真实写入(第 498-504 行)对的，不是猜的 ——
         // 第一版猜了 what/t，跑出来整列事由全是「—」而进度条一切正常，界面看着毫无异样。
@@ -375,38 +403,38 @@ struct LedgerState {
                   bal: (e["bal"] as? Int) ?? 0, kind: e["kind"] as? String ?? "")
         }
         subjects = ((json["subjects"] as? [[String: Any]]) ?? []).map {
-            Subject(id: $0["k"] as? String ?? "", name: $0["name"] as? String ?? "",
+            Subject(id: $0["k"] as? String ?? "", name: Api.localizedText($0, "name") ?? "",
                     icon: $0["icon"] as? String ?? "")
         }
         rules = ((json["rules"] as? [[String: Any]]) ?? []).map {
             Rule(id: $0["id"] as? String ?? "",
                  subject: $0["subject"] as? String ?? "",
-                 label: $0["label"] as? String ?? "",
+                 label: Api.localizedText($0, "label") ?? "",
                  kind: $0["kind"] as? String ?? "fixed",
                  pts: $0["pts"] as? Int ?? 0,
-                 unit: $0["unit"] as? String ?? "",
-                 hint: $0["hint"] as? String ?? "",
+                 unit: Api.localizedText($0, "unit") ?? "",
+                 hint: Api.localizedText($0, "hint") ?? "",
                  min: $0["min"] as? Int, max: $0["max"] as? Int,
                  calc: $0["calc"] as? String, icon: $0["icon"] as? String ?? "star.fill",
                  color: $0["color"] as? String ?? "mint", archived: $0["archived"] as? Bool ?? false)
         }
         calcs = ((json["calcs"] as? [String: [String: Any]]) ?? [:]).mapValues { c in
-            Calc(label: c["label"] as? String ?? "",
+            Calc(label: Api.localizedText(c, "label") ?? "",
                  inputs: ((c["inputs"] as? [[String: Any]]) ?? []).map {
                      Calc.Input(id: $0["k"] as? String ?? "",
-                                label: $0["label"] as? String ?? "",
-                                hint: String(describing: $0["hint"] ?? ""))
+                                label: Api.localizedText($0, "label") ?? "",
+                                hint: Api.localizedText($0, "hint") ?? String(describing: $0["hint"] ?? ""))
                  })
         }
         shop = ((json["shop"] as? [[String: Any]]) ?? []).map {
             ShopItem(id: $0["id"] as? String ?? "", icon: $0["icon"] as? String ?? "",
-                     label: $0["label"] as? String ?? "", pts: $0["pts"] as? Int ?? 0,
-                     archived: $0["archived"] as? Bool ?? false, detail: $0["description"] as? String ?? "")
+                     label: Api.localizedText($0, "label") ?? "", pts: $0["pts"] as? Int ?? 0,
+                     archived: $0["archived"] as? Bool ?? false, detail: Api.localizedText($0, "description") ?? "")
         }
         practiceLeft = json["practice_left"] as? Int ?? 0
         ladder = ((json["ladder"] as? [[String: Any]]) ?? []).map {
             Tier(at: $0["at"] as? Int ?? 0,
-                 name: $0["name"] as? String ?? "",
+                 name: Api.localizedText($0, "name") ?? "",
                  era: Era(key: $0["era"] as? String ?? ""),
                  bonus: $0["bonus"] as? Int ?? 0,
                  unlock: ($0["unlock"] as? [String]) ?? [])
@@ -491,9 +519,11 @@ struct Transaction {
         let entry = json["entry"] as? [String: Any]
         entryID = entry?["id"] as? String
         if let entry, let pts = entry["pts"] as? Int {
-            let unit = entry["cur"] as? String == "tv" ? "分钟" : entry["cur"] as? String == "wish" ? "个心愿" : "分"
-            message = "\(entry["label"] as? String ?? "记录") \(pts >= 0 ? "+" : "")\(pts) \(unit)，已记入账本"
-        } else { message = json["why"] as? String ?? "本次未产生流水" }
+            let unit = entry["cur"] as? String == "tv" ? String(localized: "minutes") : entry["cur"] as? String == "wish" ? String(localized: "wishes") : String(localized: "points")
+            let label = Api.localizedText(entry, "label") ?? String(localized: "Entry")
+            let signed = "\(pts >= 0 ? "+" : "")\(pts)"
+            message = String(localized: "\(label): \(signed) \(unit), added to your ledger.")
+        } else { message = Api.localizedText(json, "why") ?? String(localized: "No entry was created.") }
     }
 }
 
@@ -587,7 +617,27 @@ struct AccountHints: Codable {
     }
 
     private static func install(_ data: Data) {
-        let hints = (try? JSONDecoder().decode(AccountHints.self, from: data)) ?? AccountHints()
+        // Normalize only display fields before handing them to the unchanged shared FeedUI.
+        // Keep the original multilingual bytes in the cache so a system-language change works offline.
+        var json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+        if var ui = json["ui"] as? [String: Any] {
+            if let copy = ui["copy"] as? [String: Any] {
+                let keys = Set(copy.keys.map { $0.hasSuffix("_en") ? String($0.dropLast(3)) : $0 })
+                ui["copy"] = keys.reduce(into: [String: String]()) { result, key in
+                    if let text = Api.localizedText(copy, key) { result[key] = text }
+                }
+            }
+            if let vocab = ui["vocab"] as? [String: [String: Any]] {
+                ui["vocab"] = vocab.mapValues { word in
+                    var normalized = word
+                    normalized["label"] = Api.localizedText(word, "label")
+                    return normalized
+                }
+            }
+            json["ui"] = ui
+        }
+        let normalized = (try? JSONSerialization.data(withJSONObject: json)) ?? data
+        let hints = (try? JSONDecoder().decode(AccountHints.self, from: normalized)) ?? AccountHints()
         lock.withLock { current = hints }
         Remote.ui = hints.ui?.value
     }
@@ -602,10 +652,10 @@ struct AccountHints: Codable {
         clamped(number(receipt) ?? lock.withLock { current.code_ttl_seconds?.value }, 300, 60...3600) / 60
     }
 
-    static func resendWaitLabel(_ seconds: Int) -> String { "\(seconds) 秒后可重新获取" }
+    static func resendWaitLabel(_ seconds: Int) -> String { String(localized: "Resend in \(seconds) seconds") }
 
     static func phoneFootnote(sign: String, minutes: Int) -> String {
-        T("account.phone.footnote", "+86 家长手机号；短信签名「{sign}」，有效{minutes}分钟。收不到可等待重发或改用邮箱。",
+        T("account.phone.footnote", String(localized: "Parent's +86 phone number. SMS sender: {sign}. The code expires in {minutes} minutes. If it doesn't arrive, wait to resend or use email."),
           ["sign": sign, "minutes": String(minutes)])
     }
 

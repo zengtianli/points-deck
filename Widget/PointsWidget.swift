@@ -29,7 +29,7 @@ struct PointsWidget: Widget {
             PointsWidgetView(entry: entry)
         }
         .configurationDisplayName(AppIdentity.displayName)
-        .description("总市值与「还差多少升级」")
+        .description("Your balance and progress toward the next tier.")
         #if os(iOS)
         .supportedFamilies([.systemSmall, .systemMedium,
                             .accessoryCircular, .accessoryRectangular, .accessoryInline])   // accessory* = 锁屏，iOS 独有

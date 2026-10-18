@@ -28,9 +28,9 @@ final class Store: ObservableObject {
         do {
             try await Api.undo(id: id)
             await refresh()
-            showNotice("已撤销，账本和走势已恢复")
+            showNotice(String(localized: "Undone. Your ledger and trends have been restored."))
             return true
-        } catch { showNotice("撤销失败：\(error.localizedDescription)"); return false }
+        } catch { showNotice(String(localized: "Couldn't undo: \(error.localizedDescription)")); return false }
     }
 
     /// 刚刚升档到了哪一档 —— 非 nil 时界面弹「乔迁新居」。
@@ -122,7 +122,7 @@ final class Store: ObservableObject {
         catch {
             if (error as? Api.Failure)?.status == 401 {
                 dropSession(); WatchLink.shared.publishSignedOut()
-            } else { showNotice("读取历史失败：\(error.localizedDescription)") }
+            } else { showNotice(String(localized: "Couldn't load history: \(error.localizedDescription)")) }
         }
     }
 

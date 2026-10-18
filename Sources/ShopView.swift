@@ -13,7 +13,7 @@ struct ShopView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("当前积分 \(store.state?.balance ?? 0)").font(.title2.bold()).monospacedDigit()
+                Text("Current points: \(store.state?.balance ?? 0)").font(.title2.bold()).monospacedDigit()
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 290 : 145), spacing: 14)], spacing: 14) {
                     ForEach((store.state?.shop ?? []).filter { !$0.archived }) { item in
                         Button {
@@ -24,26 +24,26 @@ struct ShopView: View {
                             VStack(spacing: 10) {
                                 CatalogIcon(icon: item.icon.isEmpty ? "gift.fill" : item.icon)
                                 Text(item.label).font(.headline).multilineTextAlignment(.center)
-                                Text("\(item.pts) 分").font(.title2.bold()).monospacedDigit()
+                                Text("\(item.pts) points").font(.title2.bold()).monospacedDigit()
                                 if !(store.state?.isUnlocked(item.id) ?? false) {
-                                    Text("需达到\(store.state?.tierRequiring(item.id)?.name ?? "指定等级")").font(.caption)
+                                    Text("Requires \(store.state?.tierRequiring(item.id)?.name ?? String(localized: "the required tier"))").font(.caption)
                                 } else if (store.state?.balance ?? 0) < item.pts {
-                                    Text("还差 \(item.pts - (store.state?.balance ?? 0)) 分").font(.caption)
-                                } else { Text("可兑换").font(.caption).foregroundStyle(TreasuryTheme.accent) }
+                                    Text("\(item.pts - (store.state?.balance ?? 0)) more points needed").font(.caption)
+                                } else { Text("Available").font(.caption).foregroundStyle(TreasuryTheme.accent) }
                             }.foregroundStyle(.primary).frame(maxWidth: .infinity, minHeight: 110).padding(12)
                                 .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 20))
                         }.buttonStyle(.plain).disabled(busy == item.id)
                     }
                 }
                 if (store.state?.shop ?? []).filter({ !$0.archived }).isEmpty {
-                    ContentUnavailableView("设置第一个奖励", systemImage: "gift", description: Text("点「新建」，设置家庭约定的奖励和所需积分。"))
+                    ContentUnavailableView("Set up your first reward", systemImage: "gift", description: Text("Tap New to add a family reward and its points cost."))
                 }
             }.padding(20).contentWidth(1100)
-        }.background(TreasuryTheme.background).navigationTitle("兑换")
+        }.background(TreasuryTheme.background).navigationTitle("Rewards")
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("新建", systemImage: "plus") { manager = CatalogPresentation(startNew: true) }
-                    Button("管理", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false) }
+                    Button("New", systemImage: "plus") { manager = CatalogPresentation(startNew: true) }
+                    Button("Manage", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false) }
                 }
             }
             .sheet(item: $manager) { request in CatalogManager(kind: "shop", startNew: request.startNew) }
@@ -52,13 +52,13 @@ struct ShopView: View {
                     Form {
                         Text(item.label).font(.title2.bold())
                         if !item.detail.isEmpty { Text(item.detail) }
-                        LabeledContent("所需积分", value: "\(item.pts)")
-                        LabeledContent("兑换后余额", value: "\((store.state?.balance ?? 0) - item.pts)")
+                        LabeledContent("Points required", value: "\(item.pts)")
+                        LabeledContent("Balance after redemption", value: "\((store.state?.balance ?? 0) - item.pts)")
                         if let error { Text(error).foregroundStyle(.red) }
-                        Button(busy == nil ? "确认兑换" : "兑换中") { Task { await spend(item) } }
+                        Button(busy == nil ? String(localized: "Confirm redemption") : String(localized: "Redeeming…")) { Task { await spend(item) } }
                             .disabled(busy != nil || (store.state?.balance ?? 0) < item.pts || !(store.state?.isUnlocked(item.id) ?? false))
-                    }.navigationTitle("确认兑换")
-                        .toolbar { ToolbarItem(placement: .cancellationAction) { Button("取消") { confirming = nil } } }
+                    }.navigationTitle("Confirm redemption")
+                        .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Cancel") { confirming = nil } } }
                 }.treasurySheetSize(minHeight: 300)
             }
             .refreshable { await store.refresh() }
@@ -69,12 +69,12 @@ struct ShopView: View {
             let receipt = try await Api.transaction("api/spend", body: ["item": item.id, "expected_pts": item.pts,
                                                                        "expected_revision": expectedRevision], requestID: requestID)
             await store.refresh(); confirming = nil
-            store.showNotice("已兑换：\(item.label)", entryID: receipt.entryID)
+            store.showNotice(String(localized: "Redeemed: \(item.label)"), entryID: receipt.entryID)
         } catch {
-            self.error = "未兑换：\(error.localizedDescription)"
+            self.error = String(localized: "Not redeemed: \(error.localizedDescription)")
             if (error as? Api.Failure)?.status == 409 {
                 await store.refresh()
-                self.error = "奖励价格或条件已变化，请取消后重新确认。"
+                self.error = String(localized: "The reward's cost or requirements have changed. Cancel and confirm again.")
             }
         }
     }

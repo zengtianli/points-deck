@@ -23,7 +23,7 @@ struct CatalogManager: View {
     @State private var error: String?
     @State private var conflict = false
     @State private var serverCopy: Config?
-    private var title: String { kind == "rules" ? "记分项目" : "兑换奖励" }
+    private var title: String { kind == "rules" ? String(localized: "Point Rules") : String(localized: "Rewards") }
 
     var body: some View {
         NavigationStack {
@@ -38,8 +38,8 @@ struct CatalogManager: View {
                         HStack {
                             CatalogIcon(icon: item["icon"] as? String ?? (kind == "rules" ? "star.fill" : "gift.fill"))
                             VStack(alignment: .leading) {
-                                Text(item["label"] as? String ?? "项目").foregroundStyle(.primary)
-                                Text(item["archived"] as? Bool == true ? "已归档 · 可恢复" : "\(item["pts"] as? Int ?? 0) 分")
+                                Text(Api.localizedText(item, "label") ?? String(localized: "Rule")).foregroundStyle(.primary)
+                                Text(item["archived"] as? Bool == true ? String(localized: "Archived · Can Be Restored") : String(localized: "\(item["pts"] as? Int ?? 0) points"))
                                     .foregroundStyle(.secondary).font(.caption)
                             }
                             Spacer()
@@ -47,10 +47,10 @@ struct CatalogManager: View {
                         }.frame(minHeight: 48)
                     }.buttonStyle(.plain)
                     #if !os(iOS)
-                    Button("上移", systemImage: "arrow.up") {
+                    Button(String(localized: "Move Up"), systemImage: "arrow.up") {
                         if index > 0 { items.swapAt(index, index - 1); dirty = true }
                     }.disabled(index == 0).buttonStyle(.borderless).frame(minHeight: 48)
-                    Button("下移", systemImage: "arrow.down") {
+                    Button(String(localized: "Move Down"), systemImage: "arrow.down") {
                         if index + 1 < items.count { items.swapAt(index, index + 1); dirty = true }
                     }.disabled(index + 1 == items.count).buttonStyle(.borderless).frame(minHeight: 48)
                     #endif
@@ -60,26 +60,26 @@ struct CatalogManager: View {
                 if let error {
                     Text(error).foregroundStyle(.red)
                     if conflict {
-                        Text("本地编辑仍保留。读取最新配置后，确认合并再保存。").font(.footnote)
-                        Button("读取最新配置") { Task { await prepareMerge() } }
+                        Text(String(localized: "Your edits are still here. Load the latest settings, review the merge, then save.")).font(.footnote)
+                        Button(String(localized: "Load Latest Settings")) { Task { await prepareMerge() } }
                         if serverCopy != nil {
-                            Button("合并：保留本地改动和新增远端项目") { merge() }
+                            Button(String(localized: "Merge: Keep My Edits and New Server Items")) { merge() }
                         }
-                    } else if config == nil { Button("重试") { Task { await load() } } }
+                    } else if config == nil { Button(String(localized: "Try Again")) { Task { await load() } } }
                 }
                 Section {
-                    Text("归档保留历史，编辑可恢复；列表编辑或上下箭头调整常用顺序。").font(.footnote).foregroundStyle(.secondary)
-                    Button("更多设置（高级规则与档位）") { advanced = true }
+                    Text(String(localized: "Archiving preserves past transactions. Edit an item to restore it. Reorder the list using Edit or the arrow buttons.")).font(.footnote).foregroundStyle(.secondary)
+                    Button(String(localized: "More Settings: Advanced Rules and Tiers")) { advanced = true }
                 }
             }.navigationTitle(title)
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } }
+                    ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Close")) { dismiss() } }
                     #if os(iOS)
                     ToolbarItem(placement: .primaryAction) { EditButton() }
                     #endif
                     ToolbarItemGroup(placement: .primaryAction) {
-                        Button("新建", systemImage: "plus") { add() }.disabled(config == nil)
-                        Button(busy ? "保存中" : "保存") { Task { await save() } }.disabled(busy || !dirty || conflict)
+                        Button(String(localized: "New"), systemImage: "plus") { add() }.disabled(config == nil)
+                        Button(busy ? String(localized: "Saving…") : String(localized: "Save")) { Task { await save() } }.disabled(busy || !dirty || conflict)
                     }
                 }
                 .task { await load() }
@@ -115,7 +115,7 @@ struct CatalogManager: View {
             let revision = try await Api.configPut(kind: kind, items: items, revision: config.revision)
             self.config?.revision = revision
             dirty = false; error = nil
-            await store.refresh(); store.showNotice("已保存\(title)")
+            await store.refresh(); store.showNotice(String(localized: "Saved \(title)"))
         } catch {
             self.error = error.localizedDescription
             conflict = (error as? Api.Failure)?.status == 409
@@ -142,7 +142,7 @@ struct CatalogManager: View {
         let ids = Set(items.compactMap { $0["id"] as? String })
         items += remote.filter { !ids.contains($0["id"] as? String ?? "") }
         config = latest; conflict = false; serverCopy = nil; dirty = true
-        error = "已合并，本地修改的同名项目优先；请检查后点保存。"
+        error = String(localized: "Merged. Your edits take priority for matching items. Review the result, then save.")
     }
 }
 
@@ -171,26 +171,26 @@ struct CatalogEditor: View {
     private let icons = ["star.fill", "book.fill", "heart.fill", "sparkles", "figure.walk", "music.note", "house.fill", "gift.fill"]
     init(draft: CatalogDraft, onSave: @escaping ([String: Any]) -> Void) {
         self.draft = draft; self.onSave = onSave
-        _label = State(initialValue: draft.item["label"] as? String ?? "")
+        _label = State(initialValue: Api.localizedText(draft.item, "label") ?? "")
         _points = State(initialValue: String(abs(draft.item["pts"] as? Int ?? 1)))
         _negative = State(initialValue: draft.negative)
         _icon = State(initialValue: draft.item["icon"] as? String ?? "star.fill")
         _color = State(initialValue: draft.item["color"] as? String ?? "mint")
-        _detail = State(initialValue: draft.item["description"] as? String ?? "")
+        _detail = State(initialValue: Api.localizedText(draft.item, "description") ?? "")
         _archived = State(initialValue: draft.item["archived"] as? Bool ?? false)
     }
     private var simple: Bool { draft.kind == "shop" || (draft.item["kind"] as? String ?? "fixed") == "fixed" }
     var body: some View {
         NavigationStack {
             Form {
-                TextField(draft.kind == "rules" ? "项目名" : "奖励名", text: $label)
+                TextField(draft.kind == "rules" ? String(localized: "Rule Name") : String(localized: "Reward Name"), text: $label)
                 if simple {
                     if draft.kind == "rules" {
-                        TreasuryChoice(title: "类型", selection: $negative, options: [("加分", false), ("减分", true)])
+                        TreasuryChoice(title: String(localized: "Type"), selection: $negative, options: [(String(localized: "Add Points"), false), (String(localized: "Deduct Points"), true)])
                     }
-                    TextField(draft.kind == "rules" ? "正整数分值" : "所需积分", text: $points).keyboardType(.numberPad)
-                } else { Text("这是参数型项目。原公式保留，分值请在「更多设置」中编辑。").font(.footnote) }
-                Section("图标") {
+                    TextField(draft.kind == "rules" ? String(localized: "Positive Whole Number") : String(localized: "Points Required"), text: $points).keyboardType(.numberPad)
+                } else { Text(String(localized: "This rule uses a formula. The formula is preserved. Edit its points in More Settings.")).font(.footnote) }
+                Section(String(localized: "Icon")) {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 52))]) {
                         ForEach(icons, id: \.self) { symbol in
                             Button { icon = symbol } label: {
@@ -199,21 +199,27 @@ struct CatalogEditor: View {
                         }
                     }
                 }
-                if draft.kind == "shop" { TextField("说明（可选）", text: $detail, axis: .vertical) }
+                if draft.kind == "shop" { TextField(String(localized: "Description (Optional)"), text: $detail, axis: .vertical) }
                 else {
-                    Picker("颜色", selection: $color) { Text("薄荷").tag("mint"); Text("天空").tag("blue"); Text("暖阳").tag("orange"); Text("紫藤").tag("purple") }
+                    Picker(String(localized: "Color"), selection: $color) { Text(String(localized: "Mint")).tag("mint"); Text(String(localized: "Sky")).tag("blue"); Text(String(localized: "Sunshine")).tag("orange"); Text(String(localized: "Wisteria")).tag("purple") }
                 }
-                Toggle("归档（保留历史）", isOn: $archived)
-                Text("只影响后续记分或兑换，已有流水保留当时的名称和积分。").font(.footnote).foregroundStyle(.secondary)
-            }.navigationTitle(draft.kind == "rules" ? "编辑项目" : "编辑奖励")
+                Toggle(String(localized: "Archive (Keep History)"), isOn: $archived)
+                Text(String(localized: "Changes apply to future point entries and redemptions. Past transactions keep their original names and points.")).font(.footnote).foregroundStyle(.secondary)
+            }.navigationTitle(draft.kind == "rules" ? String(localized: "Edit Rule") : String(localized: "Edit Reward"))
                 .toolbar {
-                    ToolbarItem(placement: .cancellationAction) { Button("取消") { dismiss() } }
+                    ToolbarItem(placement: .cancellationAction) { Button(String(localized: "Cancel")) { dismiss() } }
                     ToolbarItem(placement: .primaryAction) {
-                        Button("完成") {
+                        Button(String(localized: "Done")) {
                             var item = draft.item
-                            item["label"] = label.trimmingCharacters(in: .whitespacesAndNewlines)
+                            let cleanedLabel = label.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if cleanedLabel != (Api.localizedText(item, "label") ?? "") {
+                                Api.setLocalizedText(&item, "label", cleanedLabel)
+                            }
                             if simple { item["pts"] = abs(Int(points) ?? 0) * (draft.kind == "rules" && negative ? -1 : 1) }
-                            item["icon"] = icon; item["color"] = color; item["archived"] = archived; item["description"] = detail
+                            item["icon"] = icon; item["color"] = color; item["archived"] = archived
+                            if detail != (Api.localizedText(item, "description") ?? "") {
+                                Api.setLocalizedText(&item, "description", detail)
+                            }
                             onSave(item); dismiss()
                         }.disabled(label.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || (simple && (Int(points) ?? 0) <= 0))
                     }

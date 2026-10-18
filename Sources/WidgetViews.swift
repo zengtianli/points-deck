@@ -30,7 +30,7 @@ struct PointsWidgetView: View {
         #if os(iOS) || os(watchOS)
         case .accessoryCircular:
             Gauge(value: entry.snap.progress) {
-                Text("分")
+                Text("Points")
             } currentValueLabel: {
                 Text(short(entry.snap.balance))
             }
@@ -55,14 +55,14 @@ struct PointsWidgetView: View {
                 .font(.system(.title3, design: .rounded).weight(.semibold))
                 .widgetCurvesContent()
                 .widgetLabel {
-                    Gauge(value: entry.snap.progress) { Text("分") }
+                    Gauge(value: entry.snap.progress) { Text("Points") }
                         .tint(era.accent)
                 }
                 .containerBackground(for: .widget) { Color.clear }
         #endif
         default:
             VStack(alignment: .leading, spacing: 8) {
-                Text("总市值").font(.caption).foregroundStyle(.white.opacity(0.7))
+                Text("Balance").font(.caption).foregroundStyle(.white.opacity(0.7))
                 Text(RollingNumber.grouped(entry.snap.balance))
                     .font(.system(size: 34, weight: .bold, design: .rounded))
                     .monospacedDigit()
@@ -77,13 +77,13 @@ struct PointsWidgetView: View {
 
     private var line: String {
         if let n = entry.snap.toNext, let name = entry.snap.nextName {
-            return "还差 \(n) 分升「\(name)」"
+            return String(localized: "Next tier: \(name) · \(n) to go")
         }
         return entry.snap.houseName
     }
 
     private func short(_ n: Int) -> String {
-        n >= 10000 ? String(format: "%.1fw", Double(n) / 10000) : "\(n)"
+        n.formatted(.number.notation(.compactName))
     }
 }
 

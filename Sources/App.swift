@@ -53,7 +53,13 @@ struct RootView: View {
 
     var body: some View {
         Group {
-            if UserDefaults.standard.bool(forKey: "widgetpreview") {
+            if UserDefaults.standard.string(forKey: "l10n_screen") == "login" {
+                LoginView()
+            } else if UserDefaults.standard.string(forKey: "l10n_screen") == "register" {
+                RegisterView()
+            } else if UserDefaults.standard.string(forKey: "l10n_screen") == "security" {
+                AccountSecurityView()
+            } else if UserDefaults.standard.bool(forKey: "widgetpreview") {
                 WidgetPreviewView()
             } else if UserDefaults.standard.bool(forKey: "palette") {
                 PalettePreview()
@@ -69,8 +75,8 @@ struct RootView: View {
         .safeAreaInset(edge: .top) {
             HStack {
                 Spacer()
-                Button { settings = true } label: { Label("设置", systemImage: "gearshape") }
-                Button { refreshFromShortcut() } label: { Label("刷新", systemImage: "arrow.clockwise") }
+                Button { settings = true } label: { Label("Settings", systemImage: "gearshape") }
+                Button { refreshFromShortcut() } label: { Label("Refresh", systemImage: "arrow.clockwise") }
                     .disabled(store.phase != .loggedIn)
                     .keyboardShortcut(preferences.refreshBinding)
             }.padding(.horizontal)
@@ -78,6 +84,7 @@ struct RootView: View {
         .sheet(isPresented: $settings) { TreasurySettingsView(preferences: preferences, lifecycle: lifecycle) }
         .animation(.easeInOut(duration: 0.35), value: store.phase)
         .task {
+            if UserDefaults.standard.string(forKey: "l10n_screen") == "settings" { settings = true }
             LaneSignal.applyOrientation()
             LaneSignal.applyWindowFrame()
             WatchLink.shared.activate()

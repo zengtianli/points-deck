@@ -16,16 +16,16 @@ struct WidgetPreviewView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 26) {
-                Text("Widget 视图预览").font(.headline).foregroundStyle(.white)
-                Text("数据来自共享 keychain 仓里的真实快照")
+                Text("Widget preview").font(.headline).foregroundStyle(.white)
+                Text("Uses the saved snapshot from the shared keychain.")
                     .font(.caption).foregroundStyle(.white.opacity(0.6))
 
                 block("systemSmall", w: 170, h: 170, family: .systemSmall)
                 block("systemMedium", w: 360, h: 170, family: .systemMedium)
                 #if os(iOS)   // 锁屏三种样式 iOS 独有，Mac 桌面小组件只有 system*
-                block("accessoryRectangular（锁屏）", w: 340, h: 90, family: .accessoryRectangular)
-                block("accessoryCircular（锁屏）", w: 90, h: 90, family: .accessoryCircular)
-                block("accessoryInline（锁屏）", w: 340, h: 36, family: .accessoryInline)
+                block(String(localized: "accessoryRectangular (Lock Screen)"), w: 340, h: 90, family: .accessoryRectangular)
+                block(String(localized: "accessoryCircular (Lock Screen)"), w: 90, h: 90, family: .accessoryCircular)
+                block(String(localized: "accessoryInline (Lock Screen)"), w: 340, h: 36, family: .accessoryInline)
                 #endif
             }
             .padding(20)

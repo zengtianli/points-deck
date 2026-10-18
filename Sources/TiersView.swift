@@ -38,13 +38,13 @@ struct TiersView: View {
                 }
             }
             .background(TreasuryTheme.background)
-            .navigationTitle("等级与待遇")
+            .navigationTitle("Tiers and benefits")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button("Close") { dismiss() }
                 }
             }
         }
@@ -53,12 +53,12 @@ struct TiersView: View {
     private var summary: some View {
         VStack(spacing: 8) {
             if let s {
-                Text("你在第 \(s.tier + 1) 级 · \(s.houseName)")
+                Text("You're at tier \(s.tier + 1) · \(s.houseName)")
                     .font(.title3.weight(.bold)).foregroundStyle(.primary)
-                Text("共 \(s.ladder.count) 级 · 市值 \(RollingNumber.grouped(s.balance)) 分")
+                Text("\(s.ladder.count) tiers · Balance: \(RollingNumber.grouped(s.balance)) points")
                     .font(.footnote).foregroundStyle(.secondary)
                 if let toNext = s.toNext, let next = s.nextName {
-                    Text("距「\(next)」还差 \(toNext) 分")
+                    Text("\(toNext) points to reach \(next)")
                         .font(.subheadline.weight(.semibold))
                         .foregroundStyle(TreasuryTheme.accent)
                 }
@@ -109,23 +109,23 @@ struct TiersView: View {
                         Image(systemName: "checkmark.circle.fill")
                             .foregroundStyle(.secondary)
                     } else if now {
-                        Text("现在").font(.caption2.weight(.bold))
+                        Text("Current").font(.caption2.weight(.bold))
                             .foregroundStyle(.black.opacity(0.75))
                             .padding(.horizontal, 7).padding(.vertical, 3)
                             .background(era.accent, in: Capsule())
                     }
                 }
 
-                Text(t.at == 0 ? "起始档位" : "\(RollingNumber.grouped(t.at)) 分")
+                Text(t.at == 0 ? String(localized: "Starting tier") : String(localized: "\(RollingNumber.grouped(t.at)) points"))
                     .font(.caption).foregroundStyle(.secondary)
                     .monospacedDigit()
 
                 if t.bonus > 0 {
-                    Label("乔迁贺礼 \(t.bonus) 分", systemImage: "gift.fill")
+                    Label("Move-in bonus: \(t.bonus) points", systemImage: "gift.fill")
                         .font(.caption).foregroundStyle(passed ? .white.opacity(0.5) : era.accent)
                 }
                 ForEach(items) { it in
-                    Label("\(it.icon) \(it.label)　\(RollingNumber.grouped(it.pts)) 分",
+                    Label("\(it.icon) \(it.label) · \(RollingNumber.grouped(it.pts)) points",
                           systemImage: passed || now ? "lock.open.fill" : "lock.fill")
                         .font(.caption)
                         .foregroundStyle(.white.opacity(passed || now ? 0.9 : 0.6))
@@ -144,7 +144,7 @@ struct TiersView: View {
     }
 
     private var footnote: some View {
-        Text("解锁的东西按**当前**市值算 —— 花掉分掉了档，待遇也跟着回去。")
+        Text("Benefits depend on your **current** balance. Spending points may lower your tier and its benefits.")
             .font(.caption2)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)

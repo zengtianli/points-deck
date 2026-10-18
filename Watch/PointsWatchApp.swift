@@ -61,12 +61,12 @@ struct WatchSignedOutView: View {
                     .font(.system(size: 30, weight: .medium))
                     .foregroundStyle(Era.garden.accent)
                 VStack(spacing: 2) {
-                    Text("在 iPhone 上登录")
+                    Text("Sign In on iPhone")
                     Text(AppIdentity.displayName)
                 }
                 .font(.headline)
                 .multilineTextAlignment(.center)
-                Text("登录后手表会自动同步")
+                Text("Your watch syncs automatically after you sign in.")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             }

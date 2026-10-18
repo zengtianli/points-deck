@@ -45,16 +45,16 @@ struct HomeView: View {
         Group {
             #if os(iOS)
             TabView(selection: $tab) {
-                NavigationStack { DeckView().navigationTitle("账本") }
-                    .tabItem { Label("账本", systemImage: "list.bullet.rectangle") }.tag(0)
-                NavigationStack { TrendView().navigationTitle("走势") }
-                    .tabItem { Label("走势", systemImage: "chart.line.uptrend.xyaxis") }.tag(1)
+                NavigationStack { DeckView().navigationTitle("Ledger") }
+                    .tabItem { Label("Ledger", systemImage: "list.bullet.rectangle") }.tag(0)
+                NavigationStack { TrendView().navigationTitle("Trends") }
+                    .tabItem { Label("Trends", systemImage: "chart.line.uptrend.xyaxis") }.tag(1)
                 NavigationStack { ScoreView() }
-                    .tabItem { Label("加分", systemImage: "plusminus.circle.fill") }.tag(2)
+                    .tabItem { Label("Add Points", systemImage: "plusminus.circle.fill") }.tag(2)
                 NavigationStack { ShopView() }
-                    .tabItem { Label("兑换", systemImage: "gift.fill") }.tag(3)
+                    .tabItem { Label("Rewards", systemImage: "gift.fill") }.tag(3)
                 NavigationStack { AccountView() }
-                    .tabItem { Label("账户", systemImage: "person.crop.circle") }.tag(4)
+                    .tabItem { Label("Account", systemImage: "person.crop.circle") }.tag(4)
             }
             .tabViewStyle(.tabBarOnly)
             #else
@@ -67,7 +67,7 @@ struct HomeView: View {
         #endif
         .safeAreaInset(edge: .bottom) {
             if store.offline {
-                Text("离线：显示上次账本，恢复网络后刷新；当前无法记账。")
+                Text("Offline: showing your last ledger. Reconnect to refresh or record entries.")
                     .font(.caption).padding(10).frame(maxWidth: .infinity).background(.regularMaterial)
             }
             if let message = store.notice {
@@ -75,7 +75,7 @@ struct HomeView: View {
                     Text(message).font(.subheadline)
                     Spacer()
                     if let id = store.undoEntryID {
-                        Button("撤销") { Task { await store.undoEntry(id) } }.frame(minWidth: 48, minHeight: 48)
+                        Button("Undo") { Task { await store.undoEntry(id) } }.frame(minWidth: 48, minHeight: 48)
                     }
                 }.padding(.horizontal, 16)
                     .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 16)).padding(.horizontal, 12)

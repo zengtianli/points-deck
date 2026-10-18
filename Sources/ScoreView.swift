@@ -15,11 +15,12 @@ struct ScoreView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                Text("当前积分 \(store.state?.balance ?? 0)").font(.title2.bold()).monospacedDigit()
-                TreasuryChoice(title: "记分类型", selection: $negative, options: [("加分", false), ("减分", true)])
+                Text("Current points: \(store.state?.balance ?? 0)").font(.title2.bold()).monospacedDigit()
+                TreasuryChoice(title: String(localized: "Entry type"), selection: $negative,
+                               options: [(String(localized: "Add Points"), false), (String(localized: "Deduct Points"), true)])
                 if rules.isEmpty {
-                    ContentUnavailableView("还没有\(negative ? "减分" : "加分")项目", systemImage: "plus.circle",
-                                           description: Text("点右上角「新建」，设置自己的名称和积分。"))
+                    ContentUnavailableView(negative ? String(localized: "No deduction items yet") : String(localized: "No points items yet"), systemImage: "plus.circle",
+                                           description: Text("Tap New to set up an item with a name and points."))
                 }
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 290 : 145), spacing: 14)], spacing: 14) {
                     ForEach(rules) { rule in
@@ -31,25 +32,26 @@ struct ScoreView: View {
                                 CatalogIcon(icon: rule.icon, tint: negative ? .orange : CatalogIcon.color(rule.color))
                                 Text(rule.label).font(.headline).multilineTextAlignment(.center)
                                 if busy.contains(rule.id) { ProgressView() }
-                                else if retries[rule.id] != nil { Text("未记入，重试").font(.subheadline).foregroundStyle(.orange) }
+                                else if retries[rule.id] != nil { Text("Not recorded. Retry.").font(.subheadline).foregroundStyle(.orange) }
                                 else {
-                                    Text(rule.kind == "fixed" ? "\(rule.pts >= 0 ? "+" : "−")\(abs(rule.pts))" : "填写\(rule.unit.isEmpty ? "参数" : rule.unit)")
+                                    Text(rule.kind == "fixed" ? "\(rule.pts >= 0 ? "+" : "−")\(abs(rule.pts))" :
+                                            (rule.unit.isEmpty ? String(localized: "Enter details") : String(localized: "Enter \(rule.unit)")))
                                         .font(.title2.bold()).monospacedDigit()
                                 }
                             }.foregroundStyle(.primary).frame(maxWidth: .infinity, minHeight: 110).padding(12)
                                 .background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 20))
                         }.buttonStyle(.plain).disabled(busy.contains(rule.id))
-                            .accessibilityLabel("\(rule.label)，\(rule.pts)积分")
+                            .accessibilityLabel("\(rule.label), \(rule.pts) points")
                     }
                 }
-                Button("临时记一笔", systemImage: "square.and.pencil") { temporary = true }
+                Button("Custom entry", systemImage: "square.and.pencil") { temporary = true }
                     .frame(maxWidth: .infinity, minHeight: 48).buttonStyle(.bordered)
             }.padding(20).contentWidth(1100)
-        }.background(TreasuryTheme.background).navigationTitle("加分")
+        }.background(TreasuryTheme.background).navigationTitle("Add Points")
             .toolbar {
                 ToolbarItemGroup(placement: .primaryAction) {
-                    Button("新建", systemImage: "plus") { manager = CatalogPresentation(startNew: true, negative: negative) }
-                    Button("管理", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false, negative: negative) }
+                    Button("New", systemImage: "plus") { manager = CatalogPresentation(startNew: true, negative: negative) }
+                    Button("Manage", systemImage: "slider.horizontal.3") { manager = CatalogPresentation(startNew: false, negative: negative) }
                 }
             }
             .sheet(item: $manager) { request in
@@ -69,7 +71,7 @@ struct ScoreView: View {
             retries[rule.id] = nil
             await store.refresh()
             store.showNotice(receipt.message, entryID: receipt.entryID)
-        } catch { store.showNotice("未记入：\(error.localizedDescription)，点卡片重试") }
+        } catch { store.showNotice(String(localized: "Not recorded: \(error.localizedDescription). Tap the card to retry.")) }
     }
 }
 
@@ -103,23 +105,23 @@ struct ParameterScoreView: View {
             Form {
                 Section(rule.label) {
                     switch rule.kind {
-                    case "per", "tv": Stepper("数量：\(input.n) \(rule.unit)", value: $input.n, in: 0...999)
-                    case "range": Stepper("分值：\(input.pts)", value: $input.pts, in: min(rule.min ?? 0, rule.max ?? 0)...max(rule.min ?? 0, rule.max ?? 0))
+                    case "per", "tv": Stepper("Quantity: \(input.n) \(rule.unit)", value: $input.n, in: 0...999)
+                    case "range": Stepper("Points: \(input.pts)", value: $input.pts, in: min(rule.min ?? 0, rule.max ?? 0)...max(rule.min ?? 0, rule.max ?? 0))
                     case "calc":
                         ForEach(store.state?.calcs[rule.calc ?? ""]?.inputs ?? []) { field in
                             TextField(field.label, text: Binding(get: { input.inputs[field.id] ?? "" }, set: { input.inputs[field.id] = $0 })).keyboardType(.numberPad)
                         }
-                    default: Text("固定积分")
+                    default: Text("Fixed points")
                     }
                     if let preview {
-                        Text("服务端计算：\(preview.pts >= 0 ? "+" : "")\(preview.pts) \(preview.cur == "pts" ? "分" : preview.cur == "tv" ? "分钟" : "次心愿")").font(.title3.bold())
+                        Text("Calculated by server: \(preview.pts >= 0 ? "+" : "")\(preview.pts) \(preview.cur == "pts" ? String(localized: "points") : preview.cur == "tv" ? String(localized: "minutes") : String(localized: "wishes"))").font(.title3.bold())
                         Text(preview.why)
                     }
                     if let error { Text(error).foregroundStyle(.red) }
-                    Button(busy ? "提交中" : "记入账本") { Task { await submit() } }.disabled(busy || preview == nil)
+                    Button(busy ? String(localized: "Recording…") : String(localized: "Record entry")) { Task { await submit() } }.disabled(busy || preview == nil)
                 }.disabled(busy)
-            }.navigationTitle("记一笔")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+            }.navigationTitle("Record an entry")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
                 .task(id: String(describing: input.body())) {
                     preview = nil
                     guard input.ready else { return }
@@ -137,7 +139,7 @@ struct ParameterScoreView: View {
         do {
             let receipt = try await Api.transaction("api/earn", body: input.body(), requestID: requestID)
             await store.refresh(); store.showNotice(receipt.message, entryID: receipt.entryID); dismiss()
-        } catch { self.error = "未记入，重试：\(error.localizedDescription)" }
+        } catch { self.error = String(localized: "Not recorded. Retry: \(error.localizedDescription)") }
     }
 }
 
@@ -153,14 +155,15 @@ struct TemporaryScoreView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TreasuryChoice(title: "类型", selection: $negative, options: [("加分", false), ("减分", true)])
-                TextField("整数分值", text: $points).keyboardType(.numberPad)
-                TextField("简短说明", text: $label)
+                TreasuryChoice(title: String(localized: "Type"), selection: $negative,
+                               options: [(String(localized: "Add Points"), false), (String(localized: "Deduct Points"), true)])
+                TextField("Whole number of points", text: $points).keyboardType(.numberPad)
+                TextField("Brief description", text: $label)
                 if let error { Text(error).foregroundStyle(.red) }
-                Button(busy ? "提交中" : "记入账本") { Task { await submit() } }
+                Button(busy ? String(localized: "Recording…") : String(localized: "Record entry")) { Task { await submit() } }
                     .disabled(busy || (Int(points) ?? 0) <= 0 || label.trimmingCharacters(in: .whitespaces).isEmpty)
-            }.disabled(busy).navigationTitle("临时记一笔")
-                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { dismiss() } } }
+            }.disabled(busy).navigationTitle("Custom entry")
+                .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } } }
         }.treasurySheetSize(minHeight: 360)
     }
     private func submit() async {
@@ -168,6 +171,6 @@ struct TemporaryScoreView: View {
         do {
             let receipt = try await Api.transaction("api/adjust", body: ["pts": (Int(points) ?? 0) * (negative ? -1 : 1), "label": label], requestID: requestID)
             await store.refresh(); store.showNotice(receipt.message, entryID: receipt.entryID); dismiss()
-        } catch { self.error = "未记入，重试：\(error.localizedDescription)" }
+        } catch { self.error = String(localized: "Not recorded. Retry: \(error.localizedDescription)") }
     }
 }

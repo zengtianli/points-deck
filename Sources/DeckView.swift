@@ -8,7 +8,7 @@ import SwiftUI
 struct DeckView: View {
     @EnvironmentObject var store: Store
     @State private var shown: Double = 0
-    @State private var filter = "全部"
+    @State private var filter = "all"
     @State private var selected: LedgerState.Entry?
 
     private var s: LedgerState? { store.state }
@@ -20,22 +20,25 @@ struct DeckView: View {
                     EraBanner(era: era, houseName: s?.houseName ?? "", height: 132)
                     MarketValueCard(state: s, era: era, shown: shown)
                     NextTierCard(state: s, era: era)
-                    TreasuryChoice(title: "流水筛选", selection: $filter,
-                                   options: ["全部", "加分", "减分", "兑换"].map { ($0, $0) })
+                    TreasuryChoice(title: String(localized: "Filter entries"), selection: $filter,
+                                   options: [(String(localized: "All"), "all"),
+                                             (String(localized: "Added"), "added"),
+                                             (String(localized: "Deducted"), "deducted"),
+                                             (String(localized: "Rewards"), "rewards")])
                     LazyVStack(spacing: 10) {
                         ForEach((s?.entries ?? []).filter { entry in
-                            filter == "全部" || (filter == "加分" && entry.pts > 0) ||
-                            (filter == "减分" && entry.pts < 0 && !entry.isRedemption) ||
-                            (filter == "兑换" && entry.isRedemption)
+                            filter == "all" || (filter == "added" && entry.pts > 0) ||
+                            (filter == "deducted" && entry.pts < 0 && !entry.isRedemption) ||
+                            (filter == "rewards" && entry.isRedemption)
                         }) { entry in
                             Button { selected = entry } label: {
                                 LedgerCard(entries: [entry], era: era)
                             }.buttonStyle(.plain)
                         }
                         if let s, s.total > s.entries.count {
-                            Button("查看更早流水") { Task { await store.loadHistory() } }.frame(minHeight: 48)
+                            Button("View earlier entries") { Task { await store.loadHistory() } }.frame(minHeight: 48)
                         }
-                        if (s?.entries ?? []).isEmpty { Text("还没有流水，去「加分」记第一笔。") }
+                        if (s?.entries ?? []).isEmpty { Text("No entries yet. Record your first entry in Add Points.") }
                     }
             }
             .padding(.horizontal, 20)
@@ -46,14 +49,14 @@ struct DeckView: View {
             NavigationStack {
                 Form {
                     Text(entry.what).font(.headline)
-                    LabeledContent("实际积分", value: entry.signed)
-                    LabeledContent("时间", value: entry.when)
+                    LabeledContent("Points recorded", value: entry.signed)
+                    LabeledContent("Date and time", value: entry.when)
                     if !entry.note.isEmpty { Text(entry.note) }
-                    Button("撤销这笔误记", role: .destructive) {
+                    Button("Undo this entry", role: .destructive) {
                         Task { if await store.undoEntry(entry.id) { selected = nil } }
                     }
-                }.navigationTitle("流水详情")
-                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("关闭") { selected = nil } } }
+                }.navigationTitle("Entry details")
+                    .toolbar { ToolbarItem(placement: .cancellationAction) { Button("Close") { selected = nil } } }
             }.frame(minWidth: 320, minHeight: 320)
         }
         .task {
@@ -121,12 +124,12 @@ struct MarketValueCard: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text("当前积分").font(.caption).foregroundStyle(.secondary)
+            Text("Current points").font(.caption).foregroundStyle(.secondary)
             RollingNumber(value: shown).foregroundStyle(.primary)
             HStack(spacing: 14) {
                 Text("≈ ¥\(state?.yuan ?? "0.00")")
                 if let tv = state?.tv, tv != 0 {
-                    Text("📺 \(tv) 分钟")
+                    Text("📺 \(tv) minutes")
                 }
             }
             .font(.subheadline).foregroundStyle(TreasuryTheme.accent)
@@ -145,7 +148,7 @@ struct NextTierCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             if let s = state, let need = s.toNext, let name = s.nextName {
-                Text("还差 \(RollingNumber.grouped(need)) 分升级到「\(name)」")
+                Text("\(RollingNumber.grouped(need)) points to reach \(name)")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
                 GeometryReader { geo in
@@ -158,7 +161,7 @@ struct NextTierCard: View {
                 }
                 .frame(height: 10)
             } else {
-                Text("已经住到顶了 —— 云端天堂")
+                Text("You've reached the top tier — Cloud Paradise")
                     .font(.subheadline.weight(.medium)).foregroundStyle(.primary)
             }
         }
@@ -190,7 +193,7 @@ struct LedgerCard: View {
                     if e.id != entries.last?.id { Divider().overlay(.white.opacity(0.12)) }
                 }
             } else {
-                Text("还没有流水").font(.subheadline).foregroundStyle(.secondary)
+                Text("No entries yet").font(.subheadline).foregroundStyle(.secondary)
             }
         }
         .padding(18)

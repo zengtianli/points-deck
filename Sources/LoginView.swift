@@ -22,16 +22,16 @@ struct LoginView: View {
             VStack(spacing: 20) {
                 Image(systemName: "leaf.circle.fill").font(.system(size: 64)).foregroundStyle(TreasuryTheme.accent)
                 Text(AppIdentity.displayName).font(.largeTitle.bold()).multilineTextAlignment(.center)
-                Text("记录每一份努力，积攒家庭约定的奖励").foregroundStyle(.secondary)
-                TreasuryChoice(title: "登录方式", selection: $passwordMode,
-                               options: [("手机号登录", false), ("密码登录", true)]).frame(minHeight: 48)
+                Text(String(localized: "Recognize Every Effort. Earn Family Rewards.")).foregroundStyle(.secondary)
+                TreasuryChoice(title: String(localized: "Sign-In Method"), selection: $passwordMode,
+                               options: [(String(localized: "Phone"), false), (String(localized: "Password"), true)]).frame(minHeight: 48)
                 if passwordMode {
                 VStack(alignment: .leading, spacing: 14) {
-                    Text("手机号、邮箱或原用户名").font(.subheadline)
-                    TextField("手机号、邮箱或原用户名", text: $user)
+                    Text(String(localized: "Phone, Email, or Existing Username")).font(.subheadline)
+                    TextField(String(localized: "Phone, Email, or Existing Username"), text: $user)
                         .textContentType(.username).textInputAutocapitalization(.never).autocorrectionDisabled()
                         .padding(14).frame(minHeight: 48).background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 12))
-                    PasswordInput(title: "登录密码", text: $password)
+                    PasswordInput(title: String(localized: "Sign-In Password"), text: $password)
                         .padding(.horizontal, 14).background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 12))
                 }
                 if let error = store.error { Text(error).foregroundStyle(.red).accessibilityAddTraits(.updatesFrequently) }
@@ -40,23 +40,23 @@ struct LoginView: View {
                 } label: {
                     HStack {
                         if store.busy { ProgressView().tint(.white) }
-                        Text(store.busy ? "登录中" : "进入账本").fontWeight(.semibold)
+                        Text(store.busy ? String(localized: "Signing In…") : String(localized: "Open Ledger")).fontWeight(.semibold)
                     }.frame(maxWidth: .infinity, minHeight: 52)
                         .background(TreasuryTheme.accent, in: RoundedRectangle(cornerRadius: 14)).foregroundStyle(.white)
                 }.disabled(store.busy || user.isEmpty || password.isEmpty)
                 } else {
                     VStack(alignment: .leading, spacing: 12) {
-                        TextField("+86 家长手机号", text: $phone).keyboardType(.phonePad).textContentType(.telephoneNumber)
+                        TextField(String(localized: "Parent’s +86 Phone Number"), text: $phone).keyboardType(.phonePad).textContentType(.telephoneNumber)
                             .privacySensitive().padding(14).frame(minHeight: 48).background(TreasuryTheme.card, in: RoundedRectangle(cornerRadius: 12))
                         PhoneVerification(phone: phone, purpose: "login", grant: $phoneGrant)
-                        DisclosureGroup("号码长期未用／登录环境变化时补充验证") {
-                            PasswordInput(title: "原登录密码（如已设置）", text: $riskPassword)
-                            TextField("或已绑定验证的邮箱", text: $riskEmail).textContentType(.emailAddress).keyboardType(.emailAddress)
+                        DisclosureGroup(String(localized: "Extra Verification for an Inactive Number or New Sign-In")) {
+                            PasswordInput(title: String(localized: "Existing Sign-In Password, if Set"), text: $riskPassword)
+                            TextField(String(localized: "Or Your Linked and Verified Email"), text: $riskEmail).textContentType(.emailAddress).keyboardType(.emailAddress)
                                 .textInputAutocapitalization(.never).autocorrectionDisabled()
                             EmailVerification(email: riskEmail, purpose: "recover", grant: $emailGrant)
                         }
                     }
-                    Button(phoneBusy ? "登录中" : "进入账本") {
+                    Button(phoneBusy ? String(localized: "Signing In…") : String(localized: "Open Ledger")) {
                         Task {
                             phoneBusy = true; defer { phoneBusy = false }
                             do {
@@ -67,11 +67,11 @@ struct LoginView: View {
                     }.buttonStyle(.borderedProminent).frame(minHeight: 52).disabled(phoneBusy || phoneGrant.isEmpty)
                     if let phoneError { Text(phoneError).foregroundStyle(.red) }
                 }
-                Button("没有账号？注册账号") { showRegister = true }.frame(minHeight: 48)
-                Button("忘记密码") { showRecovery = true }.frame(minHeight: 48)
-                if DeletionReceipt.load() != nil { Button("查询注销状态") { showDeletion = true }.frame(minHeight: 48) }
-                Button("隐私政策与使用约定") { privacy = true }.frame(minHeight: 48)
-                Text(T("account.login.note", "原账号和原密码可继续登录。短信暂不可用或其他地区可使用邮箱注册与密码登录。")).font(.footnote).foregroundStyle(.secondary)
+                Button(String(localized: "New Here? Create an Account")) { showRegister = true }.frame(minHeight: 48)
+                Button(String(localized: "Forgot Password")) { showRecovery = true }.frame(minHeight: 48)
+                if DeletionReceipt.load() != nil { Button(String(localized: "Check Deletion Status")) { showDeletion = true }.frame(minHeight: 48) }
+                Button(String(localized: "Privacy Policy and Terms of Use")) { privacy = true }.frame(minHeight: 48)
+                Text(T("account.login.note", String(localized: "Your existing account and password still work. If SMS is unavailable or you are outside mainland China, register with email and sign in with a password."))).font(.footnote).foregroundStyle(.secondary)
             }.padding(24).frame(maxWidth: 440).frame(maxWidth: .infinity).padding(.vertical, 28)
         }.background(TreasuryTheme.background).tint(TreasuryTheme.accent).preferredColorScheme(.light)
             .sheet(isPresented: $showRegister) { PhoneRegisterView() }

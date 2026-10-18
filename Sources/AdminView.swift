@@ -31,44 +31,44 @@ struct AdminView: View {
                             NavigationLink {
                                 RuleListView(cfg: cfg).environmentObject(store)
                             } label: {
-                                row("积分规则", "checklist", "\(cfg.rules.count) 条")
+                                row(String(localized: "Point Rules"), "checklist", String(localized: "\(cfg.rules.count) rules"))
                             }
                             NavigationLink {
                                 ShopEditView(cfg: cfg).environmentObject(store)
                             } label: {
-                                row("兑换商品", "gift", "\(cfg.shop.count) 件")
+                                row(String(localized: "Rewards"), "gift", String(localized: "\(cfg.shop.count) rewards"))
                             }
                             NavigationLink {
                                 TierEditView(cfg: cfg).environmentObject(store)
                             } label: {
-                                row("档位与待遇", "stairs", "\(cfg.tiers.count) 档")
+                                row(String(localized: "Tiers and Benefits"), "stairs", String(localized: "\(cfg.tiers.count) tiers"))
                             }
                         } header: {
-                            Text("只修改当前家庭的配置")
+                            Text(String(localized: "Changes Apply Only to This Family"))
                         } footer: {
-                            Text("改的是服务器上那份，保存即生效 —— 手机、网页、别的设备下一次刷新都会看到。"
-                                 + "本机不存副本，所以不存在「两边不一样」这回事。")
+                            Text(String(localized: "Changes are saved to the server and take effect immediately. They appear on the web and your other devices after the next refresh. ")
+                                 + String(localized: "This device does not keep a separate copy."))
                         }
                     }
                     .scrollContentBackground(.hidden)
                 } else if let err {
                     VStack(spacing: 12) {
-                        Text("读不到配置").font(.headline)
+                        Text(String(localized: "Couldn’t Load Settings")).font(.headline)
                         Text(err).font(.footnote).foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
-                        Button("重试") { Task { await load() } }
+                        Button(String(localized: "Try Again")) { Task { await load() } }
                     }
                     .padding(30)
                 }
             }
             .background(TreasuryTheme.background)
-            .navigationTitle("管理")
+            .navigationTitle(String(localized: "Manage"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .preferredColorScheme(.light)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("关闭") { dismiss() }
+                    Button(String(localized: "Close")) { dismiss() }
                 }
             }
             .task { await load() }
@@ -115,7 +115,7 @@ private struct SaveBar: View {
             Button(action: save) {
                 HStack {
                     if busy { ProgressView().tint(.white) }
-                    Text(dirty ? "保存到服务器" : "没有改动")
+                    Text(dirty ? String(localized: "Save to Server") : String(localized: "No Changes"))
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
@@ -145,16 +145,16 @@ struct ShopEditView: View {
                 ForEach(items.indices, id: \.self) { i in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack {
-                            TextField("图标", text: bind(i, "icon"))
+                            TextField(String(localized: "Icon"), text: bind(i, "icon"))
                                 .frame(width: 44)
-                            TextField("名字", text: bind(i, "label"))
+                            TextField(String(localized: "Name"), text: bind(i, "label"))
                         }
                         HStack {
-                            Text("价格").foregroundStyle(.secondary)
-                            TextField("分", text: bindInt(i, "pts"))
+                            Text(String(localized: "Price")).foregroundStyle(.secondary)
+                            TextField(String(localized: "points"), text: bindInt(i, "pts"))
                                 .keyboardType(.numberPad)
                                 .multilineTextAlignment(.trailing)
-                            Text("分").foregroundStyle(.secondary)
+                            Text(String(localized: "points")).foregroundStyle(.secondary)
                         }
                         .font(.footnote)
                     }
@@ -166,14 +166,14 @@ struct ShopEditView: View {
                     items.append(["id": "sh-\(UUID().uuidString.prefix(6).lowercased())",
                                   "icon": "🎁", "label": "", "pts": 100])
                 } label: {
-                    Label("加一件", systemImage: "plus.circle")
+                    Label(String(localized: "Add Reward"), systemImage: "plus.circle")
                 }
             }
             .scrollContentBackground(.hidden)
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
         .background(TreasuryTheme.background)
-        .navigationTitle("兑换商品")
+        .navigationTitle(String(localized: "Rewards"))
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
         .task {
@@ -183,8 +183,16 @@ struct ShopEditView: View {
     }
 
     private func bind(_ i: Int, _ k: String) -> Binding<String> {
-        Binding(get: { items.indices.contains(i) ? (items[i][k] as? String ?? "") : "" },
-                set: { if items.indices.contains(i) { items[i][k] = $0 } })
+        Binding(get: {
+            guard items.indices.contains(i) else { return "" }
+            return k == "icon" ? (items[i][k] as? String ?? "") : (Api.localizedText(items[i], k) ?? "")
+        }, set: { value in
+            guard items.indices.contains(i) else { return }
+            var item = items[i]
+            if k == "icon" { item[k] = value }
+            else { Api.setLocalizedText(&item, k, value) }
+            items[i] = item
+        })
     }
 
     private func bindInt(_ i: Int, _ k: String) -> Binding<String> {
@@ -224,7 +232,7 @@ struct TierEditView: View {
     private var shopNames: [String: String] {
         Dictionary(uniqueKeysWithValues: cfg.shop.compactMap { s -> (String, String)? in
             guard let id = s["id"] as? String else { return nil }
-            return (id, "\(s["icon"] as? String ?? "")\(s["label"] as? String ?? "")")
+            return (id, "\(s["icon"] as? String ?? "")\(Api.localizedText(s, "label") ?? "")")
         })
     }
 
@@ -236,21 +244,21 @@ struct TierEditView: View {
                         HStack {
                             Text("\(i + 1)").font(.caption.bold())
                                 .foregroundStyle(.secondary).frame(width: 20)
-                            TextField("房名", text: bind(i, "name"))
+                            TextField(String(localized: "Home Name"), text: bind(i, "name"))
                         }
                         HStack {
-                            Text("门槛").foregroundStyle(.secondary)
-                            TextField("分", text: bindInt(i, "at"))
+                            Text(String(localized: "Threshold")).foregroundStyle(.secondary)
+                            TextField(String(localized: "points"), text: bindInt(i, "at"))
                                 .keyboardType(.numberPad).multilineTextAlignment(.trailing)
-                            Text("分 · 贺礼").foregroundStyle(.secondary)
-                            TextField("分", text: bindInt(i, "bonus"))
+                            Text(String(localized: "points · Welcome Bonus")).foregroundStyle(.secondary)
+                            TextField(String(localized: "points"), text: bindInt(i, "bonus"))
                                 .keyboardType(.numberPad).multilineTextAlignment(.trailing)
-                            Text("分").foregroundStyle(.secondary)
+                            Text(String(localized: "points")).foregroundStyle(.secondary)
                         }
                         .font(.footnote)
                         let un = (items[i]["unlock"] as? [String]) ?? []
                         if !un.isEmpty {
-                            Text("解锁 " + un.map { shopNames[$0] ?? $0 }.joined(separator: "、"))
+                            Text(String(localized: "Unlocks: \(un.map { shopNames[$0] ?? $0 }.joined(separator: String(localized: ", ")))"))
                                 .font(.caption2).foregroundStyle(.secondary)
                         }
                     }
@@ -261,7 +269,7 @@ struct TierEditView: View {
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
         .background(TreasuryTheme.background)
-        .navigationTitle("档位与待遇")
+        .navigationTitle(String(localized: "Tiers and Benefits"))
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
         .task {
@@ -271,8 +279,13 @@ struct TierEditView: View {
     }
 
     private func bind(_ i: Int, _ k: String) -> Binding<String> {
-        Binding(get: { items.indices.contains(i) ? (items[i][k] as? String ?? "") : "" },
-                set: { if items.indices.contains(i) { items[i][k] = $0 } })
+        Binding(get: { items.indices.contains(i) ? (Api.localizedText(items[i], k) ?? "") : "" },
+                set: { value in
+                    guard items.indices.contains(i) else { return }
+                    var item = items[i]
+                    Api.setLocalizedText(&item, k, value)
+                    items[i] = item
+                })
     }
 
     private func bindInt(_ i: Int, _ k: String) -> Binding<String> {
@@ -325,13 +338,13 @@ struct RuleListView: View {
                         Section(subjectName[sub.id] ?? sub.name) {
                             ForEach(idx, id: \.self) { i in
                                 HStack {
-                                    TextField("名字", text: bind(i, "label"))
+                                    TextField(String(localized: "Name"), text: bind(i, "label"))
                                     Spacer(minLength: 8)
                                     if (items[i]["kind"] as? String) == "calc" {
                                         // 计算器型没有固定分值，分是服务端按公式算的
-                                        Text("按公式").font(.caption).foregroundStyle(.secondary)
+                                        Text(String(localized: "Calculated")).font(.caption).foregroundStyle(.secondary)
                                     } else {
-                                        TextField("分", text: bindInt(i, "pts"))
+                                        TextField(String(localized: "points"), text: bindInt(i, "pts"))
                                             .keyboardType(.numbersAndPunctuation)
                                             .multilineTextAlignment(.trailing)
                                             .frame(width: 64)
@@ -346,7 +359,7 @@ struct RuleListView: View {
             SaveBar(busy: busy, err: err, dirty: dump() != original) { Task { await save() } }
         }
         .background(TreasuryTheme.background)
-        .navigationTitle("积分规则")
+        .navigationTitle(String(localized: "Point Rules"))
         .navigationBarTitleDisplayMode(.inline)
         .preferredColorScheme(.light)
         .task {
@@ -356,8 +369,13 @@ struct RuleListView: View {
     }
 
     private func bind(_ i: Int, _ k: String) -> Binding<String> {
-        Binding(get: { items.indices.contains(i) ? (items[i][k] as? String ?? "") : "" },
-                set: { if items.indices.contains(i) { items[i][k] = $0 } })
+        Binding(get: { items.indices.contains(i) ? (Api.localizedText(items[i], k) ?? "") : "" },
+                set: { value in
+                    guard items.indices.contains(i) else { return }
+                    var item = items[i]
+                    Api.setLocalizedText(&item, k, value)
+                    items[i] = item
+                })
     }
 
     private func bindInt(_ i: Int, _ k: String) -> Binding<String> {

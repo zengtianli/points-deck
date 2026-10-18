@@ -41,10 +41,10 @@ struct CelebrationView: View {
 
             VStack(spacing: 14) {
                 Text("🏠").font(.system(size: 64))
-                Text("乔迁新居").font(.title2.weight(.bold)).foregroundStyle(.white)
-                Text("搬进「\(houseName)」了")
+                Text("Welcome to your new home!").font(.title2.weight(.bold)).foregroundStyle(.white)
+                Text("You've moved into \(houseName)")
                     .font(.headline).foregroundStyle(era.accent)
-                Button("知道啦") { close() }
+                Button("Got it") { close() }
                     .font(.subheadline.weight(.medium))
                     .padding(.horizontal, 24).padding(.vertical, 10)
                     .background(era.accent, in: Capsule())
