@@ -1,0 +1,257 @@
+{
+  "at": "2026-10-18T06:45:11.455486+00:00",
+  "source_commit": "498349cd6da5a4a1b3db1d1b1388920c3487503e",
+  "app_id": "6806799638",
+  "build": {
+    "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+    "type": "builds",
+    "attributes": {
+      "version": "13",
+      "uploadedDate": "2026-10-17T04:06:18-07:00",
+      "expirationDate": "2027-01-15T03:06:18-08:00",
+      "expired": false,
+      "minOsVersion": "18.0",
+      "lsMinimumSystemVersion": null,
+      "computedMinMacOsVersion": "15.0",
+      "computedMinVisionOsVersion": "2.0",
+      "iconAssetToken": {
+        "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f5/85/7f/f5857f42-cabc-b7aa-757c-26a36e19d052/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+        "width": 152,
+        "height": 152
+      },
+      "processingState": "VALID",
+      "buildAudienceType": "APP_STORE_ELIGIBLE",
+      "usesNonExemptEncryption": false
+    }
+  },
+  "prerelease": {
+    "id": "d0cc04b4-839c-410a-9e5b-7e0876abec1f",
+    "type": "preReleaseVersions",
+    "attributes": {
+      "version": "1.0.3",
+      "platform": "IOS"
+    }
+  },
+  "source_version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+  "formal_before": {
+    "versions": [
+      {
+        "id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+        "type": "appStoreVersions",
+        "attributes": {
+          "platform": "IOS",
+          "versionString": "1.0.3",
+          "appStoreState": "PREPARE_FOR_SUBMISSION",
+          "appVersionState": "PREPARE_FOR_SUBMISSION",
+          "copyright": "2026 曾田力",
+          "reviewType": "APP_STORE",
+          "releaseType": "AFTER_APPROVAL",
+          "earliestReleaseDate": null,
+          "usesIdfa": null,
+          "downloadable": true,
+          "createdDate": "2026-10-16T04:47:10-07:00"
+        }
+      },
+      {
+        "id": "464b746f-5cc6-4c06-b70c-de87b5967d9f",
+        "type": "appStoreVersions",
+        "attributes": {
+          "platform": "IOS",
+          "versionString": "1.0.2",
+          "appStoreState": "READY_FOR_SALE",
+          "appVersionState": "READY_FOR_DISTRIBUTION",
+          "copyright": "2026 曾田力",
+          "reviewType": "APP_STORE",
+          "releaseType": "AFTER_APPROVAL",
+          "earliestReleaseDate": null,
+          "usesIdfa": null,
+          "downloadable": true,
+          "createdDate": "2026-09-28T14:05:24-07:00"
+        }
+      },
+      {
+        "id": "194740cb-10ea-4a47-a6d5-215ef5b0e3f9",
+        "type": "appStoreVersions",
+        "attributes": {
+          "platform": "IOS",
+          "versionString": "1.0",
+          "appStoreState": "READY_FOR_SALE",
+          "appVersionState": "READY_FOR_DISTRIBUTION",
+          "copyright": "2026 曾田力",
+          "reviewType": "APP_STORE",
+          "releaseType": "AFTER_APPROVAL",
+          "earliestReleaseDate": null,
+          "usesIdfa": null,
+          "downloadable": true,
+          "createdDate": "2026-08-30T07:44:52-07:00"
+        }
+      }
+    ],
+    "submissions": [
+      {
+        "id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
+        "type": "reviewSubmissions",
+        "attributes": {
+          "platform": "IOS",
+          "submittedDate": "2026-10-08T17:36:19.589Z",
+          "state": "COMPLETE"
+        }
+      },
+      {
+        "id": "3f15a3e1-446f-434e-8ce3-9177bdaba202",
+        "type": "reviewSubmissions",
+        "attributes": {
+          "platform": "IOS",
+          "submittedDate": "2026-09-28T21:10:56.796Z",
+          "state": "COMPLETE"
+        }
+      },
+      {
+        "id": "21d699f6-f3e2-44b1-a3b0-87a3eba4fd7c",
+        "type": "reviewSubmissions",
+        "attributes": {
+          "platform": "IOS",
+          "submittedDate": "2026-09-07T16:06:53.83Z",
+          "state": "COMPLETE"
+        }
+      }
+    ],
+    "version_builds": {
+      "604a9480-62ed-4102-80b5-b5f3666a6210": {
+        "type": "builds",
+        "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+      },
+      "464b746f-5cc6-4c06-b70c-de87b5967d9f": {
+        "type": "builds",
+        "id": "1ad39cd1-8ac8-441e-858a-326a531712b9"
+      },
+      "194740cb-10ea-4a47-a6d5-215ef5b0e3f9": {
+        "type": "builds",
+        "id": "39708603-ce63-4169-a649-790e865a6c2e"
+      }
+    }
+  },
+  "review_source": {
+    "id": "3a3ea26e-d57c-447c-9684-0c86cdfe6152",
+    "fields_present": {
+      "contactFirstName": true,
+      "contactLastName": true,
+      "contactPhone": true,
+      "contactEmail": true,
+      "demoAccountName": true,
+      "demoAccountPassword": true,
+      "demoAccountRequired": true,
+      "notes": true
+    },
+    "demoAccountRequired": true
+  },
+  "beta_review_before": {
+    "id": "6806799638",
+    "fields_present": {
+      "contactFirstName": false,
+      "contactLastName": false,
+      "contactPhone": false,
+      "contactEmail": false,
+      "demoAccountName": false,
+      "demoAccountPassword": false,
+      "demoAccountRequired": false,
+      "notes": false
+    }
+  },
+  "build_beta_before": {
+    "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+    "type": "buildBetaDetails",
+    "attributes": {
+      "autoNotifyEnabled": true,
+      "internalBuildState": "IN_BETA_TESTING",
+      "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+    }
+  },
+  "beta_submissions_before": [],
+  "groups_before": [
+    {
+      "id": "93bc09a2-ce0a-415d-89b1-adc04325a244",
+      "type": "betaGroups",
+      "attributes": {
+        "name": "family",
+        "createdDate": "2026-09-01T07:14:07.392Z",
+        "isInternalGroup": true,
+        "hasAccessToAllBuilds": false,
+        "publicLinkEnabled": null,
+        "publicLinkId": null,
+        "publicLinkLimitEnabled": null,
+        "publicLinkLimit": null,
+        "publicLink": null,
+        "feedbackEnabled": true,
+        "iosBuildsAvailableForAppleSiliconMac": true,
+        "iosBuildsAvailableForAppleVision": true
+      }
+    }
+  ],
+  "testers_before": {
+    "zengtianli1@126.com": [
+      {
+        "id": "87c40bc0-87d2-4091-aae0-2d01ee9e9334",
+        "type": "betaTesters",
+        "attributes": {
+          "lastName": "曾",
+          "firstName": "田力",
+          "inviteType": "EMAIL",
+          "state": "INSTALLED",
+          "appDevices": [
+            {
+              "model": "iPhone18_3",
+              "platform": "IOS",
+              "osVersion": "27.2",
+              "appBuildVersion": "1.0.3 (13)"
+            }
+          ],
+          "email": "zengtianli1@126.com"
+        }
+      }
+    ],
+    "zengtianli2@126.com": [],
+    "zengtianli3@126.com": []
+  },
+  "store_localizations": [
+    {
+      "id": "0598486e-98c9-4957-bd3a-8e7455853a6e",
+      "type": "appStoreVersionLocalizations",
+      "attributes": {
+        "description": "成长小金库是一本帮助家庭正向激励的积分账本。由家长和孩子约定项目与奖励，把日常努力记录为可追溯的积分收支，一起学习积攒、选择与兑现心愿。\n\n• 账本：查看余额、成长住处与最近流水，记错后从原条目撤销。\n• 走势：回顾积分积累、变化与历史记录。\n• 加分：固定项目一按记账，参数项目先预览再确认，也可临时记一笔；家长可管理本账号的项目与奖励。\n• 兑换：核对价格、条件和扣后余额，再兑换家庭自行准备的奖励；不能透支。\n• 账户：管理账号安全、查看帮助与隐私说明，按页面验证并申请注销。\n• 设置：选择默认栏目、庆祝效果和外接键盘刷新，导入导出偏好，按需启用iCloud偏好同步或检查App Store更新。\n\n用家长本人的手机号验证码登录或注册（短信仅支持中国大陆+86），也可用邮箱注册；当前版本没有第二套家长密码，请由家长保管账号和设备。账本和账号由开发者运营的edu.tianli.cyou服务保存；默认关闭的iCloud选项只同步显示与操作偏好，不同步账号凭据或家庭账本。\n\n积分不是钱，不能购买、充值、转账或提现。只有积分数据的账号可在账户中自助删除；涉及同一账号的学习平台扫描资料时，需要协调删除并显示处理回执与状态。小组件显示本机账本快照，联网打开App后刷新。",
+        "locale": "zh-Hans",
+        "keywords": "积分,奖励,家庭,孩子,习惯,家长,记账,任务,兑换,成长",
+        "marketingUrl": "https://app-ios-points-deck.tianli.cyou",
+        "promotionalText": null,
+        "supportUrl": "https://app-ios-points-deck.tianli.cyou/support.html",
+        "whatsNew": "新增集中设置入口，可选择默认栏目、控制升档庆祝和外接键盘刷新快捷键；支持导入导出显示与操作偏好，按需启用默认关闭的iCloud偏好同步，并检查App Store更新。账号与家庭账本继续由原服务保存。"
+      }
+    }
+  ],
+  "app_info_localizations": [
+    {
+      "id": "65d52899-a894-48c5-9795-a6a1ac362f82",
+      "type": "appInfoLocalizations",
+      "attributes": {
+        "locale": "zh-Hans",
+        "name": "成长小金库",
+        "subtitle": "努力挣积分，攒出小心愿",
+        "privacyPolicyUrl": "https://app-ios-points-deck.tianli.cyou/privacy.html",
+        "privacyChoicesUrl": null,
+        "privacyPolicyText": null
+      }
+    },
+    {
+      "id": "199d1f11-4a71-4a3b-b4b7-89f48cf6e3fc",
+      "type": "appInfoLocalizations",
+      "attributes": {
+        "locale": "zh-Hans",
+        "name": "成长小金库",
+        "subtitle": "努力挣积分，攒出小心愿",
+        "privacyPolicyUrl": "https://app-ios-points-deck.tianli.cyou/privacy.html",
+        "privacyChoicesUrl": null,
+        "privacyPolicyText": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,765 @@
+{
+  "app_id": "6806799638",
+  "build_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+  "source_commit": "498349cd6da5a4a1b3db1d1b1388920c3487503e",
+  "events": [
+    {
+      "at": "2026-10-18T06:46:37.718799+00:00",
+      "step": 3,
+      "action": "validate_existing_build",
+      "data": {
+        "selected": {
+          "type": "builds",
+          "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+          "attributes": {
+            "version": "13",
+            "uploadedDate": "2026-10-17T04:06:18-07:00",
+            "expirationDate": "2027-01-15T03:06:18-08:00",
+            "expired": false,
+            "minOsVersion": "18.0",
+            "lsMinimumSystemVersion": null,
+            "computedMinMacOsVersion": "15.0",
+            "computedMinVisionOsVersion": "2.0",
+            "iconAssetToken": {
+              "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f5/85/7f/f5857f42-cabc-b7aa-757c-26a36e19d052/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+              "width": 152,
+              "height": 152
+            },
+            "processingState": "VALID",
+            "buildAudienceType": "APP_STORE_ELIGIBLE",
+            "usesNonExemptEncryption": false
+          }
+        },
+        "prerelease": {
+          "type": "preReleaseVersions",
+          "id": "d0cc04b4-839c-410a-9e5b-7e0876abec1f",
+          "attributes": {
+            "version": "1.0.3",
+            "platform": "IOS"
+          }
+        },
+        "all_ios_builds": [
+          {
+            "type": "builds",
+            "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+            "attributes": {
+              "version": "13",
+              "uploadedDate": "2026-10-17T04:06:18-07:00",
+              "expirationDate": "2027-01-15T03:06:18-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f5/85/7f/f5857f42-cabc-b7aa-757c-26a36e19d052/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "1ad39cd1-8ac8-441e-858a-326a531712b9",
+            "attributes": {
+              "version": "12",
+              "uploadedDate": "2026-10-08T10:30:10-07:00",
+              "expirationDate": "2027-01-06T09:30:10-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/05/ba/a8/05baa8f5-1052-11e6-b660-4ed8bc11df33/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "dc0ec998-a536-42c0-9722-311950e3b00f",
+            "attributes": {
+              "version": "11",
+              "uploadedDate": "2026-10-04T07:09:49-07:00",
+              "expirationDate": "2027-01-02T06:09:49-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/42/1c/12/421c12ec-9ded-11fd-3614-99cc1a058ee7/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "97f7f6d5-7fe0-4ab5-9035-535b16681099",
+            "attributes": {
+              "version": "10",
+              "uploadedDate": "2026-10-04T04:19:49-07:00",
+              "expirationDate": "2027-01-02T03:19:49-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/89/45/47/894547aa-c14b-e766-a7a3-2520feed8c9f/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "f5bbc237-7bf9-47d9-ae04-16c1a90b25a5",
+            "attributes": {
+              "version": "9",
+              "uploadedDate": "2026-10-03T12:06:39-07:00",
+              "expirationDate": "2027-01-01T11:06:39-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/dc/8f/c7/dc8fc7ff-b38a-eea0-4707-8127a92a1938/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "8a19aa18-5887-4644-b89f-1436b8a3660e",
+            "attributes": {
+              "version": "8",
+              "uploadedDate": "2026-09-28T14:08:01-07:00",
+              "expirationDate": "2026-12-27T13:08:01-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/88/35/02/883502c2-0f45-5499-7334-596db809828b/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "d44971d8-c66a-47cb-ae34-5a02685c25be",
+            "attributes": {
+              "version": "4",
+              "uploadedDate": "2026-09-09T02:06:43-07:00",
+              "expirationDate": "2026-12-08T01:06:43-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/79/77/56/797756db-fca8-a294-464a-55cc30382160/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "f9e5b73b-e288-4a68-afe8-5defd6419bf0",
+            "attributes": {
+              "version": "3",
+              "uploadedDate": "2026-09-09T01:18:05-07:00",
+              "expirationDate": "2026-12-08T00:18:05-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3a/f6/d1/3af6d1e7-ef7a-d14c-9a6d-b54c4e220ed6/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "39708603-ce63-4169-a649-790e865a6c2e",
+            "attributes": {
+              "version": "2",
+              "uploadedDate": "2026-09-06T00:13:53-07:00",
+              "expirationDate": "2026-12-04T23:13:53-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7a/0c/88/7a0c889c-d70a-2747-b21e-588313d5d82d/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "0f8f67cd-92ec-45d7-80ac-2b74ea5f0ca8",
+            "attributes": {
+              "version": "3",
+              "uploadedDate": "2026-09-05T03:22:35-07:00",
+              "expirationDate": "2026-12-04T02:22:35-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/8d/b1/2e/8db12ea2-2088-eda3-9031-1b92ca282bb9/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "539f3271-5f69-44d2-ba01-3dede2f01333",
+            "attributes": {
+              "version": "2",
+              "uploadedDate": "2026-09-01T23:04:34-07:00",
+              "expirationDate": "2026-11-30T22:04:34-08:00",
+              "expired": false,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3a/ff/2b/3aff2bcd-90dc-878a-1717-9650e666e65b/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          },
+          {
+            "type": "builds",
+            "id": "bc64e532-dcd1-4007-abc2-1875bed8ea4c",
+            "attributes": {
+              "version": "1",
+              "uploadedDate": "2026-08-30T18:14:39-07:00",
+              "expirationDate": "2026-09-02T00:47:34-07:00",
+              "expired": true,
+              "minOsVersion": "18.0",
+              "lsMinimumSystemVersion": null,
+              "computedMinMacOsVersion": "15.0",
+              "computedMinVisionOsVersion": "2.0",
+              "iconAssetToken": {
+                "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/0c/12/af/0c12afdd-1be4-879e-4364-807d858c1b16/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+                "width": 152,
+                "height": 152
+              },
+              "processingState": "VALID",
+              "buildAudienceType": "APP_STORE_ELIGIBLE",
+              "usesNonExemptEncryption": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "at": "2026-10-18T06:46:42.322488+00:00",
+      "step": 3,
+      "action": "create_external_group",
+      "data": {
+        "type": "betaGroups",
+        "id": "1e40b808-d775-4bbd-9f0a-f96c6cfc3eec",
+        "attributes": {
+          "publicLinkLimit": null,
+          "iosBuildsAvailableForAppleSiliconMac": true,
+          "createdDate": "2026-10-18T06:46:40.623Z",
+          "publicLinkEnabled": false,
+          "publicLink": null,
+          "hasAccessToAllBuilds": null,
+          "publicLinkId": null,
+          "isInternalGroup": false,
+          "name": "Growth Treasury iOS Beta",
+          "feedbackEnabled": true,
+          "publicLinkLimitEnabled": false,
+          "iosBuildsAvailableForAppleVision": true
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:46:48.978046+00:00",
+      "step": 3,
+      "action": "add_existing_app_tester",
+      "data": {
+        "email": "zengtianli1@126.com",
+        "response_status": 204,
+        "response_id": null,
+        "readback": {
+          "type": "betaTesters",
+          "id": "87c40bc0-87d2-4091-aae0-2d01ee9e9334",
+          "attributes": {
+            "lastName": "曾",
+            "firstName": "田力",
+            "inviteType": "EMAIL",
+            "state": "INSTALLED",
+            "appDevices": [],
+            "email": "zengtianli1@126.com"
+          }
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:46:55.701442+00:00",
+      "step": 3,
+      "action": "create_tester_in_external_group",
+      "data": {
+        "email": "zengtianli2@126.com",
+        "response_status": null,
+        "response_id": "b488aca7-2413-415c-ac18-f1ecbb653abd",
+        "readback": {
+          "type": "betaTesters",
+          "id": "b488aca7-2413-415c-ac18-f1ecbb653abd",
+          "attributes": {
+            "lastName": null,
+            "firstName": null,
+            "inviteType": "EMAIL",
+            "state": "NOT_INVITED",
+            "appDevices": [],
+            "email": "zengtianli2@126.com"
+          }
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:02.595606+00:00",
+      "step": 3,
+      "action": "create_tester_in_external_group",
+      "data": {
+        "email": "zengtianli3@126.com",
+        "response_status": null,
+        "response_id": "4fd76541-7a5e-4edf-abe2-9febaa5be90b",
+        "readback": {
+          "type": "betaTesters",
+          "id": "4fd76541-7a5e-4edf-abe2-9febaa5be90b",
+          "attributes": {
+            "lastName": null,
+            "firstName": null,
+            "inviteType": "EMAIL",
+            "state": "NOT_INVITED",
+            "appDevices": [],
+            "email": "zengtianli3@126.com"
+          }
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:09.872946+00:00",
+      "step": 4,
+      "action": "copy_formal_review_to_beta",
+      "data": {
+        "source_version_id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+        "source_detail_id": "3a3ea26e-d57c-447c-9684-0c86cdfe6152",
+        "beta_detail_id": "6806799638",
+        "patch_status": 200,
+        "field_matches_source": {
+          "contactFirstName": true,
+          "contactLastName": true,
+          "contactPhone": true,
+          "contactEmail": true,
+          "demoAccountRequired": true,
+          "demoAccountName": true,
+          "demoAccountPassword": true,
+          "notes": true
+        },
+        "demoAccountRequired": true,
+        "credentials_saved_in_receipt": false
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:13.368025+00:00",
+      "step": 4,
+      "action": "beta_description",
+      "data": {
+        "id": "816e0305-fa58-47ae-be9e-80b615f24f85",
+        "locale": "zh-Hans",
+        "description_matches_formal": true,
+        "feedback_email_matches_review_contact": true,
+        "privacyPolicyUrl": "https://app-ios-points-deck.tianli.cyou/privacy.html"
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:17.126811+00:00",
+      "step": 4,
+      "action": "what_to_test",
+      "data": {
+        "type": "betaBuildLocalizations",
+        "id": "1948e96e-1fd1-414f-8857-64cdb72ea0e6",
+        "attributes": {
+          "whatsNew": "请在 iPhone 或 iPad 上试用成长小金库的主要流程：手机号验证码或邮箱账号登录，查看账本与积分余额，记录固定项目和参数项目、临时加减分并撤销，查看积分走势，兑换奖励，管理项目与奖励，以及账户设置、退出和重新登录。请反馈无法完成的操作、余额或记录显示异常、看不懂的提示和不顺手之处；也请留意网络失败后的提示与输入保留。",
+          "locale": "zh-Hans"
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:20.101437+00:00",
+      "step": 4,
+      "action": "what_to_test",
+      "data": {
+        "type": "betaBuildLocalizations",
+        "id": "a837e928-3fa4-46fe-a635-1bd45e137a52",
+        "attributes": {
+          "whatsNew": "Please try the main workflows in Growth Treasury on iPhone or iPad: sign in with a phone verification code or email account, view the ledger and balance, record and undo fixed or parameter-based activities and manual adjustments, review trends, redeem rewards, manage activities and rewards, and use account settings, sign out and sign in again. Report tasks you cannot complete, unexpected balances or records, unclear messages, usability problems, and how failed network requests preserve your input.",
+          "locale": "en-US"
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:23.269182+00:00",
+      "step": 5,
+      "action": "automatic_notification",
+      "data": {
+        "type": "buildBetaDetails",
+        "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+        "attributes": {
+          "autoNotifyEnabled": true,
+          "internalBuildState": "IN_BETA_TESTING",
+          "externalBuildState": "READY_FOR_BETA_SUBMISSION"
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:28.209028+00:00",
+      "step": 5,
+      "action": "associate_external_build",
+      "data": {
+        "response": {
+          "status": 204
+        },
+        "group_build_ids": [
+          "8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+        ]
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:32.788656+00:00",
+      "step": 5,
+      "action": "create_beta_submission",
+      "data": {
+        "type": "betaAppReviewSubmissions",
+        "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+        "attributes": {
+          "betaReviewState": "WAITING_FOR_REVIEW",
+          "submittedDate": null
+        }
+      }
+    },
+    {
+      "at": "2026-10-18T06:47:52.525031+00:00",
+      "step": 7,
+      "action": "final_readback",
+      "data": {
+        "beta_state": "WAITING_FOR_REVIEW",
+        "autoNotifyEnabled": true,
+        "formal_unchanged": true,
+        "formal_review_detail_unchanged": true,
+        "testers": [
+          {
+            "email": "zengtianli1@126.com",
+            "state": "INSTALLED"
+          },
+          {
+            "email": "zengtianli2@126.com",
+            "state": "NOT_INVITED"
+          },
+          {
+            "email": "zengtianli3@126.com",
+            "state": "NOT_INVITED"
+          }
+        ]
+      }
+    }
+  ],
+  "group_id": "1e40b808-d775-4bbd-9f0a-f96c6cfc3eec",
+  "beta_submission_id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+  "status": "configured",
+  "final": {
+    "at": "2026-10-18T06:47:32.790773+00:00",
+    "build": {
+      "type": "builds",
+      "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "attributes": {
+        "version": "13",
+        "uploadedDate": "2026-10-17T04:06:18-07:00",
+        "expirationDate": "2027-01-15T03:06:18-08:00",
+        "expired": false,
+        "minOsVersion": "18.0",
+        "lsMinimumSystemVersion": null,
+        "computedMinMacOsVersion": "15.0",
+        "computedMinVisionOsVersion": "2.0",
+        "iconAssetToken": {
+          "templateUrl": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/f5/85/7f/f5857f42-cabc-b7aa-757c-26a36e19d052/AppIcon76x76@2x_U007eipad.png/{w}x{h}bb.{f}",
+          "width": 152,
+          "height": 152
+        },
+        "processingState": "VALID",
+        "buildAudienceType": "APP_STORE_ELIGIBLE",
+        "usesNonExemptEncryption": false
+      }
+    },
+    "prerelease": {
+      "type": "preReleaseVersions",
+      "id": "d0cc04b4-839c-410a-9e5b-7e0876abec1f",
+      "attributes": {
+        "version": "1.0.3",
+        "platform": "IOS"
+      }
+    },
+    "group": {
+      "type": "betaGroups",
+      "id": "1e40b808-d775-4bbd-9f0a-f96c6cfc3eec",
+      "attributes": {
+        "publicLinkLimit": null,
+        "iosBuildsAvailableForAppleSiliconMac": true,
+        "createdDate": "2026-10-18T06:46:40.623Z",
+        "publicLinkEnabled": false,
+        "publicLink": null,
+        "hasAccessToAllBuilds": null,
+        "publicLinkId": null,
+        "isInternalGroup": false,
+        "name": "Growth Treasury iOS Beta",
+        "feedbackEnabled": true,
+        "publicLinkLimitEnabled": false,
+        "iosBuildsAvailableForAppleVision": true
+      }
+    },
+    "group_build_ids": [
+      "8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+    ],
+    "testers": [
+      {
+        "type": "betaTesters",
+        "id": "87c40bc0-87d2-4091-aae0-2d01ee9e9334",
+        "attributes": {
+          "lastName": "曾",
+          "firstName": "田力",
+          "inviteType": "EMAIL",
+          "state": "INSTALLED",
+          "appDevices": [],
+          "email": "zengtianli1@126.com"
+        }
+      },
+      {
+        "type": "betaTesters",
+        "id": "b488aca7-2413-415c-ac18-f1ecbb653abd",
+        "attributes": {
+          "lastName": null,
+          "firstName": null,
+          "inviteType": "EMAIL",
+          "state": "NOT_INVITED",
+          "appDevices": [],
+          "email": "zengtianli2@126.com"
+        }
+      },
+      {
+        "type": "betaTesters",
+        "id": "4fd76541-7a5e-4edf-abe2-9febaa5be90b",
+        "attributes": {
+          "lastName": null,
+          "firstName": null,
+          "inviteType": "EMAIL",
+          "state": "NOT_INVITED",
+          "appDevices": [],
+          "email": "zengtianli3@126.com"
+        }
+      }
+    ],
+    "build_beta_detail": {
+      "type": "buildBetaDetails",
+      "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "attributes": {
+        "autoNotifyEnabled": true,
+        "internalBuildState": "IN_BETA_TESTING",
+        "externalBuildState": "WAITING_FOR_BETA_REVIEW"
+      }
+    },
+    "beta_submission": {
+      "type": "betaAppReviewSubmissions",
+      "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28",
+      "attributes": {
+        "betaReviewState": "WAITING_FOR_REVIEW",
+        "submittedDate": "2026-10-17T23:47:31-07:00"
+      }
+    },
+    "beta_build_localizations": [
+      {
+        "type": "betaBuildLocalizations",
+        "id": "1948e96e-1fd1-414f-8857-64cdb72ea0e6",
+        "attributes": {
+          "whatsNew": "请在 iPhone 或 iPad 上试用成长小金库的主要流程：手机号验证码或邮箱账号登录，查看账本与积分余额，记录固定项目和参数项目、临时加减分并撤销，查看积分走势，兑换奖励，管理项目与奖励，以及账户设置、退出和重新登录。请反馈无法完成的操作、余额或记录显示异常、看不懂的提示和不顺手之处；也请留意网络失败后的提示与输入保留。",
+          "locale": "zh-Hans"
+        }
+      },
+      {
+        "type": "betaBuildLocalizations",
+        "id": "a837e928-3fa4-46fe-a635-1bd45e137a52",
+        "attributes": {
+          "whatsNew": "Please try the main workflows in Growth Treasury on iPhone or iPad: sign in with a phone verification code or email account, view the ledger and balance, record and undo fixed or parameter-based activities and manual adjustments, review trends, redeem rewards, manage activities and rewards, and use account settings, sign out and sign in again. Report tasks you cannot complete, unexpected balances or records, unclear messages, usability problems, and how failed network requests preserve your input.",
+          "locale": "en-US"
+        }
+      }
+    ],
+    "formal_after": {
+      "versions": [
+        {
+          "type": "appStoreVersions",
+          "id": "194740cb-10ea-4a47-a6d5-215ef5b0e3f9",
+          "attributes": {
+            "platform": "IOS",
+            "versionString": "1.0",
+            "appStoreState": "READY_FOR_SALE",
+            "appVersionState": "READY_FOR_DISTRIBUTION",
+            "copyright": "2026 曾田力",
+            "reviewType": "APP_STORE",
+            "releaseType": "AFTER_APPROVAL",
+            "earliestReleaseDate": null,
+            "usesIdfa": null,
+            "downloadable": true,
+            "createdDate": "2026-08-30T07:44:52-07:00"
+          }
+        },
+        {
+          "type": "appStoreVersions",
+          "id": "464b746f-5cc6-4c06-b70c-de87b5967d9f",
+          "attributes": {
+            "platform": "IOS",
+            "versionString": "1.0.2",
+            "appStoreState": "READY_FOR_SALE",
+            "appVersionState": "READY_FOR_DISTRIBUTION",
+            "copyright": "2026 曾田力",
+            "reviewType": "APP_STORE",
+            "releaseType": "AFTER_APPROVAL",
+            "earliestReleaseDate": null,
+            "usesIdfa": null,
+            "downloadable": true,
+            "createdDate": "2026-09-28T14:05:24-07:00"
+          }
+        },
+        {
+          "type": "appStoreVersions",
+          "id": "604a9480-62ed-4102-80b5-b5f3666a6210",
+          "attributes": {
+            "platform": "IOS",
+            "versionString": "1.0.3",
+            "appStoreState": "PREPARE_FOR_SUBMISSION",
+            "appVersionState": "PREPARE_FOR_SUBMISSION",
+            "copyright": "2026 曾田力",
+            "reviewType": "APP_STORE",
+            "releaseType": "AFTER_APPROVAL",
+            "earliestReleaseDate": null,
+            "usesIdfa": null,
+            "downloadable": true,
+            "createdDate": "2026-10-16T04:47:10-07:00"
+          }
+        }
+      ],
+      "submissions": [
+        {
+          "type": "reviewSubmissions",
+          "id": "21d699f6-f3e2-44b1-a3b0-87a3eba4fd7c",
+          "attributes": {
+            "platform": "IOS",
+            "submittedDate": "2026-09-07T16:06:53.83Z",
+            "state": "COMPLETE"
+          }
+        },
+        {
+          "type": "reviewSubmissions",
+          "id": "3f15a3e1-446f-434e-8ce3-9177bdaba202",
+          "attributes": {
+            "platform": "IOS",
+            "submittedDate": "2026-09-28T21:10:56.796Z",
+            "state": "COMPLETE"
+          }
+        },
+        {
+          "type": "reviewSubmissions",
+          "id": "a3f4a35b-e56a-45b1-8384-0442f0e0c9fc",
+          "attributes": {
+            "platform": "IOS",
+            "submittedDate": "2026-10-08T17:36:19.589Z",
+            "state": "COMPLETE"
+          }
+        }
+      ],
+      "version_builds": {
+        "604a9480-62ed-4102-80b5-b5f3666a6210": {
+          "type": "builds",
+          "id": "8ce9e986-bd65-450f-b2fc-62ddba43ea28"
+        },
+        "464b746f-5cc6-4c06-b70c-de87b5967d9f": {
+          "type": "builds",
+          "id": "1ad39cd1-8ac8-441e-858a-326a531712b9"
+        },
+        "194740cb-10ea-4a47-a6d5-215ef5b0e3f9": {
+          "type": "builds",
+          "id": "39708603-ce63-4169-a649-790e865a6c2e"
+        }
+      }
+    },
+    "formal_review_detail_unchanged": true,
+    "contact_and_demo_matches": {
+      "contactFirstName": true,
+      "contactLastName": true,
+      "contactPhone": true,
+      "contactEmail": true,
+      "demoAccountRequired": true,
+      "demoAccountName": true,
+      "demoAccountPassword": true,
+      "notes": true
+    },
+    "formal_unchanged": true
+  }
+}
